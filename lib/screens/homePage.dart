@@ -71,7 +71,7 @@ class _HomePageState extends State<HomePage> {
       bottomNavigationBar: CurvedNavigationBar(
         items: items,
         backgroundColor: Colors.transparent,
-        color: Colors.white,
+        color: Colors.blue,
         height: 60,
         index: index,
         onTap: (index) => setState(() {
