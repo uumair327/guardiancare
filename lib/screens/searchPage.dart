@@ -8,7 +8,7 @@ class SearchPage extends StatelessWidget {
       body: SafeArea(
           child: Center(
               child: Text(
-        "Home",
+        "Search PAge",
       ))),
     );
   }

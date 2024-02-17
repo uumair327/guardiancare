@@ -6,43 +6,49 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
+        colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.deepPurple),
+        // Consider replacing the line above with 'primarySwatch' to match Material Design guidelines.
+        // 'useMaterial3' has been removed in newer Flutter versions.
       ),
-      home: const ucs(title: 'Flutter Demo Home Page'),
+      home: UCS(title: 'Home Page'),
     );
   }
 }
 
-class ucs extends StatefulWidget {
-  const ucs({super.key, required this.title});
+class UCS extends StatefulWidget {
+  const UCS({Key? key, required this.title}) : super(key: key);
+
   final String title;
 
   @override
-  State<ucs> createState() => _ucsState();
+  State<UCS> createState() => _UCSState();
 }
 
-class _ucsState extends State<ucs> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
-
+class _UCSState extends State<UCS> {
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      title: "Marathon App",
-      home: HomePage(),
-      debugShowCheckedModeBanner: false,
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(widget.title),
+      ),
+      body: Center(
+        child: ElevatedButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => HomePage()),
+            );
+          },
+          child: Text('Open Home Page'),
+        ),
+      ),
     );
   }
 }

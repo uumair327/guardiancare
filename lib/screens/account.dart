@@ -8,7 +8,7 @@ class Account extends StatelessWidget {
       body: SafeArea(
           child: Center(
               child: Text(
-        "Home",
+        "Account",
       ))),
     );
   }

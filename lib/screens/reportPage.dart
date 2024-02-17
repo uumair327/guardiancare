@@ -8,7 +8,7 @@ class ReportPage extends StatelessWidget {
       body: SafeArea(
           child: Center(
               child: Text(
-        "Home",
+        "Report Page",
       ))),
     );
   }
