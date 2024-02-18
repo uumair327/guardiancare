@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:myapp/screens/homePage.dart';
+import 'package:myapp/screens/Pages.dart';
 import 'package:myapp/screens/loginPage.dart';
 
 import 'firebase_options.dart';
@@ -9,7 +9,7 @@ import 'firebase_options.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  runApp(const MyApp());
+  runApp(const UCS());
 }
 
 class MyApp extends StatelessWidget {
@@ -48,7 +48,7 @@ class _UCSState extends State<UCS> {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: "Gurdian Care",
-      home: _user != null ? const HomePage() : const LoginPage(),
+      home: _user != null ? const Pages() : const LoginPage(),
       debugShowCheckedModeBanner: false,
     );
   }
