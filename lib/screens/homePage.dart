@@ -63,6 +63,7 @@ class HomePage extends StatelessWidget {
               SizedBox(height: 20),
               Card(
                 elevation: 4,
+                color: Colors.blue[100],
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10.0),
                 ),
