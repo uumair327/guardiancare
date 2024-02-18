@@ -59,7 +59,7 @@ class _PagesState extends State<Pages> {
     final screens = <Widget>[
       SearchPage(),
       ReportPage(),
-      HomePage(),
+      const HomePage(),
       ForumPage(),
       Account(),
     ];
@@ -67,7 +67,7 @@ class _PagesState extends State<Pages> {
     return Scaffold(
       extendBody: true,
       appBar: AppBar(
-        title: const Text("Gurdian Care"),
+        title: const Text("Guardian Care"),
         leading: const Padding(
           padding: EdgeInsets.all(13.0),
         ),
