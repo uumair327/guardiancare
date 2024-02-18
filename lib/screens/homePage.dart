@@ -60,7 +60,39 @@ class HomePage extends StatelessWidget {
                   );
                 }).toList(),
               ),
-              Card(),
+              SizedBox(height: 20),
+              Card(
+                elevation: 4,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                child: Padding(
+                  padding: EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          _buildCircularButton(Icons.menu),
+                          _buildCircularButton(Icons.search),
+                          _buildCircularButton(Icons.person),
+                        ],
+                      ),
+                      SizedBox(height: 20),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          _buildCircularButton(Icons.favorite),
+                          _buildCircularButton(Icons.settings),
+                          _buildCircularButton(Icons.notifications),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              SizedBox(height: 20),
               Text(
                 "Home Page",
               ),
@@ -82,6 +114,19 @@ class HomePage extends StatelessWidget {
       ),
     );
   }
+}
+
+Widget _buildCircularButton(IconData iconData) {
+  return ElevatedButton(
+    onPressed: () {},
+    style: ElevatedButton.styleFrom(
+      foregroundColor: Colors.cyan,
+      backgroundColor: Colors.green,
+      shape: CircleBorder(),
+      padding: EdgeInsets.all(20),
+    ),
+    child: Icon(iconData, color: Colors.white),
+  );
 }
 
 // WebViewPage is a placeholder for a web view to display the YouTube link
