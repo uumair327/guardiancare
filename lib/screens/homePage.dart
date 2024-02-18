@@ -60,6 +60,7 @@ class HomePage extends StatelessWidget {
                   );
                 }).toList(),
               ),
+              Card(),
               Text(
                 "Home Page",
               ),

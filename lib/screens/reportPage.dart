@@ -1,22 +1,27 @@
 import 'package:flutter/material.dart';
+
 import 'CaseQuestionsPage.dart'; // Import the CaseQuestionsPage
 
 class ReportPage extends StatelessWidget {
+  const ReportPage({Key? key});
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Report an Issue'),
-      ),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            _buildReportTitle(),
-            SizedBox(height: 20),
-            _buildCategoryButtons(context),
-          ],
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text('Report an Issue'),
+        ),
+        body: SingleChildScrollView(
+          padding: EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              _buildReportTitle(),
+              SizedBox(height: 20),
+              _buildCategoryButtons(context),
+            ],
+          ),
         ),
       ),
     );
@@ -36,48 +41,77 @@ class ReportPage extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        _buildButton(context, 'Environmental Safety', _environmentalSafetySubTopics),
+        _buildCardButton(
+            context, 'Environmental Safety', _environmentalSafetySubTopics),
         SizedBox(height: 10),
-        _buildButton(context, 'Online Safety', _onlineSafetySubTopics),
+        _buildCardButton(context, 'Online Safety', _onlineSafetySubTopics),
         SizedBox(height: 10),
-        _buildButton(context, 'Educational Safety', _educationalSafetySubTopics),
+        _buildCardButton(
+            context, 'Educational Safety', _educationalSafetySubTopics),
         SizedBox(height: 10),
-        _buildButton(context, 'Mental Health', _mentalHealthSubTopics),
+        _buildCardButton(context, 'Mental Health', _mentalHealthSubTopics),
         SizedBox(height: 10),
-        _buildButton(context, 'Community Safety', _communitySafetySubTopics),
+        _buildCardButton(
+            context, 'Community Safety', _communitySafetySubTopics),
         SizedBox(height: 10),
-        _buildButton(context, 'Promoting Positive Development', _positiveDevelopmentSubTopics),
+        _buildCardButton(context, 'Promoting Positive Development',
+            _positiveDevelopmentSubTopics),
       ],
     );
   }
 
-  Widget _buildButton(BuildContext context, String category, List<String> subTopics) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        ElevatedButton(
-          onPressed: () {
-            // Navigate to the page with questions for the selected category
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => CaseQuestionsPage(category, subTopics)),
-            );
-          },
-          child: Text(category),
+  Widget _buildCardButton(
+      BuildContext context, String category, List<String> subTopics) {
+    return Card(
+      elevation: 4,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10.0),
+      ),
+      child: InkWell(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => CaseQuestionsPage(category, subTopics),
+            ),
+          );
+        },
+        child: Padding(
+          padding: EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(
+                category,
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(height: 10),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: subTopics
+                    .map(
+                      (subTopic) => ElevatedButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  CaseQuestionsPage(category, [subTopic]),
+                            ),
+                          );
+                        },
+                        child: Text(subTopic),
+                      ),
+                    )
+                    .toList(),
+              ),
+            ],
+          ),
         ),
-        SizedBox(height: 10),
-        // Create buttons for each subtopic
-        ...subTopics.map((subTopic) => ElevatedButton(
-          onPressed: () {
-            // Navigate to the page with questions for the selected subtopic
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => CaseQuestionsPage(category, [subTopic])),
-            );
-          },
-          child: Text(subTopic),
-        )).toList(),
-      ],
+      ),
     );
   }
 
