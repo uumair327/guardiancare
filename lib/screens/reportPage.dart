@@ -23,16 +23,28 @@ class ReportPage extends StatelessWidget {
             DropdownButtonFormField<String>(
               items: [
                 DropdownMenuItem(
-                  child: Text('Accident'),
-                  value: 'accident',
+                  child: Text('Environmental Safety'),
+                  value: 'environmental_safety',
                 ),
                 DropdownMenuItem(
-                  child: Text('Theft'),
-                  value: 'theft',
+                  child: Text('Online Safety'),
+                  value: 'online_safety',
                 ),
                 DropdownMenuItem(
-                  child: Text('Fire'),
-                  value: 'fire',
+                  child: Text('Educational Safety'),
+                  value: 'educational_safety',
+                ),
+                DropdownMenuItem(
+                  child: Text('Mental Health'),
+                  value: 'mental_health',
+                ),
+                DropdownMenuItem(
+                  child: Text('Community Safety'),
+                  value: 'community_safety',
+                ),
+                DropdownMenuItem(
+                  child: Text('Promoting Positive Development'),
+                  value: 'positive_development',
                 ),
               ],
               onChanged: (value) {
