@@ -1,5 +1,6 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:myapp/screens/emergencyContactPage.dart';
 import 'package:myapp/screens/quizPage.dart';
 
 class HomePage extends StatelessWidget {
@@ -76,8 +77,7 @@ class HomePage extends StatelessWidget {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          _buildCircularButton(
-                              Icons.quiz, 'Quiz', context), // Changed here
+                          _buildCircularButton(Icons.quiz, 'Quiz', context),
                           _buildCircularButton(Icons.search, 'Search', context),
                           _buildCircularButton(
                               Icons.person, 'Profile', context),
@@ -90,7 +90,7 @@ class HomePage extends StatelessWidget {
                           _buildCircularButton(
                               Icons.favorite, 'Favorites', context),
                           _buildCircularButton(
-                              Icons.settings, 'Settings', context),
+                              Icons.emergency, 'Emergency', context),
                           _buildCircularButton(
                               Icons.notifications, 'Notifications', context),
                         ],
@@ -111,9 +111,7 @@ class HomePage extends StatelessWidget {
   }
 
   void _launchYouTubeLink(BuildContext context) {
-    // Replace 'https://www.youtube.com/' with your actual YouTube link
     final String youtubeLink = 'https://www.youtube.com/';
-    // Use any method to open the link, here we use Navigator to push a WebView page
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -130,12 +128,17 @@ Widget _buildCircularButton(
       ElevatedButton(
         onPressed: () {
           if (label == 'Quiz') {
-            // Navigate to the quiz page
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => QuizPage()),
+            );
+          } else if (label == 'Emergency') {
             Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) =>
-                      QuizPage()), // Replace QuizPage with your actual quiz page
+                builder: (context) =>
+                    EmergencyContactPage(), // Navigate to EmergencyContactPage
+              ),
             );
           } else {
             // Handle other button presses
@@ -155,7 +158,6 @@ Widget _buildCircularButton(
   );
 }
 
-// WebViewPage is a placeholder for a web view to display the YouTube link
 class WebViewPage extends StatelessWidget {
   final String url;
 
@@ -171,18 +173,3 @@ class WebViewPage extends StatelessWidget {
     );
   }
 }
-
-// QuizPage is a placeholder for the quiz page
-// class QuizPage extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//         title: Text('Quiz Page'),
-//       ),
-//       body: Center(
-//         child: Text('This is the quiz page'),
-//       ),
-//     );
-//   }
-// }
