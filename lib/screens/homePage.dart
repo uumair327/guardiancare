@@ -1,5 +1,6 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:myapp/screens/quizPage.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({Key? key});
@@ -75,18 +76,23 @@ class HomePage extends StatelessWidget {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          _buildCircularButton(Icons.menu),
-                          _buildCircularButton(Icons.search),
-                          _buildCircularButton(Icons.person),
+                          _buildCircularButton(
+                              Icons.quiz, 'Quiz', context), // Changed here
+                          _buildCircularButton(Icons.search, 'Search', context),
+                          _buildCircularButton(
+                              Icons.person, 'Profile', context),
                         ],
                       ),
                       SizedBox(height: 20),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          _buildCircularButton(Icons.favorite),
-                          _buildCircularButton(Icons.settings),
-                          _buildCircularButton(Icons.notifications),
+                          _buildCircularButton(
+                              Icons.favorite, 'Favorites', context),
+                          _buildCircularButton(
+                              Icons.settings, 'Settings', context),
+                          _buildCircularButton(
+                              Icons.notifications, 'Notifications', context),
                         ],
                       ),
                     ],
@@ -117,16 +123,35 @@ class HomePage extends StatelessWidget {
   }
 }
 
-Widget _buildCircularButton(IconData iconData) {
-  return ElevatedButton(
-    onPressed: () {},
-    style: ElevatedButton.styleFrom(
-      foregroundColor: Colors.cyan,
-      backgroundColor: Colors.green,
-      shape: CircleBorder(),
-      padding: EdgeInsets.all(20),
-    ),
-    child: Icon(iconData, color: Colors.white),
+Widget _buildCircularButton(
+    IconData iconData, String label, BuildContext context) {
+  return Column(
+    children: [
+      ElevatedButton(
+        onPressed: () {
+          if (label == 'Quiz') {
+            // Navigate to the quiz page
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) =>
+                      QuizPage()), // Replace QuizPage with your actual quiz page
+            );
+          } else {
+            // Handle other button presses
+          }
+        },
+        style: ElevatedButton.styleFrom(
+          foregroundColor: Colors.cyan,
+          backgroundColor: Colors.green,
+          shape: CircleBorder(),
+          padding: EdgeInsets.all(20),
+        ),
+        child: Icon(iconData, color: Colors.white),
+      ),
+      SizedBox(height: 8),
+      Text(label),
+    ],
   );
 }
 
@@ -146,3 +171,18 @@ class WebViewPage extends StatelessWidget {
     );
   }
 }
+
+// QuizPage is a placeholder for the quiz page
+// class QuizPage extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: Text('Quiz Page'),
+//       ),
+//       body: Center(
+//         child: Text('This is the quiz page'),
+//       ),
+//     );
+//   }
+// }
