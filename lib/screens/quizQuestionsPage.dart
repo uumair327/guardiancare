@@ -76,7 +76,7 @@ class _QuizQuestionsPageState extends State<QuizQuestionsPage> {
                               actions: [
                                 TextButton(
                                   onPressed: () {
-                                    Navigator.pop(context);
+                                    Navigator.popUntil(context, ModalRoute.withName('/'));
                                   },
                                   child: Text('OK'),
                                 ),

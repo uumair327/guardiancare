@@ -220,6 +220,113 @@ class QuizPage extends StatelessWidget {
           },
         ],
       ),
+      Quiz(
+        imageUrl: 'assets/images/image.png',
+        title: 'Quiz 3',
+        description: 'This is a quiz on cyberbullying.',
+        questions: [
+          {
+            'question': 'What is cyberbullying?',
+            'options': [
+              'Bullying that occurs in schools',
+              'Bullying that takes place over the internet or via digital devices',
+              'Bullying that happens during outdoor activities',
+              'Bullying that happens in the workplace'
+            ],
+            'correctAnswerIndex': 1,
+          },
+          {
+            'question': 'What are common forms of cyberbullying?',
+            'options': [
+              'Sending mean text messages or emails',
+              'Spreading rumors online',
+              'Posting hurtful comments on social media',
+              'All of the above'
+            ],
+            'correctAnswerIndex': 3,
+          },
+          {
+            'question': 'How can cyberbullying affect its victims?',
+            'options': [
+              'Increased self-esteem',
+              'Emotional distress and mental health issues',
+              'Improved social relationships',
+              'All of the above'
+            ],
+            'correctAnswerIndex': 1,
+          },
+          {
+            'question': 'What steps can be taken to prevent cyberbullying?',
+            'options': [
+              'Ignoring the problem',
+              'Promoting kindness and empathy online',
+              'Encouraging anonymity on social media platforms',
+              'All of the above'
+            ],
+            'correctAnswerIndex': 1,
+          },
+          {
+            'question': 'Who can be cyberbullies?',
+            'options': [
+              'Strangers only',
+              'Peers, friends, or acquaintances',
+              'Family members only',
+              'Teachers or authority figures'
+            ],
+            'correctAnswerIndex': 1,
+          },
+          {
+            'question': 'What should victims of cyberbullying do?',
+            'options': [
+              'Retaliate with equal force',
+              'Keep quiet and endure the bullying',
+              'Reach out for help and support',
+              'Become cyberbullies themselves'
+            ],
+            'correctAnswerIndex': 2,
+          },
+          {
+            'question': 'Why is cyberbullying harmful?',
+            'options': [
+              'Its just harmless fun',
+              'It can lead to serious consequences such as depression and suicide',
+              'Its a normal part of growing up',
+              'It helps build character'
+            ],
+            'correctAnswerIndex': 1,
+          },
+          {
+            'question': 'What role do bystanders play in cyberbullying?',
+            'options': [
+              'They are not involved',
+              'They can intervene and support the victim',
+              'They should join in the bullying',
+              'They should stay silent'
+            ],
+            'correctAnswerIndex': 1,
+          },
+          {
+            'question': 'How can parents help prevent cyberbullying?',
+            'options': [
+              "Monitor their children's online activities",
+              'Teach their children about responsible online behavior',
+              'Encourage open communication about online experiences',
+              'All of the above'
+            ],
+            'correctAnswerIndex': 3,
+          },
+          {
+            'question': 'What should schools do to address cyberbullying?',
+            'options': [
+              "Ignore it as it's not their responsibility",
+              'Provide education and resources on cyberbullying prevention',
+              'Punish the victims for being targeted',
+              'None of the above'
+            ],
+            'correctAnswerIndex': 1,
+          },
+        ],
+      ),
       // Add more quizzes here
       // ...
     ];
