@@ -78,7 +78,7 @@ class ForumPage extends StatelessWidget {
       case 'The Child Labour (Prohibition and Regulation) Act, 1986':
         return 'A law to prohibit the employment of children in certain occupations and regulate the conditions of work of children.';
       default:
-        return '';
+        return '123';
     }
   }
 
