@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'homePage.dart'; // Import the HomePage widget
 
 class ReportPage extends StatelessWidget {
   @override
@@ -75,12 +76,43 @@ class ReportPage extends StatelessWidget {
             SizedBox(height: 16),
             ElevatedButton(
               onPressed: () {
-                // Implement submit button logic
+                _submitReport(context); // Call function to submit report
               },
               child: Text('Submit'),
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  // Function to handle report submission
+  void _submitReport(BuildContext context) {
+    // Perform submission logic here
+    // For demonstration purposes, let's show a success dialog
+    _showSuccessDialog(context);
+  }
+
+  // Function to show success dialog
+  void _showSuccessDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Success'),
+        content: Text('Incident report submitted successfully.'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(); // Close the dialog
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => HomePage()), // Navigate to HomePage
+                    (route) => false, // Clear all previous routes
+              );
+            },
+            child: Text('OK'),
+          ),
+        ],
       ),
     );
   }
