@@ -119,7 +119,7 @@ class LawDescriptionPage extends StatelessWidget {
         The Child Labour Act is a law in India that prohibits the employment of children below the age of 14 years in certain occupations and processes. It regulates the working conditions of adolescents between the ages of 14 and 18 years and prohibits their engagement in hazardous occupations and processes. This law also provides for the rehabilitation and education of children and adolescents who are rescued from child labor. It focuses on eliminating child labor and ensuring that every child has the opportunity to go to school and get an education.
         """;
       default:
-        return '';
+        return '123';
     }
   }
 }
