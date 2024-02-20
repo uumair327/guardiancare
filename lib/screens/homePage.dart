@@ -1,44 +1,79 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:myapp/screens/emergencyContactPage.dart';
 import 'package:myapp/screens/quizPage.dart';
-import 'package:webview_flutter/webview_flutter.dart'; // Import webview_flutter
+import 'package:webview_flutter/webview_flutter.dart';
 
-class HomePage extends StatelessWidget {
-  const HomePage({Key? key});
+class HomePage extends StatefulWidget {
+  const HomePage({Key? key}) : super(key: key);
+
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  List<Map<String, dynamic>> videoData = [];
+
+  @override
+  void initState() {
+    super.initState();
+    fetchVideoTitles();
+  }
+
+  Future<void> fetchVideoTitles() async {
+    final videoUrls = [
+      'https://www.youtube.com/watch?v=d5dCN66PokQ',
+      'https://www.youtube.com/watch?v=_MXD-eL4z_M',
+      'https://www.youtube.com/watch?v=sehKCzxIblQ',
+      'https://www.youtube.com/watch?v=qRLqkqWBJPE',
+      'https://www.youtube.com/watch?v=3SzazN2OrsQ',
+    ];
+
+    for (final videoUrl in videoUrls) {
+      final response = await http.get(Uri.parse(videoUrl));
+      if (response.statusCode == 200) {
+        final videoTitle = _extractVideoTitle(response.body);
+        final thumbnailUrl = await _getThumbnailUrl(videoUrl);
+        videoData.add({'url': videoUrl, 'title': videoTitle, 'thumbnailUrl': thumbnailUrl});
+      } else {
+        print('Failed to fetch video title for $videoUrl');
+      }
+    }
+    setState(() {});
+  }
+
+  String _extractVideoTitle(String html) {
+    final regExp = RegExp(r'<title>(?:\S+\s*\|)?\s*(?<title>[\S\s]+?) - YouTube</title>');
+    final match = regExp.firstMatch(html);
+    return match?.namedGroup('title') ?? '';
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       extendBody: true,
       body: SafeArea(
-        child: Center(
-          child: Column(
-            children: [
-              CarouselSlider(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            SizedBox(height: 20),
+            Expanded(
+              child: CarouselSlider(
                 options: CarouselOptions(
-                  height: 200,
+                  height: MediaQuery.of(context).size.height / 2,
                   aspectRatio: 16 / 9,
                   viewportFraction: 0.8,
                   initialPage: 0,
                   enableInfiniteScroll: true,
-                  reverse: false,
                   autoPlay: true,
                   autoPlayInterval: Duration(seconds: 3),
                   autoPlayAnimationDuration: Duration(milliseconds: 800),
-                  autoPlayCurve: Curves.fastOutSlowIn,
                   enlargeCenterPage: true,
-                  enlargeFactor: 0.3,
+                  enlargeStrategy: CenterPageEnlargeStrategy.height,
                   scrollDirection: Axis.horizontal,
                 ),
-                items: [
-                  // Replace the URLs with your YouTube video URLs
-                  'https://www.youtube.com/watch?v=d5dCN66PokQ',
-                  'https://www.youtube.com/watch?v=_MXD-eL4z_M',
-                  'https://www.youtube.com/watch?v=sehKCzxIblQ',
-                  'https://www.youtube.com/watch?v=qRLqkqWBJPE',
-                  'https://www.youtube.com/watch?v=3SzazN2OrsQ',
-                ].map((videoUrl) {
+                items: videoData.map((video) {
                   return Builder(
                     builder: (BuildContext context) {
                       return GestureDetector(
@@ -46,41 +81,47 @@ class HomePage extends StatelessWidget {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => WebViewPage(url: videoUrl),
+                              builder: (context) => WebViewPage(url: video['url']),
                             ),
                           );
                         },
-                        child: FutureBuilder<String>(
-                          future: _getThumbnailUrl(videoUrl),
-                          builder: (context, snapshot) {
-                            if (snapshot.hasData) {
-                              return Container(
-                                width: MediaQuery.of(context).size.width,
-                                margin: EdgeInsets.symmetric(horizontal: 5.0),
-                                decoration: BoxDecoration(
-                                  color: Colors.transparent,
-                                  image: DecorationImage(
-                                    image: NetworkImage(snapshot.data!),
-                                    fit: BoxFit.cover,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(16.0),
+                          child: Stack(
+                            children: [
+                              Image.network(
+                                video['thumbnailUrl'],
+                                fit: BoxFit.cover,
+                                width: double.infinity,
+                              ),
+                              Positioned(
+                                bottom: 8.0,
+                                left: 8.0,
+                                right: 8.0,
+                                child: Text(
+                                  video['title'],
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 20.0,
+                                    fontWeight: FontWeight.bold,
                                   ),
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
                                 ),
-                              );
-                            } else {
-                              return Container(
-                                width: MediaQuery.of(context).size.width,
-                                margin: EdgeInsets.symmetric(horizontal: 5.0),
-                                child: CircularProgressIndicator(),
-                              );
-                            }
-                          },
+                              ),
+                            ],
+                          ),
                         ),
                       );
                     },
                   );
                 }).toList(),
               ),
-              SizedBox(height: 20),
-              Card(
+            ),
+            SizedBox(height: 20),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+              child: Card(
                 elevation: 4,
                 color: Colors.blue[100],
                 shape: RoundedRectangleBorder(
@@ -96,39 +137,36 @@ class HomePage extends StatelessWidget {
                         children: [
                           _buildCircularButton(Icons.quiz, 'Quiz', context),
                           _buildCircularButton(Icons.search, 'Search', context),
-                          _buildCircularButton(
-                              Icons.person, 'Profile', context),
+                          _buildCircularButton(Icons.person, 'Profile', context),
                         ],
                       ),
                       SizedBox(height: 20),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          _buildCircularButton(
-                              Icons.favorite, 'Favorites', context),
-                          _buildCircularButton(
-                              Icons.emergency, 'Emergency', context),
-                          _buildCircularButton(
-                              Icons.notifications, 'Notifications', context),
+                          _buildCircularButton(Icons.favorite, 'Favorites', context),
+                          _buildCircularButton(Icons.emergency, 'Emergency', context),
+                          _buildCircularButton(Icons.notifications, 'Notifications', context),
                         ],
                       ),
                     ],
                   ),
                 ),
               ),
-              SizedBox(height: 20),
-              Text(
-                "Home Page",
-              ),
-            ],
-          ),
+            ),
+            SizedBox(height: 40), // Increased padding below carousel
+            Text(
+              "Home Page",
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: 20),
+          ],
         ),
       ),
     );
   }
 
-  Widget _buildCircularButton(
-      IconData iconData, String label, BuildContext context) {
+  Widget _buildCircularButton(IconData iconData, String label, BuildContext context) {
     return Column(
       children: [
         ElevatedButton(
@@ -157,7 +195,7 @@ class HomePage extends StatelessWidget {
           ),
           child: Icon(iconData, color: Colors.white),
         ),
-        SizedBox(height: 8),
+        SizedBox(height: 10),
         Text(label),
       ],
     );
