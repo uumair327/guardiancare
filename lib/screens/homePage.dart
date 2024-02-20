@@ -33,11 +33,11 @@ class HomePage extends StatelessWidget {
                 ),
                 items: [
                   // Replace the URLs with your YouTube video URLs
-                  'https://www.youtube.com/watch?v=d5dCN66PokQ&pp=ygUsTmF0aW9uYWwgQ2hpbGQgQWJ1c2UgSG90bGluZSB5b3V0dWJlIGNoYW5uZWw%3D',
-                  'https://www.youtube.com/watch?v=_MXD-eL4z_M&pp=ygUhQ29ubmVjdFNhZmVseSBvbmxpbmUgc2V4dWFsIGFidXNl',
-                  'https://www.youtube.com/watch?v=sehKCzxIblQ&pp=ygUPZW1vdGlvbmFsIGFidXNl',
-                  'https://www.youtube.com/watch?v=qRLqkqWBJPE&pp=ygUoTkNNRUMgY2hpbGQgbmVnbGVjdCBhbmQgcnVuYXdheSBjaGlsZHJlbg%3D%3D',
-                  'https://www.youtube.com/watch?v=3SzazN2OrsQ&pp=ygUZVU5JQ0VGIGNoaWxkIGV4cGxvaXRhdGlvbg%3D%3D',
+                  'https://www.youtube.com/watch?v=d5dCN66PokQ',
+                  'https://www.youtube.com/watch?v=_MXD-eL4z_M',
+                  'https://www.youtube.com/watch?v=sehKCzxIblQ',
+                  'https://www.youtube.com/watch?v=qRLqkqWBJPE',
+                  'https://www.youtube.com/watch?v=3SzazN2OrsQ',
                 ].map((videoUrl) {
                   return Builder(
                     builder: (BuildContext context) {
@@ -50,16 +50,29 @@ class HomePage extends StatelessWidget {
                             ),
                           );
                         },
-                        child: Container(
-                          width: MediaQuery.of(context).size.width,
-                          margin: EdgeInsets.symmetric(horizontal: 5.0),
-                          decoration: BoxDecoration(
-                            color: Colors.transparent,
-                            image: DecorationImage(
-                              image: AssetImage('assets/images/image.png'),
-                              fit: BoxFit.cover,
-                            ),
-                          ),
+                        child: FutureBuilder<String>(
+                          future: _getThumbnailUrl(videoUrl),
+                          builder: (context, snapshot) {
+                            if (snapshot.hasData) {
+                              return Container(
+                                width: MediaQuery.of(context).size.width,
+                                margin: EdgeInsets.symmetric(horizontal: 5.0),
+                                decoration: BoxDecoration(
+                                  color: Colors.transparent,
+                                  image: DecorationImage(
+                                    image: NetworkImage(snapshot.data!),
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              );
+                            } else {
+                              return Container(
+                                width: MediaQuery.of(context).size.width,
+                                margin: EdgeInsets.symmetric(horizontal: 5.0),
+                                child: CircularProgressIndicator(),
+                              );
+                            }
+                          },
                         ),
                       );
                     },
@@ -149,6 +162,18 @@ class HomePage extends StatelessWidget {
       ],
     );
   }
+
+  Future<String> _getThumbnailUrl(String videoUrl) async {
+    final videoId = _extractVideoId(videoUrl);
+    return 'https://img.youtube.com/vi/$videoId/mqdefault.jpg';
+  }
+
+  String _extractVideoId(String url) {
+    final regExp = RegExp(
+        r"(?:https:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/|www\.youtube\.com\/\S*?[?&]v=)?([a-zA-Z0-9_-]{11})");
+    final match = regExp.firstMatch(url);
+    return match?.group(1) ?? '';
+  }
 }
 
 class WebViewPage extends StatelessWidget {
@@ -166,4 +191,10 @@ class WebViewPage extends StatelessWidget {
       ),
     );
   }
+}
+
+void main() {
+  runApp(MaterialApp(
+    home: HomePage(),
+  ));
 }
