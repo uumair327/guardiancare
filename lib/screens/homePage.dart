@@ -95,8 +95,8 @@ class HomePage extends StatelessWidget {
                               Icons.favorite, 'Favorites', context),
                           _buildCircularButton(
                               Icons.emergency, 'Emergency', context),
-                          _buildCircularButton(
-                              Icons.notifications, 'Notifications', context),
+                          // _buildCircularButton(
+                          //     Icons.notifications, 'Notifications', context),
                         ],
                       ),
                     ],
