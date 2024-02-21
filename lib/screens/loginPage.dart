@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:sign_in_button/sign_in_button.dart';
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+  const LoginPage({Key? key}) : super(key: key);
 
   @override
   State<LoginPage> createState() => _LoginPageState();
@@ -27,8 +27,8 @@ class _LoginPageState extends State<LoginPage> {
 
   void _handleGoogleSignIn() {
     try {
-      GoogleAuthProvider _googleAuthProvider = GoogleAuthProvider();
-      _auth.signInWithProvider(_googleAuthProvider);
+      GoogleAuthProvider googleAuthProvider = GoogleAuthProvider();
+      _auth.signInWithProvider(googleAuthProvider);
     } catch (e) {
       print(e);
     }
@@ -38,11 +38,40 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-          child: SizedBox(
-        height: 50,
-        child: SignInButton(Buttons.google,
-            text: "Sign In With Google", onPressed: _handleGoogleSignIn),
-      )),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // Logo
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Image.asset(
+                'assets/logo/logo.png', // Replace with your logo image path
+                height: 150,
+                width: 150,
+              ),
+            ),
+            // Title
+            Text(
+              'Welcome to GurdianCare',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            SizedBox(height: 20),
+            // Sign in with Google button
+            SizedBox(
+              height: 50,
+              width: 250,
+              child: SignInButton(
+                Buttons.google,
+                text: "Sign In With Google",
+                onPressed: _handleGoogleSignIn,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
