@@ -62,18 +62,19 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Expanded(
               child: CarouselSlider(
                 options: CarouselOptions(
                   height: MediaQuery.of(context).size.height / 2,
                   aspectRatio: 16 / 9,
-                  viewportFraction: 0.8,
+                  viewportFraction:
+                      0.9, // Adjust the viewportFraction for spacing
                   initialPage: 0,
                   enableInfiniteScroll: true,
                   autoPlay: true,
-                  autoPlayInterval: Duration(seconds: 3),
-                  autoPlayAnimationDuration: Duration(milliseconds: 800),
+                  autoPlayInterval: const Duration(seconds: 3),
+                  autoPlayAnimationDuration: const Duration(milliseconds: 800),
                   enlargeCenterPage: true,
                   enlargeStrategy: CenterPageEnlargeStrategy.height,
                   scrollDirection: Axis.horizontal,
@@ -104,15 +105,30 @@ class _HomePageState extends State<HomePage> {
                                 bottom: 8.0,
                                 left: 8.0,
                                 right: 8.0,
-                                child: Text(
-                                  video['title'],
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 20.0,
-                                    fontWeight: FontWeight.bold,
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      begin: Alignment.topCenter,
+                                      end: Alignment.bottomCenter,
+                                      colors: [
+                                        Colors.transparent,
+                                        Colors.black.withOpacity(0.5),
+                                      ],
+                                    ),
                                   ),
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Text(
+                                      video['title'],
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 20.0,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
                                 ),
                               ),
                             ],
@@ -124,17 +140,17 @@ class _HomePageState extends State<HomePage> {
                 }).toList(),
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20.0),
               child: Card(
-                elevation: 4,
+                elevation: 8, // Increased elevation
                 color: Colors.blue[100],
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10.0),
                 ),
                 child: Padding(
-                  padding: EdgeInsets.all(16.0),
+                  padding: const EdgeInsets.all(16.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
@@ -147,7 +163,7 @@ class _HomePageState extends State<HomePage> {
                               Icons.person, 'Profile', context),
                         ],
                       ),
-                      SizedBox(height: 20),
+                      const SizedBox(height: 20),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
@@ -164,8 +180,8 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
             ),
-            SizedBox(height: 40), // Increased padding below carousel
-            SizedBox(height: 20),
+            const SizedBox(height: 40), // Increased padding below carousel
+            const SizedBox(height: 20),
           ],
         ),
       ),
@@ -197,12 +213,12 @@ class _HomePageState extends State<HomePage> {
           style: ElevatedButton.styleFrom(
             foregroundColor: Colors.cyan,
             backgroundColor: Colors.green,
-            shape: CircleBorder(),
-            padding: EdgeInsets.all(20),
+            shape: const CircleBorder(),
+            padding: const EdgeInsets.all(20),
           ),
           child: Icon(iconData, color: Colors.white),
         ),
-        SizedBox(height: 10),
+        const SizedBox(height: 10),
         Text(label),
       ],
     );
@@ -229,7 +245,7 @@ class WebViewPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('YouTube Video')),
+      appBar: AppBar(title: const Text('YouTube Video')),
       body: WebView(
         initialUrl: url,
         javascriptMode: JavascriptMode.unrestricted,
@@ -239,7 +255,7 @@ class WebViewPage extends StatelessWidget {
 }
 
 void main() {
-  runApp(MaterialApp(
+  runApp(const MaterialApp(
     home: HomePage(),
   ));
 }
