@@ -35,7 +35,11 @@ class _HomePageState extends State<HomePage> {
       if (response.statusCode == 200) {
         final videoTitle = _extractVideoTitle(response.body);
         final thumbnailUrl = await _getThumbnailUrl(videoUrl);
-        videoData.add({'url': videoUrl, 'title': videoTitle, 'thumbnailUrl': thumbnailUrl});
+        videoData.add({
+          'url': videoUrl,
+          'title': videoTitle,
+          'thumbnailUrl': thumbnailUrl
+        });
       } else {
         print('Failed to fetch video title for $videoUrl');
       }
@@ -44,7 +48,8 @@ class _HomePageState extends State<HomePage> {
   }
 
   String _extractVideoTitle(String html) {
-    final regExp = RegExp(r'<title>(?:\S+\s*\|)?\s*(?<title>[\S\s]+?) - YouTube</title>');
+    final regExp =
+        RegExp(r'<title>(?:\S+\s*\|)?\s*(?<title>[\S\s]+?) - YouTube</title>');
     final match = regExp.firstMatch(html);
     return match?.namedGroup('title') ?? '';
   }
@@ -81,7 +86,8 @@ class _HomePageState extends State<HomePage> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => WebViewPage(url: video['url']),
+                              builder: (context) =>
+                                  WebViewPage(url: video['url']),
                             ),
                           );
                         },
@@ -137,16 +143,20 @@ class _HomePageState extends State<HomePage> {
                         children: [
                           _buildCircularButton(Icons.quiz, 'Quiz', context),
                           _buildCircularButton(Icons.search, 'Search', context),
-                          _buildCircularButton(Icons.person, 'Profile', context),
+                          _buildCircularButton(
+                              Icons.person, 'Profile', context),
                         ],
                       ),
                       SizedBox(height: 20),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          _buildCircularButton(Icons.favorite, 'Favorites', context),
-                          _buildCircularButton(Icons.emergency, 'Emergency', context),
-                          _buildCircularButton(Icons.notifications, 'Notifications', context),
+                          _buildCircularButton(
+                              Icons.favorite, 'Favorites', context),
+                          _buildCircularButton(
+                              Icons.emergency, 'Emergency', context),
+                          _buildCircularButton(
+                              Icons.notifications, 'Notifications', context),
                         ],
                       ),
                     ],
@@ -155,10 +165,6 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
             SizedBox(height: 40), // Increased padding below carousel
-            Text(
-              "Home Page",
-              textAlign: TextAlign.center,
-            ),
             SizedBox(height: 20),
           ],
         ),
@@ -166,7 +172,8 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildCircularButton(IconData iconData, String label, BuildContext context) {
+  Widget _buildCircularButton(
+      IconData iconData, String label, BuildContext context) {
     return Column(
       children: [
         ElevatedButton(
