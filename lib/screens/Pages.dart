@@ -15,7 +15,7 @@ class Pages extends StatefulWidget {
 }
 
 class _PagesState extends State<Pages> {
-  int index = 2; // Changed the default index value
+  int index = 0; // Changed the default index value
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   User? _user;
@@ -30,7 +30,7 @@ class _PagesState extends State<Pages> {
   Widget build(BuildContext context) {
     final items = <Widget>[
       const Icon(
-        Icons.search,
+        Icons.home,
         size: 20,
         color: Colors.amber,
       ),
@@ -40,7 +40,7 @@ class _PagesState extends State<Pages> {
         color: Colors.amber,
       ),
       const Icon(
-        Icons.home,
+        Icons.search,
         size: 20,
         color: Colors.amber,
       ),
@@ -57,9 +57,9 @@ class _PagesState extends State<Pages> {
     ];
 
     final screens = <Widget>[
+      const HomePage(),
       SearchPage(),
       ReportPage(),
-      const HomePage(),
       ForumPage(),
       Account(),
     ];
