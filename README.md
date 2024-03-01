@@ -43,7 +43,7 @@ GuardianCare utilizes the following packages:
 Download or clone this repo by using the link below:
 
 ```  
-https://github.com/myusername/guardiancare.git
+https://github.com/abbujaa/guardiancare.git
 ```
 
 **Step 2:**  
