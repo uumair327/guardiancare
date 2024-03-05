@@ -35,12 +35,12 @@ class _PagesState extends State<Pages> {
         color: Colors.amber,
       ),
       const Icon(
-        Icons.report,
+        Icons.search,
         size: 20,
         color: Colors.amber,
       ),
       const Icon(
-        Icons.search,
+        Icons.report,
         size: 20,
         color: Colors.amber,
       ),
