@@ -67,9 +67,9 @@ class _HomePageState extends State<HomePage> {
               child: CarouselSlider(
                 options: CarouselOptions(
                   height: MediaQuery.of(context).size.height / 2,
-                  aspectRatio: 16 / 9,
+                  aspectRatio: 5 / 4,
                   viewportFraction:
-                      0.9, // Adjust the viewportFraction for spacing
+                      0.8, // Adjust the viewportFraction for spacing
                   initialPage: 0,
                   enableInfiniteScroll: true,
                   autoPlay: true,

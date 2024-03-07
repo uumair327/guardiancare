@@ -9,7 +9,7 @@ import 'firebase_options.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  runApp(const UCS());
+  runApp(const GuardianCare());
 }
 
 class guardiancare extends StatelessWidget {
@@ -17,18 +17,18 @@ class guardiancare extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return UCS();
+    return GuardianCare();
   }
 }
 
-class UCS extends StatefulWidget {
-  const UCS({super.key});
+class GuardianCare extends StatefulWidget {
+  const GuardianCare({super.key});
 
   @override
-  State<UCS> createState() => _UCSState();
+  State<GuardianCare> createState() => _GuardianCareState();
 }
 
-class _UCSState extends State<UCS> {
+class _GuardianCareState extends State<GuardianCare> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   User? _user;
