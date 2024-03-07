@@ -31,27 +31,27 @@ class _PagesState extends State<Pages> {
     final items = <Widget>[
       const Icon(
         Icons.home,
-        size: 20,
+        size: 25,
         color: Colors.amber,
       ),
       const Icon(
         Icons.report,
-        size: 20,
+        size: 25,
         color: Colors.amber,
       ),
       const Icon(
         Icons.search,
-        size: 20,
+        size: 25,
         color: Colors.amber,
       ),
       const Icon(
         Icons.forum,
-        size: 20,
+        size: 25,
         color: Colors.amber,
       ),
       const Icon(
         Icons.account_circle,
-        size: 20,
+        size: 25,
         color: Colors.amber,
       ),
     ];
@@ -61,7 +61,7 @@ class _PagesState extends State<Pages> {
       SearchPage(),
       ReportPage(),
       ForumPage(),
-      Account(),
+      Account(user: _user),
     ];
 
     return Scaffold(
@@ -84,7 +84,7 @@ class _PagesState extends State<Pages> {
         items: items,
         backgroundColor: Colors.transparent,
         color: Colors.blue,
-        height: 60,
+        height: 65,
         index: index,
         onTap: (index) => setState(() {
           this.index = index;

@@ -1,6 +1,11 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class Account extends StatelessWidget {
+  final User? user;
+
+  const Account({Key? key, this.user}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -13,6 +18,17 @@ class Account extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              CircleAvatar(
+                radius: 50,
+                backgroundImage: user?.photoURL != null
+                    ? NetworkImage(user!.photoURL!)
+                    : null, // Use user's profile picture if available
+                child: user?.displayName != null &&
+                        user!.displayName!.isNotEmpty
+                    ? Text(user!.displayName![0].toUpperCase())
+                    : null, // Display user's initials if displayName is available
+              ),
+              SizedBox(height: 10),
               Text(
                 'Profile Information',
                 style: TextStyle(
@@ -23,15 +39,11 @@ class Account extends StatelessWidget {
               SizedBox(height: 10),
               ListTile(
                 leading: Icon(Icons.person),
-                title: Text('Name: John Doe'),
+                title: Text('Name: ${user?.displayName ?? 'Not available'}'),
               ),
               ListTile(
                 leading: Icon(Icons.email),
-                title: Text('Email: johndoe@guardiancare.com'),
-              ),
-              ListTile(
-                leading: Icon(Icons.phone),
-                title: Text('Phone: +1 (123) 456-7890'),
+                title: Text('Email: ${user?.email ?? 'Not available'}'),
               ),
               Divider(),
               Text(
@@ -43,9 +55,9 @@ class Account extends StatelessWidget {
               ),
               SwitchListTile(
                 title: Text('Enable Child Safety Mode'),
-                value: true,
+                value: true, // Replace with actual value from Firebase
                 onChanged: (value) {
-                  // Toggle child safety mode
+                  // Update child safety mode in Firebase
                 },
               ),
               ListTile(

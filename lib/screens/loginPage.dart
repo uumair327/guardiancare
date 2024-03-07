@@ -11,7 +11,6 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
-
   User? _user;
 
   @override
@@ -25,10 +24,18 @@ class _LoginPageState extends State<LoginPage> {
     });
   }
 
-  void _handleGoogleSignIn() {
+  void _handleGoogleSignIn() async {
     try {
       GoogleAuthProvider googleAuthProvider = GoogleAuthProvider();
-      _auth.signInWithProvider(googleAuthProvider);
+      final UserCredential userCredential =
+          await _auth.signInWithProvider(googleAuthProvider);
+      final User? user = userCredential.user;
+      if (user != null) {
+        // Update state with the signed-in user
+        setState(() {
+          _user = user;
+        });
+      }
     } catch (e) {
       print(e);
     }
