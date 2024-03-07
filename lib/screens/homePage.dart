@@ -1,8 +1,8 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:guardiancare/screens/emergencyContactPage.dart';
 import 'package:guardiancare/screens/quizPage.dart';
+import 'package:http/http.dart' as http;
 import 'package:webview_flutter/webview_flutter.dart';
 
 class HomePage extends StatefulWidget {
@@ -102,9 +102,9 @@ class _HomePageState extends State<HomePage> {
                                 width: double.infinity,
                               ),
                               Positioned(
-                                bottom: 8.0,
-                                left: 8.0,
-                                right: 8.0,
+                                bottom: 0,
+                                left: 0,
+                                right: 0,
                                 child: Container(
                                   decoration: BoxDecoration(
                                     gradient: LinearGradient(
