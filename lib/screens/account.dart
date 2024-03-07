@@ -27,7 +27,7 @@ class Account extends StatelessWidget {
               ),
               ListTile(
                 leading: Icon(Icons.email),
-                title: Text('Email: johndoe@example.com'),
+                title: Text('Email: johndoe@guardiancare.com'),
               ),
               ListTile(
                 leading: Icon(Icons.phone),

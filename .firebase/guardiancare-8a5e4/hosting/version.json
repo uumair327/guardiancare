@@ -1,1 +1,6 @@
-{"app_name":"myapp","version":"1.0.0","build_number":"1","package_name":"myapp"}
+{
+  "app_name": "guardiancare",
+  "version": "1.0.0",
+  "build_number": "1",
+  "package_name": "guardiancare"
+}

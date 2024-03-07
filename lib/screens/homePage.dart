@@ -1,8 +1,8 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:myapp/screens/emergencyContactPage.dart';
-import 'package:myapp/screens/quizPage.dart';
+import 'package:guardiancare/screens/emergencyContactPage.dart';
+import 'package:guardiancare/screens/quizPage.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class HomePage extends StatefulWidget {

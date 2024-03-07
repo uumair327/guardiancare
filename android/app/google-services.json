@@ -1,85 +1,50 @@
 {
   "project_info": {
-    "project_number": "1058815487233",
-    "project_id": "guardiancare-8a5e4",
-    "storage_bucket": "guardiancare-8a5e4.appspot.com"
+    "project_number": "331315801686",
+    "project_id": "guardiancare-a210f",
+    "storage_bucket": "guardiancare-a210f.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1058815487233:android:835ed5591e58000f05bf00",
+        "mobilesdk_app_id": "1:331315801686:android:28c596f9e2e592e17595f7",
         "android_client_info": {
-          "package_name": "com.example.UCS"
+          "package_name": "com.guardiancare.guardiancare"
         }
       },
       "oauth_client": [
         {
-          "client_id": "1058815487233-jelol9stmnd1onuc1j39h7cf5emlpr8r.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyB8-vuMD81DFdg9siyZXgwqT8XwV9StcNk"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "1058815487233-jelol9stmnd1onuc1j39h7cf5emlpr8r.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "1058815487233-6clhsl61db03mp3pof18567mjt2krjfb.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.example.UCS.RunnerTests"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:1058815487233:android:678add568111b3ad05bf00",
-        "android_client_info": {
-          "package_name": "com.example.myapp"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "1058815487233-no73hf8uagkvu31ekqd02p32ruf9nibj.apps.googleusercontent.com",
+          "client_id": "331315801686-4co8knverqologscscu70sip0c3iqqd3.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.example.myapp",
+            "package_name": "com.guardiancare.guardiancare",
+            "certificate_hash": "21a63e65aafc7011f53f23e2076c891aa943fbc0"
+          }
+        },
+        {
+          "client_id": "331315801686-95ag4s3qkqlgacimplnj2gpbdg1b5iev.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.guardiancare.guardiancare",
             "certificate_hash": "9f253fc9da6f895b1d78051273a33370900d1118"
           }
         },
         {
-          "client_id": "1058815487233-jelol9stmnd1onuc1j39h7cf5emlpr8r.apps.googleusercontent.com",
+          "client_id": "331315801686-f57icrckmccqe3mu1airrgtpvho4lcva.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyB8-vuMD81DFdg9siyZXgwqT8XwV9StcNk"
+          "current_key": "AIzaSyBiK-huaMXXmnI4M0LxYNtH5NasP1o1iHQ"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "1058815487233-jelol9stmnd1onuc1j39h7cf5emlpr8r.apps.googleusercontent.com",
+              "client_id": "331315801686-f57icrckmccqe3mu1airrgtpvho4lcva.apps.googleusercontent.com",
               "client_type": 3
-            },
-            {
-              "client_id": "1058815487233-6clhsl61db03mp3pof18567mjt2krjfb.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.example.UCS.RunnerTests"
-              }
             }
           ]
         }

@@ -1,11 +1,11 @@
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:myapp/screens/account.dart';
-import 'package:myapp/screens/forumPage.dart';
-import 'package:myapp/screens/homePage.dart';
-import 'package:myapp/screens/reportPage.dart';
-import 'package:myapp/screens/searchPage.dart';
+import 'package:guardiancare/screens/account.dart';
+import 'package:guardiancare/screens/forumPage.dart';
+import 'package:guardiancare/screens/homePage.dart';
+import 'package:guardiancare/screens/reportPage.dart';
+import 'package:guardiancare/screens/searchPage.dart';
 
 class Pages extends StatefulWidget {
   const Pages({Key? key}) : super(key: key);

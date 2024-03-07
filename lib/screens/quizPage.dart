@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:myapp/screens/quizQuestionsPage.dart';
+import 'package:guardiancare/screens/quizQuestionsPage.dart';
 
 class QuizPage extends StatelessWidget {
   @override
@@ -23,22 +23,13 @@ class QuizPage extends StatelessWidget {
           },
           {
             'question': 'Who are the most common perpetrators of child abuse?',
-            'options': [
-              'Strangers',
-              'Parents',
-              'Teachers',
-              'Police officers'
-            ],
+            'options': ['Strangers', 'Parents', 'Teachers', 'Police officers'],
             'correctAnswerIndex': 1,
           },
           {
-            'question': 'What percentage of children experience some form of abuse or neglect during their lifetime?',
-            'options': [
-              '5%',
-              '10%',
-              '20%',
-              '30%'
-            ],
+            'question':
+                'What percentage of children experience some form of abuse or neglect during their lifetime?',
+            'options': ['5%', '10%', '20%', '30%'],
             'correctAnswerIndex': 3,
           },
           {
@@ -52,7 +43,8 @@ class QuizPage extends StatelessWidget {
             'correctAnswerIndex': 0,
           },
           {
-            'question': 'What is the most important thing for parents to do to prevent abuse?',
+            'question':
+                'What is the most important thing for parents to do to prevent abuse?',
             'options': [
               'Keep children under constant supervision',
               'Teach children about personal safety',
@@ -72,7 +64,8 @@ class QuizPage extends StatelessWidget {
             'correctAnswerIndex': 3,
           },
           {
-            'question': 'What is the legal obligation regarding reporting child abuse?',
+            'question':
+                'What is the legal obligation regarding reporting child abuse?',
             'options': [
               'Optional',
               'Mandatory',
@@ -92,7 +85,8 @@ class QuizPage extends StatelessWidget {
             'correctAnswerIndex': 3,
           },
           {
-            'question': 'What is the role of bystanders in preventing child abuse?',
+            'question':
+                'What is the role of bystanders in preventing child abuse?',
             'options': [
               'Not relevant',
               'Report suspected abuse',
@@ -130,12 +124,7 @@ class QuizPage extends StatelessWidget {
           },
           {
             'question': 'Who are vulnerable to sexual exploitation?',
-            'options': [
-              'Adults',
-              'Teenagers',
-              'Children',
-              'Elderly people'
-            ],
+            'options': ['Adults', 'Teenagers', 'Children', 'Elderly people'],
             'correctAnswerIndex': 2,
           },
           {
@@ -170,12 +159,7 @@ class QuizPage extends StatelessWidget {
           },
           {
             'question': 'Who are the perpetrators of sexual exploitation?',
-            'options': [
-              'Strangers',
-              'Family members',
-              'Teachers',
-              'Doctors'
-            ],
+            'options': ['Strangers', 'Family members', 'Teachers', 'Doctors'],
             'correctAnswerIndex': 1,
           },
           {
@@ -189,7 +173,8 @@ class QuizPage extends StatelessWidget {
             'correctAnswerIndex': 3,
           },
           {
-            'question': 'What are some common tactics used by sexual exploiters?',
+            'question':
+                'What are some common tactics used by sexual exploiters?',
             'options': [
               'Offering money or gifts',
               'Threats or intimidation',
@@ -209,7 +194,8 @@ class QuizPage extends StatelessWidget {
             'correctAnswerIndex': 3,
           },
           {
-            'question': 'What should a person do if they suspect sexual exploitation?',
+            'question':
+                'What should a person do if they suspect sexual exploitation?',
             'options': [
               'Ignore the situation',
               'Keep it to themselves',

@@ -1,8 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:myapp/screens/Pages.dart';
-import 'package:myapp/screens/loginPage.dart';
+import 'package:guardiancare/screens/Pages.dart';
+import 'package:guardiancare/screens/loginPage.dart';
 
 import 'firebase_options.dart';
 
@@ -12,8 +12,8 @@ void main() async {
   runApp(const UCS());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+class guardiancare extends StatelessWidget {
+  const guardiancare({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
