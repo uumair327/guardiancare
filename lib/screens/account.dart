@@ -1,5 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:guardiancare/screens/emergencyContactPage.dart';
+import 'package:guardiancare/screens/loginPage.dart';
+import 'package:guardiancare/screens/reportPage.dart';
 
 class Account extends StatelessWidget {
   final User? user;
@@ -53,23 +56,33 @@ class Account extends StatelessWidget {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              SwitchListTile(
-                title: Text('Enable Child Safety Mode'),
-                value: true, // Replace with actual value from Firebase
-                onChanged: (value) {
-                  // Update child safety mode in Firebase
-                },
-              ),
+              // SwitchListTile(
+              //   title: Text('Enable Child Safety Mode'),
+              //   value: true, // Replace with actual value from Firebase
+              //   onChanged: (value) {
+              //     // Update child safety mode in Firebase
+              //   },
+              // ),
               ListTile(
                 title: Text('Emergency Contact'),
                 onTap: () {
-                  // Navigate to emergency contact page
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => EmergencyContactPage(),
+                    ),
+                  );
                 },
               ),
               ListTile(
                 title: Text('Report an Incident'),
                 onTap: () {
-                  // Navigate to report page
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ReportPage(),
+                    ),
+                  );
                 },
               ),
               Divider(),
@@ -80,16 +93,36 @@ class Account extends StatelessWidget {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              ListTile(
-                title: Text('Change Password'),
-                onTap: () {
-                  // Navigate to change password page
-                },
-              ),
+              // ListTile(
+              //   title: Text('Change Password'),
+              //   onTap: () {
+              //     // Navigate to change password page
+              //   },
+              // ),
               ListTile(
                 title: Text('Log Out'),
-                onTap: () {
-                  // Log out the user
+                onTap: () async {
+                  try {
+                    await FirebaseAuth.instance.signOut();
+                    final currentUser = FirebaseAuth.instance.currentUser;
+                    if (currentUser == null) {
+                      // Sign out successful, redirect to LoginPage
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (context) => LoginPage()),
+                      );
+                    } else {
+                      // Sign out failed, display an error message
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Error signing out. Please try again.'),
+                        ),
+                      );
+                    }
+                  } catch (error) {
+                    // Handle any errors during sign out
+                    print(error); // Use a proper error reporting mechanism
+                  }
                 },
               ),
             ],
