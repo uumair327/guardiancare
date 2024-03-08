@@ -1,11 +1,9 @@
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:guardiancare/screens/account.dart';
 import 'package:guardiancare/screens/forumPage.dart';
 import 'package:guardiancare/screens/homePage.dart';
 import 'package:guardiancare/screens/reportPage.dart';
-import 'package:guardiancare/screens/searchPage.dart';
 
 class Pages extends StatefulWidget {
   const Pages({Key? key}) : super(key: key);
@@ -34,11 +32,11 @@ class _PagesState extends State<Pages> {
         size: 25,
         color: Colors.amber,
       ),
-      const Icon(
-        Icons.search,
-        size: 25,
-        color: Colors.amber,
-      ),
+      // const Icon(
+      //   Icons.search,
+      //   size: 25,
+      //   color: Colors.amber,
+      // ),
       const Icon(
         Icons.report,
         size: 25,
@@ -49,19 +47,19 @@ class _PagesState extends State<Pages> {
         size: 25,
         color: Colors.amber,
       ),
-      const Icon(
-        Icons.account_circle,
-        size: 25,
-        color: Colors.amber,
-      ),
+      // const Icon(
+      //   Icons.account_circle,
+      //   size: 25,
+      //   color: Colors.amber,
+      // ),
     ];
 
     final screens = <Widget>[
       const HomePage(),
-      SearchPage(),
+      // SearchPage(),
       ReportPage(),
       ForumPage(),
-      Account(user: _user),
+      // Account(user: _user),
     ];
 
     return Scaffold(

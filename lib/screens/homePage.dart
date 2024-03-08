@@ -1,7 +1,10 @@
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:guardiancare/screens/account.dart';
 import 'package:guardiancare/screens/emergencyContactPage.dart';
 import 'package:guardiancare/screens/quizPage.dart';
+import 'package:guardiancare/screens/searchPage.dart';
 import 'package:http/http.dart' as http;
 import 'package:webview_flutter/webview_flutter.dart';
 
@@ -14,10 +17,13 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   List<Map<String, dynamic>> videoData = [];
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
+  User? _user;
   @override
   void initState() {
     super.initState();
+    _user = _auth.currentUser;
     fetchVideoTitles();
   }
 
@@ -204,6 +210,20 @@ class _HomePageState extends State<HomePage> {
                 context,
                 MaterialPageRoute(
                   builder: (context) => EmergencyContactPage(),
+                ),
+              );
+            } else if (label == 'Search') {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => SearchPage(),
+                ),
+              );
+            } else if (label == 'Profile') {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => Account(user: _user),
                 ),
               );
             } else {

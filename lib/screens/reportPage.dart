@@ -1,84 +1,87 @@
 import 'package:flutter/material.dart';
+
 import 'homePage.dart'; // Import the HomePage widget
 
 class ReportPage extends StatelessWidget {
+  const ReportPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Report Incident'),
+        title: const Text('Report Incident'),
       ),
       body: SingleChildScrollView(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text(
+            const Text(
               'Select Incident Type:',
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             DropdownButtonFormField<String>(
-              items: [
+              items: const [
                 DropdownMenuItem(
-                  child: Text('Environmental Safety'),
                   value: 'environmental_safety',
+                  child: Text('Environmental Safety'),
                 ),
                 DropdownMenuItem(
-                  child: Text('Online Safety'),
                   value: 'online_safety',
+                  child: Text('Online Safety'),
                 ),
                 DropdownMenuItem(
-                  child: Text('Educational Safety'),
                   value: 'educational_safety',
+                  child: Text('Educational Safety'),
                 ),
                 DropdownMenuItem(
-                  child: Text('Mental Health'),
                   value: 'mental_health',
+                  child: Text('Mental Health'),
                 ),
                 DropdownMenuItem(
-                  child: Text('Community Safety'),
                   value: 'community_safety',
+                  child: Text('Community Safety'),
                 ),
                 DropdownMenuItem(
-                  child: Text('Promoting Positive Development'),
                   value: 'positive_development',
+                  child: Text('Promoting Positive Development'),
                 ),
               ],
               onChanged: (value) {
                 // Implement logic based on selected incident type
               },
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 border: OutlineInputBorder(),
                 hintText: 'Select Incident Type',
               ),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             TextFormField(
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Location',
                 border: OutlineInputBorder(),
               ),
               keyboardType: TextInputType.text,
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             TextFormField(
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Description',
                 border: OutlineInputBorder(),
               ),
               keyboardType: TextInputType.multiline,
               maxLines: null,
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             ElevatedButton(
               onPressed: () {
                 _submitReport(context); // Call function to submit report
               },
-              child: Text('Submit'),
+              child: const Text('Submit'),
             ),
           ],
         ),
@@ -98,19 +101,21 @@ class ReportPage extends StatelessWidget {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Success'),
-        content: Text('Incident report submitted successfully.'),
+        title: const Text('Success'),
+        content: const Text('Incident report submitted successfully.'),
         actions: [
           TextButton(
             onPressed: () {
               Navigator.of(context).pop(); // Close the dialog
               Navigator.pushAndRemoveUntil(
                 context,
-                MaterialPageRoute(builder: (context) => HomePage()), // Navigate to HomePage
-                    (route) => false, // Clear all previous routes
+                MaterialPageRoute(
+                    builder: (context) =>
+                        const HomePage()), // Navigate to HomePage
+                (route) => false, // Clear all previous routes
               );
             },
-            child: Text('OK'),
+            child: const Text('OK'),
           ),
         ],
       ),
