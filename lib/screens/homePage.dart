@@ -6,6 +6,7 @@ import 'package:guardiancare/screens/emergencyContactPage.dart';
 import 'package:guardiancare/screens/quizPage.dart';
 import 'package:guardiancare/screens/searchPage.dart';
 import 'package:http/http.dart' as http;
+import 'package:shimmer/shimmer.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class HomePage extends StatefulWidget {
@@ -85,65 +86,67 @@ class _HomePageState extends State<HomePage> {
                   enlargeStrategy: CenterPageEnlargeStrategy.height,
                   scrollDirection: Axis.horizontal,
                 ),
-                items: videoData.map((video) {
-                  return Builder(
-                    builder: (BuildContext context) {
-                      return GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  WebViewPage(url: video['url']),
-                            ),
-                          );
-                        },
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(16.0),
-                          child: Stack(
-                            children: [
-                              Image.network(
-                                video['thumbnailUrl'],
-                                fit: BoxFit.cover,
-                                width: double.infinity,
-                              ),
-                              Positioned(
-                                bottom: 0,
-                                left: 0,
-                                right: 0,
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    gradient: LinearGradient(
-                                      begin: Alignment.topCenter,
-                                      end: Alignment.bottomCenter,
-                                      colors: [
-                                        Colors.transparent,
-                                        Colors.black.withOpacity(0.5),
-                                      ],
-                                    ),
+                items: videoData.isEmpty
+                    ? _buildShimmerItems() // Use shimmer items if video data is empty
+                    : videoData.map((video) {
+                        return Builder(
+                          builder: (BuildContext context) {
+                            return GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        WebViewPage(url: video['url']),
                                   ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Text(
-                                      video['title'],
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 20.0,
-                                        fontWeight: FontWeight.bold,
+                                );
+                              },
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(16.0),
+                                child: Stack(
+                                  children: [
+                                    Image.network(
+                                      video['thumbnailUrl'],
+                                      fit: BoxFit.cover,
+                                      width: double.infinity,
+                                    ),
+                                    Positioned(
+                                      bottom: 0,
+                                      left: 0,
+                                      right: 0,
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          gradient: LinearGradient(
+                                            begin: Alignment.topCenter,
+                                            end: Alignment.bottomCenter,
+                                            colors: [
+                                              Colors.transparent,
+                                              Colors.black.withOpacity(0.5),
+                                            ],
+                                          ),
+                                        ),
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Text(
+                                            video['title'],
+                                            style: const TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 20.0,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                            maxLines: 2,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
                                       ),
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
                                     ),
-                                  ),
+                                  ],
                                 ),
                               ),
-                            ],
-                          ),
-                        ),
-                      );
-                    },
-                  );
-                }).toList(),
+                            );
+                          },
+                        );
+                      }).toList(),
               ),
             ),
             const SizedBox(height: 20),
@@ -241,6 +244,23 @@ class _HomePageState extends State<HomePage> {
         const SizedBox(height: 10),
         Text(label),
       ],
+    );
+  }
+
+  List<Widget> _buildShimmerItems() {
+    return List.generate(5, (index) => _buildShimmerItem());
+  }
+
+  Widget _buildShimmerItem() {
+    return Shimmer.fromColors(
+      baseColor: Colors.grey[300]!,
+      highlightColor: Colors.grey[100]!,
+      child: Container(
+        color: Colors.grey[300],
+        width: double.infinity,
+        height: MediaQuery.of(context).size.height / 2,
+        child: Center(child: CircularProgressIndicator()),
+      ),
     );
   }
 

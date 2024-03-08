@@ -1,9 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_email_sender/flutter_email_sender.dart';
 
-import 'homePage.dart'; // Import the HomePage widget
+class ReportPage extends StatefulWidget {
+  const ReportPage({Key? key}) : super(key: key);
 
-class ReportPage extends StatelessWidget {
-  const ReportPage({super.key});
+  @override
+  _ReportPageState createState() => _ReportPageState();
+}
+
+class _ReportPageState extends State<ReportPage> {
+  late String _selectedIncidentType = 'environmental_safety';
+  final TextEditingController _locationController = TextEditingController();
+  final TextEditingController _descriptionController = TextEditingController();
+  final TextEditingController _recipientEmailController =
+      TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -16,8 +26,8 @@ class ReportPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const Text(
-              'Select Incident Type:',
+            Text(
+              'Select Incident Type *:',
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
@@ -25,6 +35,7 @@ class ReportPage extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             DropdownButtonFormField<String>(
+              value: _selectedIncidentType,
               items: const [
                 DropdownMenuItem(
                   value: 'environmental_safety',
@@ -34,25 +45,12 @@ class ReportPage extends StatelessWidget {
                   value: 'online_safety',
                   child: Text('Online Safety'),
                 ),
-                DropdownMenuItem(
-                  value: 'educational_safety',
-                  child: Text('Educational Safety'),
-                ),
-                DropdownMenuItem(
-                  value: 'mental_health',
-                  child: Text('Mental Health'),
-                ),
-                DropdownMenuItem(
-                  value: 'community_safety',
-                  child: Text('Community Safety'),
-                ),
-                DropdownMenuItem(
-                  value: 'positive_development',
-                  child: Text('Promoting Positive Development'),
-                ),
+                // ... (other incident types)
               ],
               onChanged: (value) {
-                // Implement logic based on selected incident type
+                setState(() {
+                  _selectedIncidentType = value!;
+                });
               },
               decoration: const InputDecoration(
                 border: OutlineInputBorder(),
@@ -61,25 +59,48 @@ class ReportPage extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             TextFormField(
+              controller: _locationController,
               decoration: const InputDecoration(
-                labelText: 'Location',
+                labelText: 'Location *',
                 border: OutlineInputBorder(),
               ),
               keyboardType: TextInputType.text,
             ),
             const SizedBox(height: 16),
             TextFormField(
+              controller: _descriptionController,
               decoration: const InputDecoration(
-                labelText: 'Description',
+                labelText: 'Description *',
                 border: OutlineInputBorder(),
               ),
               keyboardType: TextInputType.multiline,
               maxLines: null,
             ),
             const SizedBox(height: 16),
+            TextFormField(
+              controller: _recipientEmailController,
+              decoration: const InputDecoration(
+                labelText: 'Recipient Email(s) (optional)',
+                border: OutlineInputBorder(),
+              ),
+              keyboardType: TextInputType.emailAddress,
+              validator: (value) {
+                if (value!.isEmpty) {
+                  return null; // No validation for empty field (optional)
+                }
+                final emailRegex = RegExp(r"[^@]+@[^@]+\.[^@]+");
+                if (!emailRegex.hasMatch(value)) {
+                  return 'Please enter a valid email address.';
+                }
+                return null;
+              },
+            ),
+            const SizedBox(height: 16),
             ElevatedButton(
               onPressed: () {
-                _submitReport(context); // Call function to submit report
+                if (_validateInput()) {
+                  _submitReport(context);
+                }
               },
               child: const Text('Submit'),
             ),
@@ -89,36 +110,46 @@ class ReportPage extends StatelessWidget {
     );
   }
 
-  // Function to handle report submission
-  void _submitReport(BuildContext context) {
-    // Perform submission logic here
-    // For demonstration purposes, let's show a success dialog
-    _showSuccessDialog(context);
+  // Function to validate input fields
+  bool _validateInput() {
+    return _locationController.text.isNotEmpty &&
+        _descriptionController.text.isNotEmpty;
   }
 
-  // Function to show success dialog
-  void _showSuccessDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Success'),
-        content: const Text('Incident report submitted successfully.'),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop(); // Close the dialog
-              Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(
-                    builder: (context) =>
-                        const HomePage()), // Navigate to HomePage
-                (route) => false, // Clear all previous routes
-              );
-            },
-            child: const Text('OK'),
-          ),
-        ],
-      ),
+  // Function to handle report submission (using Flutter Email Sender)
+  Future<void> _submitReport(BuildContext context) async {
+    final recipientEmails =
+        _recipientEmailController.text.split(',').map((e) => e.trim()).toList();
+
+    // Prepare email content
+    final emailBody = StringBuffer();
+    emailBody.write('Incident Type: $_selectedIncidentType\n');
+    emailBody.write('Location: $_locationController.text\n');
+    emailBody.write('Description: $_descriptionController.text\n');
+
+    // Use Flutter Email Sender for efficient email composition
+    final emailRecipient = recipientEmails.isNotEmpty
+        ? recipientEmails[0]
+        : 'mohdumair.a@somaiya.edu';
+    final email = Email(
+      // recipient: emailRecipient,
+      subject: 'Incident Report',
+      body: emailBody.toString(),
     );
+
+    try {
+      await FlutterEmailSender.send(email);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Incident report submitted successfully!'),
+        ),
+      );
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error sending report: $error'),
+        ),
+      );
+    }
   }
 }
