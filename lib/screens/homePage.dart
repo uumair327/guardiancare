@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:guardiancare/screens/account.dart';
 import 'package:guardiancare/screens/emergencyContactPage.dart';
+import 'package:guardiancare/screens/learn.dart';
 import 'package:guardiancare/screens/quizPage.dart';
 import 'package:guardiancare/screens/searchPage.dart';
 import 'package:http/http.dart' as http;
@@ -181,7 +182,7 @@ class _HomePageState extends State<HomePage> {
                           _buildCircularButton(
                               Icons.emergency, 'Emergency', context),
                           _buildCircularButton(
-                              Icons.notifications, 'Notifications', context),
+                              Icons.video_library, 'Learn', context),
                         ],
                       ),
                     ],
@@ -227,6 +228,13 @@ class _HomePageState extends State<HomePage> {
                 context,
                 MaterialPageRoute(
                   builder: (context) => Account(user: _user),
+                ),
+              );
+            } else if (label == 'Learn') {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => LearnPage(),
                 ),
               );
             } else {
