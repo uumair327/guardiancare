@@ -49,6 +49,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '331315801686',
     projectId: 'guardiancare-a210f',
     authDomain: 'guardiancare-a210f.firebaseapp.com',
+    databaseURL: 'https://guardiancare-a210f-default-rtdb.asia-southeast1.firebasedatabase.app',
     storageBucket: 'guardiancare-a210f.appspot.com',
     measurementId: 'G-HRJ3C6VEXP',
   );
@@ -58,6 +59,7 @@ class DefaultFirebaseOptions {
     appId: '1:331315801686:android:28c596f9e2e592e17595f7',
     messagingSenderId: '331315801686',
     projectId: 'guardiancare-a210f',
+    databaseURL: 'https://guardiancare-a210f-default-rtdb.asia-southeast1.firebasedatabase.app',
     storageBucket: 'guardiancare-a210f.appspot.com',
   );
 
@@ -66,6 +68,7 @@ class DefaultFirebaseOptions {
     appId: '1:331315801686:ios:3e6128afd380d53a7595f7',
     messagingSenderId: '331315801686',
     projectId: 'guardiancare-a210f',
+    databaseURL: 'https://guardiancare-a210f-default-rtdb.asia-southeast1.firebasedatabase.app',
     storageBucket: 'guardiancare-a210f.appspot.com',
     androidClientId: '331315801686-4co8knverqologscscu70sip0c3iqqd3.apps.googleusercontent.com',
     iosClientId: '331315801686-4h0llgi3p79eam8n5bt5vhm735plbg7h.apps.googleusercontent.com',
@@ -77,6 +80,7 @@ class DefaultFirebaseOptions {
     appId: '1:331315801686:ios:cef1e3afa0308d3d7595f7',
     messagingSenderId: '331315801686',
     projectId: 'guardiancare-a210f',
+    databaseURL: 'https://guardiancare-a210f-default-rtdb.asia-southeast1.firebasedatabase.app',
     storageBucket: 'guardiancare-a210f.appspot.com',
     androidClientId: '331315801686-4co8knverqologscscu70sip0c3iqqd3.apps.googleusercontent.com',
     iosClientId: '331315801686-drnf2arr18matomgvs169374mbk0jgud.apps.googleusercontent.com',

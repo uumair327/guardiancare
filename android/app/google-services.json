@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "331315801686",
+    "firebase_url": "https://guardiancare-a210f-default-rtdb.asia-southeast1.firebasedatabase.app",
     "project_id": "guardiancare-a210f",
     "storage_bucket": "guardiancare-a210f.appspot.com"
   },
@@ -30,6 +31,14 @@
           }
         },
         {
+          "client_id": "331315801686-dkbnrs9hrrppo95p6ovpk094utqc7ncq.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.guardiancare.guardiancare",
+            "certificate_hash": "f7dba5844f617ff67f814b06709eca1b81fb7e27"
+          }
+        },
+        {
           "client_id": "331315801686-f57icrckmccqe3mu1airrgtpvho4lcva.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -45,6 +54,13 @@
             {
               "client_id": "331315801686-f57icrckmccqe3mu1airrgtpvho4lcva.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "331315801686-4h0llgi3p79eam8n5bt5vhm735plbg7h.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.guardiancare.guardiancare"
+              }
             }
           ]
         }
