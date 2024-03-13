@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 
 class LearnPage extends StatelessWidget {
+  const LearnPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Learn"),
+        title: const Text("Learn"),
       ),
       body: ListView(
-        padding: EdgeInsets.all(16),
-        children: [
+        padding: const EdgeInsets.all(16),
+        children: const [
           ContentField(
             title: "Road Safety",
             theme: "Stay Safe on the Road",
@@ -53,6 +55,7 @@ class ContentField extends StatelessWidget {
   final List<String> videos;
 
   const ContentField({
+    super.key,
     required this.title,
     required this.theme,
     required this.videos,
@@ -77,30 +80,30 @@ class ContentField extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  Icon(Icons.category, color: Colors.blue),
-                  SizedBox(width: 8),
+                  const Icon(Icons.category, color: Colors.blue),
+                  const SizedBox(width: 8),
                   Text(
                     title,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                 ],
               ),
-              SizedBox(height: 4),
+              const SizedBox(height: 4),
               Text(
                 theme,
-                style: TextStyle(
+                style: const TextStyle(
                   color: Colors.grey,
                   fontStyle: FontStyle.italic,
                 ),
               ),
-              SizedBox(height: 12),
+              const SizedBox(height: 12),
             ],
           ),
         ),
-        Divider(), // Add a divider between content fields
+        const Divider(), // Add a divider between content fields
       ],
     );
   }
@@ -115,7 +118,7 @@ class VideoPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Video List'),
+        title: const Text('Video List'),
       ),
       body: ListView.builder(
         itemCount: videos.length,
