@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -22,6 +23,8 @@ class _HomePageState extends State<HomePage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   User? _user;
+  final CarouselController _carouselController = CarouselController();
+
   @override
   void initState() {
     super.initState();
@@ -57,7 +60,7 @@ class _HomePageState extends State<HomePage> {
 
   String _extractVideoTitle(String html) {
     final regExp =
-        RegExp(r'<title>(?:\S+\s*\|)?\s*(?<title>[\S\s]+?) - YouTube</title>');
+    RegExp(r'<title>(?:\S+\s*\|)?\s*(?<title>[\S\s]+?) - YouTube</title>');
     final match = regExp.firstMatch(html);
     return match?.namedGroup('title') ?? '';
   }
@@ -67,139 +70,151 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       extendBody: true,
       body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const SizedBox(height: 20),
-            Expanded(
-              child: CarouselSlider(
-                options: CarouselOptions(
-                  height: MediaQuery.of(context).size.height / 2,
-                  aspectRatio: 5 / 4,
-                  viewportFraction:
-                      0.8, // Adjust the viewportFraction for spacing
-                  initialPage: 0,
-                  enableInfiniteScroll: true,
-                  autoPlay: true,
-                  autoPlayInterval: const Duration(seconds: 3),
-                  autoPlayAnimationDuration: const Duration(milliseconds: 800),
-                  enlargeCenterPage: true,
-                  enlargeStrategy: CenterPageEnlargeStrategy.height,
-                  scrollDirection: Axis.horizontal,
-                ),
-                items: videoData.isEmpty
-                    ? _buildShimmerItems() // Use shimmer items if video data is empty
-                    : videoData.map((video) {
-                        return Builder(
-                          builder: (BuildContext context) {
-                            return GestureDetector(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        WebViewPage(url: video['url']),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const SizedBox(height: 20),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: CarouselSlider(
+                  carouselController: _carouselController,
+                  options: CarouselOptions(
+                    height: MediaQuery.of(context).size.height / 3,
+                    aspectRatio: 16 / 9,
+                    viewportFraction: 0.9,
+                    initialPage: 0,
+                    enableInfiniteScroll: true,
+                    autoPlay: true,
+                    autoPlayInterval: const Duration(seconds: 5),
+                    autoPlayAnimationDuration: const Duration(milliseconds: 800),
+                    enlargeCenterPage: true,
+                    enlargeStrategy: CenterPageEnlargeStrategy.height,
+                    scrollDirection: Axis.horizontal,
+                  ),
+                  items: videoData.isEmpty
+                      ? _buildShimmerItems()
+                      : videoData.map((video) {
+                    return GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => WebViewPage(url: video['url']),
+                          ),
+                        );
+                      },
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(16.0),
+                        child: Stack(
+                          children: [
+                            _buildVideoThumbnail(video['thumbnailUrl']),
+                            Positioned(
+                              bottom: 0,
+                              left: 0,
+                              right: 0,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    begin: Alignment.topCenter,
+                                    end: Alignment.bottomCenter,
+                                    colors: [
+                                      Colors.transparent,
+                                      Colors.black.withOpacity(0.5),
+                                    ],
                                   ),
-                                );
-                              },
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(16.0),
-                                child: Stack(
-                                  children: [
-                                    Image.network(
-                                      video['thumbnailUrl'],
-                                      fit: BoxFit.cover,
-                                      width: double.infinity,
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Text(
+                                    video['title'],
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 16.0,
+                                      fontWeight: FontWeight.bold,
                                     ),
-                                    Positioned(
-                                      bottom: 0,
-                                      left: 0,
-                                      right: 0,
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          gradient: LinearGradient(
-                                            begin: Alignment.topCenter,
-                                            end: Alignment.bottomCenter,
-                                            colors: [
-                                              Colors.transparent,
-                                              Colors.black.withOpacity(0.5),
-                                            ],
-                                          ),
-                                        ),
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: Text(
-                                            video['title'],
-                                            style: const TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 20.0,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                            maxLines: 2,
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
                                 ),
                               ),
-                            );
-                          },
-                        );
-                      }).toList(),
-              ),
-            ),
-            const SizedBox(height: 20),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20.0),
-              child: Card(
-                elevation: 8, // Increased elevation
-                color: Colors.blue[100],
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10.0),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  }).toList(),
                 ),
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          _buildCircularButton(Icons.quiz, 'Quiz', context),
-                          _buildCircularButton(Icons.search, 'Search', context),
-                          _buildCircularButton(
-                              Icons.person, 'Profile', context),
-                        ],
-                      ),
-                      const SizedBox(height: 20),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          _buildCircularButton(
-                              Icons.favorite, 'Favorites', context),
-                          _buildCircularButton(
-                              Icons.emergency, 'Emergency', context),
-                          _buildCircularButton(
-                              Icons.video_library, 'Learn', context),
-                        ],
-                      ),
-                    ],
+              ),
+              const SizedBox(height: 20),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                child: Card(
+                  elevation: 8,
+                  color: Colors.blue[100],
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20.0),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            _buildCircularButton(Icons.quiz, 'Quiz', context, Colors.orange),
+                            _buildCircularButton(Icons.search, 'Search', context, Colors.green),
+                            _buildCircularButton(Icons.person, 'Profile', context, Colors.purple),
+                          ],
+                        ),
+                        const SizedBox(height: 20),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            _buildCircularButton(Icons.favorite, 'Favorites', context, Colors.pink),
+                            _buildCircularButton(Icons.emergency, 'Emergency', context, Colors.red),
+                            _buildCircularButton(Icons.video_library, 'Learn', context, Colors.blue),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
-            const SizedBox(height: 40), // Increased padding below carousel
-            const SizedBox(height: 20),
-          ],
+              const SizedBox(height: 40),
+            ],
+          ),
         ),
       ),
     );
   }
 
+  Widget _buildVideoThumbnail(String thumbnailUrl) {
+    return SizedBox(
+      width: double.infinity,
+      child: CachedNetworkImage(
+        imageUrl: thumbnailUrl,
+        imageBuilder: (context, imageProvider) => Container(
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: imageProvider,
+              fit: BoxFit.cover,
+            ),
+          ),
+        ),
+        placeholder: (context, url) => const Center(child: CircularProgressIndicator()),
+        errorWidget: (context, url, error) => const Icon(Icons.error),
+      ),
+    );
+  }
+
   Widget _buildCircularButton(
-      IconData iconData, String label, BuildContext context) {
+      IconData iconData,
+      String label,
+      BuildContext context,
+      Color color,
+      ) {
     return Column(
       children: [
         ElevatedButton(
@@ -242,15 +257,22 @@ class _HomePageState extends State<HomePage> {
             }
           },
           style: ElevatedButton.styleFrom(
-            foregroundColor: Colors.cyan,
-            backgroundColor: Colors.green,
+            foregroundColor: Colors.white,
+            backgroundColor: color,
             shape: const CircleBorder(),
             padding: const EdgeInsets.all(20),
           ),
-          child: Icon(iconData, color: Colors.white),
+          child: Icon(iconData, size: 30),
         ),
-        const SizedBox(height: 10),
-        Text(label),
+        const SizedBox(height: 8),
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            color: color,
+          ),
+        ),
       ],
     );
   }
@@ -266,7 +288,7 @@ class _HomePageState extends State<HomePage> {
       child: Container(
         color: Colors.grey[300],
         width: double.infinity,
-        height: MediaQuery.of(context).size.height / 2,
+        height: MediaQuery.of(context).size.height / 3,
         child: Center(child: CircularProgressIndicator()),
       ),
     );
