@@ -87,7 +87,8 @@ class _HomePageState extends State<HomePage> {
                     enableInfiniteScroll: true,
                     autoPlay: true,
                     autoPlayInterval: const Duration(seconds: 5),
-                    autoPlayAnimationDuration: const Duration(milliseconds: 800),
+                    autoPlayAnimationDuration:
+                    const Duration(milliseconds: 800),
                     enlargeCenterPage: true,
                     enlargeStrategy: CenterPageEnlargeStrategy.height,
                     scrollDirection: Axis.horizontal,
@@ -100,7 +101,8 @@ class _HomePageState extends State<HomePage> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => WebViewPage(url: video['url']),
+                            builder: (context) =>
+                                WebViewPage(url: video['url']),
                           ),
                         );
                       },
@@ -163,18 +165,24 @@ class _HomePageState extends State<HomePage> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
-                            _buildCircularButton(Icons.quiz, 'Quiz', context, Colors.orange),
-                            _buildCircularButton(Icons.search, 'Search', context, Colors.green),
-                            _buildCircularButton(Icons.person, 'Profile', context, Colors.purple),
+                            _buildCircularButton(
+                                Icons.quiz, 'Quiz', context, Colors.orange),
+                            _buildCircularButton(
+                                Icons.search, 'Search', context, Colors.green),
+                            _buildCircularButton(
+                                Icons.person, 'Profile', context, Colors.purple),
                           ],
                         ),
                         const SizedBox(height: 20),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
-                            _buildCircularButton(Icons.favorite, 'Favorites', context, Colors.pink),
-                            _buildCircularButton(Icons.emergency, 'Emergency', context, Colors.red),
-                            _buildCircularButton(Icons.video_library, 'Learn', context, Colors.blue),
+                            _buildCircularButton(Icons.favorite, 'Favorites',
+                                context, Colors.pink),
+                            _buildCircularButton(Icons.emergency,
+                                'Emergency', context, Colors.red),
+                            _buildCircularButton(Icons.video_library, 'Learn',
+                                context, Colors.blue),
                           ],
                         ),
                       ],
@@ -195,15 +203,8 @@ class _HomePageState extends State<HomePage> {
       width: double.infinity,
       child: CachedNetworkImage(
         imageUrl: thumbnailUrl,
-        imageBuilder: (context, imageProvider) => Container(
-          decoration: BoxDecoration(
-            image: DecorationImage(
-              image: imageProvider,
-              fit: BoxFit.cover,
-            ),
-          ),
-        ),
-        placeholder: (context, url) => const Center(child: CircularProgressIndicator()),
+        placeholder: (context, url) =>
+        const Center(child: CircularProgressIndicator()),
         errorWidget: (context, url, error) => const Icon(Icons.error),
       ),
     );
