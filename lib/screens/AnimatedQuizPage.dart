@@ -11,7 +11,7 @@ class AnimatedQuizPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Animated Quiz Page'),
+        title: Text('Animated Quiz Page.'),
       ),
       body: SingleChildScrollView(
         child: Column(
