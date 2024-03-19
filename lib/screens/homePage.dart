@@ -30,6 +30,7 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     _user = _auth.currentUser;
     fetchVideoTitles();
+
   }
 
   Future<void> fetchVideoTitles() async {
@@ -131,7 +132,7 @@ class _HomePageState extends State<HomePage> {
                                   child: Text(
                                     video['title'],
                                     style: const TextStyle(
-                                      color: Colors.white,
+                                      color: Colors.black,
                                       fontSize: 16.0,
                                       fontWeight: FontWeight.bold,
                                     ),
@@ -290,7 +291,7 @@ class _HomePageState extends State<HomePage> {
         color: Colors.grey[300],
         width: double.infinity,
         height: MediaQuery.of(context).size.height / 3,
-        child: Center(child: CircularProgressIndicator()),
+        child: const Center(child: CircularProgressIndicator()),
       ),
     );
   }

@@ -7,7 +7,7 @@ class QuizPage extends StatelessWidget {
     // Create a list of quizzes
     List<Quiz> quizzes = [
       Quiz(
-        imageUrl: 'assets/images/image.png',
+        imageUrl: 'assets/images/childabuse.jpg',
         title: 'Quiz 1',
         description: 'This is a quiz on child abuse.',
         questions: [
@@ -108,7 +108,7 @@ class QuizPage extends StatelessWidget {
         ],
       ),
       Quiz(
-        imageUrl: 'assets/images/image.png',
+        imageUrl: 'assets/images/sexual abuse.jfif',
         title: 'Quiz 2',
         description: 'This is a quiz on sexual exploitation.',
         questions: [
@@ -207,7 +207,7 @@ class QuizPage extends StatelessWidget {
         ],
       ),
       Quiz(
-        imageUrl: 'assets/images/image.png',
+        imageUrl: 'assets/images/cyberbullying.jfif',
         title: 'Quiz 3',
         description: 'This is a quiz on cyberbullying.',
         questions: [
