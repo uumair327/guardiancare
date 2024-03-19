@@ -319,7 +319,11 @@ class QuizPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Quiz Page'),
+        title: Text(
+          'Quiz Page',
+          style: TextStyle(color: Colors.white), // Text color set to white
+        ),
+        backgroundColor: Colors.orange, // App bar background color set to blue
       ),
       body: ListView.builder(
         itemCount: quizzes.length,
@@ -328,7 +332,6 @@ class QuizPage extends StatelessWidget {
             padding: const EdgeInsets.all(8.0),
             child: InkWell(
               onTap: () {
-                // Navigate to the QuizQuestionsPage with the corresponding questions
                 Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -366,8 +369,9 @@ class QuizTile extends StatelessWidget {
               fit: BoxFit.cover,
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
+          Container(
+            color: Colors.orange, // Background color set to blue
+            padding: EdgeInsets.all(8.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -376,6 +380,7 @@ class QuizTile extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
+                    color: Colors.white, // Text color set to white
                   ),
                 ),
                 SizedBox(height: 8),
@@ -383,6 +388,7 @@ class QuizTile extends StatelessWidget {
                   quiz.description,
                   style: TextStyle(
                     fontSize: 16,
+                    color: Colors.white, // Text color set to white
                   ),
                 ),
               ],
