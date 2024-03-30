@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:guardiancare/screens/quizQuestionsPage.dart'; // Assuming this is the correct import for the quiz questions page
+import 'package:guardiancare/screens/quizpage/quizQuestionsPage.dart'; // Assuming this is the correct import for the quiz questions page
 
 class AnimatedQuizPage extends StatelessWidget {
   @override

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:guardiancare/screens/quizQuestionsPage.dart';
+import 'package:guardiancare/screens/quizpage/quizQuestionsPage.dart';
 
 class QuizPage extends StatelessWidget {
   @override
