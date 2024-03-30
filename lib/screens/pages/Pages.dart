@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:guardiancare/screens/forumpage/forumPage.dart';
 import 'package:guardiancare/screens/homepage/homePage.dart';
-import 'package:guardiancare/screens/reportpage/reportPage.dart';
+import 'package:guardiancare/screens/pages/reportpage/reportPage.dart';
 
 class Pages extends StatefulWidget {
   const Pages({Key? key}) : super(key: key);

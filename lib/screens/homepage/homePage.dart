@@ -6,7 +6,7 @@ import 'package:guardiancare/screens/account/account.dart';
 import 'package:guardiancare/screens/emergency contact page/emergencyContactPage.dart';
 import 'package:guardiancare/screens/learn/learn.dart';
 import 'package:guardiancare/screens/quizpage/quizPage.dart';
-import 'package:guardiancare/screens/searchpage/searchPage.dart';
+import 'package:guardiancare/screens/pages/searchpage/searchPage.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:video_player/video_player.dart';
 
