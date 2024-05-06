@@ -204,10 +204,10 @@ class _HomePageState extends State<HomePage> {
 
   Widget _buildShimmerItem() {
     return Shimmer.fromColors(
-      baseColor: tCardBgColor, // Used constant for color
+      baseColor: tCardBgColor,
       highlightColor: Colors.grey[100]!,
       child: Container(
-        color: tCardBgColor, // Used constant for color
+        color: tCardBgColor,
         width: double.infinity,
         height: MediaQuery.of(context).size.height / 2,
         child: const Center(child: CircularProgressIndicator()),
