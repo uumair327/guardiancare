@@ -209,7 +209,6 @@ class _HomePageState extends State<HomePage> {
       child: Container(
         color: tCardBgColor, // Used constant for color
         width: double.infinity,
-        //code
         height: MediaQuery.of(context).size.height / 2,
         child: const Center(child: CircularProgressIndicator()),
       ),
