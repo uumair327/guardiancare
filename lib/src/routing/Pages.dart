@@ -3,8 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:guardiancare/src/screens/reportPage.dart';
 
-import 'forumPage.dart';
-import 'homePage.dart';
+import '../screens/forumPage.dart';
+import '../screens/homePage.dart';
 
 class Pages extends StatefulWidget {
   const Pages({Key? key}) : super(key: key);
@@ -58,8 +58,8 @@ class _PagesState extends State<Pages> {
     final screens = <Widget>[
       const HomePage(),
       // SearchPage(),
-      ReportPage(),
-      ForumPage(),
+      const ReportPage(),
+      const ForumPage(),
       // Account(user: _user),
     ];
 

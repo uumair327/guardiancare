@@ -21,13 +21,13 @@ class _VideoControllerState extends State<VideoController> {
   Future<void> fetchCategories() async {
     QuerySnapshot querySnapshot =
         await FirebaseFirestore.instance.collection('videos').get();
-    Set<String> categorySet = Set();
-    querySnapshot.docs.forEach((doc) {
+    Set<String> categorySet = {};
+    for (var doc in querySnapshot.docs) {
       final category = doc['category'] as String?;
       if (category != null) {
         categorySet.add(category);
       }
-    });
+    }
     setState(() {
       categories = categorySet.toList();
     });
@@ -65,7 +65,7 @@ class _VideoControllerState extends State<VideoController> {
           .snapshots(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: CircularProgressIndicator());
+          return const Center(child: CircularProgressIndicator());
         }
         if (snapshot.hasError) {
           return Center(child: Text('Error: ${snapshot.error}'));

@@ -4,13 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:guardiancare/src/constants/colors.dart';
 import 'package:guardiancare/src/features/authentication/controllers/home_controller.dart';
 import 'package:guardiancare/src/screens/account.dart';
-import 'package:guardiancare/src/screens/emergencyContactPage.dart';
 import 'package:guardiancare/src/screens/searchPage.dart';
-import 'package:guardiancare/src/screens/video_page.dart';
 import 'package:shimmer/shimmer.dart';
 
 import '../constants/sizes.dart';
+import 'emergencyContactPage.dart';
 import 'quizPage.dart';
+import 'video_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});

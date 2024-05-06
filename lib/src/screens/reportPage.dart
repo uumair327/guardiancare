@@ -118,8 +118,7 @@ class _ReportPageState extends State<ReportPage> {
 
   // Function to handle report submission (using Flutter Email Sender)
   Future<void> _submitReport(BuildContext context) async {
-    final recipientEmails =
-        _recipientEmailController.text.split(',').map((e) => e.trim()).toList();
+    _recipientEmailController.text.split(',').map((e) => e.trim()).toList();
 
     // Prepare email content
     final emailBody = StringBuffer();
@@ -128,9 +127,6 @@ class _ReportPageState extends State<ReportPage> {
     emailBody.write('Description: $_descriptionController.text\n');
 
     // Use Flutter Email Sender for efficient email composition
-    final emailRecipient = recipientEmails.isNotEmpty
-        ? recipientEmails[0]
-        : 'mohdumair.a@somaiya.edu';
     final email = Email(
       // recipient: emailRecipient,
       subject: 'Incident Report',

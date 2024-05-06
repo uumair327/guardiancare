@@ -4,7 +4,7 @@ import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 class VideoPlayerPage extends StatelessWidget {
   final String videoUrl;
 
-  const VideoPlayerPage({Key? key, required this.videoUrl}) : super(key: key);
+  const VideoPlayerPage({super.key, required this.videoUrl});
 
   @override
   Widget build(BuildContext context) {
@@ -12,9 +12,9 @@ class VideoPlayerPage extends StatelessWidget {
     if (videoId == null) {
       return Scaffold(
         appBar: AppBar(
-          title: Text('Video Player'),
+          title: const Text('Video Player'),
         ),
-        body: Center(
+        body: const Center(
           child: Text('Invalid YouTube URL'),
         ),
       );
@@ -30,7 +30,7 @@ class VideoPlayerPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Video Player'),
+        title: const Text('Video Player'),
       ),
       body: Center(
         child: YoutubePlayer(

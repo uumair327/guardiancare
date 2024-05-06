@@ -11,16 +11,13 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  User? _user;
 
   @override
   void initState() {
     super.initState();
 
     _auth.authStateChanges().listen((event) {
-      setState(() {
-        _user = event;
-      });
+      setState(() {});
     });
   }
 
@@ -32,9 +29,7 @@ class _LoginPageState extends State<LoginPage> {
       final User? user = userCredential.user;
       if (user != null) {
         // Update state with the signed-in user
-        setState(() {
-          _user = user;
-        });
+        setState(() {});
       }
     } catch (e) {
       print(e);
