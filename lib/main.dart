@@ -1,7 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:guardiancare/src/screens/Pages.dart';
+import 'package:guardiancare/src/routing/Pages.dart';
+import 'package:guardiancare/src/routing/app_router.dart';
 import 'package:guardiancare/src/screens/loginPage.dart';
 
 import 'firebase_options.dart';
@@ -54,6 +55,7 @@ class _GuardianCareState extends State<GuardianCare> {
     return MaterialApp(
       title: "Gurdian Care",
       home: _user != null ? const Pages() : const LoginPage(),
+      onGenerateRoute: AppRouter.generateRoute,
       debugShowCheckedModeBanner: false,
     );
   }

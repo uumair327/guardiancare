@@ -21,7 +21,7 @@ class OnBoardingScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Image(
-                  image: AssetImage(tOnBoardingImage1),
+                  image: const AssetImage(tOnBoardingImage1),
                   height: size.height * 0.5,
                 ),
                 Column(
@@ -32,7 +32,7 @@ class OnBoardingScreen extends StatelessWidget {
                         style: Theme.of(context).textTheme.labelSmall),
                   ],
                 ),
-                Text(tOnBoardingCounter1),
+                const Text(tOnBoardingCounter1),
               ],
             ),
           ),
