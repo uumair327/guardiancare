@@ -24,6 +24,9 @@ class _HomePageState extends State<HomePage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   User? _user;
 
+  // Define a GlobalKey for the CarouselSlider
+  final GlobalKey<CarouselSliderState> _carouselKey = GlobalKey();
+
   @override
   void initState() {
     super.initState();
@@ -49,6 +52,7 @@ class _HomePageState extends State<HomePage> {
             const SizedBox(height: tDefaultSize), // Used constant for height
             Expanded(
               child: CarouselSlider(
+                key: _carouselKey, // Assign the GlobalKey here
                 options: CarouselOptions(
                   height: MediaQuery.of(context).size.height / 2,
                   aspectRatio: 5 / 4,
@@ -163,7 +167,7 @@ class _HomePageState extends State<HomePage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => SearchPage(),
+                  builder: (context) => const SearchPage(),
                 ),
               );
             } else if (label == 'Profile') {
@@ -177,7 +181,7 @@ class _HomePageState extends State<HomePage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => VideoPage(),
+                  builder: (context) => const VideoPage(),
                 ),
               );
             } else {
