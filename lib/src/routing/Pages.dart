@@ -38,7 +38,7 @@ class _PagesState extends State<Pages> {
       //   color: Colors.amber,
       // ),
       const Icon(
-        Icons.report,
+        Icons.explore,
         size: 25,
         color: Colors.amber,
       ),
@@ -57,7 +57,7 @@ class _PagesState extends State<Pages> {
     final screens = <Widget>[
       const HomePage(),
       // SearchPage(),
-      Explore(),
+      const Explore(),
       const ForumPage(),
       // Account(user: _user),
     ];
