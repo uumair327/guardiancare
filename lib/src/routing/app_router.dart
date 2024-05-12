@@ -5,7 +5,7 @@ import 'package:guardiancare/src/screens/homePage.dart';
 import 'package:guardiancare/src/screens/quizPage.dart';
 import 'package:guardiancare/src/screens/searchPage.dart';
 import 'package:guardiancare/src/screens/video_page.dart';
-
+//not in use right now
 class AppRouter {
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
