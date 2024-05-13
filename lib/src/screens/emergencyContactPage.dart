@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class EmergencyContactPage extends StatelessWidget {
   @override
@@ -19,9 +20,9 @@ class EmergencyContactPage extends StatelessWidget {
                   icon: Icons.local_hospital,
                   title: 'Emergency Services',
                   contacts: [
-                    'Police: 911',
-                    'Fire Department: 911',
-                    'Medical Emergency: 911',
+                    {'name': 'Police', 'number': '911'},
+                    {'name': 'Fire Department', 'number': '911'},
+                    {'name': 'Medical Emergency', 'number': '911'},
                   ],
                 ),
                 const SizedBox(height: 20),
@@ -30,9 +31,9 @@ class EmergencyContactPage extends StatelessWidget {
                   icon: Icons.child_care,
                   title: 'Child Safety',
                   contacts: [
-                    'National Center for Missing & Exploited Children: 1-800-843-5678',
-                    'Childhelp National Child Abuse Hotline: 1-800-422-4453',
-                    'Poison Control Center: 1-800-222-1222',
+                    {'name': 'National Center for Missing & Exploited Children', 'number': '1-800-843-5678'},
+                    {'name': 'Childhelp National Child Abuse Hotline', 'number': '1-800-422-4453'},
+                    {'name': 'Poison Control Center', 'number': '1-800-222-1222'},
                   ],
                 ),
               ],
@@ -46,7 +47,7 @@ class EmergencyContactPage extends StatelessWidget {
   Widget _buildCard({
     required IconData icon,
     required String title,
-    required List<String> contacts,
+    required List<Map<String, String>> contacts,
   }) {
     return Card(
       elevation: 4,
@@ -77,19 +78,39 @@ class EmergencyContactPage extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: contacts
                   .map((contact) => Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 4.0),
-                        child: Text(
-                          contact,
-                          style: const TextStyle(
-                            fontSize: 16,
-                          ),
-                        ),
-                      ))
+                padding: const EdgeInsets.symmetric(vertical: 4.0),
+                child: ElevatedButton.icon(
+                  onPressed: () {
+                    _launchPhone(contact['number']!);
+                  },
+                  icon: Icon(
+                    Icons.phone,
+                    size: 20,
+                  ),
+                  label: Text(
+                    '${contact['name']}: ${contact['number']}',
+                    style: const TextStyle(fontSize: 16),
+                  ),
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all<Color>(Colors.green), // Use MaterialStateProperty.all<Color> to set background color
+                    padding: MaterialStateProperty.all<EdgeInsetsGeometry>(EdgeInsets.symmetric(vertical: 10, horizontal: 15)),
+                  ),
+                ),
+              ))
                   .toList(),
             ),
           ],
         ),
       ),
     );
+  }
+
+  void _launchPhone(String phoneNumber) async {
+    final Uri phoneLaunchUri = Uri(scheme: 'tel', path: phoneNumber);
+    if (await canLaunch(phoneLaunchUri.toString())) {
+      await launch(phoneLaunchUri.toString());
+    } else {
+      throw 'Could not launch $phoneLaunchUri';
+    }
   }
 }
