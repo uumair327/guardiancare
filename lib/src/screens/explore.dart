@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:guardiancare/src/constants/colors.dart';
 
 class Explore extends StatelessWidget {
-  const Explore({Key? key}) : super(key: key);
+  const Explore({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Explore"),
-      ),
+      // appBar: AppBar(
+      //   title: const Text("Explore"),
+      // ),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -20,10 +21,13 @@ class Explore extends StatelessWidget {
                   const Expanded(
                     child: TextField(
                       decoration: InputDecoration(
-                        hintText: "Search...",
-                        border: OutlineInputBorder(),
-                        prefixIcon: Icon(Icons.search)
-                      ),
+                          hintText: "Search...",
+                          prefixIcon: Icon(
+                            Icons.search,
+                            color: tPrimaryColor,
+                          ),
+                          focusedBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(color: tPrimaryColor))),
                     ),
                   ),
                   const SizedBox(width: 16.0),
@@ -31,7 +35,8 @@ class Explore extends StatelessWidget {
                     onPressed: () {
                       // Implement filter action
                     },
-                    child: const Text("Filter"),
+                    child: const Text("Filter",
+                        style: TextStyle(color: tPrimaryColor)),
                   ),
                 ],
               ),
@@ -48,9 +53,11 @@ class Explore extends StatelessWidget {
                       Tab(text: 'Campaigns'),
                       Tab(text: 'Content'),
                     ],
+                    indicatorColor: tPrimaryColor,
+                    labelColor: tPrimaryColor,
                   ),
                   // TabBarView for displaying content based on selected tab
-                  Container(
+                  SizedBox(
                     height:
                         400, // Adjust the height according to your requirement
                     child: TabBarView(
