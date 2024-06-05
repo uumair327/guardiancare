@@ -106,7 +106,7 @@ class _HomePageState extends State<HomePage> {
                 ),
                 child: Padding(
                   padding: const EdgeInsets.all(
-                      tDefaultSize), // Used constant for padding
+                      16), // Used constant for padding
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [

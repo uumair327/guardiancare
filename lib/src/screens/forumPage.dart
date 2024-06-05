@@ -13,15 +13,18 @@ class ForumPage extends StatelessWidget {
       body: ListView.builder(
         itemCount: _childSafetyLaws.length,
         itemBuilder: (context, index) {
-          return GestureDetector( // Wrap each ForumPost with GestureDetector
+          return GestureDetector(
+            // Wrap each ForumPost with GestureDetector
             onTap: () {
               // Navigate to LawDescriptionPage when a law is tapped
               Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (context) => LawDescriptionPage(
-                    lawName: _childSafetyLaws[index], // Pass the law name to LawDescriptionPage
-                    lawDescription: _generateLawDescription(_childSafetyLaws[index]), // Pass the law description to LawDescriptionPage
+                    lawName: _childSafetyLaws[
+                        index], // Pass the law name to LawDescriptionPage
+                    lawDescription: _generateLawDescription(_childSafetyLaws[
+                        index]), // Pass the law description to LawDescriptionPage
                   ),
                 ),
               );
@@ -84,7 +87,6 @@ class ForumPage extends StatelessWidget {
     }
   }
 
-
   // Generate law description for LawDescriptionPage
   String _generateLawDescription(String lawName) {
     // Implement law descriptions for all 15 laws
@@ -101,7 +103,8 @@ class ForumPost extends StatelessWidget {
   final int likes;
   final int comments;
 
-  const ForumPost({super.key,
+  const ForumPost({
+    super.key,
     required this.title,
     required this.author,
     required this.date,
