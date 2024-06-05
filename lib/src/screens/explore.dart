@@ -22,6 +22,7 @@ class Explore extends StatelessWidget {
                       decoration: InputDecoration(
                         hintText: "Search...",
                         border: OutlineInputBorder(),
+                        prefixIcon: Icon(Icons.search)
                       ),
                     ),
                   ),

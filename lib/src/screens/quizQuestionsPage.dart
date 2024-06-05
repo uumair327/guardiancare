@@ -41,12 +41,15 @@ class _QuizQuestionsPageState extends State<QuizQuestionsPage> {
             const SizedBox(height: 16),
             ...List.generate(
               widget.questions[currentQuestionIndex]['options'].length,
-                  (index) => ElevatedButton(
+              (index) => ElevatedButton(
+                style: ButtonStyle(
+                    backgroundColor: WidgetStateProperty.all(
+                        const Color.fromARGB(255, 239, 73, 52))),
                 onPressed: () {
                   // Check if the selected option is correct
                   if (index ==
                       widget.questions[currentQuestionIndex]
-                      ['correctAnswerIndex']) {
+                          ['correctAnswerIndex']) {
                     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                       content: Text('Correct!'),
                     ));
@@ -61,8 +64,7 @@ class _QuizQuestionsPageState extends State<QuizQuestionsPage> {
                   // Move to the next question after a short delay
                   Future.delayed(const Duration(seconds: 2), () {
                     setState(() {
-                      if (currentQuestionIndex <
-                          widget.questions.length - 1) {
+                      if (currentQuestionIndex < widget.questions.length - 1) {
                         currentQuestionIndex++;
                       } else {
                         // Show a dialog with the score
@@ -76,7 +78,8 @@ class _QuizQuestionsPageState extends State<QuizQuestionsPage> {
                               actions: [
                                 TextButton(
                                   onPressed: () {
-                                    Navigator.popUntil(context, ModalRoute.withName('/'));
+                                    Navigator.popUntil(
+                                        context, ModalRoute.withName('/'));
                                   },
                                   child: const Text('OK'),
                                 ),
@@ -88,8 +91,8 @@ class _QuizQuestionsPageState extends State<QuizQuestionsPage> {
                     });
                   });
                 },
-                child: Text(widget.questions[currentQuestionIndex]['options']
-                [index]),
+                child: Text(
+                    widget.questions[currentQuestionIndex]['options'][index]),
               ),
             ),
           ],

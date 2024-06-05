@@ -6,7 +6,6 @@ import 'package:guardiancare/src/features/authentication/controllers/home_contro
 import 'package:guardiancare/src/screens/account.dart';
 import 'package:guardiancare/src/screens/searchPage.dart';
 import 'package:shimmer/shimmer.dart';
-
 import '../constants/sizes.dart';
 import 'emergencyContactPage.dart';
 import 'quizPage.dart';
@@ -188,9 +187,9 @@ class _HomePageState extends State<HomePage> {
               // Handle other button presses
             }
           },
-          style: ElevatedButton.styleFrom(
+          style: ElevatedButton.styleFrom(  
             foregroundColor: Colors.cyan,
-            backgroundColor: Colors.green,
+            backgroundColor: const Color.fromARGB(255, 239, 73, 52),
             shape: const CircleBorder(),
             padding: const EdgeInsets.all(tHomePageButtonSize),
           ),

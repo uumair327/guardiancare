@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:guardiancare/src/constants/colors.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class EmergencyContactPage extends StatelessWidget {
@@ -17,7 +18,7 @@ class EmergencyContactPage extends StatelessWidget {
               children: [
                 // Emergency services section
                 _buildCard(
-                  icon: Icons.local_hospital,
+                  icon: Icons.medical_services,
                   title: 'Emergency Services',
                   contacts: [
                     {'name': 'Police', 'number': '911'},
@@ -31,9 +32,19 @@ class EmergencyContactPage extends StatelessWidget {
                   icon: Icons.child_care,
                   title: 'Child Safety',
                   contacts: [
-                    {'name': 'National Center for Missing & Exploited Children', 'number': '1-800-843-5678'},
-                    {'name': 'Childhelp National Child Abuse Hotline', 'number': '1-800-422-4453'},
-                    {'name': 'Poison Control Center', 'number': '1-800-222-1222'},
+                    {
+                      'name':
+                          'National Center for Missing & Exploited Children',
+                      'number': '1-800-843-5678'
+                    },
+                    {
+                      'name': 'Childhelp National Child Abuse Hotline',
+                      'number': '1-800-422-4453'
+                    },
+                    {
+                      'name': 'Poison Control Center',
+                      'number': '1-800-222-1222'
+                    },
                   ],
                 ),
               ],
@@ -61,7 +72,7 @@ class EmergencyContactPage extends StatelessWidget {
                 Icon(
                   icon,
                   size: 48,
-                  color: Colors.blue,
+                  color: tPrimaryColor,
                 ),
                 const SizedBox(width: 10),
                 Text(
@@ -78,25 +89,31 @@ class EmergencyContactPage extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: contacts
                   .map((contact) => Padding(
-                padding: const EdgeInsets.symmetric(vertical: 4.0),
-                child: ElevatedButton.icon(
-                  onPressed: () {
-                    _launchPhone(contact['number']!);
-                  },
-                  icon: Icon(
-                    Icons.phone,
-                    size: 20,
-                  ),
-                  label: Text(
-                    '${contact['name']}: ${contact['number']}',
-                    style: const TextStyle(fontSize: 16),
-                  ),
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all<Color>(Colors.green), // Use MaterialStateProperty.all<Color> to set background color
-                    padding: MaterialStateProperty.all<EdgeInsetsGeometry>(EdgeInsets.symmetric(vertical: 10, horizontal: 15)),
-                  ),
-                ),
-              ))
+                        padding: const EdgeInsets.symmetric(vertical: 4.0),
+                        child: ElevatedButton.icon(
+                          onPressed: () {
+                            _launchPhone(contact['number']!);
+                          },
+                          icon: const Icon(
+                            Icons.phone,
+                            size: 20,
+                            color: tPrimaryColor,
+                          ),
+                          label: Text(
+                            '${contact['name']}: ${contact['number']}',
+                            style: const TextStyle(
+                                fontSize: 16, color: tTextPrimary),
+                          ),
+                          style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.all<Color>(Colors
+                                .white), // Use MaterialStateProperty.all<Color> to set background color
+                            padding:
+                                MaterialStateProperty.all<EdgeInsetsGeometry>(
+                                    EdgeInsets.symmetric(
+                                        vertical: 10, horizontal: 15)),
+                          ),
+                        ),
+                      ))
                   .toList(),
             ),
           ],

@@ -1,6 +1,7 @@
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:guardiancare/src/constants/colors.dart';
 import 'package:guardiancare/src/screens/explore.dart';
 import 'package:guardiancare/src/screens/forumPage.dart';
 import 'package:guardiancare/src/screens/homePage.dart';
@@ -30,7 +31,7 @@ class _PagesState extends State<Pages> {
       const Icon(
         Icons.home,
         size: 25,
-        color: Colors.amber,
+        color: tNavBarColorButton,
       ),
       // const Icon(
       //   Icons.search,
@@ -40,12 +41,12 @@ class _PagesState extends State<Pages> {
       const Icon(
         Icons.explore,
         size: 25,
-        color: Colors.amber,
+        color: tNavBarColorButton,
       ),
       const Icon(
         Icons.forum,
         size: 25,
-        color: Colors.amber,
+        color: tNavBarColorButton,
       ),
       // const Icon(
       //   Icons.account_circle,
@@ -81,7 +82,7 @@ class _PagesState extends State<Pages> {
       bottomNavigationBar: CurvedNavigationBar(
         items: items,
         backgroundColor: Colors.transparent,
-        color: Colors.blue,
+        color: tNavBarColor,
         height: 65,
         index: index,
         onTap: (index) => setState(() {
