@@ -94,6 +94,6 @@ class _PagesState extends State<Pages> {
 
   Widget _signOut() {
     return TextButton(
-        onPressed: () => _auth.signOut(), child: const Text("Sign Out"));
+        onPressed: () => _auth.signOut(), child: const Text("Sign Out", style: TextStyle(color: tPrimaryColor)));
   }
 }
