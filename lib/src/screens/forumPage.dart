@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'LawDescripitonPage.dart';
+import 'Add_Forum/add_forum_Screen.dart';
 
 class ForumPage extends StatelessWidget {
   const ForumPage({super.key});
@@ -42,7 +43,7 @@ class ForumPage extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          // Add functionality to create new forum posts
+          Navigator.push(context, MaterialPageRoute(builder: (_) => const AddForumScreen()));
         },
         child: const Icon(Icons.add),
       ),
