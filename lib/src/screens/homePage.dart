@@ -23,7 +23,7 @@ class _HomePageState extends State<HomePage> {
     {
       'type': 'image',
       'imageUrl':
-          'https://firebasestorage.googleapis.com/v0/b/guardiancare-a210f.appspot.com/o/Screenshot%202024-06-05%20222416.png?alt=media&token=0a380226-50fb-4b18-ac53-36a3ab28d81c',
+          'https://firebasestorage.googleapis.com/v0/b/guardiancare-a210f.appspot.com/o/carousel_image%2Fcif_home.png?alt=media&token=8adae879-19b6-4e87-88a9-4e9e7b0316d2',
       'link': 'https://childrenofindia.in/',
       'thumbnailUrl': ''
     },
