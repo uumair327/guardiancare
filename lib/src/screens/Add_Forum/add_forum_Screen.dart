@@ -1,12 +1,16 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+
+import '../../models/Forum.dart';
 
  
 class AddForumScreen extends StatefulWidget {
   const AddForumScreen ({super.key});
   @override
   State<AddForumScreen> createState()=> _AddForumScreenState();
- 
 }
 class _AddForumScreenState extends State<AddForumScreen> {
   final  title = TextEditingController();
@@ -17,10 +21,11 @@ class _AddForumScreenState extends State<AddForumScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Add Blog'),
+        title: const Text('Add Forum Post'),
         actions: [
           IconButton(onPressed: (){},
-           icon: const Icon(Icons.done))
+           icon: const Icon(Icons.done),
+           )
         ]
       ),
       body: Form (
@@ -63,6 +68,28 @@ class _AddForumScreenState extends State<AddForumScreen> {
   }
 
   addForum() async{
-
+    final db = FirebaseFirestore.instance.collection('forum');
+    final user =FirebaseAuth.instance.currentUser!;
+    final id=DateTime.now().microsecondsSinceEpoch.toString();
+    Forum forum= Forum (
+      id: id,
+      userId: user.uid,
+      title: title.text,
+      description: description.text,
+      createdAt: DateTime.now(),
+    );
+    try {
+    await db.doc(id).set(forum.toMap());
+    setState(() {
+      loading = false;
+    });
+    }
+    on FirebaseException catch(e){
+      print(e);
+       setState(() {
+        loading = false;
+      });
+    }
+   
   }
 }
