@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_email_sender/flutter_email_sender.dart';
+import 'package:guardiancare/src/constants/colors.dart';
 
 class ReportPage extends StatefulWidget {
   const ReportPage({super.key});
@@ -97,12 +98,18 @@ class _ReportPageState extends State<ReportPage> {
             ),
             const SizedBox(height: 16),
             ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: tPrimaryColor,
+              ),
               onPressed: () {
                 if (_validateInput()) {
                   _submitReport(context);
                 }
               },
-              child: const Text('Submit'),
+              child: const Text(
+                'Submit',
+                style: TextStyle(color: Colors.white),
+              ),
             ),
           ],
         ),
