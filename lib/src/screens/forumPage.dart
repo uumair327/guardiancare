@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:guardiancare/src/widgets/forum_widget.dart';
 import '../models/Forum.dart';
 import 'Add_Forum/add_forum_Screen.dart';
 
@@ -26,12 +27,10 @@ class ForumPage extends StatelessWidget {
             forumList.add(forum);
           }
           return ListView(
+            padding: const EdgeInsets.all(10),
             children:[
               for (var forum in forumList)
-                ListTile (
-                  title: Text(forum.title),
-                  subtitle: Text(forum.description),
-                )
+                ForumWidget(forum: forum),
             ],
           );
           }
