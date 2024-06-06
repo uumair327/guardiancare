@@ -1,4 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import '../models/Forum.dart';
 import 'Add_Forum/add_forum_Screen.dart';
 
 class ForumPage extends StatelessWidget {
@@ -10,8 +12,31 @@ class ForumPage extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Child Safety Laws Forum'),
       ),
-      body: Center(
-       child: Text('Child Safety Laws Forum'),
+      body:  StreamBuilder(
+        stream: FirebaseFirestore.instance.collection('forum').snapshots(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          if(snapshot.hasData && snapshot.data!=null) {
+          final data = snapshot.data!.docs;
+          List<Forum> forumList = [];
+          for (var element in data){
+            Forum forum = Forum.fromMap(element.data());
+            forumList.add(forum);
+          }
+          return ListView(
+            children:[
+              for (var forum in forumList)
+                ListTile (
+                  title: Text(forum.title),
+                  subtitle: Text(forum.description),
+                )
+            ],
+          );
+          }
+          return const SizedBox();
+        },
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
