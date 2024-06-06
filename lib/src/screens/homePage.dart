@@ -47,11 +47,6 @@ class _HomePageState extends State<HomePage> {
           'https://firebasestorage.googleapis.com/v0/b/guardiancare-a210f.appspot.com/o/Screenshot%202024-06-05%20222416.png?alt=media&token=0a380226-50fb-4b18-ac53-36a3ab28d81c',
       'link': 'https://childrenofindia.in/'
     },
-    {
-      'imageUrl':
-          'https://www.volunteerforever.com/wp-content/uploads/2019/06/VF_TeachIndia.jpg',
-      'link': 'https://childrenofindia.in/'
-    }
   ];
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -106,33 +101,54 @@ class _HomePageState extends State<HomePage> {
                 items: videoData.isEmpty
                     ? _buildShimmerItems()
                     : videoData.map((video) {
+                        final type = video['type'];
                         final imageUrl = video['imageUrl'];
                         final link = video['link'];
+                        final thumbnailUrl = video['thumbnailUrl'];
+
                         if (imageUrl == null || link == null) {
                           return _buildShimmerItem(carouselHeight);
                         }
+
                         return Builder(
                           builder: (BuildContext context) {
                             return GestureDetector(
                               onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        WebViewPage(url: link),
-                                  ),
-                                );
+                                if (type == 'video') {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          WebViewPage(url: link),
+                                    ),
+                                  );
+                                }
                               },
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(20.0),
-                                child: CachedNetworkImage(
-                                  fit: BoxFit.cover,
-                                  imageUrl: imageUrl,
-                                  placeholder: (context, url) => const Center(
-                                    child: CircularProgressIndicator(),
-                                  ),
-                                  errorWidget: (context, url, error) =>
-                                      const Icon(Icons.error),
+                                child: Stack(
+                                  children: [
+                                    CachedNetworkImage(
+                                      fit: BoxFit.cover,
+                                      imageUrl: type == 'video'
+                                          ? thumbnailUrl
+                                          : imageUrl,
+                                      placeholder: (context, url) =>
+                                          const Center(
+                                        child: CircularProgressIndicator(),
+                                      ),
+                                      errorWidget: (context, url, error) =>
+                                          const Icon(Icons.error),
+                                    ),
+                                    if (type == 'video')
+                                      Center(
+                                        child: Icon(
+                                          Icons.play_circle_outline,
+                                          color: Colors.white,
+                                          size: 50.0,
+                                        ),
+                                      ),
+                                  ],
                                 ),
                               ),
                             );
