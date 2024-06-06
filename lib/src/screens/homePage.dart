@@ -1,29 +1,62 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:guardiancare/src/constants/colors.dart';
-import 'package:guardiancare/src/features/authentication/controllers/home_controller.dart';
+import 'package:guardiancare/src/screens/WebViewPage.dart';
 import 'package:guardiancare/src/screens/account.dart';
+import 'package:guardiancare/src/screens/emergencyContactPage.dart';
+import 'package:guardiancare/src/screens/quizPage.dart';
 import 'package:guardiancare/src/screens/searchPage.dart';
+import 'package:guardiancare/src/screens/video_page.dart';
 import 'package:shimmer/shimmer.dart';
-import '../constants/sizes.dart';
-import 'emergencyContactPage.dart';
-import 'quizPage.dart';
-import 'video_page.dart';
+
+import '../features/authentication/controllers/home_controller.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  const HomePage({Key? key}) : super(key: key);
 
   @override
   _HomePageState createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
-  List<Map<String, dynamic>> videoData = [];
+  late double carouselHeight;
+  List<Map<String, dynamic>> videoData = [
+    {
+      'imageUrl':
+          'https://firebasestorage.googleapis.com/v0/b/guardiancare-a210f.appspot.com/o/Screenshot%202024-06-05%20222416.png?alt=media&token=0a380226-50fb-4b18-ac53-36a3ab28d81c',
+      'link': 'https://childrenofindia.in/'
+    },
+    {
+      'imageUrl':
+          'https://www.volunteerforever.com/wp-content/uploads/2019/06/VF_TeachIndia.jpg',
+      'link': 'https://childrenofindia.in/'
+    },
+    {
+      'imageUrl':
+          'https://firebasestorage.googleapis.com/v0/b/guardiancare-a210f.appspot.com/o/Screenshot%202024-06-05%20222416.png?alt=media&token=0a380226-50fb-4b18-ac53-36a3ab28d81c',
+      'link': 'https://childrenofindia.in/'
+    },
+    {
+      'imageUrl':
+          'https://www.volunteerforever.com/wp-content/uploads/2019/06/VF_TeachIndia.jpg',
+      'link': 'https://childrenofindia.in/'
+    },
+    {
+      'imageUrl':
+          'https://firebasestorage.googleapis.com/v0/b/guardiancare-a210f.appspot.com/o/Screenshot%202024-06-05%20222416.png?alt=media&token=0a380226-50fb-4b18-ac53-36a3ab28d81c',
+      'link': 'https://childrenofindia.in/'
+    },
+    {
+      'imageUrl':
+          'https://www.volunteerforever.com/wp-content/uploads/2019/06/VF_TeachIndia.jpg',
+      'link': 'https://childrenofindia.in/'
+    }
+  ];
+
   final FirebaseAuth _auth = FirebaseAuth.instance;
   User? _user;
 
-  // Define a GlobalKey for the CarouselSlider
   final GlobalKey<CarouselSliderState> _carouselKey = GlobalKey();
 
   @override
@@ -31,6 +64,12 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     _user = _auth.currentUser;
     _fetchVideoData();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    carouselHeight = MediaQuery.of(context).size.height / 2;
   }
 
   Future<void> _fetchVideoData() async {
@@ -48,13 +87,12 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const SizedBox(height: tDefaultSize), // Used constant for height
             Expanded(
               child: CarouselSlider(
-                key: _carouselKey, // Assign the GlobalKey here
+                key: _carouselKey,
                 options: CarouselOptions(
                   height: MediaQuery.of(context).size.height / 2,
-                  aspectRatio: 5 / 4,
+                  aspectRatio: 16 / 9,
                   viewportFraction: 0.8,
                   initialPage: 0,
                   enableInfiniteScroll: true,
@@ -62,29 +100,39 @@ class _HomePageState extends State<HomePage> {
                   autoPlayInterval: const Duration(seconds: 3),
                   autoPlayAnimationDuration: const Duration(milliseconds: 800),
                   enlargeCenterPage: true,
-                  enlargeStrategy: CenterPageEnlargeStrategy.height,
+                  enlargeStrategy: CenterPageEnlargeStrategy.zoom,
                   scrollDirection: Axis.horizontal,
                 ),
                 items: videoData.isEmpty
                     ? _buildShimmerItems()
                     : videoData.map((video) {
+                        final imageUrl = video['imageUrl'];
+                        final link = video['link'];
+                        if (imageUrl == null || link == null) {
+                          return _buildShimmerItem(carouselHeight);
+                        }
                         return Builder(
                           builder: (BuildContext context) {
                             return GestureDetector(
                               onTap: () {
-                                // Navigate to WebViewPage
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        WebViewPage(url: link),
+                                  ),
+                                );
                               },
                               child: ClipRRect(
-                                borderRadius: BorderRadius.circular(
-                                    tDefaultSize), // Used constant for border radius
-                                child: Stack(
-                                  children: [
-                                    Image.network(
-                                      video['thumbnailUrl'],
-                                      fit: BoxFit.cover,
-                                      width: double.infinity,
-                                    ),
-                                  ],
+                                borderRadius: BorderRadius.circular(20.0),
+                                child: CachedNetworkImage(
+                                  fit: BoxFit.cover,
+                                  imageUrl: imageUrl,
+                                  placeholder: (context, url) => const Center(
+                                    child: CircularProgressIndicator(),
+                                  ),
+                                  errorWidget: (context, url, error) =>
+                                      const Icon(Icons.error),
                                 ),
                               ),
                             );
@@ -93,20 +141,16 @@ class _HomePageState extends State<HomePage> {
                       }).toList(),
               ),
             ),
-            const SizedBox(height: tDefaultSize), // Used constant for height
             Padding(
-              padding: const EdgeInsets.symmetric(
-                  horizontal: tDefaultSize), // Used constant for padding
+              padding: const EdgeInsets.symmetric(horizontal: 20.0),
               child: Card(
-                elevation: tDefaultSize, // Used constant for elevation
-                color: tCardBgColor, // Used constant for color
+                elevation: 20.0,
+                color: Colors.white,
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(
-                      tDefaultSize), // Used constant for border radius
+                  borderRadius: BorderRadius.circular(20.0),
                 ),
                 child: Padding(
-                  padding: const EdgeInsets.all(
-                      16), // Used constant for padding
+                  padding: const EdgeInsets.all(16),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
@@ -119,8 +163,7 @@ class _HomePageState extends State<HomePage> {
                               Icons.person, 'Profile', context),
                         ],
                       ),
-                      const SizedBox(
-                          height: tDefaultSize), // Used constant for height
+                      const SizedBox(height: 20.0),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
@@ -137,7 +180,7 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
             ),
-            const SizedBox(height: tDefaultSize), // Used constant for height
+            const SizedBox(height: 20.0),
           ],
         ),
       ),
@@ -158,63 +201,59 @@ class _HomePageState extends State<HomePage> {
             } else if (label == 'Emergency') {
               Navigator.push(
                 context,
-                MaterialPageRoute(
-                  builder: (context) => EmergencyContactPage(),
-                ),
+                MaterialPageRoute(builder: (context) => EmergencyContactPage()),
               );
             } else if (label == 'Search') {
               Navigator.push(
                 context,
-                MaterialPageRoute(
-                  builder: (context) => const SearchPage(),
-                ),
+                MaterialPageRoute(builder: (context) => const SearchPage()),
               );
             } else if (label == 'Profile') {
               Navigator.push(
                 context,
-                MaterialPageRoute(
-                  builder: (context) => Account(user: _user),
-                ),
+                MaterialPageRoute(builder: (context) => Account(user: _user)),
               );
             } else if (label == 'Learn') {
               Navigator.push(
                 context,
-                MaterialPageRoute(
-                  builder: (context) => const VideoPage(),
-                ),
+                MaterialPageRoute(builder: (context) => const VideoPage()),
               );
-            } else {
-              // Handle other button presses
             }
           },
-          style: ElevatedButton.styleFrom(  
+          style: ElevatedButton.styleFrom(
             foregroundColor: Colors.cyan,
             backgroundColor: const Color.fromARGB(255, 239, 73, 52),
             shape: const CircleBorder(),
-            padding: const EdgeInsets.all(tHomePageButtonSize),
+            padding: const EdgeInsets.all(20.0),
           ),
-          child: Icon(iconData, color: tWhiteColor),
+          child: Icon(iconData, color: Colors.white),
         ),
-        const SizedBox(height: tHeight),
+        const SizedBox(height: 10.0),
         Text(label),
       ],
     );
   }
 
-  List<Widget> _buildShimmerItems() {
-    return List.generate(5, (index) => _buildShimmerItem());
-  }
-
-  Widget _buildShimmerItem() {
-    return Shimmer.fromColors(
-      baseColor: tCardBgColor,
-      highlightColor: Colors.grey[100]!,
-      child: Container(
-        color: tCardBgColor,
-        width: double.infinity,
-        height: MediaQuery.of(context).size.height / 2,
-        child: const Center(child: CircularProgressIndicator()),
+  Widget _buildShimmerItem(double carouselHeight) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 8.0),
+      decoration: BoxDecoration(
+        color: Colors.grey[300],
+        borderRadius: BorderRadius.circular(12.0),
+      ),
+      child: Shimmer.fromColors(
+        baseColor: Colors.grey[300]!,
+        highlightColor: Colors.grey[100]!,
+        child: SizedBox(
+          width: double.infinity,
+          height: carouselHeight,
+        ),
       ),
     );
+  }
+
+  // Helper method to build shimmer items when data is empty
+  List<Widget> _buildShimmerItems() {
+    return List.generate(5, (index) => _buildShimmerItem(carouselHeight));
   }
 }
