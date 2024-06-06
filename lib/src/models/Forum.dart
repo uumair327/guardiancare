@@ -9,6 +9,15 @@ class Forum {
     required this.description,
     required this.createdAt,
   });
+factory Forum.fromMap(Map<String, dynamic> map){
+    return Forum(
+      id: map['id'],
+      userId: map['userId'],
+      title: map['title'],
+      description: map['description'],
+      createdAt: DateTime.parse(map['createdAt']),
+    );
+  }
 
   Map<String, dynamic> toMap(){
     return {
