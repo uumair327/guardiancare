@@ -30,8 +30,8 @@ class _HomePageState extends State<HomePage> {
     {
       'type': 'image',
       'imageUrl':
-          'https://www.volunteerforever.com/wp-content/uploads/2019/06/VF_TeachIndia.jpg',
-      'link': 'https://childrenofindia.in/',
+          'https://firebasestorage.googleapis.com/v0/b/guardiancare-a210f.appspot.com/o/carousel_image%2FEDUCATION%20FOR%20CHILDREN.png?alt=media&token=9f264de5-c3ea-4575-9a6a-ae43267a96eb',
+      'link': 'https://childrenofindia.in/education/',
       'thumbnailUrl': ''
     },
     {
