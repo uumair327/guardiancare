@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 class HomeController {
   static Future<List<Map<String, dynamic>>> fetchVideoData() async {
     // Replace 'apiEndpoint' with the actual URL of your API endpoint
-    final String apiUrl = 'https://www.youtube.com/watch?v=SY7RhBszp0k';
+    const String apiUrl = 'https://yourapiendpoint.com/videos';
 
     try {
       final response = await http.get(Uri.parse(apiUrl));
@@ -17,8 +17,10 @@ class HomeController {
         // Map the response data to the required format
         List<Map<String, dynamic>> videoData = responseData.map((video) {
           return {
+            'type': video['type'], // "image" or "video"
             'imageUrl': video['imageUrl'],
             'link': video['link'],
+            'thumbnailUrl': video['thumbnailUrl'], // For videos
           };
         }).toList();
 
