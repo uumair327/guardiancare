@@ -3,7 +3,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-
 import '../../models/Forum.dart';
 
  
@@ -23,17 +22,26 @@ class _AddForumScreenState extends State<AddForumScreen> {
       appBar: AppBar(
         title: const Text('Add Forum Post'),
         actions: [
-          IconButton(onPressed: (){},
+          IconButton(onPressed: (){
+            if(_formKey.currentState!.validate()){
+              setState(() {
+                loading = true;
+              });
+              addForum();
+            } 
+          },
            icon: const Icon(Icons.done),
            )
         ]
       ),
-      body: Form (
+      body: loading? const Center (child:CircularProgressIndicator()):
+      Form (
         key: _formKey,
         child : ListView(
         padding: const EdgeInsets.all(15),
         children:[
           TextFormField(
+            controller: title,
             decoration: const InputDecoration(
               labelText: 'Title',
               hintText: 'Enter the title of the Forum  post',
@@ -48,6 +56,7 @@ class _AddForumScreenState extends State<AddForumScreen> {
           ),
           const SizedBox(height: 15),
           TextFormField(
+            controller: description,
             maxLines: 10,
             decoration: const InputDecoration(
               labelText: 'Description',
@@ -56,7 +65,7 @@ class _AddForumScreenState extends State<AddForumScreen> {
             ),
             validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Please enter the title';
+                    return 'Please enter the Description ';
                   }
                   return null;
                 }
@@ -83,12 +92,22 @@ class _AddForumScreenState extends State<AddForumScreen> {
     setState(() {
       loading = false;
     });
+    ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Successfully added Forum Post'),
+        ),
+      );
     }
     on FirebaseException catch(e){
       print(e);
-       setState(() {
+      setState(() {
         loading = false;
       });
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Failed to add Forum Post'),
+        ),
+      );
     }
    
   }

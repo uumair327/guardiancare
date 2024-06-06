@@ -10,7 +10,7 @@ class Forum {
     required this.createdAt,
   });
 
-  toMap(){
+  Map<String, dynamic> toMap(){
     return {
       'id': id,
       'userId': userId,
