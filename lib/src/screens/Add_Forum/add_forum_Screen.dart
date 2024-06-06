@@ -97,6 +97,7 @@ class _AddForumScreenState extends State<AddForumScreen> {
           content: Text('Successfully added Forum Post'),
         ),
       );
+      Navigator.pop(context);
     }
     on FirebaseException catch(e){
       print(e);
