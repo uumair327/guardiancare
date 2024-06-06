@@ -47,10 +47,10 @@ class _VideoControllerState extends State<VideoController> {
   }
 
   Widget buildCategoryList() {
-    return GridView.builder(
+    return Padding(padding: const EdgeInsets.all(8.0), child: GridView.builder(
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
-        crossAxisSpacing: 16.0,
+        crossAxisSpacing: 8.0,
         mainAxisSpacing: 16.0,
       ),
       itemCount: categories!.length,
@@ -92,7 +92,7 @@ class _VideoControllerState extends State<VideoController> {
           ),
         );
       },
-    );
+    ));
   }
 
   Widget buildVideoList(String category) {

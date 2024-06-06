@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:guardiancare/src/constants/colors.dart';
 import 'package:guardiancare/src/features/authentication/controllers/account_controller.dart';
 import 'package:guardiancare/src/screens/emergencyContactPage.dart';
 import 'package:guardiancare/src/screens/reportPage.dart';
@@ -41,11 +42,11 @@ class Account extends StatelessWidget {
               ),
               const SizedBox(height: 10),
               ListTile(
-                leading: const Icon(Icons.person),
+                leading: const Icon(Icons.person, color: tPrimaryColor),
                 title: Text('Name: ${user?.displayName ?? 'Not available'}'),
               ),
               ListTile(
-                leading: const Icon(Icons.email),
+                leading: const Icon(Icons.email, color: tPrimaryColor),
                 title: Text('Email: ${user?.email ?? 'Not available'}'),
               ),
               const Divider(),
@@ -57,6 +58,7 @@ class Account extends StatelessWidget {
                 ),
               ),
               ListTile(
+                leading: const Icon(Icons.phone, color: tPrimaryColor),
                 title: const Text('Emergency Contact'),
                 onTap: () {
                   Navigator.push(
@@ -68,6 +70,7 @@ class Account extends StatelessWidget {
                 },
               ),
               ListTile(
+                leading: const Icon(Icons.warning, color: tPrimaryColor),
                 title: const Text('Report an Incident'),
                 onTap: () {
                   Navigator.push(
@@ -87,6 +90,7 @@ class Account extends StatelessWidget {
                 ),
               ),
               ListTile(
+                leading: const Icon(Icons.logout, color: tPrimaryColor),
                 title: const Text('Log Out'),
                 onTap: () async {
                   await AccountController.signOut(context);
