@@ -34,6 +34,13 @@ class _HomePageState extends State<HomePage> {
       'link': 'https://childrenofindia.in/',
       'thumbnailUrl': ''
     },
+    {
+      'type': 'image',
+      'imageUrl':
+          'https://firebasestorage.googleapis.com/v0/b/guardiancare-a210f.appspot.com/o/carousel_image%2FCHILD%20HEALTH%20PROGRAMME.png?alt=media&token=7d6b41c8-ab21-4164-9db8-edac2b0c75e5',
+      'link': 'https://childrenofindia.in/child-health-programme/',
+      'thumbnailUrl': ''
+    },
   ];
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
