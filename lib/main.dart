@@ -53,7 +53,7 @@ class _GuardianCareState extends State<GuardianCare> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: "Gurdian Care",
+      title: "Children of India",
       home: _user != null ? const Pages() : const LoginPage(),
       onGenerateRoute: AppRouter.generateRoute,
       debugShowCheckedModeBanner: false,
