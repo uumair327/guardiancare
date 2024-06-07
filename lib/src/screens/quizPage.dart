@@ -38,7 +38,7 @@ class _QuizPageState extends State<QuizPage> {
 
   Future<void> getQuestions() async {
     QuerySnapshot querySnapshot =
-        await FirebaseFirestore.instance.collection('questions').get();
+        await FirebaseFirestore.instance.collection('quiz_questions').get();
     List<Map<String, dynamic>> ques = [];
     for (var doc in querySnapshot.docs) {
       if (doc["quiz"] != null) {
