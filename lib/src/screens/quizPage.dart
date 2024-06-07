@@ -30,7 +30,7 @@ class _QuizPageState extends State<QuizPage> {
           "thumbnail": doc["thumbnail"],
         });
       }
-    }
+    } 
     setState(() {
       quizes = _quizes;
     });
@@ -107,15 +107,16 @@ class QuizTile extends StatelessWidget {
             children: [
               Image.network(
                 quiz["thumbnail"],
-                height: 200,
+                height: 150,
               ),
               Container(
                 padding: EdgeInsets.all(8),
-                color: Color.fromRGBO(220, 220, 220, 1),
-                  child: Text(
-                quiz["name"],
-                style: TextStyle(fontSize: 25, color: tPrimaryColor),
-              ))
+                color: tPrimaryColor,
+                child: Text(
+                  quiz["name"],
+                  style: TextStyle(fontSize: 25, color: tWhiteColor),
+                )
+              )
             ],
           ),
     );

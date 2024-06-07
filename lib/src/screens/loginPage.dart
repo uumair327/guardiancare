@@ -47,20 +47,20 @@ class _LoginPageState extends State<LoginPage> {
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: Image.asset(
-                'assets/logo/logo.png', // Replace with your logo image path
-                height: 150,
+                'assets/logo/logo_CIF.jpg', // Replace with your logo image path
                 width: 150,
               ),
             ),
             // Title
             const Text(
-              'Welcome to GurdianCare',
+              'Welcome to Children of India',
               style: TextStyle(
+                color: Color.fromRGBO(239, 72, 53, 1),
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 30),
             // Sign in with Google button
             SizedBox(
               height: 50,

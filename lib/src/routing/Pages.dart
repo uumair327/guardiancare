@@ -66,15 +66,22 @@ class _PagesState extends State<Pages> {
     return Scaffold(
       extendBody: true,
       appBar: AppBar(
-        title: const Text("Guardian Care"),
+        title: const Text(
+          "Children of India",
+          style : TextStyle(
+            color: tPrimaryColor,
+            fontWeight: FontWeight.bold,
+            fontSize: 25
+          )
+        ),
         leading: const Padding(
           padding: EdgeInsets.all(13.0),
         ),
         backgroundColor: Colors.white,
         centerTitle: true,
-        actions: [
-          _user != null ? _signOut() : const Text("Hi"),
-        ],
+        // actions: [
+        //   _user != null ? _signOut() : const Text("Hi"),
+        // ],
       ),
       body: SafeArea(
         child: screens[index],
@@ -92,8 +99,8 @@ class _PagesState extends State<Pages> {
     );
   }
 
-  Widget _signOut() {
-    return TextButton(
-        onPressed: () => _auth.signOut(), child: const Text("Sign Out", style: TextStyle(color: tPrimaryColor)));
-  }
+  // Widget _signOut() {
+  //   return TextButton(
+  //       onPressed: () => _auth.signOut(), child: const Text("Sign Out", style: TextStyle(color: tPrimaryColor)));
+  // }
 }

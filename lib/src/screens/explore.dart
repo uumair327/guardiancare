@@ -14,33 +14,33 @@ class Explore extends StatelessWidget {
         child: Column(
           children: [
             // Row for Search and Filters
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Row(
-                children: [
-                  const Expanded(
-                    child: TextField(
-                      decoration: InputDecoration(
-                          hintText: "Search...",
-                          prefixIcon: Icon(
-                            Icons.search,
-                            color: tPrimaryColor,
-                          ),
-                          focusedBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(color: tPrimaryColor))),
-                    ),
-                  ),
-                  const SizedBox(width: 16.0),
-                  ElevatedButton(
-                    onPressed: () {
-                      // Implement filter action
-                    },
-                    child: const Text("Filter",
-                        style: TextStyle(color: tPrimaryColor)),
-                  ),
-                ],
-              ),
-            ),
+            // Padding(
+            //   padding: const EdgeInsets.all(16.0),
+            //   child: Row(
+            //     children: [
+            //       const Expanded(
+            //         child: TextField(
+            //           decoration: InputDecoration(
+            //               hintText: "Search...",
+            //               prefixIcon: Icon(
+            //                 Icons.search,
+            //                 color: tPrimaryColor,
+            //               ),
+            //               focusedBorder: UnderlineInputBorder(
+            //                   borderSide: BorderSide(color: tPrimaryColor))),
+            //         ),
+            //       ),
+            //       const SizedBox(width: 16.0),
+            //       ElevatedButton(
+            //         onPressed: () {
+            //           // Implement filter action
+            //         },
+            //         child: const Text("Filter",
+            //             style: TextStyle(color: tPrimaryColor)),
+            //       ),
+            //     ],
+            //   ),
+            // ),
             // Tabs Section
             DefaultTabController(
               length: 4,
@@ -51,7 +51,7 @@ class Explore extends StatelessWidget {
                       Tab(text: 'Feature'),
                       Tab(text: 'Action'),
                       Tab(text: 'Campaigns'),
-                      Tab(text: 'Content'),
+                      // Tab(text: 'Content'),
                     ],
                     indicatorColor: tPrimaryColor,
                     labelColor: tPrimaryColor,

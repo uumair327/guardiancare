@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:guardiancare/src/screens/WebViewPage.dart';
 import 'package:guardiancare/src/screens/account.dart';
@@ -9,6 +10,9 @@ import 'package:guardiancare/src/screens/quizPage.dart';
 import 'package:guardiancare/src/screens/searchPage.dart';
 import 'package:guardiancare/src/screens/video_page.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:cupertino_icons/cupertino_icons.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -166,21 +170,31 @@ class _HomePageState extends State<HomePage> {
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
                           _buildCircularButton(Icons.quiz, 'Quiz', context),
-                          _buildCircularButton(Icons.search, 'Search', context),
+                          // _buildCircularButton(Icons.search, 'Search', context),
+                          // _buildCircularButton(
+                          //     Icons.person, 'Profile', context),
                           _buildCircularButton(
-                              Icons.person, 'Profile', context),
+                              Icons.video_library, 'Learn', context),
+                          _buildCircularButton(
+                              Icons.emergency, 'Emergency', context),
                         ],
                       ),
                       const SizedBox(height: 20.0),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
+                          // _buildCircularButton(
+                          //     Icons.favorite, 'Favorites', context),
+                          // _buildCircularButton(
+                          //     Icons.emergency, 'Emergency', context),
+                          // _buildCircularButton(
+                          //     Icons.video_library, 'Learn', context),
                           _buildCircularButton(
-                              Icons.favorite, 'Favorites', context),
+                              Icons.person, 'Profile', context),
                           _buildCircularButton(
-                              Icons.emergency, 'Emergency', context),
+                            CupertinoIcons.globe, 'Website', context),
                           _buildCircularButton(
-                              Icons.video_library, 'Learn', context),
+                            Icons.email, 'Mail Us', context)
                         ],
                       ),
                     ],
@@ -200,7 +214,7 @@ class _HomePageState extends State<HomePage> {
     return Column(
       children: [
         ElevatedButton(
-          onPressed: () {
+          onPressed: () async {
             if (label == 'Quiz') {
               Navigator.push(
                 context,
@@ -211,10 +225,10 @@ class _HomePageState extends State<HomePage> {
                 context,
                 MaterialPageRoute(builder: (context) => EmergencyContactPage()),
               );
-            } else if (label == 'Search') {
+            } else if (label == 'Websitee') {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const SearchPage()),
+                MaterialPageRoute(builder: (context) => WebViewPage(url: "https://childrenofindia.in/")),
               );
             } else if (label == 'Profile') {
               Navigator.push(
@@ -226,6 +240,17 @@ class _HomePageState extends State<HomePage> {
                 context,
                 MaterialPageRoute(builder: (context) => const VideoPage()),
               );
+            } 
+            else {
+              final Uri emailLaunchUri = Uri(
+              scheme: 'mailto',
+              path: 'hello@childrenofindia.in',
+              );
+              if (await canLaunchUrl(emailLaunchUri)) {
+                await launchUrl(emailLaunchUri);
+              } else {
+                throw "Could not launch $emailLaunchUri";
+              }
             }
           },
           style: ElevatedButton.styleFrom(
