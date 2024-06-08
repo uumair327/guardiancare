@@ -57,7 +57,6 @@ class _PagesState extends State<Pages> {
 
     final screens = <Widget>[
       const HomePage(),
-      // SearchPage(),
       const Explore(),
       const LoginScreen(),
       // const HomeScreen(),
@@ -77,9 +76,9 @@ class _PagesState extends State<Pages> {
         ),
         backgroundColor: Colors.white,
         centerTitle: true,
-        // actions: [
-        //   _user != null ? _signOut() : const Text("Hi"),
-        // ],
+        actions: [
+          _user != null ? _signOut() : const Text("Hi"),
+        ],
       ),
       body: SafeArea(
         child: screens[index],
@@ -97,8 +96,9 @@ class _PagesState extends State<Pages> {
     );
   }
 
-  // Widget _signOut() {
-  //   return TextButton(
-  //       onPressed: () => _auth.signOut(), child: const Text("Sign Out", style: TextStyle(color: tPrimaryColor)));
-  // }
+  Widget _signOut() {
+    return TextButton(
+        onPressed: () => _auth.signOut(),
+        child: const Text("Sign Out", style: TextStyle(color: tPrimaryColor)));
+  }
 }
