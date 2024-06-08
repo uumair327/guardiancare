@@ -19,8 +19,8 @@ dependencies:
   smooth_page_indicator: ^1.1.0
   curved_navigation_bar: ^1.0.3
   carousel_slider: ^4.2.1
-  firebase_auth: ^4.17.0
-  firebase_core: ^2.25.0
+  firebase_auth: ^5.0.0
+  firebase_core: ^3.0.0
   sign_in_button: ^3.2.0
   youtube_parser: ^2.1.3
   http: ^1.0.0
@@ -28,16 +28,36 @@ dependencies:
   url_launcher: ^6.2.5
   flutter_email_sender: ^6.0.2
   shimmer: ^3.0.0
-  cloud_firestore: ^4.15.9
+  cloud_firestore: ^5.0.0
   youtube_player_flutter: ^9.0.0
   cached_network_image: ^3.3.1
   video_player: ^2.8.6
   intl: ^0.19.0
+  firebase_storage: ^12.0.0
+  google_sign_in: ^6.2.1
+  flutter_riverpod: ^2.0.2
+  fpdart: ^1.1.0
+  routemaster: ^1.0.1
+  dotted_border: ^2.0.0+2
+  file_picker: ^8.0.3
+  shared_preferences: ^2.0.15
+  uuid: ^4.3.2
+  any_link_preview: ^3.0.1
+  google_gemini: ^0.1.2
+  google_generative_ai: ^0.4.3
+  delayed_display: ^2.0.0
+  google_maps_flutter: ^2.5.2
+  location: ^6.0.2
+  flutter_polyline_points: ^2.0.0
+  custom_info_window: ^1.0.1
+  firebase_crashlytics: ^4.0.0
+  firebase_analytics: ^11.0.0
+  flutter_svg: ^2.0.10+1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^3.0.2
+  flutter_lints: ^4.0.0
 
 flutter_native_splash:
   color: "#f7f6f1"
@@ -60,3 +80,10 @@ flutter:
     - assets/images/
     - assets/logo/
     - assets/images/image.png
+    - assets/images/google.png
+    - assets/images/loginEmote.png
+    - assets/images/logo.png
+    - assets/images/awards/
+    - assets/images/Donation_center.png
+    - assets/images/userLocation.png
+    - assets/images/support_Outreach.png
