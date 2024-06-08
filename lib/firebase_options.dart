@@ -70,7 +70,7 @@ class DefaultFirebaseOptions {
     projectId: 'guardiancare-a210f',
     databaseURL: 'https://guardiancare-a210f-default-rtdb.asia-southeast1.firebasedatabase.app',
     storageBucket: 'guardiancare-a210f.appspot.com',
-    androidClientId: '331315801686-4co8knverqologscscu70sip0c3iqqd3.apps.googleusercontent.com',
+    androidClientId: '331315801686-01tinu5ukqe35u4ivvn3fqo4ju59pp1d.apps.googleusercontent.com',
     iosClientId: '331315801686-0hcdvdo15e87a8lmqnartjpuea9lr2jl.apps.googleusercontent.com',
     iosBundleId: 'app.guardiancare.guardiancare',
   );
@@ -82,7 +82,7 @@ class DefaultFirebaseOptions {
     projectId: 'guardiancare-a210f',
     databaseURL: 'https://guardiancare-a210f-default-rtdb.asia-southeast1.firebasedatabase.app',
     storageBucket: 'guardiancare-a210f.appspot.com',
-    androidClientId: '331315801686-4co8knverqologscscu70sip0c3iqqd3.apps.googleusercontent.com',
+    androidClientId: '331315801686-01tinu5ukqe35u4ivvn3fqo4ju59pp1d.apps.googleusercontent.com',
     iosClientId: '331315801686-s5blibsu54lp96ti29kvqeas6ko7jk5u.apps.googleusercontent.com',
     iosBundleId: 'app.guardiancare.guardiancare.RunnerTests',
   );
