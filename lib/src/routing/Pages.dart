@@ -2,7 +2,7 @@ import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:guardiancare/src/constants/colors.dart';
-import 'package:guardiancare/src/features/forum/features/home/screens/home_screen.dart';
+import 'package:guardiancare/src/features/forum/features/auth/screens/login_screen.dart';
 import 'package:guardiancare/src/screens/explore.dart';
 import 'package:guardiancare/src/screens/homePage.dart';
 
@@ -59,7 +59,8 @@ class _PagesState extends State<Pages> {
       const HomePage(),
       // SearchPage(),
       const Explore(),
-      const HomeScreen(),
+      const LoginScreen(),
+      // const HomeScreen(),
       // Account(user: _user),
     ];
 
