@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:guardiancare/src/models/Comment.dart';
-import 'package:guardiancare/src/models/Forum.dart';
+import 'package:guardiancare/src/features/forum/models/Comment.dart';
+import 'package:guardiancare/src/features/forum/models/Forum.dart';
 import 'package:guardiancare/src/screens/CommentInput.dart';
 import 'package:intl/intl.dart';
 
@@ -31,7 +31,7 @@ class ForumWidget extends StatelessWidget {
           //   border: Border.all(color: Colors.grey.shade300),
           //   borderRadius: BorderRadius.circular(10),
           // ),
-          
+
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
