@@ -63,7 +63,15 @@ class _RecommendedVideos extends StatelessWidget {
           return const Center(child: CircularProgressIndicator());
         }
 
-        final videos = snapshot.data!.docs;
+        final videoSet = <String>{};
+        final videos = <QueryDocumentSnapshot>[];
+
+        for (var video in snapshot.data!.docs) {
+          if (!videoSet.contains(video['video'])) {
+            videoSet.add(video['video']);
+            videos.add(video);
+          }
+        }
 
         return ListView.builder(
           itemCount: videos.length,
