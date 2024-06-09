@@ -47,6 +47,7 @@ class _QuizPageState extends State<QuizPage> {
           "question": doc["question"],
           "options": doc["options"],
           "correctAnswerIndex": doc["correctOptionIndex"],
+          "category": doc["category"]
         });
       }
     }
@@ -93,8 +94,7 @@ class _QuizPageState extends State<QuizPage> {
 class QuizTile extends StatelessWidget {
   final Map<String, dynamic> quiz;
 
-  const QuizTile({required this.quiz});
-  
+  const QuizTile({super.key, required this.quiz});
 
   @override
   Widget build(BuildContext context) {
@@ -107,19 +107,38 @@ class QuizTile extends StatelessWidget {
             children: [
               Image.network(
                 quiz["thumbnail"],
-                height: 150,
+                height: 200,
+                fit: BoxFit.cover,
               ),
               Container(
                 padding: EdgeInsets.all(8),
-                color: tPrimaryColor,
                 child: Text(
-                  quiz["name"],
-                  style: TextStyle(fontSize: 25, color: tWhiteColor),
+                  capitalizeEach(quiz["name"]),
+                  style: const TextStyle(fontSize: 25, color: tPrimaryColor, fontWeight: FontWeight.w600),
                 )
               )
             ],
           ),
     );
+  }
+  
+  String capitalize(quiz) {
+    if (quiz == null) return "";
+    
+    final firstLetter = quiz[0].toUpperCase();
+    final restLetters = quiz.substring(1);
+
+    return '$firstLetter$restLetters';
+  }
+
+  String capitalizeEach(quiz) {
+    if (quiz == null) return "";
+    
+    final List<String> words = quiz.split(' ');
+
+    final formatted = words.map((e) => capitalize(e)).toList();
+
+    return formatted.join(' ');
   }
 }
 
