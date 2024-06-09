@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:guardiancare/src/models/Forum.dart';
-import 'package:guardiancare/src/models/comments.dart';
+import 'package:guardiancare/src/models/Comment.dart';
 import 'package:intl/intl.dart';
+import 'package:guardiancare/src/screens/commentinput.dart';
 
 class ForumWidget extends StatelessWidget {
   final Forum forum;
@@ -36,6 +37,7 @@ class ForumWidget extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 20),
+          const Divider(),
           StreamBuilder(
             stream: FirebaseFirestore.instance
                 .collection('forum')
@@ -52,14 +54,35 @@ class ForumWidget extends StatelessWidget {
               return Column(
                 children: comments.map((comment) {
                   return ListTile(
-                    title: Text(comment.text),
-                    subtitle: Text(DateFormat('dd MM yy hh:mm a')
-                        .format(comment.createdAt)),
+                    title: Text(
+                      comment.userName,
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          comment.userEmail,
+                          style: TextStyle(
+                              color: Colors.grey.shade600, fontSize: 12),
+                        ),
+                        Text(comment.text),
+                        Text(
+                          DateFormat('dd MM yy hh:mm a')
+                              .format(comment.createdAt),
+                          style: TextStyle(
+                              color: Colors.grey.shade600, fontSize: 12),
+                        ),
+                      ],
+                    ),
+                    isThreeLine: true,
                   );
                 }).toList(),
               );
             },
           ),
+          const Divider(),
+          CommentInput(forumId: forum.id),
         ],
       ),
     );
