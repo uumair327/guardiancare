@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:guardiancare/src/models/comments.dart';
+import 'package:guardiancare/src/models/Comment.dart';
 
 class CommentInput extends StatefulWidget {
   final String forumId;
@@ -16,7 +16,7 @@ class _CommentInputState extends State<CommentInput> {
   final _controller = TextEditingController();
   bool _loading = false;
 
-  void _addComment() async {
+  Future<void> _addComment() async {
     if (_controller.text.isEmpty) return;
 
     setState(() {
@@ -24,10 +24,15 @@ class _CommentInputState extends State<CommentInput> {
     });
 
     final user = FirebaseAuth.instance.currentUser!;
+    final userName = user.displayName ?? 'Anonymous';
+    final userEmail = user.email!;
+
     final commentId = DateTime.now().microsecondsSinceEpoch.toString();
     final comment = Comment(
       id: commentId,
       userId: user.uid,
+      userName: userName,
+      userEmail: userEmail,
       forumId: widget.forumId,
       text: _controller.text,
       createdAt: DateTime.now(),

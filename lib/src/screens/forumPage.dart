@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:guardiancare/src/widgets/forum_widget.dart';
-import 'package:guardiancare/src/screens/CommentInput.dart'; // Import this
 import '../models/Forum.dart';
 import 'Add_Forum/add_forum_Screen.dart';
 
@@ -30,13 +29,7 @@ class ForumPage extends StatelessWidget {
             return ListView(
               padding: const EdgeInsets.all(10),
               children: [
-                for (var forum in forumList)
-                  Column(
-                    children: [
-                      ForumWidget(forum: forum),
-                      CommentInput(forumId: forum.id), // Add this
-                    ],
-                  ),
+                for (var forum in forumList) ForumWidget(forum: forum),
               ],
             );
           }
