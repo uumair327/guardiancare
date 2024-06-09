@@ -43,14 +43,14 @@ class Explore extends StatelessWidget {
             // ),
             // Tabs Section
             DefaultTabController(
-              length: 4,
+              length: 1,
               child: Column(
                 children: [
                   const TabBar(
                     tabs: [
-                      Tab(text: 'Feature'),
-                      Tab(text: 'Action'),
-                      Tab(text: 'Campaigns'),
+                      Tab(text: 'Recommended'),
+                      // Tab(text: 'Action'),
+                      // Tab(text: 'Campaigns'),
                       // Tab(text: 'Content'),
                     ],
                     indicatorColor: tPrimaryColor,
@@ -69,23 +69,23 @@ class Explore extends StatelessWidget {
                           description: 'Feature Description',
                         ),
                         // Content for Action tab
-                        _buildContentCard(
-                          imageUrl: 'assets/images/image.png',
-                          title: 'Action Title',
-                          description: 'Action Description',
-                        ),
+                        // _buildContentCard(
+                        //   imageUrl: 'assets/images/image.png',
+                        //   title: 'Action Title',
+                        //   description: 'Action Description',
+                        // ),
                         // Content for Campaigns tab
-                        _buildContentCard(
-                          imageUrl: 'assets/images/image.png',
-                          title: 'Campaigns Title',
-                          description: 'Campaigns Description',
-                        ),
+                        // _buildContentCard(
+                        //   imageUrl: 'assets/images/image.png',
+                        //   title: 'Campaigns Title',
+                        //   description: 'Campaigns Description',
+                        // ),
                         // Content for Content tab
-                        _buildContentCard(
-                          imageUrl: 'assets/images/image.png',
-                          title: 'Content Title',
-                          description: 'Content Description',
-                        ),
+                        // _buildContentCard(
+                        //   imageUrl: 'assets/images/image.png',
+                        //   title: 'Content Title',
+                        //   description: 'Content Description',
+                        // ),
                       ],
                     ),
                   ),
@@ -142,3 +142,4 @@ class Explore extends StatelessWidget {
     );
   }
 }
+
