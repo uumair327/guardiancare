@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:guardiancare/src/widgets/forum_widget.dart';
+import 'package:guardiancare/src/screens/CommentInput.dart'; // Import this
 import '../models/Forum.dart';
 import 'Add_Forum/add_forum_Screen.dart';
 
@@ -13,33 +14,39 @@ class ForumPage extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Child Safety Laws Forum'),
       ),
-      body:  StreamBuilder(
+      body: StreamBuilder(
         stream: FirebaseFirestore.instance.collection('forum').snapshots(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           }
-          if(snapshot.hasData && snapshot.data!=null) {
-          final data = snapshot.data!.docs;
-          List<Forum> forumList = [];
-          for (var element in data){
-            Forum forum = Forum.fromMap(element.data());
-            forumList.add(forum);
-          }
-          return ListView(
-            padding: const EdgeInsets.all(10),
-            children:[
-              for (var forum in forumList)
-                ForumWidget(forum: forum),
-            ],
-          );
+          if (snapshot.hasData && snapshot.data != null) {
+            final data = snapshot.data!.docs;
+            List<Forum> forumList = [];
+            for (var element in data) {
+              Forum forum = Forum.fromMap(element.data());
+              forumList.add(forum);
+            }
+            return ListView(
+              padding: const EdgeInsets.all(10),
+              children: [
+                for (var forum in forumList)
+                  Column(
+                    children: [
+                      ForumWidget(forum: forum),
+                      CommentInput(forumId: forum.id), // Add this
+                    ],
+                  ),
+              ],
+            );
           }
           return const SizedBox();
         },
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.push(context, MaterialPageRoute(builder: (_) => const AddForumScreen()));
+          Navigator.push(context,
+              MaterialPageRoute(builder: (_) => const AddForumScreen()));
         },
         child: const Icon(Icons.add),
       ),
