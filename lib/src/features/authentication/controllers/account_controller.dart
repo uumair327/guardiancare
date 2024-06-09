@@ -1,4 +1,3 @@
-// controllers/account_controller.dart
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:guardiancare/src/features/authentication/screens/loginPage.dart';
@@ -11,11 +10,11 @@ class AccountController {
       if (currentUser == null) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const LoginPage()),
+          MaterialPageRoute(builder: (context) => LoginPage()),
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
+          SnackBar(
             content: Text('Error signing out. Please try again.'),
           ),
         );
