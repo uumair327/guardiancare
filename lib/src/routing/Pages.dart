@@ -2,8 +2,8 @@ import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:guardiancare/src/constants/colors.dart';
+import 'package:guardiancare/src/features/forum/features/auth/screens/login_screen.dart';
 import 'package:guardiancare/src/screens/explore.dart';
-import 'package:guardiancare/src/screens/forumPage.dart';
 import 'package:guardiancare/src/screens/homePage.dart';
 
 class Pages extends StatefulWidget {
@@ -57,31 +57,28 @@ class _PagesState extends State<Pages> {
 
     final screens = <Widget>[
       const HomePage(),
-      // SearchPage(),
       const Explore(),
-      const ForumPage(),
+      const LoginScreen(),
+      // const HomeScreen(),
       // Account(user: _user),
     ];
 
     return Scaffold(
       extendBody: true,
       appBar: AppBar(
-        title: const Text(
-          "Children of India",
-          style : TextStyle(
-            color: tPrimaryColor,
-            fontWeight: FontWeight.bold,
-            fontSize: 25
-          )
-        ),
+        title: const Text("Children of India",
+            style: TextStyle(
+                color: tPrimaryColor,
+                fontWeight: FontWeight.bold,
+                fontSize: 25)),
         leading: const Padding(
           padding: EdgeInsets.all(13.0),
         ),
         backgroundColor: Colors.white,
         centerTitle: true,
-        // actions: [
-        //   _user != null ? _signOut() : const Text("Hi"),
-        // ],
+        actions: [
+          _user != null ? _signOut() : const Text("Hi"),
+        ],
       ),
       body: SafeArea(
         child: screens[index],
@@ -99,8 +96,9 @@ class _PagesState extends State<Pages> {
     );
   }
 
-  // Widget _signOut() {
-  //   return TextButton(
-  //       onPressed: () => _auth.signOut(), child: const Text("Sign Out", style: TextStyle(color: tPrimaryColor)));
-  // }
+  Widget _signOut() {
+    return TextButton(
+        onPressed: () => _auth.signOut(),
+        child: const Text("Sign Out", style: TextStyle(color: tPrimaryColor)));
+  }
 }

@@ -16,7 +16,7 @@
     ·
     <a href="https://github.com/uumair327/guardiancare/issues">Report Bug / Request Feature</a> 
    - 
-   <a href="">Click here to become a tester</a> 
+   <a href="https://appdistribution.firebase.dev/i/2dc0d93759150b3f">Click here to become a tester</a> 
 </p>
 
 <br>
