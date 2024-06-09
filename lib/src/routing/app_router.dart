@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:guardiancare/src/features/emergency/screens/emergencyContactPage.dart';
 import 'package:guardiancare/src/features/home/screens/homePage.dart';
+import 'package:guardiancare/src/features/profile/screens/account.dart';
 import 'package:guardiancare/src/features/quiz/screens/quizPage.dart';
-import 'package:guardiancare/src/screens/account.dart';
-import 'package:guardiancare/src/screens/emergencyContactPage.dart';
 import 'package:guardiancare/src/screens/searchPage.dart';
 import 'package:guardiancare/src/screens/video_page.dart';
 

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:guardiancare/src/constants/colors.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:guardiancare/src/features/emergency/controllers/emergency_contact_controller.dart';
 
 class EmergencyContactPage extends StatelessWidget {
   @override
@@ -92,7 +92,8 @@ class EmergencyContactPage extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(vertical: 4.0),
                         child: ElevatedButton.icon(
                           onPressed: () {
-                            _launchPhone(contact['number']!);
+                            EmergencyContactController.launchPhone(
+                                contact['number']!);
                           },
                           icon: const Icon(
                             Icons.phone,
@@ -120,14 +121,5 @@ class EmergencyContactPage extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  void _launchPhone(String phoneNumber) async {
-    final Uri phoneLaunchUri = Uri(scheme: 'tel', path: phoneNumber);
-    if (await canLaunch(phoneLaunchUri.toString())) {
-      await launch(phoneLaunchUri.toString());
-    } else {
-      throw 'Could not launch $phoneLaunchUri';
-    }
   }
 }
