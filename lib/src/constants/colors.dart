@@ -20,3 +20,5 @@ const tNavBarColorButton = Colors.white;
 const tNavBarColor = Color.fromARGB(255, 239, 73, 52);
 
 const tTextPrimary = Color.fromRGBO(34, 34, 38, 1.0);
+
+// const tPrimaryColor = Colors.blue;

@@ -2,8 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:guardiancare/src/constants/colors.dart';
 import 'package:guardiancare/src/features/authentication/controllers/account_controller.dart';
+import 'package:guardiancare/src/features/report/screens/reportPage.dart';
 import 'package:guardiancare/src/screens/emergencyContactPage.dart';
-import 'package:guardiancare/src/screens/reportPage.dart';
 
 class Account extends StatelessWidget {
   final User? user;

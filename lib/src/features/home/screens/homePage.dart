@@ -3,16 +3,13 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:guardiancare/src/features/quiz/screens/quizPage.dart';
 import 'package:guardiancare/src/screens/WebViewPage.dart';
 import 'package:guardiancare/src/screens/account.dart';
 import 'package:guardiancare/src/screens/emergencyContactPage.dart';
-import 'package:guardiancare/src/screens/quizPage.dart';
-import 'package:guardiancare/src/screens/searchPage.dart';
 import 'package:guardiancare/src/screens/video_page.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:cupertino_icons/cupertino_icons.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:url_launcher/url_launcher_string.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -192,9 +189,8 @@ class _HomePageState extends State<HomePage> {
                           _buildCircularButton(
                               Icons.person, 'Profile', context),
                           _buildCircularButton(
-                            CupertinoIcons.globe, 'Website', context),
-                          _buildCircularButton(
-                            Icons.email, 'Mail Us', context)
+                              CupertinoIcons.globe, 'Website', context),
+                          _buildCircularButton(Icons.email, 'Mail Us', context)
                         ],
                       ),
                     ],
@@ -228,7 +224,9 @@ class _HomePageState extends State<HomePage> {
             } else if (label == 'Website') {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => WebViewPage(url: "https://childrenofindia.in/")),
+                MaterialPageRoute(
+                    builder: (context) =>
+                        WebViewPage(url: "https://childrenofindia.in/")),
               );
             } else if (label == 'Profile') {
               Navigator.push(
@@ -240,11 +238,10 @@ class _HomePageState extends State<HomePage> {
                 context,
                 MaterialPageRoute(builder: (context) => const VideoPage()),
               );
-            } 
-            else {
+            } else {
               final Uri emailLaunchUri = Uri(
-              scheme: 'mailto',
-              path: 'hello@childrenofindia.in',
+                scheme: 'mailto',
+                path: 'hello@childrenofindia.in',
               );
               if (await canLaunchUrl(emailLaunchUri)) {
                 await launchUrl(emailLaunchUri);
