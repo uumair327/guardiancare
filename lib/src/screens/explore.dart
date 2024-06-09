@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:guardiancare/src/constants/colors.dart';
+import 'package:guardiancare/src/screens/video_player_page.dart';
 
 class Explore extends StatelessWidget {
   const Explore({super.key});
@@ -72,6 +73,7 @@ class _RecommendedVideos extends StatelessWidget {
               imageUrl: video['thumbnail'],
               title: video['title'],
               description: video['video'],
+              context: context,
             );
           },
         );
@@ -83,8 +85,17 @@ class _RecommendedVideos extends StatelessWidget {
     required String imageUrl,
     required String title,
     required String description,
+    required BuildContext context,
   }) {
-    return SingleChildScrollView(
+    return InkWell(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => VideoPlayerPage(videoUrl: description),
+          ),
+        );
+      },
       child: Card(
         margin: const EdgeInsets.all(16.0),
         child: Column(
