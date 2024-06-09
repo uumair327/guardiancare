@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:guardiancare/src/constants/colors.dart';
 import 'package:guardiancare/src/screens/video_player_page.dart';
 import 'package:video_player/video_player.dart';
 
@@ -9,7 +10,7 @@ class VideoController extends StatefulWidget {
 }
 
 class _VideoControllerState extends State<VideoController> {
-  List<String>? categories;
+  List<List<String>>? categories;
   String? selectedCategory;
 
   @override
@@ -32,17 +33,19 @@ class _VideoControllerState extends State<VideoController> {
   }
 
   Future<void> fetchCategories() async {
-    QuerySnapshot querySnapshot =
-        await FirebaseFirestore.instance.collection('videos').get();
-    Set<String> categorySet = {};
-    for (var doc in querySnapshot.docs) {
-      final category = doc['category'] as String?;
-      if (category != null) {
-        categorySet.add(category);
+    // QuerySnapshot querySnapshot =
+    //     await FirebaseFirestore.instance.collection('videos').get();
+    QuerySnapshot thumbnails = await FirebaseFirestore.instance.collection('learn').get();
+    List<List<String>> categoryList = [];
+    for (var doc in thumbnails.docs) {
+      final category = doc['name'] as String?;
+      final thumbnail = doc['thumbnail'] as String?;
+      if (category != null && thumbnail != null) {
+        categoryList.add([category, thumbnail]);
       }
     }
     setState(() {
-      categories = categorySet.toList();
+      categories = categoryList;
     });
   }
 
@@ -55,7 +58,8 @@ class _VideoControllerState extends State<VideoController> {
       ),
       itemCount: categories!.length,
       itemBuilder: (context, index) {
-        final category = categories![index];
+        final category = categories![index][0];
+        final thumbnail = categories![index][1];
         return GestureDetector(
           onTap: () {
             setState(() {
@@ -71,9 +75,11 @@ class _VideoControllerState extends State<VideoController> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Expanded(
-                  child: Image.asset(
-                    'assets/images/image.png',
+                  child: Image.network(
+                    thumbnail,
                     fit: BoxFit.cover,
+                    width: 300,
+                    height: 100,
                   ),
                 ),
                 Padding(
@@ -83,6 +89,7 @@ class _VideoControllerState extends State<VideoController> {
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 18,
+                      color: tPrimaryColor
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -143,10 +150,14 @@ class _VideoControllerState extends State<VideoController> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    AspectRatio(
-                      aspectRatio: 16 / 9,
-                      child: VideoPlayer(controller),
+                    Image.network(
+                      video["thumbnailUrl"],
+                      fit: BoxFit.cover,
                     ),
+                    // AspectRatio(
+                    //   aspectRatio: 16 / 9,
+                    //   child: VideoPlayer(controller),
+                    // ),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Text(
@@ -156,17 +167,18 @@ class _VideoControllerState extends State<VideoController> {
                         style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 16,
+                          color: tPrimaryColor
                         ),
                       ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                      child: Text(
-                        video['description'] ?? '',
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
+                    )
+                    // Padding(
+                    //   padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    //   child: Text(
+                    //     video['description'] ?? '',
+                    //     maxLines: 1,
+                    //     overflow: TextOverflow.ellipsis,
+                    //   ),
+                    // ),
                   ],
                 ),
               ),
