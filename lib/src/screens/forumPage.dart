@@ -1,9 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:guardiancare/src/models/forum.dart';
+import 'package:guardiancare/src/screens/Add_Forum/add_forum_Screen.dart';
 import 'package:guardiancare/src/widgets/forum_widget.dart';
-
-import '../models/Forum.dart';
-import 'Add_Forum/add_forum_Screen.dart';
 
 class ForumPage extends StatelessWidget {
   const ForumPage({super.key});
