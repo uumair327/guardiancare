@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:guardiancare/src/widgets/forum_widget.dart';
+
 import '../models/Forum.dart';
 import 'Add_Forum/add_forum_Screen.dart';
 
@@ -41,7 +42,10 @@ class ForumPage extends StatelessWidget {
           Navigator.push(context,
               MaterialPageRoute(builder: (_) => const AddForumScreen()));
         },
-        child: const Icon(Icons.add),
+        child: const Icon(
+          Icons.add,
+          color: Color.fromRGBO(239, 72, 53, 1),
+        ),
       ),
     );
   }
