@@ -10,9 +10,9 @@ class ForumPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Child Safety Laws Forum'),
-      ),
+      // appBar: AppBar(
+      //   title: const Text('Child Safety Laws Forum'),
+      // ),
       body: StreamBuilder(
         stream: FirebaseFirestore.instance.collection('forum').snapshots(),
         builder: (context, snapshot) {
