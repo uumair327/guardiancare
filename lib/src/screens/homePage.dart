@@ -225,7 +225,7 @@ class _HomePageState extends State<HomePage> {
                 context,
                 MaterialPageRoute(builder: (context) => EmergencyContactPage()),
               );
-            } else if (label == 'Websitee') {
+            } else if (label == 'Website') {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => WebViewPage(url: "https://childrenofindia.in/")),

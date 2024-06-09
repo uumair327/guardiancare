@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:guardiancare/src/common_widgets/quiz_question_widget.dart';
 import 'package:guardiancare/src/features/quiz/controllers/quiz_controller.dart';
+import 'package:guardiancare/src/gemini/processCategories.dart';
 
 class QuizQuestionsPage extends StatefulWidget {
   final List<Map<String, dynamic>> questions;
@@ -14,6 +15,8 @@ class QuizQuestionsPage extends StatefulWidget {
 class _QuizQuestionsPageState extends State<QuizQuestionsPage> {
   int currentQuestionIndex = 0; // Index of the current question
   int correctAnswers = 0; // Number of correct answers
+
+  List<String> incorrectCategories = [];
 
   @override
   Widget build(BuildContext context) {
@@ -45,13 +48,20 @@ class _QuizQuestionsPageState extends State<QuizQuestionsPage> {
                     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                       content: Text('Incorrect!'),
                     ));
+                    setState(() {
+                      incorrectCategories.add(widget.questions[currentQuestionIndex]['category']);
+                    });
                   }
                   // Move to the next question after a short delay
-                  Future.delayed(const Duration(seconds: 2), () {
+                  Future.delayed(const Duration(seconds: 3), () {
                     setState(() {
                       if (currentQuestionIndex < widget.questions.length - 1) {
                         currentQuestionIndex++;
                       } else {
+                        Future<bool> processSuccess = processCategories(incorrectCategories, widget.questions[0]['quiz']);
+
+                        print(processSuccess);
+                      
                         // Show quiz completed dialog
                         QuizController.showQuizCompletedDialog(
                             context, correctAnswers, widget.questions.length);
