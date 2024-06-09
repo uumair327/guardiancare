@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:guardiancare/src/constants/colors.dart';
 
@@ -43,12 +44,22 @@ class Explore extends StatelessWidget {
 class _RecommendedVideos extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final FirebaseAuth auth = FirebaseAuth.instance;
+    final User? user = auth.currentUser;
+
+    if (user == null) {
+      return const Center(child: Text('User not logged in'));
+    }
+
     return StreamBuilder<QuerySnapshot>(
-      stream:
-          FirebaseFirestore.instance.collection('recommendations').snapshots(),
+      stream: FirebaseFirestore.instance
+          .collection('recommendations')
+          .where('UID', isEqualTo: user.uid)
+          .orderBy('timestamp', descending: true)
+          .snapshots(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
-          return Center(child: CircularProgressIndicator());
+          return const Center(child: CircularProgressIndicator());
         }
 
         final videos = snapshot.data!.docs;
