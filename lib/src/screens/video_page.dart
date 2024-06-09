@@ -12,7 +12,7 @@ class _VideoPageState extends State<VideoPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Video List'),
+        title: const Text('Learn'),
       ),
       body: VideoController(),
     );
