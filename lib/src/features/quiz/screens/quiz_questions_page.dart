@@ -49,7 +49,8 @@ class _QuizQuestionsPageState extends State<QuizQuestionsPage> {
                       content: Text('Incorrect!'),
                     ));
                     setState(() {
-                      incorrectCategories.add(widget.questions[currentQuestionIndex]['category']);
+                      incorrectCategories.add(
+                          widget.questions[currentQuestionIndex]['category']);
                     });
                   }
                   // Move to the next question after a short delay
@@ -58,10 +59,12 @@ class _QuizQuestionsPageState extends State<QuizQuestionsPage> {
                       if (currentQuestionIndex < widget.questions.length - 1) {
                         currentQuestionIndex++;
                       } else {
-                        Future<bool> processSuccess = processCategories(incorrectCategories, widget.questions[0]['quiz']);
+                        if (incorrectCategories.isNotEmpty) {
+                          Future<bool> processSuccess = processCategories(
+                              incorrectCategories, widget.questions[0]['quiz']);
+                          print(processSuccess);
+                        }
 
-                        print(processSuccess);
-                      
                         // Show quiz completed dialog
                         QuizController.showQuizCompletedDialog(
                             context, correctAnswers, widget.questions.length);
