@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:guardiancare/src/features/home/screens/homePage.dart';
+import 'package:guardiancare/src/features/quiz/screens/quizPage.dart';
 import 'package:guardiancare/src/screens/account.dart';
 import 'package:guardiancare/src/screens/emergencyContactPage.dart';
-import 'package:guardiancare/src/screens/homePage.dart';
-import 'package:guardiancare/src/screens/quizPage.dart';
 import 'package:guardiancare/src/screens/searchPage.dart';
 import 'package:guardiancare/src/screens/video_page.dart';
+
 //not in use right now
 class AppRouter {
   static Route<dynamic> generateRoute(RouteSettings settings) {

@@ -2,9 +2,9 @@ import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:guardiancare/src/constants/colors.dart';
-import 'package:guardiancare/src/screens/explore.dart';
-import 'package:guardiancare/src/screens/forumPage.dart';
-import 'package:guardiancare/src/screens/homePage.dart';
+import 'package:guardiancare/src/features/explore/screens/explore.dart';
+import 'package:guardiancare/src/features/forum/screens/forumPage.dart';
+import 'package:guardiancare/src/features/home/screens/homePage.dart';
 
 class Pages extends StatefulWidget {
   const Pages({Key? key}) : super(key: key);
@@ -66,14 +66,11 @@ class _PagesState extends State<Pages> {
     return Scaffold(
       extendBody: true,
       appBar: AppBar(
-        title: const Text(
-          "Children of India",
-          style : TextStyle(
-            color: tPrimaryColor,
-            fontWeight: FontWeight.bold,
-            fontSize: 25
-          )
-        ),
+        title: const Text("Children of India",
+            style: TextStyle(
+                color: tPrimaryColor,
+                fontWeight: FontWeight.bold,
+                fontSize: 25)),
         leading: const Padding(
           padding: EdgeInsets.all(13.0),
         ),

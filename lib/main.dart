@@ -1,9 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:guardiancare/src/features/authentication/screens/loginPage.dart';
 import 'package:guardiancare/src/routing/Pages.dart';
 import 'package:guardiancare/src/routing/app_router.dart';
-import 'package:guardiancare/src/screens/loginPage.dart';
 
 import 'firebase_options.dart';
 

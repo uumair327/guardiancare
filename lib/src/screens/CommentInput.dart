@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:guardiancare/src/models/Comment.dart';
+import 'package:flutter/material.dart';
+import 'package:guardiancare/src/features/forum/models/Comment.dart';
 
 class CommentInput extends StatefulWidget {
   final String forumId;
