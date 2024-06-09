@@ -1,9 +1,9 @@
-import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:guardiancare/src/models/Forum.dart';
+import 'package:flutter/material.dart';
 import 'package:guardiancare/src/models/Comment.dart';
-import 'package:intl/intl.dart';
+import 'package:guardiancare/src/models/Forum.dart';
 import 'package:guardiancare/src/screens/commentinput.dart';
+import 'package:intl/intl.dart';
 
 class ForumWidget extends StatelessWidget {
   final Forum forum;
@@ -19,22 +19,23 @@ class ForumWidget extends StatelessWidget {
         borderRadius: BorderRadius.circular(10),
       ),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                forum.title,
-                style: const TextStyle(
-                  fontSize: 24.0,
-                  fontWeight: FontWeight.bold,
-                  color: Color.fromRGBO(239, 72, 53, 1),
-                ),
-              ),
-              Text(DateFormat('dd MM yy hh:mm a').format(forum.createdAt)),
-              const SizedBox(height: 10),
-              Text(forum.description),
-            ],
+          Text(
+            forum.title,
+            style: const TextStyle(
+              fontSize: 24.0,
+              fontWeight: FontWeight.bold,
+              color: Color.fromRGBO(239, 72, 53, 1),
+            ),
+          ),
+          Text(
+            DateFormat('dd MMM yy - hh:mm a').format(forum.createdAt),
+          ),
+          const SizedBox(height: 10),
+          Text(
+            forum.description,
+            textAlign: TextAlign.left,
           ),
           const SizedBox(height: 20),
           const Divider(),
@@ -66,9 +67,12 @@ class ForumWidget extends StatelessWidget {
                           style: TextStyle(
                               color: Colors.grey.shade600, fontSize: 12),
                         ),
-                        Text(comment.text),
                         Text(
-                          DateFormat('dd MM yy hh:mm a')
+                          comment.text,
+                          textAlign: TextAlign.left,
+                        ),
+                        Text(
+                          DateFormat('dd MMM yy - hh:mm a')
                               .format(comment.createdAt),
                           style: TextStyle(
                               color: Colors.grey.shade600, fontSize: 12),
