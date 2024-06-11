@@ -142,6 +142,8 @@ class ForumDetailPage extends StatelessWidget {
               ),
               const SizedBox(height: 20),
               const Divider(),
+              CommentInput(forumId: forum.id),
+              const Divider(),
               StreamBuilder(
                 stream: FirebaseFirestore.instance
                     .collection('forum')
@@ -187,9 +189,7 @@ class ForumDetailPage extends StatelessWidget {
                     }).toList(),
                   );
                 },
-              ),
-              const Divider(),
-              CommentInput(forumId: forum.id),
+              )
             ],
           ),
         ),
