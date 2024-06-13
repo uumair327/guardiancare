@@ -30,56 +30,58 @@ class _QuizQuestionsPageState extends State<QuizQuestionsPage> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             if (currentQuestionIndex < widget.questions.length)
-              QuizQuestionWidget(
-                questionIndex: currentQuestionIndex + 1,
-                question: widget.questions[currentQuestionIndex],
-                onPressed: (int selectedOptionIndex) {
-                  // Check if the selected option is correct
-                  if (selectedOptionIndex ==
-                      widget.questions[currentQuestionIndex]
-                          ['correctAnswerIndex']) {
-                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                      content: Text('Correct!'),
-                    ));
-                    setState(() {
-                      correctAnswers++;
-                    });
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                      content: Text('Incorrect!'),
-                    ));
-                    setState(() {
-                      incorrectCategories.add(
-                          widget.questions[currentQuestionIndex]['category']);
-                    });
-                  }
-                  // Move to the next question after a short delay
-                  Future.delayed(const Duration(seconds: 3), () {
-                    setState(() {
-                      if (currentQuestionIndex < widget.questions.length - 1) {
-                        currentQuestionIndex++;
+              Expanded(
+                child: SingleChildScrollView(
+                  child: QuizQuestionWidget(
+                    questionIndex: currentQuestionIndex + 1,
+                    question: widget.questions[currentQuestionIndex],
+                    onPressed: (int selectedOptionIndex) {
+                      // Check if the selected option is correct
+                      if (selectedOptionIndex ==
+                          widget.questions[currentQuestionIndex]
+                              ['correctAnswerIndex']) {
+                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                          content: Text('Correct!'),
+                        ));
+                        setState(() {
+                          correctAnswers++;
+                        });
                       } else {
-                        if (incorrectCategories.isNotEmpty) {
-                          Future<bool> processSuccess = processCategories(
-                              incorrectCategories, widget.questions[0]['quiz']);
-                          print(processSuccess);
-                        }
-
-                        // Show quiz completed dialog
-                        QuizController.showQuizCompletedDialog(
-                            context, correctAnswers, widget.questions.length);
+                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                          content: Text('Incorrect!'),
+                        ));
+                        setState(() {
+                          incorrectCategories.add(
+                              widget.questions[currentQuestionIndex]['category']);
+                        });
                       }
-                    });
-                  });
-                },
+                      // Move to the next question after a short delay
+                      Future.delayed(const Duration(seconds: 3), () {
+                        setState(() {
+                          if (currentQuestionIndex < widget.questions.length - 1) {
+                            currentQuestionIndex++;
+                          } else {
+                            if (incorrectCategories.isNotEmpty) {
+                              Future<bool> processSuccess = processCategories(
+                                  incorrectCategories, widget.questions[0]['quiz']);
+                              print(processSuccess);
+                            }
+
+                            // Show quiz completed dialog
+                            QuizController.showQuizCompletedDialog(
+                                context, correctAnswers, widget.questions.length);
+                          }
+                        });
+                      });
+                    },
+                  ),
+                ),
               ),
             if (currentQuestionIndex >= widget.questions.length)
-              Expanded(
-                child: Center(
-                  child: Text(
-                    'Quiz Completed!',
-                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                  ),
+              const Center(
+                child: Text(
+                  'Quiz Completed!',
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Color.fromRGBO(239, 72, 53, 1)),
                 ),
               ),
           ],

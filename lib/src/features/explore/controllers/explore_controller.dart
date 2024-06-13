@@ -15,6 +15,7 @@ class ExploreController {
         .collection('recommendations')
         .where('UID', isEqualTo: currentUser!.uid)
         .orderBy('timestamp', descending: true)
+        .limit(8)
         .snapshots();
   }
 }

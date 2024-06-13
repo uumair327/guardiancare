@@ -59,24 +59,38 @@ class _CommentInputState extends State<CommentInput> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.all(12.0),
       child: Row(
         children: [
           Expanded(
             child: TextField(
               controller: _controller,
               decoration: const InputDecoration(
+                filled: true,
+                fillColor: Colors.white,
                 labelText: 'Add a comment...',
-                border: OutlineInputBorder(),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(30.0))
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(30.0)),
+                  borderSide: BorderSide(color: Color.fromRGBO(239, 72, 53, 1)),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(30.0)),
+                  borderSide: BorderSide(color: Color.fromRGBO(239, 72, 53, 1)),
+                ),
+                contentPadding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
               ),
             ),
           ),
-          const SizedBox(width: 8),
+          const SizedBox(width: 5),
           _loading
               ? const CircularProgressIndicator()
               : IconButton(
                   icon: const Icon(Icons.send),
                   onPressed: _addComment,
+                  color: Color.fromRGBO(239, 72, 53, 1),
                 ),
         ],
       ),

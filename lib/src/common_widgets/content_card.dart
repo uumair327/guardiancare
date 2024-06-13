@@ -47,13 +47,13 @@ class ContentCard extends StatelessWidget {
                       fontSize: 16.0,
                     ),
                   ),
-                  const SizedBox(height: 8.0),
-                  Text(
-                    description,
-                    style: const TextStyle(
-                      fontSize: 14.0,
-                    ),
-                  ),
+                  const SizedBox(height: 3.0),
+                  // Text(
+                  //   description,
+                  //   style: const TextStyle(
+                  //     fontSize: 14.0,
+                  //   ),
+                  // ),
                 ],
               ),
             ),

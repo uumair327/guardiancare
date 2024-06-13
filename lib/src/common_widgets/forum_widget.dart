@@ -118,81 +118,89 @@ class ForumDetailPage extends StatelessWidget {
       appBar: AppBar(
         title: Text(forum.title),
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(10),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                forum.title,
-                style: const TextStyle(
-                  fontSize: 20.0,
-                  fontWeight: FontWeight.bold,
-                  color: Color.fromRGBO(239, 72, 53, 1),
+      body: Column(
+        children: [
+          Expanded(
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      forum.title,
+                      style: const TextStyle(
+                        fontSize: 20.0,
+                        fontWeight: FontWeight.bold,
+                        color: Color.fromRGBO(239, 72, 53, 1),
+                      ),
+                    ),
+                    Text(
+                      DateFormat('dd MMM yy - hh:mm a').format(forum.createdAt),
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                      forum.description,
+                      textAlign: TextAlign.left,
+                    ),
+                    const SizedBox(height: 10),
+                    const Divider(),
+                    StreamBuilder(
+                      stream: FirebaseFirestore.instance
+                          .collection('forum')
+                          .doc(forum.id)
+                          .collection('comments')
+                          .snapshots(),
+                      builder: (context, snapshot) {
+                        if (!snapshot.hasData) {
+                          return const Center(child: CircularProgressIndicator());
+                        }
+                        var comments = snapshot.data!.docs
+                            .map((doc) => Comment.fromMap(doc.data()))
+                            .toList();
+                        return Column(
+                          children: comments.map((comment) {
+                            return ListTile(
+                              // title: Text(
+                              //   comment.userName,
+                              //   style: const TextStyle(fontWeight: FontWeight.bold),
+                              // ),
+                              subtitle: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    comment.userEmail,
+                                    style: const TextStyle(
+                                        color: Color.fromRGBO(239, 72, 53, 1), fontSize: 12),
+                                  ),
+                                  Text(
+                                    comment.text,
+                                    textAlign: TextAlign.left,
+                                  ),
+                                  Text(
+                                    DateFormat('dd MMM yy - hh:mm a')
+                                        .format(comment.createdAt),
+                                    style: TextStyle(
+                                        color: Colors.grey.shade600, fontSize: 12),
+                                  ),
+                                ],
+                              ),
+                              isThreeLine: true,
+                            );
+                          }).toList(),
+                        );
+                      },
+                    ),
+                  ],
                 ),
               ),
-              Text(
-                DateFormat('dd MMM yy - hh:mm a').format(forum.createdAt),
-              ),
-              const SizedBox(height: 10),
-              Text(
-                forum.description,
-                textAlign: TextAlign.left,
-              ),
-              const SizedBox(height: 20),
-              const Divider(),
-              CommentInput(forumId: forum.id),
-              const Divider(),
-              StreamBuilder(
-                stream: FirebaseFirestore.instance
-                    .collection('forum')
-                    .doc(forum.id)
-                    .collection('comments')
-                    .snapshots(),
-                builder: (context, snapshot) {
-                  if (!snapshot.hasData) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
-                  var comments = snapshot.data!.docs
-                      .map((doc) => Comment.fromMap(doc.data()))
-                      .toList();
-                  return Column(
-                    children: comments.map((comment) {
-                      return ListTile(
-                        title: Text(
-                          comment.userName,
-                          style: const TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        subtitle: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              comment.userEmail,
-                              style: TextStyle(
-                                  color: Colors.grey.shade600, fontSize: 12),
-                            ),
-                            Text(
-                              comment.text,
-                              textAlign: TextAlign.left,
-                            ),
-                            Text(
-                              DateFormat('dd MMM yy - hh:mm a')
-                                  .format(comment.createdAt),
-                              style: TextStyle(
-                                  color: Colors.grey.shade600, fontSize: 12),
-                            ),
-                          ],
-                        ),
-                        isThreeLine: true,
-                      );
-                    }).toList(),
-                  );
-                },
-              )
-            ],
+            ),
           ),
-        ),
+          Padding(
+            padding: const EdgeInsets.only(bottom: 3.0),
+            child: CommentInput(forumId: forum.id),
+          ),
+        ],
       ),
     );
   }
