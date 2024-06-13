@@ -74,12 +74,12 @@ class _PagesState extends State<Pages> {
         leading: const Padding(
           padding: EdgeInsets.all(13.0),
         ),
-        backgroundColor: Colors.white,
         centerTitle: true,
         // actions: [
         //   _user != null ? _signOut() : const Text("Hi"),
         // ],
       ),
+      backgroundColor: Colors.white,
       body: SafeArea(
         child: screens[index],
       ),
