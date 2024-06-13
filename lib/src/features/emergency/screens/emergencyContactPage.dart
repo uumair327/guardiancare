@@ -21,9 +21,9 @@ class EmergencyContactPage extends StatelessWidget {
                   icon: Icons.medical_services,
                   title: 'Emergency Services',
                   contacts: [
-                    {'name': 'Police', 'number': '911'},
-                    {'name': 'Fire Department', 'number': '911'},
-                    {'name': 'Medical Emergency', 'number': '911'},
+                    {'name': 'Police', 'number': '100'},
+                    {'name': 'Child Helpline', 'number': '1098'},
+                    // {'name': 'Medical Emergency', 'number': '911'},
                   ],
                 ),
                 const SizedBox(height: 20),
@@ -33,18 +33,22 @@ class EmergencyContactPage extends StatelessWidget {
                   title: 'Child Safety',
                   contacts: [
                     {
+                      'name': 'Children of India Coordination Office',
+                      'number': '+91 94824 50000'
+                    },
+                    {
                       'name':
                           'National Center for Missing & Exploited Children',
-                      'number': '1-800-843-5678'
+                      'number': '+1-800-843-5678'
                     },
                     {
                       'name': 'Childhelp National Child Abuse Hotline',
-                      'number': '1-800-422-4453'
+                      'number': '+91 80042 24453'
                     },
-                    {
-                      'name': 'Poison Control Center',
-                      'number': '1-800-222-1222'
-                    },
+                    // {
+                    //   'name': 'Poison Control Center',
+                    //   'number': '1-800-222-1222'
+                    // },
                   ],
                 ),
               ],
