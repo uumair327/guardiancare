@@ -24,7 +24,7 @@ class _QuizPageState extends State<QuizPage> {
         await FirebaseFirestore.instance.collection('quizes').get();
     List<Map<String, dynamic>> _quizes = [];
     for (var doc in querySnapshot.docs) {
-      if (doc["name"] != null) {
+      if (doc["name"] != null && doc["use"]) {
         _quizes.add({
           "name": doc["name"],
           "thumbnail": doc["thumbnail"],
