@@ -38,8 +38,7 @@ class _QuizQuestionsPageState extends State<QuizQuestionsPage> {
                     onPressed: (int selectedOptionIndex) {
                       // Check if the selected option is correct
                       if (selectedOptionIndex ==
-                          widget.questions[currentQuestionIndex]
-                              ['correctAnswerIndex']) {
+                          widget.questions[currentQuestionIndex]['correctAnswerIndex']) {
                         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                           content: Text('Correct!'),
                         ));
