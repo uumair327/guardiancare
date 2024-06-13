@@ -25,7 +25,7 @@ class Explore extends StatelessWidget {
                     labelColor: tPrimaryColor,
                   ),
                   SizedBox(
-                    height: 441,
+                    height: MediaQuery.of(context).size.height * 0.67,
                     child: TabBarView(
                       children: [
                         _RecommendedVideos(),
