@@ -101,6 +101,27 @@ To run the GuardianCare app, you need to configure the environment on your machi
 ## Firebase
 
 
+### Firestore Databases
+- users:
+
+- forum:
+
+- quizes:
+
+- questions:
+
+- videos:
+
+- recommendations:
+
+- home_images:
+
+- learn:
+
+- posts:
+
+
+
 <!-- SCREENSHOTS -->
 ## Screenshots of Application [APK]
 
