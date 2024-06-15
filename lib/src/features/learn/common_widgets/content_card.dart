@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:guardiancare/src/screens/video_player_page.dart';
+import 'package:guardiancare/src/common_widgets/video_player_page.dart';
 
 class ContentCard extends StatelessWidget {
   final String imageUrl;

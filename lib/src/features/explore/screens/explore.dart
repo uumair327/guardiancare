@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:guardiancare/src/common_widgets/content_card.dart';
 import 'package:guardiancare/src/constants/colors.dart';
 import 'package:guardiancare/src/features/explore/controllers/explore_controller.dart';
+import 'package:guardiancare/src/features/learn/common_widgets/content_card.dart';
 
 class Explore extends StatelessWidget {
   const Explore({super.key});
