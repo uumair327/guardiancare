@@ -2,11 +2,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:guardiancare/src/features/forum/models/Comment.dart';
 import 'package:guardiancare/src/features/forum/models/Forum.dart';
-import 'package:guardiancare/src/screens/CommentInput.dart';
+import 'package:guardiancare/src/features/forum/screens/CommentInput.dart';
 import 'package:intl/intl.dart';
 
 class ForumWidget extends StatelessWidget {
   final Forum forum;
+
   const ForumWidget({Key? key, required this.forum}) : super(key: key);
 
   @override
@@ -110,6 +111,7 @@ class ForumWidget extends StatelessWidget {
 
 class ForumDetailPage extends StatelessWidget {
   final Forum forum;
+
   const ForumDetailPage({Key? key, required this.forum}) : super(key: key);
 
   @override
@@ -123,7 +125,8 @@ class ForumDetailPage extends StatelessWidget {
           Expanded(
             child: SingleChildScrollView(
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -153,7 +156,8 @@ class ForumDetailPage extends StatelessWidget {
                           .snapshots(),
                       builder: (context, snapshot) {
                         if (!snapshot.hasData) {
-                          return const Center(child: CircularProgressIndicator());
+                          return const Center(
+                              child: CircularProgressIndicator());
                         }
                         var comments = snapshot.data!.docs
                             .map((doc) => Comment.fromMap(doc.data()))
@@ -171,7 +175,8 @@ class ForumDetailPage extends StatelessWidget {
                                   Text(
                                     comment.userEmail,
                                     style: const TextStyle(
-                                        color: Color.fromRGBO(239, 72, 53, 1), fontSize: 12),
+                                        color: Color.fromRGBO(239, 72, 53, 1),
+                                        fontSize: 12),
                                   ),
                                   Text(
                                     comment.text,
@@ -181,7 +186,8 @@ class ForumDetailPage extends StatelessWidget {
                                     DateFormat('dd MMM yy - hh:mm a')
                                         .format(comment.createdAt),
                                     style: TextStyle(
-                                        color: Colors.grey.shade600, fontSize: 12),
+                                        color: Colors.grey.shade600,
+                                        fontSize: 12),
                                   ),
                                 ],
                               ),
