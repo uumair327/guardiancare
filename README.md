@@ -120,6 +120,20 @@ To run the GuardianCare app, you need to configure the environment on your machi
 - **learn**: Stores names and thumbnail references of all available video categories.
 
 
+### Storage
+- **carousel_images**: Stores images to be displayed on the carousel on the home page.
+
+- **learn_thumbnails**: Stores image thumbnails for learn cards.
+
+- **quiz_thumbnails**: Stores image thumbnails for quiz cards.
+
+
+### Authentication
+#### Methods
+- Email/Password 
+- Google
+- Anonymous
+
 
 <!-- SCREENSHOTS -->
 ## Screenshots of Application [APK]
