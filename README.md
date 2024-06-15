@@ -102,23 +102,22 @@ To run the GuardianCare app, you need to configure the environment on your machi
 
 
 ### Firestore Databases
-- users:
+- users: Stores user details.
 
-- forum:
+- forum: Stores details about individual forum posts.
+  - comments: Stores details about each individual comment on a forum post.
 
-- quizes:
+- quizes: Stores names and thumbnail references of all available quizes.
 
-- questions:
+- questions: Stores questions, their options, correct option, category and the quiz they belong to.
 
-- videos:
+- videos: Stores the titles, categories, thumbnail references and video references for all videos.
 
-- recommendations:
+- recommendations: Stores the details of the videos recommended to users based on their quiz performance.
 
-- home_images:
+- home_images: Stores references of the images used on the home page.
 
-- learn:
-
-- posts:
+- learn: Stores names and thumbnail references of all available video categories.
 
 
 
