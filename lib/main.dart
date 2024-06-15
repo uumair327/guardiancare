@@ -3,7 +3,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:guardiancare/src/features/authentication/screens/loginPage.dart';
 import 'package:guardiancare/src/routing/Pages.dart';
-import 'package:guardiancare/src/routing/app_router.dart';
 
 import 'firebase_options.dart';
 
@@ -55,7 +54,6 @@ class _GuardianCareState extends State<GuardianCare> {
     return MaterialApp(
       title: "Children of India",
       home: _user != null ? const Pages() : const LoginPage(),
-      onGenerateRoute: AppRouter.generateRoute,
       debugShowCheckedModeBanner: false,
     );
   }
