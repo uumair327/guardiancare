@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:guardiancare/src/common_widgets/video_player_page.dart';
 import 'package:guardiancare/src/constants/colors.dart';
-import 'package:guardiancare/src/screens/video_player_page.dart';
 import 'package:video_player/video_player.dart';
 
 class VideoController extends StatefulWidget {
@@ -35,7 +35,8 @@ class _VideoControllerState extends State<VideoController> {
   Future<void> fetchCategories() async {
     // QuerySnapshot querySnapshot =
     //     await FirebaseFirestore.instance.collection('videos').get();
-    QuerySnapshot thumbnails = await FirebaseFirestore.instance.collection('learn').get();
+    QuerySnapshot thumbnails =
+        await FirebaseFirestore.instance.collection('learn').get();
     List<List<String>> categoryList = [];
     for (var doc in thumbnails.docs) {
       final category = doc['name'] as String?;
@@ -50,56 +51,57 @@ class _VideoControllerState extends State<VideoController> {
   }
 
   Widget buildCategoryList() {
-    return Padding(padding: const EdgeInsets.all(8.0), child: GridView.builder(
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        crossAxisSpacing: 8.0,
-        mainAxisSpacing: 16.0,
-      ),
-      itemCount: categories!.length,
-      itemBuilder: (context, index) {
-        final category = categories![index][0];
-        final thumbnail = categories![index][1];
-        return GestureDetector(
-          onTap: () {
-            setState(() {
-              selectedCategory = category;
-            });
-          },
-          child: Card(
-            elevation: 4.0,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12.0),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Expanded(
-                  child: Image.network(
-                    thumbnail,
-                    fit: BoxFit.cover,
-                    width: 300,
-                    height: 100,
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    category,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18,
-                      color: tPrimaryColor
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              ],
-            ),
+    return Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: GridView.builder(
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            crossAxisSpacing: 8.0,
+            mainAxisSpacing: 16.0,
           ),
-        );
-      },
-    ));
+          itemCount: categories!.length,
+          itemBuilder: (context, index) {
+            final category = categories![index][0];
+            final thumbnail = categories![index][1];
+            return GestureDetector(
+              onTap: () {
+                setState(() {
+                  selectedCategory = category;
+                });
+              },
+              child: Card(
+                elevation: 4.0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12.0),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      child: Image.network(
+                        thumbnail,
+                        fit: BoxFit.cover,
+                        width: 300,
+                        height: 100,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        category,
+                        style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18,
+                            color: tPrimaryColor),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        ));
   }
 
   Widget buildVideoList(String category) {
@@ -165,10 +167,9 @@ class _VideoControllerState extends State<VideoController> {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                          color: tPrimaryColor
-                        ),
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                            color: tPrimaryColor),
                       ),
                     )
                     // Padding(

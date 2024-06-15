@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:guardiancare/src/common_widgets/forum_widget.dart';
+import 'package:guardiancare/src/features/forum/common_widgets/forum_widget.dart';
 import 'package:guardiancare/src/features/forum/models/Forum.dart';
 import 'package:guardiancare/src/screens/Add_Forum/add_forum_Screen.dart';
 
