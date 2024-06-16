@@ -1,5 +1,4 @@
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:guardiancare/src/constants/colors.dart';
 import 'package:guardiancare/src/features/explore/screens/explore.dart';
@@ -15,14 +14,10 @@ class Pages extends StatefulWidget {
 
 class _PagesState extends State<Pages> {
   int index = 0; // Changed the default index value
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-
-  User? _user;
 
   @override
   void initState() {
     super.initState();
-    _user = _auth.currentUser;
   }
 
   @override
