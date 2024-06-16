@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:guardiancare/src/features/quiz/common_widgets/quiz_question_widget.dart';
 import 'package:guardiancare/src/features/quiz/controllers/quiz_controller.dart';
-import 'package:guardiancare/src/gemini/processCategories.dart';
+import 'package:guardiancare/src/api/gemini/processCategories.dart';
 
 class QuizQuestionsPage extends StatefulWidget {
   final List<Map<String, dynamic>> questions;
@@ -71,7 +71,7 @@ class _QuizQuestionsPageState extends State<QuizQuestionsPage> {
 
                           // Show quiz completed dialog
                           QuizController.showQuizCompletedDialog(
-                              context, correctAnswers, widget.questions.length);
+                              context, correctAnswers, widget.questions.length, incorrectCategories.length);
                         }
                       });
                     });
