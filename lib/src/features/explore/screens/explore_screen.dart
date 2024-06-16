@@ -8,6 +8,9 @@ class Explore extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Recommended'),
+      ),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -15,15 +18,8 @@ class Explore extends StatelessWidget {
               length: 1,
               child: Column(
                 children: [
-                  const TabBar(
-                    tabs: [
-                      Tab(text: 'Recommended'),
-                    ],
-                    indicatorColor: tPrimaryColor,
-                    labelColor: tPrimaryColor,
-                  ),
                   SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.73,
+                    height: MediaQuery.of(context).size.height,
                     child: TabBarView(
                       children: [
                         RecommendedVideos(),
