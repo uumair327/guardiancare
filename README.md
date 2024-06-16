@@ -138,6 +138,8 @@ To run the GuardianCare app, you need to configure the environment on your machi
 <!-- SCREENSHOTS -->
 ## Screenshots of Application [APK]
 
+### Home Page
+<img src="https://firebasestorage.googleapis.com/v0/b/guardiancare-a210f.appspot.com/o/screenshots%2FhomePage.jpg?alt=media&token=8fbcd6eb-69dd-4907-8f68-557f3b20da07"/>
 
 ## Testing and Feedback 
 
