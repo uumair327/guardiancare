@@ -50,119 +50,121 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       extendBody: true,
       body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            SingleChildScrollView(
-              child: HomeCarousel(
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              HomeCarousel(
                 carouselData: carouselData,
                 carouselHeight: carouselHeight,
               ),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20.0),
-              child: Card(
-                elevation: 20.0,
-                color: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20.0),
-                ),
-                child: Padding(
-                  padding: EdgeInsets.all(16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          CircularButton(
-                            iconData: Icons.quiz,
-                            label: 'Quiz',
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => QuizPage()),
-                              );
-                            },
-                          ),
-                          CircularButton(
-                            iconData: Icons.video_library,
-                            label: 'Learn',
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => VideoPage()),
-                              );
-                            },
-                          ),
-                          CircularButton(
-                            iconData: Icons.emergency,
-                            label: 'Emergency',
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        EmergencyContactPage()),
-                              );
-                            },
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 20.0),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          CircularButton(
-                            iconData: Icons.person,
-                            label: 'Profile',
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => Account(user: _user)),
-                              );
-                            },
-                          ),
-                          CircularButton(
-                            iconData: CupertinoIcons.globe,
-                            label: 'Website',
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => WebViewPage(
-                                      url: "https://childrenofindia.in/"),
-                                ),
-                              );
-                            },
-                          ),
-                          CircularButton(
-                            iconData: Icons.email,
-                            label: 'Mail Us',
-                            onPressed: () async {
-                              final Uri emailLaunchUri = Uri(
-                                scheme: 'mailto',
-                                path: 'hello@childrenofindia.in',
-                              );
-                              if (await canLaunch(emailLaunchUri.toString())) {
-                                await launch(emailLaunchUri.toString());
-                              } else {
-                                throw "Could not launch $emailLaunchUri";
-                              }
-                            },
-                          ),
-                        ],
-                      ),
-                    ],
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20.0),
+                child: Card(
+                  elevation: 20.0,
+                  color: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20.0),
+                  ),
+                  child: Padding(
+                    padding: EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            CircularButton(
+                              iconData: Icons.quiz,
+                              label: 'Quiz',
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => QuizPage()),
+                                );
+                              },
+                            ),
+                            CircularButton(
+                              iconData: Icons.video_library,
+                              label: 'Learn',
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => VideoPage()),
+                                );
+                              },
+                            ),
+                            CircularButton(
+                              iconData: Icons.emergency,
+                              label: 'Emergency',
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          EmergencyContactPage()),
+                                );
+                              },
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 20.0),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            CircularButton(
+                              iconData: Icons.person,
+                              label: 'Profile',
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          Account(user: _user)),
+                                );
+                              },
+                            ),
+                            CircularButton(
+                              iconData: CupertinoIcons.globe,
+                              label: 'Website',
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => WebViewPage(
+                                        url: "https://childrenofindia.in/"),
+                                  ),
+                                );
+                              },
+                            ),
+                            CircularButton(
+                              iconData: Icons.email,
+                              label: 'Mail Us',
+                              onPressed: () async {
+                                final Uri emailLaunchUri = Uri(
+                                  scheme: 'mailto',
+                                  path: 'hello@childrenofindia.in',
+                                );
+                                if (await canLaunch(
+                                    emailLaunchUri.toString())) {
+                                  await launch(emailLaunchUri.toString());
+                                } else {
+                                  throw "Could not launch $emailLaunchUri";
+                                }
+                              },
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
-            SizedBox(height: 20.0),
-          ],
+              SizedBox(height: 20.0),
+            ],
+          ),
         ),
       ),
     );
