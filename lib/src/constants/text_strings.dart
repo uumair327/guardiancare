@@ -1,4 +1,4 @@
-const String tAppName = ".appable/";
+const String AppName = ".appable/";
 const String tAppTagLine = "Learn To Code. \nFree For Everyone";
 
 const String tOnBoardingTitle1 = "Build Awesome Apps";

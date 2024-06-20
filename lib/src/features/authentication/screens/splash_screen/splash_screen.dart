@@ -36,7 +36,7 @@ class SplashScreen extends StatelessWidget {
                 duration: const Duration(milliseconds: 1600),
                 child: Column(
                   children: [
-                    Text(tAppName,
+                    Text(AppName,
                         style: Theme.of(context).textTheme.displayLarge),
                     Text(tAppTagLine,
                         style: Theme.of(context).textTheme.displayMedium)
