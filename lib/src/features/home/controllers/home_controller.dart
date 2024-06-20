@@ -1,37 +1,16 @@
-import 'dart:convert';
-
-import 'package:http/http.dart' as http;
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class HomeController {
-  static Future<List<Map<String, dynamic>>> fetchVideoData() async {
-    // Replace 'apiEndpoint' with the actual URL of your API endpoint
-    const String apiUrl = '';
-
+  Future<List<Map<String, dynamic>>> fetchCarouselData() async {
     try {
-      final response = await http.get(Uri.parse(apiUrl));
-
-      if (response.statusCode == 200) {
-        // Parse the JSON response
-        final List<dynamic> responseData = json.decode(response.body);
-
-        // Map the response data to the required format
-        List<Map<String, dynamic>> videoData = responseData.map((video) {
-          return {
-            'type': video['type'], // "image" or "video"
-            'imageUrl': video['imageUrl'],
-            'link': video['link'],
-            'thumbnailUrl': video['thumbnailUrl'], // For videos
-          };
-        }).toList();
-
-        return videoData;
-      } else {
-        // Handle API error
-        throw Exception('Failed to load video data');
-      }
+      QuerySnapshot snapshot =
+          await FirebaseFirestore.instance.collection('carousel_items').get();
+      return snapshot.docs
+          .map((doc) => doc.data() as Map<String, dynamic>)
+          .toList();
     } catch (e) {
-      // Handle network error
-      throw Exception('Network error: $e');
+      print('Error fetching carousel data: $e');
+      return [];
     }
   }
 }
