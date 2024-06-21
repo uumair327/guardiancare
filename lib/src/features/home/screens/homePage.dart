@@ -54,12 +54,18 @@ class _HomePageState extends State<HomePage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              const SizedBox(
+                height: 10.0,
+              ),
               HomeCarousel(
                 carouselData: carouselData,
                 carouselHeight: carouselHeight,
               ),
+              const SizedBox(
+                height: 20.0,
+              ),
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20.0),
+                padding: const EdgeInsets.symmetric(horizontal: 20.0),
                 child: Card(
                   elevation: 20.0,
                   color: Colors.white,
@@ -67,7 +73,7 @@ class _HomePageState extends State<HomePage> {
                     borderRadius: BorderRadius.circular(20.0),
                   ),
                   child: Padding(
-                    padding: EdgeInsets.all(16),
+                    padding: const EdgeInsets.all(16),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
@@ -92,7 +98,7 @@ class _HomePageState extends State<HomePage> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => VideoPage()),
+                                      builder: (context) => const VideoPage()),
                                 );
                               },
                             ),
@@ -110,7 +116,7 @@ class _HomePageState extends State<HomePage> {
                             ),
                           ],
                         ),
-                        SizedBox(height: 20.0),
+                        const SizedBox(height: 20.0),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
@@ -162,7 +168,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
               ),
-              SizedBox(height: 20.0),
+              const SizedBox(height: 10.0),
             ],
           ),
         ),
