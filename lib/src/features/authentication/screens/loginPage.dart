@@ -1,80 +1,66 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:sign_in_button/sign_in_button.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:guardiancare/src/core/common/loader.dart';
+import 'package:guardiancare/src/core/common/sign_in_button.dart';
+import 'package:guardiancare/src/features/authentication/controllers/auth_controller.dart';
+import 'package:guardiancare/src/responsive/responsive.dart';
+import 'package:guardiancare/src/constants/colors.dart';
 
-class LoginPage extends StatefulWidget {
+class LoginPage extends ConsumerWidget {
   const LoginPage({Key? key}) : super(key: key);
 
-  @override
-  State<LoginPage> createState() => _LoginPageState();
-}
-
-class _LoginPageState extends State<LoginPage> {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-
-  @override
-  void initState() {
-    super.initState();
-
-    _auth.authStateChanges().listen((event) {
-      setState(() {});
-    });
-  }
-
-  void _handleGoogleSignIn() async {
-    try {
-      GoogleAuthProvider googleAuthProvider = GoogleAuthProvider();
-      final UserCredential userCredential =
-          await _auth.signInWithProvider(googleAuthProvider);
-      final User? user = userCredential.user;
-      if (user != null) {
-        // Update state with the signed-in user
-        setState(() {});
-      }
-    } catch (e) {
-      print(e);
-    }
+  void signInAsGuest(WidgetRef ref, BuildContext context) {
+    ref.read(authControllerProvider.notifier).signInAsGuest(context);
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isLoading = ref.watch(authControllerProvider);
+
     return Scaffold(
-      backgroundColor: Colors.white,
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // Logo
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Image.asset(
-                'assets/logo/logo_CIF.jpg', // Replace with your logo image path
-                width: 150,
-              ),
+      // appBar: AppBar(
+      //   title: Image.asset(
+      //     Constants.logoPath,
+      //     height: 40,
+      //   ),
+      //   actions: [
+      //     TextButton(
+      //       onPressed: () => signInAsGuest(ref, context),
+      //       child: const Text(
+      //         'Skip',
+      //         style: TextStyle(
+      //           fontWeight: FontWeight.bold,
+      //         ),
+      //       ),
+      //     ),
+      //   ],
+      // ),
+      body: isLoading
+          ? const Loader()
+          : Column(
+              children: [
+                const SizedBox(height: 100),
+                const Text(
+                  'Children of India',
+                  style: TextStyle(
+                    fontSize: 30,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 0.5,
+                    color: tPrimaryColor,
+                  ),
+                ),
+                const SizedBox(height: 30),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Image.asset(
+                    'assets/logo/logo_CIF.jpg',
+                    height: 200,
+                  ),
+                ),
+                const SizedBox(height: 20),
+                const Responsive(child: SignInButton()),
+              ],
             ),
-            // Title
-            const Text(
-              'Welcome to Children of India',
-              style: TextStyle(
-                color: Color.fromRGBO(239, 72, 53, 1),
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 30),
-            // Sign in with Google button
-            SizedBox(
-              height: 50,
-              width: 250,
-              child: SignInButton(
-                Buttons.google,
-                text: "Sign In With Google",
-                onPressed: _handleGoogleSignIn,
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }

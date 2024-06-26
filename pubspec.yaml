@@ -35,6 +35,13 @@ dependencies:
   video_player: ^2.8.6
   intl: ^0.19.0
   flutter_launcher_icons: ^0.13.1
+  flutter_riverpod: ^2.5.1
+  file_picker: ^8.0.5
+  fpdart: ^1.1.0
+  google_sign_in: ^6.2.1
+  firebase_storage: ^12.1.0
+  shared_preferences: ^2.2.3
+  routemaster: ^1.0.1
 
 dev_dependencies:
   flutter_test:

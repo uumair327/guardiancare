@@ -1,62 +1,107 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:guardiancare/src/features/authentication/controllers/auth_controller.dart';
+import 'package:guardiancare/src/features/authentication/models/user_model.dart';
 import 'package:guardiancare/src/features/authentication/screens/loginPage.dart';
 import 'package:guardiancare/src/routing/Pages.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:guardiancare/src/utils/theme/pallete.dart';
+import 'package:routemaster/routemaster.dart';
 
 import 'firebase_options.dart';
 
 void main() async {
-  // await dotenv.load(fileName: "/.env");
-
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  runApp(const GuardianCare());
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+   // Pass all uncaught "fatal" errors from the framework to Crashlytics
+  // FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
+
+  // // Pass all uncaught errors from the framework to Crashlytics
+  // FlutterError.onError = (errorDetails) {
+  //   FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
+  // };
+  // // Pass all uncaught asynchronous errors that aren't handled by the Flutter framework to Crashlytics
+  // PlatformDispatcher.instance.onError = (error, stack) {
+  //   FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+  //   return true;
+  // };
+
+  runApp(
+    const ProviderScope(
+      child: GuardianCare(),
+    ),
+  );
 }
 
-class guardiancare extends StatefulWidget {
+class guardiancare extends ConsumerStatefulWidget {
   const guardiancare({super.key});
 
   @override
-  State<guardiancare> createState() => _guardiancareState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _guardiancareState();
 }
 
-class _guardiancareState extends State<guardiancare> {
+// ignore: camel_case_types
+class _guardiancareState extends ConsumerState<guardiancare> {
   @override
   Widget build(BuildContext context) {
     return const GuardianCare();
   }
 }
 
-class GuardianCare extends StatefulWidget {
+class GuardianCare extends ConsumerStatefulWidget {
   const GuardianCare({super.key});
 
   @override
-  State<GuardianCare> createState() => _GuardianCareState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _GuardianCareState();
 }
 
-class _GuardianCareState extends State<GuardianCare> {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
+class _GuardianCareState extends ConsumerState<GuardianCare> {
+  UserModel? userModel;
 
-  User? _user;
-
-  @override
-  void initState() {
-    super.initState();
-
-    _auth.authStateChanges().listen((event) {
-      setState(() {
-        _user = event;
-      });
-    });
+  void getData(WidgetRef ref, User data) async {
+    userModel = await ref
+        .watch(authControllerProvider.notifier)
+        .getUserData(data.uid)
+        .first;
+    ref.read(userProvider.notifier).update((state) => userModel);
   }
 
+
+  // @override
+  // Widget build(BuildContext context) {
+  //   return MaterialApp(
+  //     title: "Children of India",
+  //     home: _user != null ? const Pages() : const LoginPage(),
+  //     debugShowCheckedModeBanner: false,
+  //   );
+  // }
+  
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: "Children of India",
-      home: _user != null ? const Pages() : const LoginPage(),
-      debugShowCheckedModeBanner: false,
-    );
+    return ref.watch(authStateChangeProvider).when(
+          data: (data) => MaterialApp.router(
+            debugShowCheckedModeBanner: false,
+            title: 'Aid Employ App',
+            theme: ref.watch(themeNotifierProvider),
+            routerDelegate: RoutemasterDelegate(
+              routesBuilder: (context) {
+                if (data != null) {
+                  getData(ref, data);
+                  if (ref.watch(userProvider)!= null) {
+                    return loggedInRoute;
+                  }
+                }
+                print('Returning loggedOutRoute');
+                return loggedOutRoute;
+              },
+            ),
+            routeInformationParser: const RoutemasterParser(),
+          ),
+          error: (error, stackTrace) => ErrorText(error: error.toString()),
+          loading: () => const Loader(),
+        );
   }
 }

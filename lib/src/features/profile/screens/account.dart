@@ -1,17 +1,19 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:guardiancare/src/constants/colors.dart';
-import 'package:guardiancare/src/features/authentication/controllers/account_controller.dart';
+import 'package:guardiancare/src/features/authentication/controllers/auth_controller.dart';
 import 'package:guardiancare/src/features/emergency/screens/emergencyContactPage.dart';
 import 'package:guardiancare/src/features/report/screens/reportPage.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class Account extends StatelessWidget {
-  final User? user;
-
-  const Account({Key? key, this.user}) : super(key: key);
+class Account extends ConsumerWidget {
+  void logOut(WidgetRef ref) {
+    ref.read(authControllerProvider.notifier).logout();
+  }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final user = ref.watch(userProvider)!;
+    
     return Scaffold(
       appBar: AppBar(
         title: const Text('Account'),
@@ -92,9 +94,7 @@ class Account extends StatelessWidget {
               ListTile(
                 leading: const Icon(Icons.logout, color: tPrimaryColor),
                 title: const Text('Log Out'),
-                onTap: () async {
-                  await AccountController.signOut(context);
-                },
+                onTap: () => logOut(ref),
               ),
             ],
           ),
