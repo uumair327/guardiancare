@@ -2,7 +2,7 @@
 <h3 align="center">Helping to make every step forward a leap towards a brighter and safer future for children.</h3>
 <p align="center">
   <a href="https://github.com/uumair327/guardiancare/releases">
-    <img width="120" height="120" alt="GuardianCare" src="https://github.com/uumair327/guardiancare/blob/main/assets/logo/logo.png">
+    <img width="120" height="120" alt="GuardianCare" src="https://github.com/uumair327/guardiancare/blob/main/assets/logo/logo_CIF.png">
   </a>
 </p>
 
