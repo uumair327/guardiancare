@@ -7,21 +7,14 @@ import 'package:guardiancare/src/routing/Pages.dart';
 import 'firebase_options.dart';
 
 void main() async {
-  // await dotenv.load(fileName: "/.env");
-
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  runApp(const GuardianCare());
+  runApp(const GuardianCareApp());
 }
 
-class guardiancare extends StatefulWidget {
-  const guardiancare({super.key});
+class GuardianCareApp extends StatelessWidget {
+  const GuardianCareApp({super.key});
 
-  @override
-  State<guardiancare> createState() => _guardiancareState();
-}
-
-class _guardiancareState extends State<guardiancare> {
   @override
   Widget build(BuildContext context) {
     return const GuardianCare();
@@ -37,16 +30,14 @@ class GuardianCare extends StatefulWidget {
 
 class _GuardianCareState extends State<GuardianCare> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
-
   User? _user;
 
   @override
   void initState() {
     super.initState();
-
-    _auth.authStateChanges().listen((event) {
+    _auth.authStateChanges().listen((User? user) {
       setState(() {
-        _user = event;
+        _user = user;
       });
     });
   }
@@ -55,7 +46,30 @@ class _GuardianCareState extends State<GuardianCare> {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: "Children of India",
-      home: _user != null ? const Pages() : const LoginPage(),
+      home: StreamBuilder<User?>(
+        stream: _auth.authStateChanges(),
+        builder: (BuildContext context, AsyncSnapshot<User?> snapshot) {
+          if (snapshot.hasError) {
+            return Scaffold(
+              body: Center(
+                child: Text("Error: ${snapshot.error}"),
+              ),
+            );
+          }
+          if (snapshot.connectionState == ConnectionState.active) {
+            if (snapshot.data == null) {
+              return const LoginPage();
+            } else {
+              return const Pages();
+            }
+          }
+          return const Scaffold(
+            body: Center(
+              child: CircularProgressIndicator(),
+            ),
+          );
+        },
+      ),
       debugShowCheckedModeBanner: false,
     );
   }
