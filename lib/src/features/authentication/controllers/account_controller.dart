@@ -6,21 +6,26 @@ class AccountController {
   static Future<void> signOut(BuildContext context) async {
     try {
       await FirebaseAuth.instance.signOut();
-      final currentUser = FirebaseAuth.instance.currentUser;
-      if (currentUser == null) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => LoginPage()),
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error signing out. Please try again.'),
-          ),
-        );
-      }
+
+      // Sign-out successful, navigate to LoginPage
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => LoginPage()),
+      );
+
+      // Show a success message
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Successfully signed out.'),
+        ),
+      );
     } catch (error) {
-      print(error);
+      print('Error signing out: $error');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Error signing out. Please try again.'),
+        ),
+      );
     }
   }
 }
