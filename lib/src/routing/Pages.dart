@@ -1,6 +1,8 @@
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:guardiancare/src/constants/colors.dart';
+import 'package:guardiancare/src/features/authentication/screens/loginPage.dart';
 import 'package:guardiancare/src/features/explore/screens/explore.dart';
 import 'package:guardiancare/src/features/forum/screens/forumPage.dart';
 import 'package:guardiancare/src/features/home/screens/homePage.dart';
@@ -58,19 +60,19 @@ class _PagesState extends State<Pages> {
           ),
         ),
         centerTitle: true,
-        // actions: [
-        //   IconButton(
-        //     icon: const Icon(Icons.logout, color: tPrimaryColor),
-        //     onPressed: () async {
-        //       await FirebaseAuth.instance.signOut();
-        //       Navigator.of(context).pushReplacement(
-        //         MaterialPageRoute(
-        //           builder: (context) => const LoginPage(),
-        //         ),
-        //       );
-        //     },
-        //   ),
-        // ],
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout, color: tPrimaryColor),
+            onPressed: () async {
+              await FirebaseAuth.instance.signOut();
+              Navigator.of(context).pushReplacement(
+                MaterialPageRoute(
+                  builder: (context) => const LoginPage(),
+                ),
+              );
+            },
+          ),
+        ],
       ),
       backgroundColor: Colors.white,
       body: SafeArea(
