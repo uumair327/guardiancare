@@ -13,7 +13,7 @@ class Pages extends StatefulWidget {
 }
 
 class _PagesState extends State<Pages> {
-  int index = 0; // Changed the default index value
+  int index = 0;
 
   @override
   void initState() {
@@ -28,11 +28,6 @@ class _PagesState extends State<Pages> {
         size: 25,
         color: tNavBarColorButton,
       ),
-      // const Icon(
-      //   Icons.search,
-      //   size: 25,
-      //   color: Colors.amber,
-      // ),
       const Icon(
         Icons.explore,
         size: 25,
@@ -43,35 +38,38 @@ class _PagesState extends State<Pages> {
         size: 25,
         color: tNavBarColorButton,
       ),
-      // const Icon(
-      //   Icons.account_circle,
-      //   size: 25,
-      //   color: Colors.amber,
-      // ),
     ];
 
     final screens = <Widget>[
       const HomePage(),
-      // SearchPage(),
       const Explore(),
       const ForumPage(),
-      // Account(user: _user),
     ];
 
     return Scaffold(
       extendBody: true,
       appBar: AppBar(
-        title: const Text("Children of India",
-            style: TextStyle(
-                color: tPrimaryColor,
-                fontWeight: FontWeight.bold,
-                fontSize: 25)),
-        leading: const Padding(
-          padding: EdgeInsets.all(13.0),
+        title: const Text(
+          "Children of India",
+          style: TextStyle(
+            color: tPrimaryColor,
+            fontWeight: FontWeight.bold,
+            fontSize: 25,
+          ),
         ),
         centerTitle: true,
         // actions: [
-        //   _user != null ? _signOut() : const Text("Hi"),
+        //   IconButton(
+        //     icon: const Icon(Icons.logout, color: tPrimaryColor),
+        //     onPressed: () async {
+        //       await FirebaseAuth.instance.signOut();
+        //       Navigator.of(context).pushReplacement(
+        //         MaterialPageRoute(
+        //           builder: (context) => const LoginPage(),
+        //         ),
+        //       );
+        //     },
+        //   ),
         // ],
       ),
       backgroundColor: Colors.white,
@@ -90,9 +88,4 @@ class _PagesState extends State<Pages> {
       ),
     );
   }
-
-  // Widget _signOut() {
-  //   return TextButton(
-  //       onPressed: () => _auth.signOut(), child: const Text("Sign Out", style: TextStyle(color: tPrimaryColor)));
-  // }
 }
