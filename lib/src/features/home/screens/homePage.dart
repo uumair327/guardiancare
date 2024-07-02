@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:guardiancare/src/common_widgets/WebViewPage.dart';
 import 'package:guardiancare/src/features/emergency/screens/emergencyContactPage.dart';
 import 'package:guardiancare/src/features/home/controllers/home_controller.dart';
@@ -11,14 +12,14 @@ import 'package:guardiancare/src/features/profile/screens/account.dart';
 import 'package:guardiancare/src/features/quiz/screens/quizPage.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class HomePage extends StatefulWidget {
+class HomePage extends ConsumerStatefulWidget {
   const HomePage({Key? key}) : super(key: key);
 
   @override
-  _HomePageState createState() => _HomePageState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends ConsumerState<HomePage> {
   late double carouselHeight;
   List<Map<String, dynamic>> carouselData = [];
   final FirebaseAuth _auth = FirebaseAuth.instance;

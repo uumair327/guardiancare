@@ -1,19 +1,22 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:guardiancare/src/constants/colors.dart';
 import 'package:guardiancare/src/features/authentication/controllers/auth_controller.dart';
 import 'package:guardiancare/src/features/emergency/screens/emergencyContactPage.dart';
 import 'package:guardiancare/src/features/report/screens/reportPage.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class Account extends ConsumerWidget {
+  final User? user;
+
   void logOut(WidgetRef ref) {
     ref.read(authControllerProvider.notifier).logout();
   }
 
+  const Account({Key? key, this.user}) : super(key: key);
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final user = ref.watch(userProvider)!;
-    
     return Scaffold(
       appBar: AppBar(
         title: const Text('Account'),

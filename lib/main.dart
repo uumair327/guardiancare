@@ -1,10 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:guardiancare/router.dart';
+import 'package:guardiancare/src/core/common/error_text.dart';
+import 'package:guardiancare/src/core/common/loader.dart';
 import 'package:guardiancare/src/features/authentication/controllers/auth_controller.dart';
 import 'package:guardiancare/src/features/authentication/models/user_model.dart';
-import 'package:guardiancare/src/features/authentication/screens/loginPage.dart';
-import 'package:guardiancare/src/routing/Pages.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:guardiancare/src/utils/theme/pallete.dart';
 import 'package:routemaster/routemaster.dart';
@@ -84,7 +85,7 @@ class _GuardianCareState extends ConsumerState<GuardianCare> {
     return ref.watch(authStateChangeProvider).when(
           data: (data) => MaterialApp.router(
             debugShowCheckedModeBanner: false,
-            title: 'Aid Employ App',
+            title: 'Guardian Care',
             theme: ref.watch(themeNotifierProvider),
             routerDelegate: RoutemasterDelegate(
               routesBuilder: (context) {
