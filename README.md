@@ -1,10 +1,12 @@
-<h1 align="center">GuardianCare</h1> <br>
-<h3 align="center">Helping to make every step forward a leap towards a brighter and safer future for children.</h3>
-<p align="center">
+<p align="center">  
   <a href="https://github.com/uumair327/guardiancare/releases">
-    <img width="120" height="120" alt="GuardianCare" src="https://github.com/uumair327/guardiancare/blob/main/assets/logo/logo_CIF.png">
+    <img width="240" height="240" alt="GuardianCare" src="https://github.com/uumair327/guardiancare/blob/main/assets/logo/logo_Splash.png">
   </a>
 </p>
+<h1 align="center">GuardianCare</h1> <br>
+<h3 align="center">Helping to make every step forward a leap towards a brighter and safer future for children.</h3>
+
+
 
 <p align="center">
   A Flutter-based cross-platform mobile application that provides resources, reporting mechanisms, and support to combat online sexual exploitation of children.
