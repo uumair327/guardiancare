@@ -182,7 +182,7 @@ We value your input and strive to make our app the best it can be. If you're int
 
 By becoming a tester, you'll get the opportunity to experience beta testing and try out upcoming features before they're released to the public. Meanwhile, stable releases can be found in the [Releases section](https://github.com/uumair327/guardiancare/releases/tag/Stable) . You can also contribute by building the app locally and testing specific functionalities to help us find and fix bugs. Alternatively, you can join our testing app group to access beta releases and provide [feedback directly](https://github.com/uumair327/guardiancare/issues).
 
-To join our testing program, click [here]() and become a part of shaping the future of our app!
+To join our testing program, click [here](https://appdistribution.firebase.dev/i/2dc0d93759150b3f) and become a part of shaping the future of our app!
 
 ## License
 
