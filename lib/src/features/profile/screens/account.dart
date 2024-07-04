@@ -2,13 +2,14 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:guardiancare/src/constants/colors.dart';
+import 'package:guardiancare/src/features/authentication/screens/loginPage.dart';
 import 'package:guardiancare/src/features/emergency/screens/emergencyContactPage.dart';
 import 'package:guardiancare/src/features/report/screens/reportPage.dart';
 
 class Account extends StatelessWidget {
   final User? user;
 
-  const Account({Key? key, this.user}) : super(key: key);
+  const Account({super.key, this.user});
 
   @override
   Widget build(BuildContext context) {
@@ -95,6 +96,13 @@ class Account extends StatelessWidget {
                 onTap: () async {
                   await GoogleSignIn().signOut();
                   await FirebaseAuth.instance.signOut();
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const LoginPage(),
+                    ),
+                    (Route<dynamic> route) => false,
+                  );
                 },
               ),
             ],
