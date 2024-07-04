@@ -43,10 +43,13 @@ dev_dependencies:
   flutter_lints: ^4.0.0
 
 flutter_native_splash:
-  color: "#f7f6f1"
-  color_dark: "#272727"
-  image: assets/images/logo.png
-  image_dark: assets/images/logo.png
+  android: true
+  ios: true
+  color: "#f4f4f4"
+  color_dark: "#151517"
+  image: "assets/logo/logo_Splash.png"
+  image_dark: "assets/logo/logo_Splash.png"
+  android_gravity: "center"
 
   android_12:
     image: assets/images/logo.png
