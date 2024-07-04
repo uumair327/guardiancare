@@ -1,10 +1,12 @@
-<h1 align="center">GuardianCare</h1> <br>
-<h3 align="center">Helping to make every step forward a leap towards a brighter and safer future for children.</h3>
-<p align="center">
+<p align="center">  
   <a href="https://github.com/uumair327/guardiancare/releases">
-    <img width="120" height="120" alt="GuardianCare" src="https://github.com/uumair327/guardiancare/blob/main/assets/logo/logo.png">
+    <img width="240" height="240" alt="GuardianCare" src="https://github.com/uumair327/guardiancare/blob/main/assets/logo/logo_Splash.png">
   </a>
 </p>
+<h1 align="center">GuardianCare</h1> <br>
+<h3 align="center">Helping to make every step forward a leap towards a brighter and safer future for children.</h3>
+
+
 
 <p align="center">
   A Flutter-based cross-platform mobile application that provides resources, reporting mechanisms, and support to combat online sexual exploitation of children.
@@ -180,7 +182,7 @@ We value your input and strive to make our app the best it can be. If you're int
 
 By becoming a tester, you'll get the opportunity to experience beta testing and try out upcoming features before they're released to the public. Meanwhile, stable releases can be found in the [Releases section](https://github.com/uumair327/guardiancare/releases/tag/Stable) . You can also contribute by building the app locally and testing specific functionalities to help us find and fix bugs. Alternatively, you can join our testing app group to access beta releases and provide [feedback directly](https://github.com/uumair327/guardiancare/issues).
 
-To join our testing program, click [here]() and become a part of shaping the future of our app!
+To join our testing program, click [here](https://appdistribution.firebase.dev/i/2dc0d93759150b3f) and become a part of shaping the future of our app!
 
 ## License
 
