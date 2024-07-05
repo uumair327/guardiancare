@@ -1,10 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:guardiancare/src/constants/colors.dart';
 import 'package:guardiancare/src/features/authentication/screens/loginPage.dart';
 import 'package:guardiancare/src/features/emergency/screens/emergencyContactPage.dart';
 import 'package:guardiancare/src/features/report/screens/reportPage.dart';
+import 'package:guardiancare/src/features/authentication/controllers/login_controller.dart';
 
 class Account extends StatelessWidget {
   final User? user;
@@ -12,7 +12,7 @@ class Account extends StatelessWidget {
   const Account({super.key, this.user});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) {  
     return Scaffold(
       appBar: AppBar(
         title: const Text('Account'),
@@ -94,15 +94,18 @@ class Account extends StatelessWidget {
                 leading: const Icon(Icons.logout, color: tPrimaryColor),
                 title: const Text('Log Out'),
                 onTap: () async {
-                  await GoogleSignIn().signOut();
-                  await FirebaseAuth.instance.signOut();
-                  Navigator.pushAndRemoveUntil(
+                  bool result = await signOutFromGoogle();
+                  print(result);
+
+                  Navigator.pop(
+                    // ignore: use_build_context_synchronously
                     context,
                     MaterialPageRoute(
                       builder: (context) => const LoginPage(),
                     ),
-                    (Route<dynamic> route) => false,
                   );
+
+                  if (result) print("Signed Out Successfully !!");
                 },
               ),
             ],

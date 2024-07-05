@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sign_in_button/sign_in_button.dart';
+import 'package:guardiancare/src/features/authentication/controllers/login_controller.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -19,26 +19,6 @@ class _LoginPageState extends State<LoginPage> {
     _auth.authStateChanges().listen((User? user) {
       setState(() {});
     });
-  }
-
-  Future<void> signInWithGoogle() async {
-    try {
-      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-      final GoogleSignInAuthentication? googleAuth =
-          await googleUser?.authentication;
-      final AuthCredential credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth?.accessToken,
-        idToken: googleAuth?.idToken,
-      );
-      final UserCredential userCredential =
-          await _auth.signInWithCredential(credential);
-      print("Signed in: ${userCredential.user?.displayName}");
-    } catch (e) {
-      print("Error signing in with Google: $e");
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Error signing in with Google: $e")),
-      );
-    }
   }
 
   @override
@@ -71,8 +51,14 @@ class _LoginPageState extends State<LoginPage> {
               child: SignInButton(
                 Buttons.google,
                 text: "Sign In With Google",
-                onPressed: signInWithGoogle,
-              ),
+                onPressed: () async { 
+                  UserCredential? userCredential = await signInWithGoogle();
+
+                  if (userCredential != null) {
+                    print("Signed in: ${userCredential.user?.displayName}");
+                  }
+                },
+              )
             ),
           ],
         ),
