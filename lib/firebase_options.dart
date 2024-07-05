@@ -27,10 +27,7 @@ class DefaultFirebaseOptions {
       case TargetPlatform.macOS:
         return macos;
       case TargetPlatform.windows:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for windows - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return windows;
       case TargetPlatform.linux:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for linux - '
@@ -70,20 +67,32 @@ class DefaultFirebaseOptions {
     projectId: 'guardiancare-a210f',
     databaseURL: 'https://guardiancare-a210f-default-rtdb.asia-southeast1.firebasedatabase.app',
     storageBucket: 'guardiancare-a210f.appspot.com',
-    androidClientId: '331315801686-4co8knverqologscscu70sip0c3iqqd3.apps.googleusercontent.com',
+    androidClientId: '331315801686-01tinu5ukqe35u4ivvn3fqo4ju59pp1d.apps.googleusercontent.com',
     iosClientId: '331315801686-0hcdvdo15e87a8lmqnartjpuea9lr2jl.apps.googleusercontent.com',
     iosBundleId: 'app.guardiancare.guardiancare',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
     apiKey: 'AIzaSyDwCbSP-Qw1bRg5BvVco5x0VqxoBMAtLgs',
-    appId: '1:331315801686:ios:fc27e7a4f68823717595f7',
+    appId: '1:331315801686:ios:f9b6693b41daae0d7595f7',
     messagingSenderId: '331315801686',
     projectId: 'guardiancare-a210f',
     databaseURL: 'https://guardiancare-a210f-default-rtdb.asia-southeast1.firebasedatabase.app',
     storageBucket: 'guardiancare-a210f.appspot.com',
-    androidClientId: '331315801686-4co8knverqologscscu70sip0c3iqqd3.apps.googleusercontent.com',
-    iosClientId: '331315801686-s5blibsu54lp96ti29kvqeas6ko7jk5u.apps.googleusercontent.com',
-    iosBundleId: 'app.guardiancare.guardiancare.RunnerTests',
+    androidClientId: '331315801686-01tinu5ukqe35u4ivvn3fqo4ju59pp1d.apps.googleusercontent.com',
+    iosClientId: '331315801686-0hcdvdo15e87a8lmqnartjpuea9lr2jl.apps.googleusercontent.com',
+    iosBundleId: 'app.guardiancare.guardiancare',
   );
+
+  static const FirebaseOptions windows = FirebaseOptions(
+    apiKey: 'AIzaSyBJKvh4ZXb3npq8cL9-mk-kDlSIUO6VppU',
+    appId: '1:331315801686:web:890d5aa832db1f5a7595f7',
+    messagingSenderId: '331315801686',
+    projectId: 'guardiancare-a210f',
+    authDomain: 'guardiancare-a210f.firebaseapp.com',
+    databaseURL: 'https://guardiancare-a210f-default-rtdb.asia-southeast1.firebasedatabase.app',
+    storageBucket: 'guardiancare-a210f.appspot.com',
+    measurementId: 'G-LDQKT44KB4',
+  );
+
 }
