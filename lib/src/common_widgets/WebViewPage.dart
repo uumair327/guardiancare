@@ -18,7 +18,8 @@ class _WebViewPageState extends State<WebViewPage> {
   void initState() {
     super.initState();
 
-    PlatformWebViewControllerCreationParams params;
+    late final PlatformWebViewControllerCreationParams params;
+
     if (WebViewPlatform.instance is WebKitWebViewPlatform) {
       params = WebKitWebViewControllerCreationParams(
         allowsInlineMediaPlayback: true,
