@@ -34,6 +34,8 @@ class _QuizQuestionsPageState extends State<QuizQuestionsPage> {
                 // child: SingleChildScrollView(
                 child: QuizQuestionWidget(
                   questionIndex: currentQuestionIndex + 1,
+                  correctAnswerIndex: widget.questions[currentQuestionIndex]
+                            ['correctAnswerIndex'],
                   question: widget.questions[currentQuestionIndex],
                   onPressed: (int selectedOptionIndex) {
                     // Check if the selected option is correct
