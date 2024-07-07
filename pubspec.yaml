@@ -55,9 +55,9 @@ flutter_native_splash:
   android_gravity: "center"
 
   android_12:
-    image: assets/logo/logo_Splash.png
+    image: assets/logo/logo_CIF.png
     icon_background_color: "#f7f6f1"
-    image_dark: assets/logo/logo_Splash.png
+    image_dark: assets/logo/logo_CIF.png
     icon_background_color_dark: "#272727"
 
 flutter:
