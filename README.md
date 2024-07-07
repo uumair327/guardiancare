@@ -139,7 +139,6 @@ To run the GuardianCare app, you need to configure the environment on your machi
 
 <!-- SCREENSHOTS -->
 ## Screenshots of Application [APK]
-## Application Screenshots
 
 ### Home and Explore Pages
 | Home Page | Explore Page |
