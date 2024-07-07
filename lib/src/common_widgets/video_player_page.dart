@@ -20,7 +20,7 @@ class VideoPlayerPage extends StatelessWidget {
       );
     }
 
-    YoutubePlayerController _controller = YoutubePlayerController(
+    YoutubePlayerController controller = YoutubePlayerController(
       initialVideoId: videoId,
       flags: const YoutubePlayerFlags(
         autoPlay: true,
@@ -34,13 +34,16 @@ class VideoPlayerPage extends StatelessWidget {
       ),
       body: Center(
         child: YoutubePlayer(
-          controller: _controller,
+          controller: controller,
           showVideoProgressIndicator: true,
           progressIndicatorColor: Colors.blueAccent,
           progressColors: const ProgressBarColors(
             playedColor: Colors.blue,
             handleColor: Colors.blueAccent,
           ),
+          onReady: () {
+            controller.addListener(() {});
+          },
         ),
       ),
     );
