@@ -155,14 +155,25 @@ To run the GuardianCare app, you need to configure the environment on your machi
 |:------------:|:------------:|:------------:|
 |<img src="https://firebasestorage.googleapis.com/v0/b/guardiancare-a210f.appspot.com/o/screenshots%2FlearnPage.jpg?alt=media&token=48e1f85e-04e7-45bb-a2f2-cbc13a86f1cc" alt="Learn Page" width="240"/>|<img src="https://firebasestorage.googleapis.com/v0/b/guardiancare-a210f.appspot.com/o/screenshots%2FlearnPage2.jpg?alt=media&token=2f749f94-a9e4-48c9-b299-975ff5b479b3" alt="Learn Page 2" width="240"/>|<img src="https://firebasestorage.googleapis.com/v0/b/guardiancare-a210f.appspot.com/o/screenshots%2FlearnPage3.jpg?alt=media&token=c8ed5821-c1bf-4b5d-83e3-d5b1a03b55cf" alt="Learn Page 3" width="240"/>|
 
-### Quiz, Emergency, and Profile Pages
-| Quiz Page 1 | Quiz Page 2 | Emergency Page |
-|:-----------:|:-----------:|:--------------:|
-|<img src="https://firebasestorage.googleapis.com/v0/b/guardiancare-a210f.appspot.com/o/screenshots%2FquizPage.jpg?alt=media&token=354061bd-7c48-4de6-beb9-11ddaacbc85e" alt="Quiz Page" width="240"/>|<img src="https://firebasestorage.googleapis.com/v0/b/guardiancare-a210f.appspot.com/o/screenshots%2FquizPage2.jpg?alt=media&token=7f46c41f-8373-4196-be1c-00c79a58d60b" alt="Quiz Page 2" width="240"/>|<img src="https://firebasestorage.googleapis.com/v0/b/guardiancare-a210f.appspot.com/o/screenshots%2FemergencyPage.jpg?alt=media&token=bc2f536c-fedd-4416-a058-19b3e349dd84" alt="Emergency Page" width="240"/>|
+### Quiz Page
+| Quiz Page 1 | Quiz Page 2 |
+|:-----------:|:-----------:|
+|<img src="https://firebasestorage.googleapis.com/v0/b/guardiancare-a210f.appspot.com/o/screenshots%2FquizPage.jpg?alt=media&token=354061bd-7c48-4de6-beb9-11ddaacbc85e" alt="Quiz Page" width="240"/>|<img src="https://firebasestorage.googleapis.com/v0/b/guardiancare-a210f.appspot.com/o/screenshots%2FquizPage2.jpg?alt=media&token=7f46c41f-8373-4196-be1c-00c79a58d60b" alt="Quiz Page 2" width="240"/>|
 
-| Profile Page | Web View |
-|:------------:|:--------:|
-|<img src="https://firebasestorage.googleapis.com/v0/b/guardiancare-a210f.appspot.com/o/screenshots%2FprofilePage.jpg?alt=media&token=4f1d2e28-5af5-4a5e-a3c4-a1d2ec04a176" alt="Profile Page" width="240"/>|<img src="https://firebasestorage.googleapis.com/v0/b/guardiancare-a210f.appspot.com/o/screenshots%2FwebPage.jpg?alt=media&token=6a9e63c1-fe94-4625-98c6-fe613e59aad1" alt="Web View" width="240"/>|
+### Emergency Page
+| Emergency Page |
+|:--------------:|
+|<img src="https://firebasestorage.googleapis.com/v0/b/guardiancare-a210f.appspot.com/o/screenshots%2FemergencyPage.jpg?alt=media&token=bc2f536c-fedd-4416-a058-19b3e349dd84" alt="Emergency Page" width="240"/>|
+
+### Profile Page
+| Profile Page |
+|:------------:|
+|<img src="https://firebasestorage.googleapis.com/v0/b/guardiancare-a210f.appspot.com/o/screenshots%2FprofilePage.jpg?alt=media&token=4f1d2e28-5af5-4a5e-a3c4-a1d2ec04a176" alt="Profile Page" width="240"/>|
+
+### Web View
+| Web View |
+|:--------:|
+|<img src="https://firebasestorage.googleapis.com/v0/b/guardiancare-a210f.appspot.com/o/screenshots%2FwebPage.jpg?alt=media&token=6a9e63c1-fe94-4625-98c6-fe613e59aad1" alt="Web View" width="240"/>|
 
 ## Testing and Feedback 
 
