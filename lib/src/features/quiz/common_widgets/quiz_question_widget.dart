@@ -1,69 +1,93 @@
 import 'package:flutter/material.dart';
 import 'package:guardiancare/src/constants/colors.dart';
 
-class QuizQuestionWidget extends StatelessWidget {
+class QuizQuestionWidget extends StatefulWidget {
   final int questionIndex;
+  final int correctAnswerIndex;
   final Map<String, dynamic> question;
   final Function(int) onPressed;
 
   const QuizQuestionWidget({
     Key? key,
     required this.questionIndex,
+    required this.correctAnswerIndex,
     required this.question,
     required this.onPressed,
   }) : super(key: key);
 
   @override
+  _QuizQuestionWidgetState createState() => _QuizQuestionWidgetState();
+}
+
+class _QuizQuestionWidgetState extends State<QuizQuestionWidget> {
+  int? selectedIndex;
+
+  @override
+  void didUpdateWidget(QuizQuestionWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.questionIndex != oldWidget.questionIndex) {
+      setState(() {
+        selectedIndex = null;
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Expanded(
       child: Container(
-        color: Colors.white, // Background color
+        color: Colors.white,
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(
-              'Question $questionIndex',
+              'Question ${widget.questionIndex}',
               style: const TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
-                color: tTextPrimary, // Text color
+                color: tTextPrimary,
               ),
             ),
             const SizedBox(height: 16),
             Text(
-              question['question'],
+              widget.question['question'],
               style: const TextStyle(
                 fontSize: 20,
-                color: tTextPrimary, // Text color
+                color: tTextPrimary,
               ),
             ),
             const SizedBox(height: 16),
             ...List.generate(
-              question['options'].length,
+              widget.question['options'].length,
               (index) => SingleChildScrollView(
                 child: Container(
                   margin: const EdgeInsets.symmetric(vertical: 8.0),
                   child: ElevatedButton(
-                    onPressed: () => onPressed(index),
+                    onPressed: () {
+                      setState(() {
+                        selectedIndex = index;
+                      });
+                      widget.onPressed(index);
+                    },
                     style: ElevatedButton.styleFrom(
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(30.0),
-                        side: const BorderSide(
-                            color: tPrimaryColor), // White border
+                        side: const BorderSide(color: tPrimaryColor),
                       ),
                       padding: const EdgeInsets.symmetric(
                         vertical: 16.0,
                         horizontal: 24.0,
                       ),
-                      backgroundColor: Colors.white,
+                      backgroundColor: getButtonColor(index),
                       foregroundColor: tTextPrimary,
-                      elevation: 0, // Green background color
+                      elevation: 0,
                     ),
                     child: Text(
-                      question['options'][index],
-                      style:
-                          const TextStyle(color: tPrimaryColor), // Text color
+                      widget.question['options'][index],
+                      style: TextStyle(
+                        color: selectedIndex == index ? Colors.white : tPrimaryColor,
+                      ),
                     ),
                   ),
                 ),
@@ -73,5 +97,12 @@ class QuizQuestionWidget extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Color getButtonColor(int index) {
+    if (selectedIndex == index) {
+      return index == widget.correctAnswerIndex ? Colors.green : Colors.red;
+    }
+    return Colors.white;
   }
 }
