@@ -16,6 +16,27 @@ class _CommentInputState extends State<CommentInput> {
   final _controller = TextEditingController();
   bool _loading = false;
 
+  Future<Map<String, String>> fetchUserDetails() async {
+    final user = FirebaseAuth.instance.currentUser!;
+    var userName = "Anonymous";
+    String userEmail = user.email!;
+
+    try {
+      final userDetails = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .get();
+
+      if (userDetails.exists) {
+        userName = userDetails.data()?['displayName'] ?? "Anonymous";
+      }
+    } catch (e) {
+      print('Error fetching user details: $e');
+    }
+
+    return {'userName': userName, 'userEmail': userEmail, 'userUID': user.uid};
+  }
+
   Future<void> _addComment() async {
     if (_controller.text.isEmpty) return;
 
@@ -23,22 +44,17 @@ class _CommentInputState extends State<CommentInput> {
       _loading = true;
     });
 
-    final user = FirebaseAuth.instance.currentUser!;
-    final userName = user.displayName ?? 'Anonymous';
-    final userEmail = user.email!;
-
-    final commentId = DateTime.now().microsecondsSinceEpoch.toString();
-    final comment = Comment(
-      id: commentId,
-      userId: user.uid,
-      userName: userName,
-      userEmail: userEmail,
-      forumId: widget.forumId,
-      text: _controller.text,
-      createdAt: DateTime.now(),
-    );
-
     try {
+      final user = FirebaseAuth.instance.currentUser!;
+      final commentId = DateTime.now().microsecondsSinceEpoch.toString();
+      final comment = Comment(
+        id: commentId,
+        userId: user.uid,
+        forumId: widget.forumId,
+        text: _controller.text,
+        createdAt: DateTime.now(),
+      );
+
       await FirebaseFirestore.instance
           .collection('forum')
           .doc(widget.forumId)
@@ -70,7 +86,7 @@ class _CommentInputState extends State<CommentInput> {
                 fillColor: Colors.white,
                 labelText: 'Add a comment...',
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(30.0))
+                  borderRadius: BorderRadius.all(Radius.circular(30.0)),
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.all(Radius.circular(30.0)),
@@ -80,7 +96,8 @@ class _CommentInputState extends State<CommentInput> {
                   borderRadius: BorderRadius.all(Radius.circular(30.0)),
                   borderSide: BorderSide(color: Color.fromRGBO(239, 72, 53, 1)),
                 ),
-                contentPadding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+                contentPadding:
+                    EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
               ),
             ),
           ),

@@ -31,13 +31,27 @@ class _LoginPageState extends State<LoginPage> {
           children: [
             Padding(
               padding: const EdgeInsets.all(16.0),
-              child: Image.asset(
-                'assets/logo/logo_CIF.png',
-                width: 150,
+              child: Column(
+                children: [
+                  Image.asset(
+                    'assets/logo/logo.png',
+                    width: 100,
+                  ), // Reduce height here
+                  const Text(
+                    'A Children Of India App',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      fontStyle: FontStyle.italic,
+                    ),
+                  ),
+                ],
               ),
             ),
+            const SizedBox(
+                height: 10), // Adjust space between the first and second text
             const Text(
-              'Welcome to Children of India',
+              'Welcome to Guardian Care',
               style: TextStyle(
                 color: Color.fromRGBO(239, 72, 53, 1),
                 fontSize: 24,
@@ -45,20 +59,26 @@ class _LoginPageState extends State<LoginPage> {
               ),
             ),
             const SizedBox(height: 30),
-            SizedBox(
-              height: 50,
-              width: 250,
-              child: SignInButton(
-                Buttons.google,
-                text: "Sign In With Google",
-                onPressed: () async { 
-                  UserCredential? userCredential = await signInWithGoogle();
+            Center(
+              child: SizedBox(
+                height: 50,
+                width: 250,
+                child: SignInButton(
+                  Buttons.google,
+                  text: "Sign In With Google",
+                  onPressed: () async {
+                    UserCredential? userCredential = await signInWithGoogle();
 
-                  if (userCredential != null) {
-                    print("Signed in: ${userCredential.user?.displayName}");
-                  }
-                },
-              )
+                    if (userCredential != null) {
+                      print("Signed in: ${userCredential.user?.displayName}");
+                    }
+                  },
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(50.0),
+                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 30.0),
+                ),
+              ),
             ),
           ],
         ),
