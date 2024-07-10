@@ -1,5 +1,5 @@
 name: guardiancare
-description: "A new Flutter project."
+description: "A Children of India App."
 
 publish_to: 'none'
 
@@ -50,14 +50,14 @@ flutter_native_splash:
   ios: true
   color: "#f4f4f4"
   color_dark: "#151517"
-  image: "assets/logo/logo_Splash.png"
-  image_dark: "assets/logo/logo_Splash.png"
+  image: "assets/logo/logo.png"
+  image_dark: "assets/logo/logo.png"
   android_gravity: "center"
 
   android_12:
-    image: assets/logo/logo_CIF.png
+    image: assets/logo/logo.png
     icon_background_color: "#f7f6f1"
-    image_dark: assets/logo/logo_CIF.png
+    image_dark: assets/logo/logo.png
     icon_background_color_dark: "#272727"
 
 flutter:
@@ -68,13 +68,12 @@ flutter:
     - assets/images/on_boarding_images/
     - assets/images/
     - assets/logo/
-    - assets/images/image.png
-
+    
 flutter_launcher_icons:
   android: "launcher_icon"
   ios: true
-  image_path: "assets/logo/logo_CIF.png"
-  min_sdk_android: 21 # android min sdk min:16, default 21
+  image_path: "assets/logo/logo.png"
+  min_sdk_android: 21
 
 lib:
   - .env
