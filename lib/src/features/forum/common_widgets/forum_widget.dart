@@ -65,87 +65,101 @@ class ForumDetailPage extends StatelessWidget {
       appBar: AppBar(
         title: Text(forum.title),
       ),
-      body: Column(
-        children: [
-          Expanded(
-            child: SingleChildScrollView(
-              child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      forum.title,
-                      style: const TextStyle(
-                        fontSize: 20.0,
-                        fontWeight: FontWeight.bold,
-                        color: Color.fromRGBO(239, 72, 53, 1),
-                      ),
-                    ),
-                    Text(
-                      DateFormat('dd MMM yy - hh:mm a').format(forum.createdAt),
-                    ),
-                    const SizedBox(height: 10),
-                    Text(
-                      forum.description,
-                      textAlign: TextAlign.left,
-                    ),
-                    const SizedBox(height: 10),
-                    const Divider(),
-                    StreamBuilder(
-                      stream: FirebaseFirestore.instance
-                          .collection('forum')
-                          .doc(forum.id)
-                          .collection('comments')
-                          .snapshots(),
-                      builder: (context, snapshot) {
-                        if (!snapshot.hasData) {
-                          return const Center(
-                              child: CircularProgressIndicator());
-                        }
-                        var comments = snapshot.data!.docs
-                            .map((doc) => Comment.fromMap(doc.data()))
-                            .toList();
-                        return Column(
-                          children: comments.map((comment) {
-                            return ListTile(
-                              contentPadding: const EdgeInsets.only(left: 6),
-                              subtitle: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  UserDetails(userId: comment.userId),
-                                  const SizedBox(height: 6),
-                                  Text(
-                                    comment.text,
-                                    textAlign: TextAlign.left,
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          bool isTablet = constraints.maxWidth > 600;
+
+          return Column(
+            children: [
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Padding(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          forum.title,
+                          style: TextStyle(
+                            fontSize: isTablet ? 24.0 : 20.0,
+                            fontWeight: FontWeight.bold,
+                            color: const Color.fromRGBO(239, 72, 53, 1),
+                          ),
+                        ),
+                        Text(
+                          DateFormat('dd MMM yy - hh:mm a')
+                              .format(forum.createdAt),
+                        ),
+                        const SizedBox(height: 10),
+                        Text(
+                          forum.description,
+                          textAlign: TextAlign.left,
+                          style: TextStyle(fontSize: isTablet ? 18.0 : 14.0),
+                        ),
+                        const SizedBox(height: 10),
+                        const Divider(),
+                        StreamBuilder<QuerySnapshot>(
+                          stream: FirebaseFirestore.instance
+                              .collection('forum')
+                              .doc(forum.id)
+                              .collection('comments')
+                              .snapshots(),
+                          builder: (context, snapshot) {
+                            if (!snapshot.hasData) {
+                              return const Center(
+                                  child: CircularProgressIndicator());
+                            }
+                            var comments = snapshot.data!.docs
+                                .map((doc) => Comment.fromMap(
+                                    doc.data() as Map<String, dynamic>))
+                                .toList();
+                            return Column(
+                              children: comments.map((comment) {
+                                return ListTile(
+                                  contentPadding:
+                                      const EdgeInsets.only(left: 6),
+                                  subtitle: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      UserDetails(userId: comment.userId),
+                                      const SizedBox(height: 6),
+                                      Text(
+                                        comment.text,
+                                        textAlign: TextAlign.left,
+                                        style: TextStyle(
+                                          fontSize: isTablet ? 18 : 14,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      // Text(
+                                      //   DateFormat('dd MMM yy - hh:mm a').format(comment.createdAt),
+                                      //   style: TextStyle(
+                                      //     color: Colors.grey.shade600,
+                                      //     fontSize: isTablet ? 14 : 12,
+                                      //   ),
+                                      // ),
+                                    ],
                                   ),
-                                  // Text(
-                                  //   DateFormat('dd MMM yy - hh:mm a')
-                                  //       .format(comment.createdAt),
-                                  //   style: TextStyle(
-                                  //     color: Colors.grey.shade600,
-                                  //     fontSize: 12,
-                                  //   ),
-                                  // ),
-                                ],
-                              ),
-                              isThreeLine: true,
+                                  isThreeLine: true,
+                                );
+                              }).toList(),
                             );
-                          }).toList(),
-                        );
-                      },
+                          },
+                        ),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
               ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(bottom: 3.0),
-            child: CommentInput(forumId: forum.id),
-          ),
-        ],
+              Padding(
+                padding: const EdgeInsets.only(bottom: 3.0),
+                child: CommentInput(forumId: forum.id),
+              ),
+            ],
+          );
+        },
       ),
     );
   }
@@ -169,7 +183,8 @@ class UserDetails extends StatelessWidget {
 
       if (userDetails.exists) {
         userName = userDetails.data()?['displayName'] ?? "Anonymous";
-        userImage = userDetails.data()?['photoURL'] ?? "";
+        userImage = userDetails.data()?['photoURL'] ??
+            "https://i.ibb.co/Qc9HnBr/logo-CIF-zoom.jpg";
         userEmail = userDetails.data()?['email'] ?? "anonymous@mail.com";
       }
     } catch (e) {
