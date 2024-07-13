@@ -35,23 +35,23 @@ class _QuizQuestionsPageState extends State<QuizQuestionsPage> {
                 child: QuizQuestionWidget(
                   questionIndex: currentQuestionIndex + 1,
                   correctAnswerIndex: widget.questions[currentQuestionIndex]
-                            ['correctAnswerIndex'],
+                      ['correctAnswerIndex'],
                   question: widget.questions[currentQuestionIndex],
                   onPressed: (int selectedOptionIndex) {
                     // Check if the selected option is correct
                     if (selectedOptionIndex ==
                         widget.questions[currentQuestionIndex]
                             ['correctAnswerIndex']) {
-                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                        content: Text('Correct!'),
-                      ));
+                      // ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                      //   content: Text('Correct!'),
+                      // ));
                       setState(() {
                         correctAnswers++;
                       });
                     } else {
-                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                        content: Text('Incorrect!'),
-                      ));
+                      // ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                      //   content: Text('Incorrect!'),
+                      // ));
                       setState(() {
                         incorrectCategories.add(
                             widget.questions[currentQuestionIndex]['category']);
@@ -73,7 +73,10 @@ class _QuizQuestionsPageState extends State<QuizQuestionsPage> {
 
                           // Show quiz completed dialog
                           QuizController.showQuizCompletedDialog(
-                              context, correctAnswers, widget.questions.length, incorrectCategories.length);
+                              context,
+                              correctAnswers,
+                              widget.questions.length,
+                              incorrectCategories.length);
                         }
                       });
                     });
