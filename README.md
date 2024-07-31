@@ -1,6 +1,6 @@
 <p align="center">  
   <a href="https://github.com/uumair327/guardiancare/releases">
-    <img width="240" height="240" alt="GuardianCare" src="https://github.com/uumair327/guardiancare/blob/main/assets/logo/logo_Splash.png">
+    <img width="240" height="240" alt="GuardianCare" src="https://github.com/user-attachments/assets/cb305108-c53e-4d9f-914a-7179fee18654">
   </a>
 </p>
 <h1 align="center">GuardianCare</h1> <br>
