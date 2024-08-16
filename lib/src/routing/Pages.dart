@@ -1,5 +1,6 @@
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart'; // Import for SharedPreferences
 import 'package:guardianscare/src/constants/colors.dart';
 import 'package:guardianscare/src/features/explore/screens/explore.dart';
 import 'package:guardianscare/src/features/forum/screens/forumPage.dart';
@@ -13,11 +14,61 @@ class Pages extends StatefulWidget {
 }
 
 class _PagesState extends State<Pages> {
-  int index = 0; // Changed the default index value
+  int index = 0;
+  bool hasSeenForumGuidelines = false;
 
-  @override
-  void initState() {
-    super.initState();
+  Future<void> _checkAndShowGuidelines() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    hasSeenForumGuidelines = prefs.getBool('has_seen_forum_guidelines') ?? false;
+
+    if (index == 2 && !hasSeenForumGuidelines) {
+      await _showGuidelinesDialog();
+      await prefs.setBool('has_seen_forum_guidelines', true);
+      setState(() {
+        hasSeenForumGuidelines = true;
+      });
+    }
+  }
+
+  Future<void> _showGuidelinesDialog() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // Prevent dismissing by tapping outside
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text(
+            'Forum Guidelines',
+            style: TextStyle(
+              color: tPrimaryColor,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          content: const SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text('Welcome to the GuardiansCare Global Forum. Kindly follow these guidelines:'),
+                SizedBox(height: 10),
+                Text('• Be respectful and courteous to all members.'),
+                Text('• Do not use any language that is abusive, harassing, or harmful.'),
+                Text('• Avoid sharing content that is inappropriate or harmful, especially related to children.'),
+                Text('• Remember that this is a space for constructive discussions on child safety.'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text(
+                'I Agree',
+                style: TextStyle(color: tPrimaryColor),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -28,11 +79,6 @@ class _PagesState extends State<Pages> {
         size: 25,
         color: tNavBarColorButton,
       ),
-      // const Icon(
-      //   Icons.search,
-      //   size: 25,
-      //   color: Colors.amber,
-      // ),
       const Icon(
         Icons.explore,
         size: 25,
@@ -43,36 +89,26 @@ class _PagesState extends State<Pages> {
         size: 25,
         color: tNavBarColorButton,
       ),
-      // const Icon(
-      //   Icons.account_circle,
-      //   size: 25,
-      //   color: Colors.amber,
-      // ),
     ];
 
     final screens = <Widget>[
       const HomePage(),
-      // SearchPage(),
       const Explore(),
       const ForumPage(),
-      // Account(user: _user),
     ];
 
     return Scaffold(
       extendBody: true,
       appBar: AppBar(
-        title: const Text("Children of India",
-            style: TextStyle(
-                color: tPrimaryColor,
-                fontWeight: FontWeight.bold,
-                fontSize: 25)),
-        leading: const Padding(
-          padding: EdgeInsets.all(13.0),
+        title: const Text(
+          "Children of India",
+          style: TextStyle(
+            color: tPrimaryColor,
+            fontWeight: FontWeight.bold,
+            fontSize: 25,
+          ),
         ),
         centerTitle: true,
-        // actions: [
-        //   _user != null ? _signOut() : const Text("Hi"),
-        // ],
       ),
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -82,17 +118,19 @@ class _PagesState extends State<Pages> {
         items: items,
         backgroundColor: Colors.transparent,
         color: tNavBarColor,
-        height: 65,
+        height: 55,
         index: index,
-        onTap: (index) => setState(() {
-          this.index = index;
-        }),
+        onTap: (newIndex) async {
+          setState(() {
+            index = newIndex;
+          });
+
+          // Check and show guidelines dialog if navigating to forum
+          if (newIndex == 2) {
+            await _checkAndShowGuidelines();
+          }
+        },
       ),
     );
   }
-
-  // Widget _signOut() {
-  //   return TextButton(
-  //       onPressed: () => _auth.signOut(), child: const Text("Sign Out", style: TextStyle(color: tPrimaryColor)));
-  // }
 }
