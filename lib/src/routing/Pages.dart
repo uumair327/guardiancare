@@ -1,9 +1,9 @@
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:guardiancare/src/constants/colors.dart';
-import 'package:guardiancare/src/features/explore/screens/explore.dart';
-import 'package:guardiancare/src/features/forum/screens/forumPage.dart';
-import 'package:guardiancare/src/features/home/screens/homePage.dart';
+import 'package:guardianscare/src/constants/colors.dart';
+import 'package:guardianscare/src/features/explore/screens/explore.dart';
+import 'package:guardianscare/src/features/forum/screens/forumPage.dart';
+import 'package:guardianscare/src/features/home/screens/homePage.dart';
 
 class Pages extends StatefulWidget {
   const Pages({Key? key}) : super(key: key);
