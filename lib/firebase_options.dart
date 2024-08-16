@@ -87,13 +87,13 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions windows = FirebaseOptions(
     apiKey: 'AIzaSyBJKvh4ZXb3npq8cL9-mk-kDlSIUO6VppU',
-    appId: '1:331315801686:web:890d5aa832db1f5a7595f7',
+    appId: '1:331315801686:web:942094b5fc96fe447595f7',
     messagingSenderId: '331315801686',
     projectId: 'guardiancare-a210f',
     authDomain: 'guardiancare-a210f.firebaseapp.com',
     databaseURL: 'https://guardiancare-a210f-default-rtdb.asia-southeast1.firebasedatabase.app',
     storageBucket: 'guardiancare-a210f.appspot.com',
-    measurementId: 'G-LDQKT44KB4',
+    measurementId: 'G-SEF3D98352',
   );
 
 }
