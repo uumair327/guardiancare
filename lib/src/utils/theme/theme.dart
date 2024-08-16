@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:guardiancare/src/utils/theme/widget_themes/text_theme.dart';
+import 'package:guardianscare/src/utils/theme/widget_themes/text_theme.dart';
 
 class TAppTheme {
   TAppTheme._();

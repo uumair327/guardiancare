@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:guardiancare/src/features/authentication/screens/loginPage.dart';
+import 'package:guardianscare/src/features/authentication/screens/loginPage.dart';
 
 class AccountController {
   static Future<void> signOut(BuildContext context) async {

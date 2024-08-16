@@ -1,10 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:guardiancare/src/constants/colors.dart';
-import 'package:guardiancare/src/features/authentication/screens/loginPage.dart';
-import 'package:guardiancare/src/features/emergency/screens/emergencyContactPage.dart';
-import 'package:guardiancare/src/features/report/screens/reportPage.dart';
-import 'package:guardiancare/src/features/authentication/controllers/login_controller.dart';
+import 'package:guardianscare/src/constants/colors.dart';
+import 'package:guardianscare/src/features/authentication/screens/loginPage.dart';
+import 'package:guardianscare/src/features/emergency/screens/emergencyContactPage.dart';
+import 'package:guardianscare/src/features/report/screens/reportPage.dart';
+import 'package:guardianscare/src/features/authentication/controllers/login_controller.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Account extends StatelessWidget {
@@ -14,7 +14,10 @@ class Account extends StatelessWidget {
 
   Future<DocumentSnapshot> getUserDetails() async {
     if (user != null) {
-      return await FirebaseFirestore.instance.collection('users').doc(user!.uid).get();
+      return await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user!.uid)
+          .get();
     }
 
     throw Exception("User is null");
@@ -28,7 +31,8 @@ class Account extends StatelessWidget {
       ),
       body: FutureBuilder<DocumentSnapshot>(
         future: getUserDetails(),
-        builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+        builder:
+            (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           }
@@ -52,7 +56,8 @@ class Account extends StatelessWidget {
                     backgroundImage: userData['photoURL'] != null
                         ? NetworkImage(userData['photoURL'])
                         : null,
-                    child: userData['displayName'] != null && userData['displayName'].isNotEmpty
+                    child: userData['displayName'] != null &&
+                            userData['displayName'].isNotEmpty
                         ? Text(userData['displayName'][0].toUpperCase())
                         : null,
                   ),
@@ -68,12 +73,14 @@ class Account extends StatelessWidget {
                   // const SizedBox(height: 5),
                   ListTile(
                     leading: const Icon(Icons.person, color: tPrimaryColor),
-                    title: Text('Name: ${userData['displayName'] ?? 'Not available'}'),
+                    title: Text(
+                        'Name: ${userData['displayName'] ?? 'Not available'}'),
                   ),
                   ListTile(
                     minTileHeight: 25,
                     leading: const Icon(Icons.email, color: tPrimaryColor),
-                    title: Text('Email: ${userData['email'] ?? 'Not available'}'),
+                    title:
+                        Text('Email: ${userData['email'] ?? 'Not available'}'),
                   ),
                   const Divider(),
                   const SizedBox(height: 5),

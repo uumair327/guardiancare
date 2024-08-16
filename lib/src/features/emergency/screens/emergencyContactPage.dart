@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:guardiancare/src/constants/colors.dart';
-import 'package:guardiancare/src/features/emergency/controllers/emergency_contact_controller.dart';
+import 'package:guardianscare/src/constants/colors.dart';
+import 'package:guardianscare/src/features/emergency/controllers/emergency_contact_controller.dart';
 
 class EmergencyContactPage extends StatelessWidget {
   @override
