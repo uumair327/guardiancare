@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:guardiancare/src/constants/colors.dart';
-import 'package:guardiancare/src/features/explore/controllers/recommended_videos.dart';
+import 'package:guardianscare/src/constants/colors.dart';
+import 'package:guardianscare/src/features/explore/controllers/recommended_videos.dart';
 
 class Explore extends StatelessWidget {
   const Explore({super.key});

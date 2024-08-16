@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:guardiancare/src/constants/images_strings.dart';
-import 'package:guardiancare/src/constants/sizes.dart';
-import 'package:guardiancare/src/constants/text_strings.dart';
-import 'package:guardiancare/src/features/splashscreen/controllers/splash_screen_controller.dart';
+import 'package:guardianscare/src/constants/images_strings.dart';
+import 'package:guardianscare/src/constants/sizes.dart';
+import 'package:guardianscare/src/constants/text_strings.dart';
+import 'package:guardianscare/src/features/splashscreen/controllers/splash_screen_controller.dart';
 
 class SplashScreen extends StatelessWidget {
   SplashScreen({Key? key}) : super(key: key);
