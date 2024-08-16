@@ -5,6 +5,7 @@ import 'package:guardiancare/src/features/authentication/screens/loginPage.dart'
 import 'package:guardiancare/src/features/emergency/screens/emergencyContactPage.dart';
 import 'package:guardiancare/src/features/report/screens/reportPage.dart';
 import 'package:guardiancare/src/features/authentication/controllers/login_controller.dart';
+import 'package:guardiancare/src/features/authentication/controllers/account_controller.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Account extends StatelessWidget {
@@ -18,6 +19,79 @@ class Account extends StatelessWidget {
     }
 
     throw Exception("User is null");
+  }
+
+  Future<void> _confirmAndDeleteAccount(BuildContext context) async {
+    bool shouldDelete = await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Delete Account', style: TextStyle(color: tPrimaryColor, fontWeight: FontWeight.bold)),
+          content: const Text('Are you sure you want to delete your account? This action cannot be undone.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(false); // User clicked "No"
+              },
+              style: TextButton.styleFrom(
+                foregroundColor: tPrimaryColor, // Sets the text color
+              ),
+              child: const Text('No'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop(true); // User clicked "Yes"
+              },
+              style: TextButton.styleFrom(
+                foregroundColor: tPrimaryColor, // Sets the text color
+              ),
+              child: const Text('Yes'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (shouldDelete) {
+      // Show loading indicator for 10 seconds
+      showDialog(
+        // ignore: use_build_context_synchronously
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        },
+      );
+
+      // Simulate a delay for 10 seconds
+      await Future.delayed(const Duration(seconds: 10));
+
+      // Proceed with account deletion
+      bool result = await deleteUserAccount();
+
+      // Close the loading indicator
+      // ignore: use_build_context_synchronously
+      Navigator.of(context).pop();
+
+      if (result) {
+        // Navigate back to the login page after successful deletion
+        Navigator.pop(
+          // ignore: use_build_context_synchronously
+          context,
+          MaterialPageRoute(
+            builder: (context) => const LoginPage(),
+          ),
+        );
+        print("Account is Deleted!!");
+      } else {
+        // Handle failure case
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Failed to delete account. Please try again.")),
+        );
+      }
+    }
   }
 
   @override
@@ -43,7 +117,7 @@ class Account extends StatelessWidget {
 
           return SingleChildScrollView(
             child: Padding(
-              padding: const EdgeInsets.all(16.0),
+              padding: const EdgeInsets.all(10.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -71,7 +145,7 @@ class Account extends StatelessWidget {
                     title: Text('Name: ${userData['displayName'] ?? 'Not available'}'),
                   ),
                   ListTile(
-                    minTileHeight: 25,
+                    minTileHeight: 5,
                     leading: const Icon(Icons.email, color: tPrimaryColor),
                     title: Text('Email: ${userData['email'] ?? 'Not available'}'),
                   ),
@@ -98,7 +172,7 @@ class Account extends StatelessWidget {
                     },
                   ),
                   ListTile(
-                    minTileHeight: 25,
+                    minTileHeight: 5,
                     leading: const Icon(Icons.warning, color: tPrimaryColor),
                     title: const Text('Report an Incident'),
                     onTap: () {
@@ -137,6 +211,33 @@ class Account extends StatelessWidget {
                       if (result) print("Signed Out Successfully !!");
                     },
                   ),
+                  ListTile(
+                    minTileHeight: 5,
+                    leading: const Icon(Icons.delete, color: tPrimaryColor),
+                    title: const Text('Delete My Account', style: TextStyle(color: tPrimaryColor, fontWeight: FontWeight.bold),),
+                    onTap: () async {
+                      // Trigger the confirmation and deletion logic
+                      await _confirmAndDeleteAccount(context);
+                    },
+                  ),
+                  // ListTile(
+                  //   minTileHeight: 5,
+                  //   leading: const Icon(Icons.delete, color: tPrimaryColor),
+                  //   title: const Text('Delete My Account', style: TextStyle(color: tPrimaryColor, fontWeight: FontWeight.bold),),
+                  //   onTap: () async {
+                  //     bool result = await deleteUserAccount();
+                  //     print(result);
+
+                  //     Navigator.pop(
+                  //       context,
+                  //       MaterialPageRoute(
+                  //         builder: (context) => const LoginPage(),
+                  //       ),
+                  //     );
+
+                  //     if (result) print("Account is Deleted!!");
+                  //   },
+                  // ),
                 ],
               ),
             ),
