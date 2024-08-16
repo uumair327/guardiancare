@@ -171,6 +171,22 @@
       },
       "oauth_client": [
         {
+          "client_id": "331315801686-cddom9qkj9arrom00k6lib9eblfoir4t.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "app.guardiancare.guardianscare",
+            "certificate_hash": "52b10f3654acfef1f6a351465797c7b998db4146"
+          }
+        },
+        {
+          "client_id": "331315801686-nnlvp6jcvtc7o0h1mljp4sbkg10qf4ia.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "app.guardiancare.guardianscare",
+            "certificate_hash": "9f253fc9da6f895b1d78051273a33370900d1118"
+          }
+        },
+        {
           "client_id": "331315801686-f57icrckmccqe3mu1airrgtpvho4lcva.apps.googleusercontent.com",
           "client_type": 3
         }
