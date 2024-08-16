@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:guardiancare/src/constants/colors.dart';
-import 'package:guardiancare/src/features/quiz/screens/quiz_questions_page.dart';
+import 'package:guardianscare/src/constants/colors.dart';
+import 'package:guardianscare/src/features/quiz/screens/quiz_questions_page.dart';
 
 class QuizPage extends StatefulWidget {
   @override
@@ -30,7 +30,7 @@ class _QuizPageState extends State<QuizPage> {
           "thumbnail": doc["thumbnail"],
         });
       }
-    } 
+    }
     setState(() {
       quizes = _quizes;
     });
@@ -100,31 +100,32 @@ class QuizTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       elevation: 4,
-      child: 
-          Column(
-            mainAxisSize: MainAxisSize.max,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Image.network(
-                quiz["thumbnail"],
-                height: 200,
-                fit: BoxFit.cover,
-              ),
-              Container(
-                padding: EdgeInsets.all(8),
-                child: Text(
-                  capitalizeEach(quiz["name"]),
-                  style: const TextStyle(fontSize: 25, color: tPrimaryColor, fontWeight: FontWeight.w600),
-                )
-              )
-            ],
+      child: Column(
+        mainAxisSize: MainAxisSize.max,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Image.network(
+            quiz["thumbnail"],
+            height: 200,
+            fit: BoxFit.cover,
           ),
+          Container(
+              padding: EdgeInsets.all(8),
+              child: Text(
+                capitalizeEach(quiz["name"]),
+                style: const TextStyle(
+                    fontSize: 25,
+                    color: tPrimaryColor,
+                    fontWeight: FontWeight.w600),
+              ))
+        ],
+      ),
     );
   }
-  
+
   String capitalize(quiz) {
     if (quiz == null) return "";
-    
+
     final firstLetter = quiz[0].toUpperCase();
     final restLetters = quiz.substring(1);
 
@@ -133,7 +134,7 @@ class QuizTile extends StatelessWidget {
 
   String capitalizeEach(quiz) {
     if (quiz == null) return "";
-    
+
     final List<String> words = quiz.split(' ');
 
     final formatted = words.map((e) => capitalize(e)).toList();
@@ -141,4 +142,3 @@ class QuizTile extends StatelessWidget {
     return formatted.join(' ');
   }
 }
-

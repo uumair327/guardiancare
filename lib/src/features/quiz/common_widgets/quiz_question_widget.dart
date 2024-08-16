@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:guardiancare/src/constants/colors.dart';
+import 'package:guardianscare/src/constants/colors.dart';
 
 class QuizQuestionWidget extends StatefulWidget {
   final int questionIndex;
@@ -86,7 +86,9 @@ class _QuizQuestionWidgetState extends State<QuizQuestionWidget> {
                     child: Text(
                       widget.question['options'][index],
                       style: TextStyle(
-                        color: selectedIndex == index ? Colors.white : tPrimaryColor,
+                        color: selectedIndex == index
+                            ? Colors.white
+                            : tPrimaryColor,
                       ),
                     ),
                   ),

@@ -53,7 +53,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyBiK-huaMXXmnI4M0LxYNtH5NasP1o1iHQ',
-    appId: '1:331315801686:android:51cee5c22ec4493e7595f7',
+    appId: '1:331315801686:android:bbc3124e1812cc917595f7',
     messagingSenderId: '331315801686',
     projectId: 'guardiancare-a210f',
     databaseURL: 'https://guardiancare-a210f-default-rtdb.asia-southeast1.firebasedatabase.app',
@@ -62,26 +62,26 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyDwCbSP-Qw1bRg5BvVco5x0VqxoBMAtLgs',
-    appId: '1:331315801686:ios:f9b6693b41daae0d7595f7',
+    appId: '1:331315801686:ios:c956a1fa41d7bbb47595f7',
     messagingSenderId: '331315801686',
     projectId: 'guardiancare-a210f',
     databaseURL: 'https://guardiancare-a210f-default-rtdb.asia-southeast1.firebasedatabase.app',
     storageBucket: 'guardiancare-a210f.appspot.com',
     androidClientId: '331315801686-01tinu5ukqe35u4ivvn3fqo4ju59pp1d.apps.googleusercontent.com',
-    iosClientId: '331315801686-0hcdvdo15e87a8lmqnartjpuea9lr2jl.apps.googleusercontent.com',
-    iosBundleId: 'app.guardiancare.guardiancare',
+    iosClientId: '331315801686-a0u07tpvqes8eu000e1iclahjmsqg1ss.apps.googleusercontent.com',
+    iosBundleId: 'app.guardiancare.guardianscare',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
     apiKey: 'AIzaSyDwCbSP-Qw1bRg5BvVco5x0VqxoBMAtLgs',
-    appId: '1:331315801686:ios:f9b6693b41daae0d7595f7',
+    appId: '1:331315801686:ios:c956a1fa41d7bbb47595f7',
     messagingSenderId: '331315801686',
     projectId: 'guardiancare-a210f',
     databaseURL: 'https://guardiancare-a210f-default-rtdb.asia-southeast1.firebasedatabase.app',
     storageBucket: 'guardiancare-a210f.appspot.com',
     androidClientId: '331315801686-01tinu5ukqe35u4ivvn3fqo4ju59pp1d.apps.googleusercontent.com',
-    iosClientId: '331315801686-0hcdvdo15e87a8lmqnartjpuea9lr2jl.apps.googleusercontent.com',
-    iosBundleId: 'app.guardiancare.guardiancare',
+    iosClientId: '331315801686-a0u07tpvqes8eu000e1iclahjmsqg1ss.apps.googleusercontent.com',
+    iosBundleId: 'app.guardiancare.guardianscare',
   );
 
   static const FirebaseOptions windows = FirebaseOptions(

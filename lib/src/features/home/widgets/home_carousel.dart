@@ -1,7 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:guardiancare/src/common_widgets/WebViewPage.dart';
+import 'package:guardianscare/src/common_widgets/WebViewPage.dart';
 import 'package:shimmer/shimmer.dart';
 
 class HomeCarousel extends StatelessWidget {
@@ -67,14 +67,14 @@ class HomeCarousel extends StatelessWidget {
                                 ),
                               ),
                             ),
-                            placeholder: (context, url) => Center(
+                            placeholder: (context, url) => const Center(
                               child: CircularProgressIndicator(),
                             ),
                             errorWidget: (context, url, error) =>
-                                Icon(Icons.error),
+                                const Icon(Icons.error),
                           ),
                           if (type == 'video')
-                            Center(
+                            const Center(
                               child: Icon(
                                 Icons.play_circle_outline,
                                 color: Colors.white,
@@ -93,7 +93,7 @@ class HomeCarousel extends StatelessWidget {
 
   Widget _buildShimmerItem() {
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 8.0),
+      margin: const EdgeInsets.symmetric(horizontal: 8.0),
       decoration: BoxDecoration(
         color: Colors.grey[300],
         borderRadius: BorderRadius.circular(12.0),
