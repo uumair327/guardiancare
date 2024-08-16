@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:guardiancare/src/features/learn/controllers/video_controller.dart';
+import 'package:guardianscare/src/features/learn/controllers/video_controller.dart';
 
 class VideoPage extends StatefulWidget {
   const VideoPage({Key? key}) : super(key: key);
