@@ -6,6 +6,7 @@ import 'package:guardianscare/src/features/authentication/screens/loginPage.dart
 import 'package:guardianscare/src/features/emergency/screens/emergencyContactPage.dart';
 import 'package:guardianscare/src/features/report/screens/reportPage.dart';
 import 'package:guardianscare/src/features/authentication/controllers/login_controller.dart';
+import 'package:guardianscare/src/features/authentication/controllers/account_controller.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Account extends StatelessWidget {
