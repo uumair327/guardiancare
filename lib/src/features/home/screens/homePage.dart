@@ -55,17 +55,17 @@ class _HomePageState extends State<HomePage> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const SizedBox(
-                height: 60.0,
+                height: 5.0,
               ),
               HomeCarousel(
                 carouselData: carouselData,
                 carouselHeight: carouselHeight,
               ),
               const SizedBox(
-                height: 60.0,
+                height: 20.0,
               ),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                padding: const EdgeInsets.symmetric(horizontal: 25.0),
                 child: Card(
                   elevation: 20.0,
                   color: Colors.white,
@@ -116,7 +116,7 @@ class _HomePageState extends State<HomePage> {
                             ),
                           ],
                         ),
-                        const SizedBox(height: 60.0),
+                        const SizedBox(height: 20.0),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [

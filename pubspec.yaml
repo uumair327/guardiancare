@@ -11,6 +11,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  shared_preferences: ^2.1.1
   flutter_gemini: ^2.0.4
   cupertino_icons: ^1.0.6
   google_fonts: ^6.1.0
