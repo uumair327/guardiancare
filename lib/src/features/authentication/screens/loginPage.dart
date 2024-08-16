@@ -35,23 +35,15 @@ class _LoginPageState extends State<LoginPage> {
                 children: [
                   Image.asset(
                     'assets/logo/logo.png',
-                    width: 100,
+                    width: 120,
                   ), // Reduce height here
-                  const Text(
-                    'A Children Of India App',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                      fontStyle: FontStyle.italic,
-                    ),
-                  ),
                 ],
               ),
             ),
             const SizedBox(
                 height: 10), // Adjust space between the first and second text
             const Text(
-              'Welcome to Guardian Care',
+              'Welcome to Guardians Care',
               style: TextStyle(
                 color: Color.fromRGBO(239, 72, 53, 1),
                 fontSize: 24,
