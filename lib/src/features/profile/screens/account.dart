@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:guardianscare/src/constants/colors.dart';
 import 'package:guardianscare/src/features/authentication/screens/loginPage.dart';
@@ -23,6 +24,11 @@ class Account extends StatelessWidget {
     }
 
     throw Exception("User is null");
+  }
+
+  Future<void> _clearUserPreferences() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.remove('has_seen_forum_guidelines');
   }
 
   Future<void> _confirmAndDeleteAccount(BuildContext context) async {
@@ -74,6 +80,9 @@ class Account extends StatelessWidget {
 
       // Proceed with account deletion
       bool result = await deleteUserAccount();
+
+      // Clear user preferences
+      await _clearUserPreferences();
 
       // Close the loading indicator
       // ignore: use_build_context_synchronously
@@ -206,6 +215,7 @@ class Account extends StatelessWidget {
                     leading: const Icon(Icons.logout, color: tPrimaryColor),
                     title: const Text('Log Out'),
                     onTap: () async {
+                      await _clearUserPreferences();
                       bool result = await signOutFromGoogle();
                       print(result);
 
@@ -228,24 +238,6 @@ class Account extends StatelessWidget {
                       await _confirmAndDeleteAccount(context);
                     },
                   ),
-                  // ListTile(
-                  //   minTileHeight: 5,
-                  //   leading: const Icon(Icons.delete, color: tPrimaryColor),
-                  //   title: const Text('Delete My Account', style: TextStyle(color: tPrimaryColor, fontWeight: FontWeight.bold),),
-                  //   onTap: () async {
-                  //     bool result = await deleteUserAccount();
-                  //     print(result);
-
-                  //     Navigator.pop(
-                  //       context,
-                  //       MaterialPageRoute(
-                  //         builder: (context) => const LoginPage(),
-                  //       ),
-                  //     );
-
-                  //     if (result) print("Account is Deleted!!");
-                  //   },
-                  // ),
                 ],
               ),
             ),

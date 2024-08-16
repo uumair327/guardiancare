@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:guardianscare/src/constants/colors.dart';
 import 'package:sign_in_button/sign_in_button.dart';
 import 'package:guardianscare/src/features/authentication/controllers/login_controller.dart';
 
@@ -21,6 +22,55 @@ class _LoginPageState extends State<LoginPage> {
     });
   }
 
+  Future<void> _showTermsAndConditions(BuildContext context) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // Prevent dismissing the dialog by tapping outside
+      builder: (BuildContext context) {
+        return AlertDialog(
+          elevation: 16.0,
+          title: const Text('Terms and Conditions', style: TextStyle(color: tPrimaryColor, fontWeight: FontWeight.bold)),
+          content: const SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text(
+                  'Please read and accept the following terms and conditions to proceed.',
+                ),
+                SizedBox(height: 10),
+                Text(
+                  '• Your data will be securely stored.\n'
+                  '• You agree to follow the platform rules and regulations.\n'
+                  '• You acknowledge the responsibility of safeguarding your account.',
+                ),
+                // Add more terms and conditions here.
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('I Agree', style: TextStyle(color: tPrimaryColor)),
+              onPressed: () async {
+                Navigator.of(context).pop(); // Close the dialog
+                // Proceed with Google sign-in if terms are accepted
+                UserCredential? userCredential = await signInWithGoogle();
+
+                if (userCredential != null) {
+                  print("Signed in: ${userCredential.user?.displayName}");
+                }
+              },
+            ),
+            TextButton(
+              child: const Text('Cancel', style: TextStyle(color: tPrimaryColor)),
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -36,12 +86,11 @@ class _LoginPageState extends State<LoginPage> {
                   Image.asset(
                     'assets/logo/logo.png',
                     width: 120,
-                  ), // Reduce height here
+                  ),
                 ],
               ),
             ),
-            const SizedBox(
-                height: 10), // Adjust space between the first and second text
+            const SizedBox(height: 10),
             const Text(
               'Welcome to Guardians Care',
               style: TextStyle(
@@ -58,12 +107,9 @@ class _LoginPageState extends State<LoginPage> {
                 child: SignInButton(
                   Buttons.google,
                   text: "Sign In With Google",
-                  onPressed: () async {
-                    UserCredential? userCredential = await signInWithGoogle();
-
-                    if (userCredential != null) {
-                      print("Signed in: ${userCredential.user?.displayName}");
-                    }
+                  onPressed: () {
+                    // Show the terms and conditions dialog before signing in
+                    _showTermsAndConditions(context);
                   },
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(50.0),
