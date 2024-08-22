@@ -43,9 +43,6 @@ class Account extends StatelessWidget {
               onPressed: () {
                 Navigator.of(context).pop(false); // User clicked "No"
               },
-              style: TextButton.styleFrom(
-                foregroundColor: tPrimaryColor, // Sets the text color
-              ),
               child: const Text('No'),
             ),
             ElevatedButton(
@@ -188,19 +185,19 @@ class Account extends StatelessWidget {
                       );
                     },
                   ),
-                  ListTile(
-                    minTileHeight: 5,
-                    leading: const Icon(Icons.warning, color: tPrimaryColor),
-                    title: const Text('Report an Incident'),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const ReportPage(),
-                        ),
-                      );
-                    },
-                  ),
+                  // ListTile(
+                  //   minTileHeight: 5,
+                  //   leading: const Icon(Icons.warning, color: tPrimaryColor),
+                  //   title: const Text('Report an Incident'),
+                  //   onTap: () {
+                  //     Navigator.push(
+                  //       context,
+                  //       MaterialPageRoute(
+                  //         builder: (context) => const ReportPage(),
+                  //       ),
+                  //     );
+                  //   },
+                  // ),
                   const Divider(),
                   const SizedBox(height: 5),
                   const Text(
