@@ -87,12 +87,21 @@ class _LoginPageState extends State<LoginPage> {
                     'assets/logo/logo.png',
                     width: 120,
                   ),
+                  const SizedBox(height: 3),
+                  const Text(
+                    'A Children of India App',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.normal,
+                      fontStyle: FontStyle.italic
+                    ),
+                  )
                 ],
               ),
             ),
             const SizedBox(height: 10),
             const Text(
-              'Welcome to Guardians Care',
+              'Welcome to Guardian Care',
               style: TextStyle(
                 color: Color.fromRGBO(239, 72, 53, 1),
                 fontSize: 24,
