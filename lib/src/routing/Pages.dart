@@ -101,11 +101,12 @@ class _PagesState extends State<Pages> {
       extendBody: true,
       appBar: AppBar(
         title: const Text(
-          "Children of India",
+          "Guardian Care",
           style: TextStyle(
             color: tPrimaryColor,
             fontWeight: FontWeight.bold,
             fontSize: 25,
+            fontStyle: FontStyle.italic
           ),
         ),
         centerTitle: true,
