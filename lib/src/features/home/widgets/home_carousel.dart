@@ -81,6 +81,25 @@ class HomeCarousel extends StatelessWidget {
                                 size: 50.0,
                               ),
                             ),
+                          Positioned(
+                            bottom: 5.0,
+                            right: 10.0,
+                            child: Text(
+                              "Source: childrenofindia.in",
+                              style: TextStyle(
+                                fontSize: 10.0,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.white.withOpacity(0.9),
+                                shadows: [
+                                  Shadow(
+                                    offset: Offset(1.0, 1.0),
+                                    blurRadius: 3.0,
+                                    color: Colors.black.withOpacity(0.7),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
                         ],
                       ),
                     ),
