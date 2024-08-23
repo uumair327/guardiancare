@@ -50,21 +50,17 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       extendBody: true,
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              const SizedBox(
-                height: 5.0,
-              ),
-              HomeCarousel(
-                carouselData: carouselData,
-                carouselHeight: carouselHeight,
-              ),
-              const SizedBox(
-                height: 20.0,
-              ),
-              Padding(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            const SizedBox(height: 5.0),
+            HomeCarousel(
+              carouselData: carouselData,
+              carouselHeight: carouselHeight,
+            ),
+            const SizedBox(height: 20.0),
+            Expanded(
+              child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 25.0),
                 child: Card(
                   elevation: 20.0,
@@ -75,6 +71,7 @@ class _HomePageState extends State<HomePage> {
                   child: Padding(
                     padding: const EdgeInsets.all(16),
                     child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         Row(
@@ -168,9 +165,9 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
               ),
-              const SizedBox(height: 10.0),
-            ],
-          ),
+            ),
+            const SizedBox(height: 15.0),
+          ],
         ),
       ),
     );
