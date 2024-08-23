@@ -60,7 +60,7 @@ class _guardiancareState extends State<guardiancare> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: "Children of India",
+      title: "Guardian Care",
       home: StreamBuilder<User?>(
         stream: _auth.authStateChanges(),
         builder: (BuildContext context, AsyncSnapshot<User?> snapshot) {
