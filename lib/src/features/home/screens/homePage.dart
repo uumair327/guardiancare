@@ -1,14 +1,14 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:guardianscare/src/common_widgets/WebViewPage.dart';
-import 'package:guardianscare/src/features/emergency/screens/emergencyContactPage.dart';
-import 'package:guardianscare/src/features/home/controllers/home_controller.dart';
-import 'package:guardianscare/src/features/home/widgets/circular_button.dart';
-import 'package:guardianscare/src/features/home/widgets/home_carousel.dart';
-import 'package:guardianscare/src/features/learn/screens/video_page.dart';
-import 'package:guardianscare/src/features/profile/screens/account.dart';
-import 'package:guardianscare/src/features/quiz/screens/quizPage.dart';
+import 'package:guardiancare/src/common_widgets/WebViewPage.dart';
+import 'package:guardiancare/src/features/emergency/screens/emergencyContactPage.dart';
+import 'package:guardiancare/src/features/home/controllers/home_controller.dart';
+import 'package:guardiancare/src/features/home/widgets/circular_button.dart';
+import 'package:guardiancare/src/features/home/widgets/home_carousel.dart';
+import 'package:guardiancare/src/features/learn/screens/video_page.dart';
+import 'package:guardiancare/src/features/profile/screens/account.dart';
+import 'package:guardiancare/src/features/quiz/screens/quizPage.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class HomePage extends StatefulWidget {

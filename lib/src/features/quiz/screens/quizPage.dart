@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:guardianscare/src/constants/colors.dart';
-import 'package:guardianscare/src/features/quiz/screens/quiz_questions_page.dart';
+import 'package:guardiancare/src/constants/colors.dart';
+import 'package:guardiancare/src/features/quiz/screens/quiz_questions_page.dart';
 
 class QuizPage extends StatefulWidget {
   @override

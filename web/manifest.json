@@ -1,6 +1,6 @@
 {
-    "name": "guardianscare",
-    "short_name": "guardianscare",
+    "name": "guardiancare",
+    "short_name": "guardiancare",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

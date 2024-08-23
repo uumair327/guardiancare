@@ -187,6 +187,14 @@
           }
         },
         {
+          "client_id": "331315801686-r0g5lqjqphvdbapdk61fin6moju18945.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "app.guardiancare.guardianscare",
+            "certificate_hash": "52914ad0b6d258a9e8cb12ea5dfe071569d31fea"
+          }
+        },
+        {
           "client_id": "331315801686-f57icrckmccqe3mu1airrgtpvho4lcva.apps.googleusercontent.com",
           "client_type": 3
         }

@@ -1,10 +1,10 @@
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart'; // Import for SharedPreferences
-import 'package:guardianscare/src/constants/colors.dart';
-import 'package:guardianscare/src/features/explore/screens/explore.dart';
-import 'package:guardianscare/src/features/forum/screens/forumPage.dart';
-import 'package:guardianscare/src/features/home/screens/homePage.dart';
+import 'package:guardiancare/src/constants/colors.dart';
+import 'package:guardiancare/src/features/explore/screens/explore.dart';
+import 'package:guardiancare/src/features/forum/screens/forumPage.dart';
+import 'package:guardiancare/src/features/home/screens/homePage.dart';
 
 class Pages extends StatefulWidget {
   const Pages({Key? key}) : super(key: key);
@@ -19,7 +19,8 @@ class _PagesState extends State<Pages> {
 
   Future<void> _checkAndShowGuidelines() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    hasSeenForumGuidelines = prefs.getBool('has_seen_forum_guidelines') ?? false;
+    hasSeenForumGuidelines =
+        prefs.getBool('has_seen_forum_guidelines') ?? false;
 
     if (index == 2 && !hasSeenForumGuidelines) {
       await _showGuidelinesDialog();
@@ -46,12 +47,16 @@ class _PagesState extends State<Pages> {
           content: const SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
-                Text('Welcome to the GuardiansCare Global Forum. Kindly follow these guidelines:'),
+                Text(
+                    'Welcome to the guardiancare Global Forum. Kindly follow these guidelines:'),
                 SizedBox(height: 10),
                 Text('• Be respectful and courteous to all members.'),
-                Text('• Do not use any language that is abusive, harassing, or harmful.'),
-                Text('• Avoid sharing content that is inappropriate or harmful, especially related to children.'),
-                Text('• Remember that this is a space for constructive discussions on child safety.'),
+                Text(
+                    '• Do not use any language that is abusive, harassing, or harmful.'),
+                Text(
+                    '• Avoid sharing content that is inappropriate or harmful, especially related to children.'),
+                Text(
+                    '• Remember that this is a space for constructive discussions on child safety.'),
               ],
             ),
           ),

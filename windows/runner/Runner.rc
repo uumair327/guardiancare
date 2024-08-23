@@ -90,12 +90,12 @@ BEGIN
         BLOCK "040904e4"
         BEGIN
             VALUE "CompanyName", "app.guardiancare" "\0"
-            VALUE "FileDescription", "guardianscare" "\0"
+            VALUE "FileDescription", "guardiancare" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "guardianscare" "\0"
+            VALUE "InternalName", "guardiancare" "\0"
             VALUE "LegalCopyright", "Copyright (C) 2024 app.guardiancare. All rights reserved." "\0"
-            VALUE "OriginalFilename", "guardianscare.exe" "\0"
-            VALUE "ProductName", "guardianscare" "\0"
+            VALUE "OriginalFilename", "guardiancare.exe" "\0"
+            VALUE "ProductName", "guardiancare" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

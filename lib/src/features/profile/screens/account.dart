@@ -2,12 +2,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:guardianscare/src/constants/colors.dart';
-import 'package:guardianscare/src/features/authentication/screens/loginPage.dart';
-import 'package:guardianscare/src/features/emergency/screens/emergencyContactPage.dart';
-import 'package:guardianscare/src/features/report/screens/reportPage.dart';
-import 'package:guardianscare/src/features/authentication/controllers/login_controller.dart';
-import 'package:guardianscare/src/features/authentication/controllers/account_controller.dart';
+import 'package:guardiancare/src/constants/colors.dart';
+import 'package:guardiancare/src/features/authentication/screens/loginPage.dart';
+import 'package:guardiancare/src/features/emergency/screens/emergencyContactPage.dart';
+import 'package:guardiancare/src/features/report/screens/reportPage.dart';
+import 'package:guardiancare/src/features/authentication/controllers/login_controller.dart';
+import 'package:guardiancare/src/features/authentication/controllers/account_controller.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Account extends StatelessWidget {
@@ -36,8 +36,11 @@ class Account extends StatelessWidget {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Delete Account', style: TextStyle(color: tPrimaryColor, fontWeight: FontWeight.bold)),
-          content: const Text('Are you sure you want to delete your account? This action cannot be undone.'),
+          title: const Text('Delete Account',
+              style:
+                  TextStyle(color: tPrimaryColor, fontWeight: FontWeight.bold)),
+          content: const Text(
+              'Are you sure you want to delete your account? This action cannot be undone.'),
           actions: [
             TextButton(
               onPressed: () {
@@ -101,7 +104,8 @@ class Account extends StatelessWidget {
       } else {
         // Handle failure case
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Failed to delete account. Please try again.")),
+          const SnackBar(
+              content: Text("Failed to delete account. Please try again.")),
         );
       }
     }
@@ -232,7 +236,11 @@ class Account extends StatelessWidget {
                   ListTile(
                     minTileHeight: 5,
                     leading: const Icon(Icons.delete, color: tPrimaryColor),
-                    title: const Text('Delete My Account', style: TextStyle(color: tPrimaryColor, fontWeight: FontWeight.bold),),
+                    title: const Text(
+                      'Delete My Account',
+                      style: TextStyle(
+                          color: tPrimaryColor, fontWeight: FontWeight.bold),
+                    ),
                     onTap: () async {
                       // Trigger the confirmation and deletion logic
                       await _confirmAndDeleteAccount(context);
