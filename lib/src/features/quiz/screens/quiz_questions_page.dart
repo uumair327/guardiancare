@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:guardianscare/src/features/quiz/common_widgets/quiz_question_widget.dart';
-import 'package:guardianscare/src/features/quiz/controllers/quiz_controller.dart';
-import 'package:guardianscare/src/api/gemini/processCategories.dart';
+import 'package:guardiancare/src/features/quiz/common_widgets/quiz_question_widget.dart';
+import 'package:guardiancare/src/features/quiz/controllers/quiz_controller.dart';
+import 'package:guardiancare/src/api/gemini/processCategories.dart';
 
 class QuizQuestionsPage extends StatefulWidget {
   final List<Map<String, dynamic>> questions;

@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:guardianscare/src/common_widgets/video_player_page.dart';
-import 'package:guardianscare/src/constants/colors.dart';
+import 'package:guardiancare/src/common_widgets/video_player_page.dart';
+import 'package:guardiancare/src/constants/colors.dart';
 import 'package:video_player/video_player.dart';
 
 class VideoController extends StatefulWidget {

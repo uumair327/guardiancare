@@ -1,7 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:guardianscare/src/common_widgets/WebViewPage.dart';
+import 'package:guardiancare/src/common_widgets/WebViewPage.dart';
 import 'package:shimmer/shimmer.dart';
 
 class HomeCarousel extends StatelessWidget {

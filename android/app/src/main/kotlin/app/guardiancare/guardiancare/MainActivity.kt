@@ -1,4 +1,4 @@
-package app.guardiancare.guardianscare
+package app.guardiancare.guardiancare
 
 import io.flutter.embedding.android.FlutterActivity
 

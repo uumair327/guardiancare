@@ -4,8 +4,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
-import 'package:guardianscare/src/features/authentication/screens/loginPage.dart';
-import 'package:guardianscare/src/routing/Pages.dart';
+import 'package:guardiancare/src/features/authentication/screens/loginPage.dart';
+import 'package:guardiancare/src/routing/Pages.dart';
 
 import 'firebase_options.dart';
 
@@ -24,26 +24,26 @@ void main() async {
     FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
     return true;
   };
-  runApp(const GuardiansCareApp());
+  runApp(const guardiancareApp());
 }
 
-class GuardiansCareApp extends StatelessWidget {
-  const GuardiansCareApp({super.key});
+class guardiancareApp extends StatelessWidget {
+  const guardiancareApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const GuardiansCare();
+    return const guardiancare();
   }
 }
 
-class GuardiansCare extends StatefulWidget {
-  const GuardiansCare({super.key});
+class guardiancare extends StatefulWidget {
+  const guardiancare({super.key});
 
   @override
-  State<GuardiansCare> createState() => _GuardiansCareState();
+  State<guardiancare> createState() => _guardiancareState();
 }
 
-class _GuardiansCareState extends State<GuardiansCare> {
+class _guardiancareState extends State<guardiancare> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   User? _user;
 

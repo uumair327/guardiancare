@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:guardianscare/src/constants/colors.dart';
-import 'package:guardianscare/src/features/explore/screens/explore_screen.dart';
+import 'package:guardiancare/src/constants/colors.dart';
+import 'package:guardiancare/src/features/explore/screens/explore_screen.dart';
 
 class QuizController {
   static Future<void> showQuizCompletedDialog(BuildContext context,

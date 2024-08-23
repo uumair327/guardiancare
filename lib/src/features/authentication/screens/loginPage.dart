@@ -1,8 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:guardianscare/src/constants/colors.dart';
+import 'package:guardiancare/src/constants/colors.dart';
 import 'package:sign_in_button/sign_in_button.dart';
-import 'package:guardianscare/src/features/authentication/controllers/login_controller.dart';
+import 'package:guardiancare/src/features/authentication/controllers/login_controller.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -25,11 +25,14 @@ class _LoginPageState extends State<LoginPage> {
   Future<void> _showTermsAndConditions(BuildContext context) async {
     return showDialog<void>(
       context: context,
-      barrierDismissible: false, // Prevent dismissing the dialog by tapping outside
+      barrierDismissible:
+          false, // Prevent dismissing the dialog by tapping outside
       builder: (BuildContext context) {
         return AlertDialog(
           elevation: 16.0,
-          title: const Text('Terms and Conditions', style: TextStyle(color: tPrimaryColor, fontWeight: FontWeight.bold)),
+          title: const Text('Terms and Conditions',
+              style:
+                  TextStyle(color: tPrimaryColor, fontWeight: FontWeight.bold)),
           content: const SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
@@ -48,7 +51,8 @@ class _LoginPageState extends State<LoginPage> {
           ),
           actions: <Widget>[
             TextButton(
-              child: const Text('I Agree', style: TextStyle(color: tPrimaryColor)),
+              child:
+                  const Text('I Agree', style: TextStyle(color: tPrimaryColor)),
               onPressed: () async {
                 Navigator.of(context).pop(); // Close the dialog
                 // Proceed with Google sign-in if terms are accepted
@@ -60,7 +64,8 @@ class _LoginPageState extends State<LoginPage> {
               },
             ),
             TextButton(
-              child: const Text('Cancel', style: TextStyle(color: tPrimaryColor)),
+              child:
+                  const Text('Cancel', style: TextStyle(color: tPrimaryColor)),
               onPressed: () {
                 Navigator.of(context).pop(); // Close the dialog
               },
