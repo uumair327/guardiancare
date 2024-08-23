@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:guardianscare/src/constants/colors.dart';
+import 'package:guardiancare/src/constants/colors.dart';
 import 'package:liquid_swipe/liquid_swipe.dart';
 
 import '../../../../constants/images_strings.dart';

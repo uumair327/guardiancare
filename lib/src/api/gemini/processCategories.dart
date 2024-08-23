@@ -1,6 +1,6 @@
 import 'package:flutter_gemini/flutter_gemini.dart';
-import 'package:guardianscare/src/api/youtube/fetchVideos.dart';
-import 'package:guardianscare/src/constants/keys.dart';
+import 'package:guardiancare/src/api/youtube/fetchVideos.dart';
+import 'package:guardiancare/src/constants/keys.dart';
 
 Future<bool> processCategories(
     List<String> incorrectCategories, String category) async {
