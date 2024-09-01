@@ -49,17 +49,17 @@ dev_dependencies:
 flutter_native_splash:
   android: true
   ios: true
-  color: "#f4f4f4"
-  color_dark: "#151517"
-  image: "assets/logo/logo.png"
-  image_dark: "assets/logo/logo.png"
+  color: "#ffffff"
+  color_dark: "#ffffff"
+  image: "assets/logo/logo_splash.png"
+  image_dark: "assets/logo/logo_splash.png"
   android_gravity: "center"
 
   android_12:
-    image: assets/logo/logo.png
-    icon_background_color: "#f7f6f1"
-    image_dark: assets/logo/logo.png
-    icon_background_color_dark: "#272727"
+    image: assets/logo/logo_splash.png
+    icon_background_color: "#ffffff"
+    image_dark: assets/logo/logo_splash.png
+    icon_background_color_dark: "#ffffff"
 
 flutter:
   uses-material-design: true
