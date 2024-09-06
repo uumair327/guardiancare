@@ -110,11 +110,11 @@ class EmergencyContactPage extends StatelessWidget {
                                 fontSize: 16, color: tTextPrimary),
                           ),
                           style: ButtonStyle(
-                            backgroundColor: MaterialStateProperty.all<Color>(Colors
+                            backgroundColor: WidgetStateProperty.all<Color>(Colors
                                 .white), // Use MaterialStateProperty.all<Color> to set background color
                             padding:
-                                MaterialStateProperty.all<EdgeInsetsGeometry>(
-                                    EdgeInsets.symmetric(
+                            WidgetStateProperty.all<EdgeInsetsGeometry>(
+                                    const EdgeInsets.symmetric(
                                         vertical: 10, horizontal: 15)),
                           ),
                         ),
