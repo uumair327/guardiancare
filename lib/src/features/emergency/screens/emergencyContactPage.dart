@@ -3,6 +3,8 @@ import 'package:guardiancare/src/constants/colors.dart';
 import 'package:guardiancare/src/features/emergency/controllers/emergency_contact_controller.dart';
 
 class EmergencyContactPage extends StatelessWidget {
+  const EmergencyContactPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -113,7 +115,7 @@ class EmergencyContactPage extends StatelessWidget {
                             backgroundColor: WidgetStateProperty.all<Color>(Colors
                                 .white), // Use MaterialStateProperty.all<Color> to set background color
                             padding:
-                            WidgetStateProperty.all<EdgeInsetsGeometry>(
+                                WidgetStateProperty.all<EdgeInsetsGeometry>(
                                     const EdgeInsets.symmetric(
                                         vertical: 10, horizontal: 15)),
                           ),
