@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:guardiancare/src/constants/colors.dart';
 import 'package:guardiancare/src/features/quiz/common_widgets/quiz_question_widget.dart';
 import 'package:guardiancare/src/features/quiz/controllers/quiz_controller.dart';
 import 'package:guardiancare/src/api/gemini/processCategories.dart';
@@ -15,8 +16,8 @@ class QuizQuestionsPage extends StatefulWidget {
 class _QuizQuestionsPageState extends State<QuizQuestionsPage> {
   int currentQuestionIndex = 0; // Index of the current question
   int correctAnswers = 0; // Number of correct answers
-
   List<String> incorrectCategories = [];
+  bool isBlocked = false; // Flag to block next actions
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +32,6 @@ class _QuizQuestionsPageState extends State<QuizQuestionsPage> {
           children: [
             if (currentQuestionIndex < widget.questions.length)
               Expanded(
-                // child: SingleChildScrollView(
                 child: QuizQuestionWidget(
                   questionIndex: currentQuestionIndex + 1,
                   correctAnswerIndex: widget.questions[currentQuestionIndex]
@@ -39,64 +39,98 @@ class _QuizQuestionsPageState extends State<QuizQuestionsPage> {
                   question: widget.questions[currentQuestionIndex],
                   onPressed: (int selectedOptionIndex) {
                     // Check if the selected option is correct
-                    if (selectedOptionIndex ==
-                        widget.questions[currentQuestionIndex]
-                            ['correctAnswerIndex']) {
-                      // ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                      //   content: Text('Correct!'),
-                      // ));
+                    if (selectedOptionIndex == widget.questions[currentQuestionIndex]['correctAnswerIndex']) {
                       setState(() {
                         correctAnswers++;
                       });
                     } else {
-                      // ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                      //   content: Text('Incorrect!'),
-                      // ));
                       setState(() {
-                        incorrectCategories.add(
-                            widget.questions[currentQuestionIndex]['category']);
+                        incorrectCategories.add(widget.questions[currentQuestionIndex]['category']);
                       });
                     }
-                    // Move to the next question after a short delay
-                    Future.delayed(const Duration(seconds: 3), () {
-                      setState(() {
-                        if (currentQuestionIndex <
-                            widget.questions.length - 1) {
-                          currentQuestionIndex++;
-                        } else {
-                          if (incorrectCategories.isNotEmpty) {
-                            Future<bool> processSuccess = processCategories(
-                                incorrectCategories,
-                                widget.questions[0]['quiz']);
-                            print(processSuccess);
-                          }
 
-                          // Show quiz completed dialog
-                          QuizController.showQuizCompletedDialog(
-                              context,
-                              correctAnswers,
-                              widget.questions.length,
-                              incorrectCategories.length);
-                        }
+                    // Block for 3 seconds
+                    setState(() {
+                      isBlocked = true;
+                    });
+
+                    Future.delayed(const Duration(seconds: 1), () {
+                      setState(() {
+                        isBlocked = false;
                       });
                     });
                   },
                 ),
-                // ),
               ),
             if (currentQuestionIndex >= widget.questions.length)
               const Center(
                 child: Text(
                   'Quiz Completed!',
                   style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: Color.fromRGBO(239, 72, 53, 1)),
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Color.fromRGBO(239, 72, 53, 1),
+                  ),
                 ),
               ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                if (currentQuestionIndex > 0)
+                  ElevatedButton(
+                    onPressed: isBlocked ? null : _goToPreviousQuestion,
+                    child: const Text('Previous',
+                      style: const TextStyle(
+                        color: tPrimaryColor,
+                      ),
+                    ),
+                  ),
+                ElevatedButton(
+                  onPressed: isBlocked ? null : _goToNextQuestion,
+                  child: Text(
+                    currentQuestionIndex == widget.questions.length - 1
+                        ? 'Finish'
+                        : 'Next',
+                    style: const TextStyle(
+                      color: tPrimaryColor,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ],
         ),
       ),
     );
+  }
+
+  void _goToPreviousQuestion() {
+    setState(() {
+      if (currentQuestionIndex > 0) {
+        currentQuestionIndex--;
+      }
+    });
+  }
+
+  void _goToNextQuestion() {
+    if (currentQuestionIndex < widget.questions.length - 1) {
+      setState(() {
+        currentQuestionIndex++;
+      });
+    } else {
+      // Process completion
+      if (incorrectCategories.isNotEmpty) {
+        Future<bool> processSuccess = processCategories(incorrectCategories, widget.questions[0]['quiz']);
+        print(processSuccess);
+      }
+
+      // Show quiz completed dialog
+      QuizController.showQuizCompletedDialog(
+        context,
+        correctAnswers,
+        widget.questions.length,
+        incorrectCategories.length,
+      );
+    }
   }
 }
