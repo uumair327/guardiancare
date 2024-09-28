@@ -1,8 +1,17 @@
+<<<<<<< HEAD
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:guardiancare/src/constants/colors.dart';
 import 'package:guardiancare/src/features/explore/controllers/explore_controller.dart';
 import 'package:guardiancare/src/features/learn/common_widgets/content_card.dart';
+=======
+import 'package:guardiancare/src/constants/colors.dart';
+import 'package:guardiancare/src/features/explore/controllers/explore_controller.dart';
+import 'package:guardiancare/src/features/learn/common_widgets/content_card.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
+import 'package:guardiancare/src/features/home/widgets/circular_button.dart';
+>>>>>>> 2752b80 (fix : added prev next in quiz questions ..)
 import 'package:guardiancare/src/features/quiz/screens/quizPage.dart';
 
 class RecommendedVideos extends StatelessWidget {
@@ -19,8 +28,48 @@ class RecommendedVideos extends StatelessWidget {
     return StreamBuilder<QuerySnapshot>(
       stream: controller.getRecommendedVideos(),
       builder: (context, snapshot) {
-        if (!snapshot.hasData) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
+        }
+
+        if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text(
+                  'No recommended videos right now.\nPlease take the quiz first.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 18, color: Colors.grey),
+                ),
+                const SizedBox(height: 20),
+                ElevatedButton(
+                  
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            QuizPage(), // Redirect to QuizPage
+                      ),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 35, vertical: 12.5),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    backgroundColor: tPrimaryColor,
+                  ),
+                  child: const Text(
+                    'Quiz',
+                    style: TextStyle(fontSize: 18, color: tWhiteColor),
+                  ),
+                ),
+              ],
+            ),
+          );
         }
 
         final videoSet = <String>{};
