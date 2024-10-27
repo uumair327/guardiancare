@@ -85,7 +85,7 @@ class RecommendedVideos extends StatelessWidget {
                     textAlign: TextAlign.center,
                   ),
                 ),
-                const SizedBox(height: 10),
+                const SizedBox(height: 8),
                 const Text(
                   'Based on your quiz score, we will provide personalized recommendations.',
                   style: TextStyle(
