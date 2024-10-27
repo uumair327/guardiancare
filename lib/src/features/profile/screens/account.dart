@@ -1,14 +1,12 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
 import 'package:guardiancare/src/constants/colors.dart';
-import 'package:guardiancare/src/features/authentication/screens/loginPage.dart';
-import 'package:guardiancare/src/features/emergency/screens/emergencyContactPage.dart';
-import 'package:guardiancare/src/features/report/screens/reportPage.dart';
-import 'package:guardiancare/src/features/authentication/controllers/login_controller.dart';
 import 'package:guardiancare/src/features/authentication/controllers/account_controller.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:guardiancare/src/features/authentication/controllers/login_controller.dart';
+import 'package:guardiancare/src/features/authentication/screens/login_page.dart';
+import 'package:guardiancare/src/features/emergency/screens/emergency_contact_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Account extends StatelessWidget {
   final User? user;
