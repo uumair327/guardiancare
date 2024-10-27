@@ -1,9 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:guardiancare/src/constants/colors.dart';
-import 'package:guardiancare/src/features/forum/models/Comment.dart';
-import 'package:guardiancare/src/features/forum/models/Forum.dart';
-import 'package:guardiancare/src/features/forum/screens/CommentInput.dart';
+import 'package:guardiancare/src/features/forum/models/comment.dart';
+import 'package:guardiancare/src/features/forum/models/forum.dart';
+import 'package:guardiancare/src/features/forum/screens/comment_input.dart';
 import 'package:intl/intl.dart';
 
 class ForumWidget extends StatelessWidget {
