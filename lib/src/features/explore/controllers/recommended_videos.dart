@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:guardiancare/src/constants/colors.dart';
 import 'package:guardiancare/src/features/explore/controllers/explore_controller.dart';
 import 'package:guardiancare/src/features/learn/common_widgets/content_card.dart';
-import 'package:guardiancare/src/features/quiz/screens/quiz_page.dart';
+import 'package:guardiancare/src/features/quiz/screens/quizPage.dart';
 
 class RecommendedVideos extends StatelessWidget {
   final ExploreController controller = ExploreController();
