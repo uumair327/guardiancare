@@ -4,8 +4,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
-import 'package:guardiancare/src/features/authentication/screens/loginPage.dart';
-import 'package:guardiancare/src/routing/Pages.dart';
+import 'package:guardiancare/src/features/authentication/screens/login_page.dart';
+import 'package:guardiancare/src/routing/pages.dart';
 
 import 'firebase_options.dart';
 

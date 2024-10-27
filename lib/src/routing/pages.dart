@@ -1,10 +1,10 @@
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart'; // Import for SharedPreferences
 import 'package:guardiancare/src/constants/colors.dart';
 import 'package:guardiancare/src/features/explore/screens/explore.dart';
-import 'package:guardiancare/src/features/forum/screens/forumPage.dart';
-import 'package:guardiancare/src/features/home/screens/homePage.dart';
+import 'package:guardiancare/src/features/forum/screens/forum_page.dart';
+import 'package:guardiancare/src/features/home/screens/home_page.dart';
+import 'package:shared_preferences/shared_preferences.dart'; // Import for SharedPreferences
 
 class Pages extends StatefulWidget {
   const Pages({Key? key}) : super(key: key);
@@ -108,11 +108,10 @@ class _PagesState extends State<Pages> {
         title: const Text(
           "Guardian Care",
           style: TextStyle(
-            color: tPrimaryColor,
-            fontWeight: FontWeight.bold,
-            fontSize: 25,
-            fontStyle: FontStyle.italic
-          ),
+              color: tPrimaryColor,
+              fontWeight: FontWeight.bold,
+              fontSize: 25,
+              fontStyle: FontStyle.italic),
         ),
         centerTitle: true,
       ),
