@@ -110,14 +110,14 @@ class QuizTile extends StatelessWidget {
             fit: BoxFit.cover,
           ),
           Container(
-              padding: EdgeInsets.all(8),
-              child: Text(
-                capitalizeEach(quiz["name"]),
-                style: const TextStyle(
-                    fontSize: 25,
-                    color: tPrimaryColor,
-                    fontWeight: FontWeight.w600),
-              ))
+            padding: EdgeInsets.all(8),
+            child: Text(
+              capitalizeEach(quiz["name"]),
+              style: const TextStyle(
+                  fontSize: 25,
+                  color: tPrimaryColor,
+                  fontWeight: FontWeight.w600),
+            ))
         ],
       ),
     );
