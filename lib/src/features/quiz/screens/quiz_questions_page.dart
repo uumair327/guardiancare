@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:guardiancare/src/api/gemini/process_categories.dart';
 import 'package:guardiancare/src/constants/colors.dart';
 import 'package:guardiancare/src/features/quiz/common_widgets/quiz_question_widget.dart';
 import 'package:guardiancare/src/features/quiz/controllers/quiz_controller.dart';
-import 'package:guardiancare/src/api/gemini/processCategories.dart';
 
 class QuizQuestionsPage extends StatefulWidget {
   final List<Map<String, dynamic>> questions;
@@ -39,13 +39,16 @@ class _QuizQuestionsPageState extends State<QuizQuestionsPage> {
                   question: widget.questions[currentQuestionIndex],
                   onPressed: (int selectedOptionIndex) {
                     // Check if the selected option is correct
-                    if (selectedOptionIndex == widget.questions[currentQuestionIndex]['correctAnswerIndex']) {
+                    if (selectedOptionIndex ==
+                        widget.questions[currentQuestionIndex]
+                            ['correctAnswerIndex']) {
                       setState(() {
                         correctAnswers++;
                       });
                     } else {
                       setState(() {
-                        incorrectCategories.add(widget.questions[currentQuestionIndex]['category']);
+                        incorrectCategories.add(
+                            widget.questions[currentQuestionIndex]['category']);
                       });
                     }
 
@@ -79,7 +82,8 @@ class _QuizQuestionsPageState extends State<QuizQuestionsPage> {
                 if (currentQuestionIndex > 0)
                   ElevatedButton(
                     onPressed: isBlocked ? null : _goToPreviousQuestion,
-                    child: const Text('Previous',
+                    child: const Text(
+                      'Previous',
                       style: const TextStyle(
                         color: tPrimaryColor,
                       ),
@@ -120,7 +124,8 @@ class _QuizQuestionsPageState extends State<QuizQuestionsPage> {
     } else {
       // Process completion
       if (incorrectCategories.isNotEmpty) {
-        Future<bool> processSuccess = processCategories(incorrectCategories, widget.questions[0]['quiz']);
+        Future<bool> processSuccess =
+            processCategories(incorrectCategories, widget.questions[0]['quiz']);
         print(processSuccess);
       }
 

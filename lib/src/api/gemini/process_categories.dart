@@ -1,5 +1,5 @@
 import 'package:flutter_gemini/flutter_gemini.dart';
-import 'package:guardiancare/src/api/youtube/fetchVideos.dart';
+import 'package:guardiancare/src/api/youtube/fetch_videos.dart';
 import 'package:guardiancare/src/constants/keys.dart';
 
 Future<bool> processCategories(
