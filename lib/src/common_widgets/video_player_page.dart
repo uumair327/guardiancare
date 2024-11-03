@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
-class VideoPlayerPage extends StatelessWidget {
+class VideoPlayerPage extends StatefulWidget {
   final String videoUrl;
 
   const VideoPlayerPage({super.key, required this.videoUrl});
 
   @override
+  State<VideoPlayerPage> createState() => _VideoPlayerPageState();
+}
+
+class _VideoPlayerPageState extends State<VideoPlayerPage> {
+  @override
   Widget build(BuildContext context) {
-    String? videoId = YoutubePlayer.convertUrlToId(videoUrl);
+    String? videoId = YoutubePlayer.convertUrlToId(widget.videoUrl);
     if (videoId == null) {
       return Scaffold(
         appBar: AppBar(
