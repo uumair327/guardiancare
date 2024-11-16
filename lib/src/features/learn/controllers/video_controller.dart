@@ -129,6 +129,7 @@ class _VideoControllerState extends State<VideoController> {
           itemCount: videos.length,
           itemBuilder: (context, index) {
             var video = videos[index].data() as Map<String, dynamic>;
+            // ignore: unused_local_variable
             VideoPlayerController controller = VideoPlayerController.networkUrl(
               Uri.parse(video['videoUrl'] as String? ?? ''),
             )..initialize().then((_) {

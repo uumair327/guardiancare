@@ -15,7 +15,7 @@ class _VideoPageState extends State<VideoPage> {
       appBar: AppBar(
         title: const Text('Learn'),
       ),
-      body: VideoController(),
+      body: const VideoController(),
     );
   }
 }
