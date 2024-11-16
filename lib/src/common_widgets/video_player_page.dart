@@ -4,7 +4,7 @@ import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 class VideoPlayerPage extends StatefulWidget {
   final String videoUrl;
 
-  const VideoPlayerPage({Key? key, required this.videoUrl}) : super(key: key);
+  const VideoPlayerPage({super.key, required this.videoUrl});
 
   @override
   State<VideoPlayerPage> createState() => _VideoPlayerPageState();
@@ -12,7 +12,7 @@ class VideoPlayerPage extends StatefulWidget {
 
 class _VideoPlayerPageState extends State<VideoPlayerPage> {
   late YoutubePlayerController _controller;
-  bool _isVideoUrlValid = true;
+  bool _isVideoUrlValid = false; // Default to false until validated
 
   @override
   void initState() {
@@ -20,9 +20,8 @@ class _VideoPlayerPageState extends State<VideoPlayerPage> {
 
     // Extract video ID and check validity
     String? videoId = YoutubePlayer.convertUrlToId(widget.videoUrl);
-    if (videoId == null) {
-      _isVideoUrlValid = false;
-    } else {
+    if (videoId != null) {
+      _isVideoUrlValid = true;
       _controller = YoutubePlayerController(
         initialVideoId: videoId,
         flags: const YoutubePlayerFlags(
@@ -30,6 +29,8 @@ class _VideoPlayerPageState extends State<VideoPlayerPage> {
           mute: false,
         ),
       );
+    } else {
+      _isVideoUrlValid = false; // Invalid URL
     }
   }
 
@@ -53,14 +54,19 @@ class _VideoPlayerPageState extends State<VideoPlayerPage> {
                   _controller.addListener(() {});
                 },
               )
-            : const Text('Invalid YouTube URL'),
+            : const Text(
+                'Invalid YouTube URL',
+                style: TextStyle(color: Colors.red, fontSize: 16),
+              ),
       ),
     );
   }
 
   @override
   void dispose() {
-    _controller.dispose();
+    if (_isVideoUrlValid) {
+      _controller.dispose();
+    }
     super.dispose();
   }
 }

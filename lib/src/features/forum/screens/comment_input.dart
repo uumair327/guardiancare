@@ -6,7 +6,7 @@ import 'package:guardiancare/src/features/forum/models/comment.dart';
 class CommentInput extends StatefulWidget {
   final String forumId;
 
-  const CommentInput({Key? key, required this.forumId}) : super(key: key);
+  const CommentInput({super.key, required this.forumId});
 
   @override
   _CommentInputState createState() => _CommentInputState();
@@ -107,7 +107,7 @@ class _CommentInputState extends State<CommentInput> {
               : IconButton(
                   icon: const Icon(Icons.send),
                   onPressed: _addComment,
-                  color: Color.fromRGBO(239, 72, 53, 1),
+                  color: const Color.fromRGBO(239, 72, 53, 1),
                 ),
         ],
       ),

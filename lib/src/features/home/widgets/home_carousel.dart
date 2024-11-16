@@ -9,10 +9,10 @@ class HomeCarousel extends StatelessWidget {
   final double carouselHeight;
 
   const HomeCarousel({
-    Key? key,
+    super.key,
     required this.carouselData,
     required this.carouselHeight,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

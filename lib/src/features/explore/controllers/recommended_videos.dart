@@ -8,6 +8,8 @@ import 'package:guardiancare/src/features/quiz/screens/quiz_page.dart';
 class RecommendedVideos extends StatelessWidget {
   final ExploreController controller = ExploreController();
 
+  RecommendedVideos({super.key});
+
   @override
   Widget build(BuildContext context) {
     final user = controller.currentUser;
