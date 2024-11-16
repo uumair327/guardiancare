@@ -99,7 +99,7 @@ class _PagesState extends State<Pages> {
     final screens = <Widget>[
       const HomePage(),
       const Explore(),
-      const ForumPage(),
+      ForumPage(),
     ];
 
     return Scaffold(

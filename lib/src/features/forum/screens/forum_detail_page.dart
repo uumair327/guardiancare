@@ -1,63 +1,18 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+// lib/src/features/forum/screens/forum_detail_page.dart
 import 'package:flutter/material.dart';
-import 'package:guardiancare/src/constants/colors.dart';
+import 'package:guardiancare/src/features/forum/controllers/forum_controller.dart';
 import 'package:guardiancare/src/features/forum/models/comment.dart';
 import 'package:guardiancare/src/features/forum/models/forum.dart';
-import 'package:guardiancare/src/features/forum/screens/comment_input.dart';
+import 'package:guardiancare/src/features/forum/widgets/comment_input.dart';
+import 'package:guardiancare/src/features/forum/widgets/reminder_dialog.dart';
+import 'package:guardiancare/src/features/forum/widgets/user_details.dart';
 import 'package:intl/intl.dart';
-
-class ForumWidget extends StatelessWidget {
-  final Forum forum;
-
-  const ForumWidget({Key? key, required this.forum}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => ForumDetailPage(forum: forum),
-          ),
-        );
-      },
-      child: Card(
-        elevation: 4,
-        margin: const EdgeInsets.only(bottom: 30),
-        child: Container(
-          padding: const EdgeInsets.all(15),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                forum.title,
-                style: const TextStyle(
-                  fontSize: 20.0,
-                  fontWeight: FontWeight.bold,
-                  color: Color.fromRGBO(239, 72, 53, 1),
-                ),
-              ),
-              Text(
-                DateFormat('dd MMM yy - hh:mm a').format(forum.createdAt),
-              ),
-              const SizedBox(height: 10),
-              Text(
-                forum.description,
-                textAlign: TextAlign.left,
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
 
 class ForumDetailPage extends StatelessWidget {
   final Forum forum;
+  final ForumController _forumController = ForumController();
 
-  const ForumDetailPage({Key? key, required this.forum}) : super(key: key);
+  ForumDetailPage({super.key, required this.forum});
 
   @override
   Widget build(BuildContext context) {
@@ -99,21 +54,17 @@ class ForumDetailPage extends StatelessWidget {
                         ),
                         const SizedBox(height: 10),
                         const Divider(),
-                        StreamBuilder<QuerySnapshot>(
-                          stream: FirebaseFirestore.instance
-                              .collection('forum')
-                              .doc(forum.id)
-                              .collection('comments')
-                              .snapshots(),
+                        // In-App Reminder
+                        ReminderWidget(),
+                        const SizedBox(height: 10),
+                        StreamBuilder<List<Comment>>(
+                          stream: _forumController.getComments(forum.id),
                           builder: (context, snapshot) {
                             if (!snapshot.hasData) {
                               return const Center(
                                   child: CircularProgressIndicator());
                             }
-                            var comments = snapshot.data!.docs
-                                .map((doc) => Comment.fromMap(
-                                    doc.data() as Map<String, dynamic>))
-                                .toList();
+                            var comments = snapshot.data!;
                             return Column(
                               children: comments.map((comment) {
                                 return ListTile(
@@ -133,6 +84,7 @@ class ForumDetailPage extends StatelessWidget {
                                         ),
                                       ),
                                       const SizedBox(height: 4),
+                                      // Optionally, add the comment's timestamp
                                       // Text(
                                       //   DateFormat('dd MMM yy - hh:mm a').format(comment.createdAt),
                                       //   style: TextStyle(
@@ -165,81 +117,47 @@ class ForumDetailPage extends StatelessWidget {
   }
 }
 
-class UserDetails extends StatelessWidget {
-  final String userId;
+class ReminderWidget extends StatefulWidget {
+  const ReminderWidget({super.key});
 
-  const UserDetails({Key? key, required this.userId}) : super(key: key);
+  @override
+  _ReminderWidgetState createState() => _ReminderWidgetState();
+}
 
-  Future<Map<String, String>> fetchUserDetails(String userId) async {
-    var userName = "Anonymous",
-        userImage = "",
-        userEmail = "anonymous@mail.com";
+class _ReminderWidgetState extends State<ReminderWidget> {
+  bool _isReminderShown = false;
 
-    try {
-      final userDetails = await FirebaseFirestore.instance
-          .collection('users')
-          .doc(userId)
-          .get();
+  @override
+  void initState() {
+    super.initState();
+    _checkAndShowReminder();
+  }
 
-      if (userDetails.exists) {
-        userName = userDetails.data()?['displayName'] ?? "Anonymous";
-        userImage = userDetails.data()?['photoURL'] ??
-            "https://i.ibb.co/Qc9HnBr/logo-CIF-zoom.jpg";
-        userEmail = userDetails.data()?['email'] ?? "anonymous@mail.com";
-      }
-    } catch (e) {
-      print('Error fetching user details: $e');
+  Future<void> _checkAndShowReminder() async {
+    // Implement your logic to determine if the user is a child.
+    // For demonstration, we'll assume all users are children.
+    bool isChildUser = true;
+
+    if (isChildUser && !_isReminderShown) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) => ReminderDialog(
+            onAgree: () {
+              // You can add additional actions here if needed
+            },
+          ),
+        );
+      });
+      setState(() {
+        _isReminderShown = true;
+      });
     }
-
-    return {
-      'userName': userName,
-      'userImage': userImage,
-      'userEmail': userEmail
-    };
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<Map<String, String>>(
-      future: fetchUserDetails(userId),
-      builder: (context, snapshot) {
-        if (!snapshot.hasData) {
-          return const Center(child: CircularProgressIndicator());
-        }
-        var user = snapshot.data!;
-        return Row(
-          children: [
-            CircleAvatar(
-              backgroundImage: user['userImage']!.isNotEmpty
-                  ? NetworkImage(user['userImage']!)
-                  : null,
-              child:
-                  user['userImage']!.isEmpty ? const Icon(Icons.person) : null,
-            ),
-            const SizedBox(width: 10),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  user['userName']!,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 14,
-                    color: tPrimaryColor,
-                  ),
-                ),
-                Text(
-                  user['userEmail']!,
-                  style: const TextStyle(
-                    color: Colors.grey,
-                    fontSize: 12,
-                  ),
-                ),
-              ],
-            ),
-          ],
-        );
-      },
-    );
+    return Container(); // Placeholder, as the dialog handles the reminder
   }
 }
