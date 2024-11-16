@@ -5,6 +5,7 @@ import 'package:guardiancare/src/features/explore/screens/explore.dart';
 import 'package:guardiancare/src/features/forum/screens/forum_page.dart';
 import 'package:guardiancare/src/features/home/screens/home_page.dart';
 import 'package:shared_preferences/shared_preferences.dart'; // Import for SharedPreferences
+import 'package:guardiancare/src/common_widgets/password_dialog.dart'; 
 
 class Pages extends StatefulWidget {
   const Pages({Key? key}) : super(key: key);
@@ -16,19 +17,63 @@ class Pages extends StatefulWidget {
 class _PagesState extends State<Pages> {
   int index = 0;
   bool hasSeenForumGuidelines = false;
+  final String _correctPassword = "1234"; // Hardcoded password for testing
 
-  Future<void> _checkAndShowGuidelines() async {
+  @override
+  void initState() {
+    super.initState();
+    _loadGuidelinesStatus();
+  }
+
+  Future<void> _loadGuidelinesStatus() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    hasSeenForumGuidelines =
-        prefs.getBool('has_seen_forum_guidelines') ?? false;
+    setState(() {
+      hasSeenForumGuidelines =
+          prefs.getBool('has_seen_forum_guidelines') ?? false;
+    });
+  }
 
-    if (index == 2 && !hasSeenForumGuidelines) {
-      await _showGuidelinesDialog();
-      await prefs.setBool('has_seen_forum_guidelines', true);
-      setState(() {
-        hasSeenForumGuidelines = true;
-      });
+  Future<void> _checkAndShowPasswordAndGuidelines() async {
+    if (index == 2) {
+      // Show guidelines dialog if it's the first visit
+      if (!hasSeenForumGuidelines) {
+        await _showGuidelinesDialog();
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setBool('has_seen_forum_guidelines', true);
+        setState(() {
+          hasSeenForumGuidelines = true;
+        });
+      }
+
+      // Always show the password dialog on forum visit
+      await _showPasswordDialog();
     }
+  }
+
+  Future<void> _showPasswordDialog() async {
+    await showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return PasswordDialog(
+          onSubmit: (password) {
+            if (password == _correctPassword) {
+              Navigator.of(context).pop(); // Close the dialog
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text("Incorrect password!")),
+              );
+            }
+          },
+          onCancel: () {
+            setState(() {
+              index = 0; // Navigate back to HomePage if password is incorrect
+            });
+            Navigator.of(context).pop(); // Close the dialog
+          },
+        );
+      },
+    );
   }
 
   Future<void> _showGuidelinesDialog() async {
@@ -48,7 +93,7 @@ class _PagesState extends State<Pages> {
             child: ListBody(
               children: <Widget>[
                 Text(
-                    'Welcome to the guardiancare Global Forum. Kindly follow these guidelines:'),
+                    'Welcome to the GuardianCare Global Forum. Kindly follow these guidelines:'),
                 SizedBox(height: 10),
                 Text('• Be respectful and courteous to all members.'),
                 Text(
@@ -130,9 +175,9 @@ class _PagesState extends State<Pages> {
             index = newIndex;
           });
 
-          // Check and show guidelines dialog if navigating to forum
+          // Check and show guidelines and password dialog if navigating to forum
           if (newIndex == 2) {
-            await _checkAndShowGuidelines();
+            await _checkAndShowPasswordAndGuidelines();
           }
         },
       ),
