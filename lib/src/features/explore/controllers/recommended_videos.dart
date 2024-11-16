@@ -66,7 +66,7 @@ class RecommendedVideos extends StatelessWidget {
                         seconds: 2)); // Optional delay for smooth UX
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => QuizPage()),
+                      MaterialPageRoute(builder: (context) => const QuizPage()),
                     );
                   },
                   style: ElevatedButton.styleFrom(

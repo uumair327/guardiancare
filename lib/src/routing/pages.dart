@@ -1,10 +1,13 @@
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:guardiancare/src/constants/colors.dart';
+import 'package:guardiancare/src/features/consent/controllers/consent_controller.dart';
+import 'package:guardiancare/src/features/consent/screens/consent_form.dart';
 import 'package:guardiancare/src/features/explore/screens/explore.dart';
 import 'package:guardiancare/src/features/forum/screens/forum_page.dart';
 import 'package:guardiancare/src/features/home/screens/home_page.dart';
-import 'package:shared_preferences/shared_preferences.dart'; // Import for SharedPreferences
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:ui'; // For BackdropFilter
 
 class Pages extends StatefulWidget {
   const Pages({super.key});
@@ -15,85 +18,59 @@ class Pages extends StatefulWidget {
 
 class _PagesState extends State<Pages> {
   int index = 0;
-  bool hasSeenForumGuidelines = false;
+  bool hasSeenConsent = false;
+  bool hasVerifiedOtp = false;
+  bool isConsentFormVisible = true;
+  bool isOtpFormVisible = false;
 
-  Future<void> _checkAndShowGuidelines() async {
+  final ConsentController _consentController = ConsentController();
+  final TextEditingController formController = TextEditingController();
+  final TextEditingController otpController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _checkAndShowConsent();
+  }
+
+  Future<void> _checkAndShowConsent() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    hasSeenForumGuidelines =
-        prefs.getBool('has_seen_forum_guidelines') ?? false;
+    hasSeenConsent = prefs.getBool('has_seen_consent') ?? false;
+    hasVerifiedOtp = prefs.getBool('has_verified_otp') ?? false;
 
-    if (index == 2 && !hasSeenForumGuidelines) {
-      await _showGuidelinesDialog();
-      await prefs.setBool('has_seen_forum_guidelines', true);
+    if (!hasSeenConsent || !hasVerifiedOtp) {
       setState(() {
-        hasSeenForumGuidelines = true;
+        isConsentFormVisible = !hasSeenConsent;
+        isOtpFormVisible = hasSeenConsent && !hasVerifiedOtp;
       });
     }
   }
 
-  Future<void> _showGuidelinesDialog() async {
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: false, // Prevent dismissing by tapping outside
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text(
-            'Forum Guidelines',
-            style: TextStyle(
-              color: tPrimaryColor,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          content: const SingleChildScrollView(
-            child: ListBody(
-              children: <Widget>[
-                Text(
-                    'Welcome to the guardiancare Global Forum. Kindly follow these guidelines:'),
-                SizedBox(height: 10),
-                Text('• Be respectful and courteous to all members.'),
-                Text(
-                    '• Do not use any language that is abusive, harassing, or harmful.'),
-                Text(
-                    '• Avoid sharing content that is inappropriate or harmful, especially related to children.'),
-                Text(
-                    '• Remember that this is a space for constructive discussions on child safety.'),
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: const Text(
-                'I Agree',
-                style: TextStyle(color: tPrimaryColor),
-              ),
-              onPressed: () {
-                Navigator.of(context).pop(); // Close the dialog
-              },
-            ),
-          ],
-        );
-      },
-    );
+  void submitConsent() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setBool('has_seen_consent', true);
+
+    setState(() {
+      isConsentFormVisible = false;
+      isOtpFormVisible = true;
+    });
+  }
+
+  void submitOtp() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setBool('has_verified_otp', true);
+
+    setState(() {
+      isOtpFormVisible = false;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     final items = <Widget>[
-      const Icon(
-        Icons.home,
-        size: 25,
-        color: tNavBarColorButton,
-      ),
-      const Icon(
-        Icons.explore,
-        size: 25,
-        color: tNavBarColorButton,
-      ),
-      const Icon(
-        Icons.forum,
-        size: 25,
-        color: tNavBarColorButton,
-      ),
+      const Icon(Icons.home, size: 25, color: tNavBarColorButton),
+      const Icon(Icons.explore, size: 25, color: tNavBarColorButton),
+      const Icon(Icons.forum, size: 25, color: tNavBarColorButton),
     ];
 
     final screens = <Widget>[
@@ -102,40 +79,79 @@ class _PagesState extends State<Pages> {
       const ForumPage(),
     ];
 
-    return Scaffold(
-      extendBody: true,
-      appBar: AppBar(
-        title: const Text(
-          "Guardian Care",
-          style: TextStyle(
-              color: tPrimaryColor,
-              fontWeight: FontWeight.bold,
-              fontSize: 25,
-              fontStyle: FontStyle.italic),
+    return Stack(
+      children: [
+        Scaffold(
+          extendBody: true,
+          appBar: AppBar(
+            title: const Text(
+              "Guardian Care",
+              style: TextStyle(
+                color: tPrimaryColor,
+                fontWeight: FontWeight.bold,
+                fontSize: 25,
+                fontStyle: FontStyle.italic,
+              ),
+            ),
+            centerTitle: true,
+          ),
+          backgroundColor: Colors.white,
+          body: screens[index],
+          bottomNavigationBar: CurvedNavigationBar(
+            items: items,
+            backgroundColor: Colors.transparent,
+            color: tNavBarColor,
+            height: 55,
+            index: index,
+            onTap: (newIndex) async {
+              setState(() {
+                index = newIndex;
+              });
+            },
+          ),
         ),
-        centerTitle: true,
-      ),
-      backgroundColor: Colors.white,
-      body: SafeArea(
-        child: screens[index],
-      ),
-      bottomNavigationBar: CurvedNavigationBar(
-        items: items,
-        backgroundColor: Colors.transparent,
-        color: tNavBarColor,
-        height: 55,
-        index: index,
-        onTap: (newIndex) async {
-          setState(() {
-            index = newIndex;
-          });
 
-          // Check and show guidelines dialog if navigating to forum
-          if (newIndex == 2) {
-            await _checkAndShowGuidelines();
-          }
-        },
-      ),
+        // Consent form overlay
+        if (isConsentFormVisible)
+          Positioned.fill(
+            child: Stack(
+              children: [
+                BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
+                  child: Container(
+                    color: Colors.black.withOpacity(0.5),
+                  ),
+                ),
+                ConsentForm(
+                  consentController: _consentController,
+                  controller: formController,
+                  onSubmit: submitConsent, // This just hides the form, the logic is handled inside ConsentForm
+                ),
+              ],
+            ),
+          ),
+
+        // OTP form overlay
+        if (isOtpFormVisible)
+          Positioned.fill(
+            child: Stack(
+              children: [
+                BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
+                  child: Container(
+                    color: Colors.black.withOpacity(0.5),
+                  ),
+                ),
+                OtpForm(
+                  consentController: _consentController,
+                  controller: otpController,
+                  onSubmit: submitOtp,
+                ),
+              ],
+            ),
+          ),
+      ],
     );
   }
 }
+
