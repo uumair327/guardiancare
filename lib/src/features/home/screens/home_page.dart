@@ -84,7 +84,7 @@ class _HomePageState extends State<HomePage> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => QuizPage()),
+                                      builder: (context) => const QuizPage()),
                                 );
                               },
                             ),
@@ -136,7 +136,7 @@ class _HomePageState extends State<HomePage> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => WebViewPage(
+                                    builder: (context) => const WebViewPage(
                                         url: "https://childrenofindia.in/"),
                                   ),
                                 );
