@@ -1,7 +1,10 @@
 class Forum {
-  String id , userId , title , description; 
-  DateTime createdAt;
-  
+  final String id;
+  final String userId;
+  final String title;
+  final String description;
+  final DateTime createdAt;
+
   Forum({
     required this.id,
     required this.userId,
@@ -9,7 +12,8 @@ class Forum {
     required this.description,
     required this.createdAt,
   });
-factory Forum.fromMap(Map<String, dynamic> map){
+
+  factory Forum.fromMap(Map<String, dynamic> map) {
     return Forum(
       id: map['id'],
       userId: map['userId'],
@@ -19,14 +23,13 @@ factory Forum.fromMap(Map<String, dynamic> map){
     );
   }
 
-  Map<String, dynamic> toMap(){
+  Map<String, dynamic> toMap() {
     return {
       'id': id,
       'userId': userId,
       'title': title,
       'description': description,
-      'createdAt': createdAt.toString(),
+      'createdAt': createdAt.toIso8601String(),
     };
   }
-
 }
