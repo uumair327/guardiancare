@@ -9,7 +9,7 @@ import 'package:intl/intl.dart';
 class ForumWidget extends StatelessWidget {
   final Forum forum;
 
-  const ForumWidget({Key? key, required this.forum}) : super(key: key);
+  const ForumWidget({super.key, required this.forum});
 
   @override
   Widget build(BuildContext context) {
@@ -57,7 +57,7 @@ class ForumWidget extends StatelessWidget {
 class ForumDetailPage extends StatelessWidget {
   final Forum forum;
 
-  const ForumDetailPage({Key? key, required this.forum}) : super(key: key);
+  const ForumDetailPage({super.key, required this.forum});
 
   @override
   Widget build(BuildContext context) {
@@ -168,7 +168,7 @@ class ForumDetailPage extends StatelessWidget {
 class UserDetails extends StatelessWidget {
   final String userId;
 
-  const UserDetails({Key? key, required this.userId}) : super(key: key);
+  const UserDetails({super.key, required this.userId});
 
   Future<Map<String, String>> fetchUserDetails(String userId) async {
     var userName = "Anonymous",

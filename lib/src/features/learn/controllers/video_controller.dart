@@ -5,6 +5,8 @@ import 'package:guardiancare/src/constants/colors.dart';
 import 'package:video_player/video_player.dart';
 
 class VideoController extends StatefulWidget {
+  const VideoController({super.key});
+
   @override
   _VideoControllerState createState() => _VideoControllerState();
 }

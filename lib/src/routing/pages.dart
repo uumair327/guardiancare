@@ -7,7 +7,7 @@ import 'package:guardiancare/src/features/home/screens/home_page.dart';
 import 'package:shared_preferences/shared_preferences.dart'; // Import for SharedPreferences
 
 class Pages extends StatefulWidget {
-  const Pages({Key? key}) : super(key: key);
+  const Pages({super.key});
 
   @override
   State<Pages> createState() => _PagesState();
