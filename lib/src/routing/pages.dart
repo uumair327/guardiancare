@@ -63,6 +63,10 @@ class _PagesState extends State<Pages> {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text("Incorrect password!")),
               );
+              setState(() {
+                index = 0; // Navigate back to HomePage if password is incorrect
+              });
+              Navigator.of(context).pop(); // Close the dialog
             }
           },
           onCancel: () {
