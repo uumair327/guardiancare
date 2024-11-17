@@ -1,6 +1,7 @@
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:guardiancare/src/constants/colors.dart';
+import 'package:guardiancare/src/constants/text_strings.dart';
 import 'package:guardiancare/src/features/explore/screens/explore.dart';
 import 'package:guardiancare/src/features/forum/screens/forum_page.dart';
 import 'package:guardiancare/src/features/home/screens/home_page.dart';
@@ -17,8 +18,7 @@ class Pages extends StatefulWidget {
 class _PagesState extends State<Pages> {
   int index = 0;
   bool hasSeenForumGuidelines = false;
-  final String _correctPassword = "1234"; // Hardcoded password for testing
-
+  
   @override
   void initState() {
     super.initState();
@@ -57,7 +57,7 @@ class _PagesState extends State<Pages> {
       builder: (BuildContext context) {
         return PasswordDialog(
           onSubmit: (password) {
-            if (password == _correctPassword) {
+            if (password == tCorrectPassword) {
               Navigator.of(context).pop(); // Close the dialog
             } else {
               ScaffoldMessenger.of(context).showSnackBar(
