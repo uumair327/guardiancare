@@ -154,7 +154,11 @@ class _HomePageState extends State<HomePage> {
                                     emailLaunchUri.toString())) {
                                   await launch(emailLaunchUri.toString());
                                 } else {
-                                  throw "Could not launch $emailLaunchUri";
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                        content: Text(
+                                            "Could not launch email client")),
+                                  );
                                 }
                               },
                             ),
