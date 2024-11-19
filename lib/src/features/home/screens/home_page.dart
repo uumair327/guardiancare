@@ -185,7 +185,7 @@ class _HomePageState extends State<HomePage> {
                                     await launch(emailLaunchUri.toString());
                                   } else {
                                     ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
+                                      const SnackBar(
                                           content: Text(
                                               "Could not launch email client")),
                                     );

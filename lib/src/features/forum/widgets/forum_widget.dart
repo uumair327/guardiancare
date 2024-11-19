@@ -6,7 +6,7 @@ import 'package:intl/intl.dart';
 class ForumWidget extends StatelessWidget {
   final Forum forum;
 
-  const ForumWidget({Key? key, required this.forum}) : super(key: key);
+  const ForumWidget({super.key, required this.forum});
 
   @override
   Widget build(BuildContext context) {
