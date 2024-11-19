@@ -55,6 +55,7 @@ class _guardiancareState extends State<guardiancare> {
         _user = user;
       });
     });
+    print("I am the user: $_user");
   }
 
   @override
@@ -72,6 +73,8 @@ class _guardiancareState extends State<guardiancare> {
             );
           }
           if (snapshot.connectionState == ConnectionState.active) {
+            print("Snapshot Data is: ${snapshot.data ?? 'No data'}");
+
             if (snapshot.data == null) {
               return const LoginPage();
             } else {

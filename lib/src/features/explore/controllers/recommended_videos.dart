@@ -8,6 +8,8 @@ import 'package:guardiancare/src/features/quiz/screens/quiz_page.dart';
 class RecommendedVideos extends StatelessWidget {
   final ExploreController controller = ExploreController();
 
+  RecommendedVideos({super.key});
+
   @override
   Widget build(BuildContext context) {
     final user = controller.currentUser;
@@ -64,7 +66,7 @@ class RecommendedVideos extends StatelessWidget {
                         seconds: 2)); // Optional delay for smooth UX
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => QuizPage()),
+                      MaterialPageRoute(builder: (context) => const QuizPage()),
                     );
                   },
                   style: ElevatedButton.styleFrom(
