@@ -7,7 +7,7 @@ class ContentCard extends StatelessWidget {
   final String description;
   final BuildContext context;
 
-  ContentCard({
+  const ContentCard({super.key, 
     required this.imageUrl,
     required this.title,
     required this.description,
