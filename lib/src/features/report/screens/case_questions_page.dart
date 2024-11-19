@@ -1,13 +1,12 @@
 
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class CaseQuestionsPage extends StatelessWidget {
   final String caseName;
   final List<String> questions;
 
-  CaseQuestionsPage(this.caseName, this.questions);
+  const CaseQuestionsPage(this.caseName, this.questions, {super.key});
 
   @override
   Widget build(BuildContext context) {

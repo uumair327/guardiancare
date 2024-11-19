@@ -4,7 +4,7 @@ import 'package:guardiancare/src/features/forum/controllers/comment_controller.d
 class CommentInput extends StatefulWidget {
   final String forumId;
 
-  const CommentInput({Key? key, required this.forumId}) : super(key: key);
+  const CommentInput({super.key, required this.forumId});
 
   @override
   _CommentInputState createState() => _CommentInputState();
