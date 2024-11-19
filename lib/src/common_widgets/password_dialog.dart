@@ -7,10 +7,10 @@ class PasswordDialog extends StatelessWidget {
   final VoidCallback onCancel;
 
   const PasswordDialog({
-    Key? key,
+    super.key,
     required this.onSubmit,
     required this.onCancel,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

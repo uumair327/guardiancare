@@ -3,7 +3,7 @@ import 'package:guardiancare/src/features/forum/controllers/forum_controller.dar
 import 'package:guardiancare/src/features/forum/widgets/reminder_dialog.dart';
 
 class AddForumScreen extends StatefulWidget {
-  const AddForumScreen({Key? key}) : super(key: key);
+  const AddForumScreen({super.key});
 
   @override
   State<AddForumScreen> createState() => _AddForumScreenState();
