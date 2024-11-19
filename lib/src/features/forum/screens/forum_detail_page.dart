@@ -55,7 +55,7 @@ class ForumDetailPage extends StatelessWidget {
                         const SizedBox(height: 10),
                         const Divider(),
                         // In-App Reminder
-                        ReminderWidget(),
+                        const ReminderWidget(),
                         const SizedBox(height: 10),
                         StreamBuilder<List<Comment>>(
                           stream: _forumController.getComments(forum.id),

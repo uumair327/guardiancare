@@ -4,7 +4,7 @@ import 'package:guardiancare/src/constants/colors.dart';
 class ReminderDialog extends StatelessWidget {
   final VoidCallback onAgree;
 
-  const ReminderDialog({Key? key, required this.onAgree}) : super(key: key);
+  const ReminderDialog({super.key, required this.onAgree});
 
   @override
   Widget build(BuildContext context) {

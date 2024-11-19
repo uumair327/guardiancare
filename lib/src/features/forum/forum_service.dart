@@ -13,7 +13,7 @@ class ForumService {
         .orderBy('createdAt', descending: true)
         .snapshots()
         .map((snapshot) => snapshot.docs
-            .map((doc) => Forum.fromMap(doc.data() as Map<String, dynamic>))
+            .map((doc) => Forum.fromMap(doc.data()))
             .toList());
   }
 
@@ -39,7 +39,7 @@ class ForumService {
         .orderBy('createdAt', descending: true)
         .snapshots()
         .map((snapshot) => snapshot.docs
-            .map((doc) => Comment.fromMap(doc.data() as Map<String, dynamic>))
+            .map((doc) => Comment.fromMap(doc.data()))
             .toList());
   }
 
