@@ -1,9 +1,9 @@
 class Comment {
-  String id;
-  String userId;
-  String forumId;
-  String text;
-  DateTime createdAt;
+  final String id;
+  final String userId;
+  final String forumId;
+  final String text;
+  final DateTime createdAt;
 
   Comment({
     required this.id,
@@ -29,7 +29,7 @@ class Comment {
       'userId': userId,
       'forumId': forumId,
       'text': text,
-      'createdAt': createdAt.toString(),
+      'createdAt': createdAt.toIso8601String(),
     };
   }
 }

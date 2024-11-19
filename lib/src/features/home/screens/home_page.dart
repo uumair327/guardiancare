@@ -10,6 +10,8 @@ import 'package:guardiancare/src/features/learn/screens/video_page.dart';
 import 'package:guardiancare/src/features/profile/screens/account.dart';
 import 'package:guardiancare/src/features/quiz/screens/quiz_page.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:guardiancare/src/constants/text_strings.dart';
+import 'package:guardiancare/src/common_widgets/password_dialog.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -43,6 +45,31 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       carouselData = data;
     });
+  }
+
+  Future<void> _verifyPasswordAndExecute(VoidCallback onSuccess) async {
+    await showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return PasswordDialog(
+          onSubmit: (password) {
+            if (password == tCorrectPassword) {
+              Navigator.of(context).pop(); // Close the dialog
+              onSuccess(); // Execute the callback if the password is correct
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text("Incorrect password!")),
+              );
+              Navigator.of(context).pop(); // Close the dialog
+            }
+          },
+          onCancel: () {
+            Navigator.of(context).pop(); // Close the dialog
+          },
+        );
+      },
+    );
   }
 
   @override
@@ -121,12 +148,14 @@ class _HomePageState extends State<HomePage> {
                               iconData: Icons.person,
                               label: 'Profile',
                               onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          Account(user: _user)),
-                                );
+                                _verifyPasswordAndExecute(() {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            Account(user: _user)),
+                                  );
+                                });
                               },
                             ),
                             CircularButton(
@@ -145,17 +174,23 @@ class _HomePageState extends State<HomePage> {
                             CircularButton(
                               iconData: Icons.email,
                               label: 'Mail Us',
-                              onPressed: () async {
-                                final Uri emailLaunchUri = Uri(
-                                  scheme: 'mailto',
-                                  path: 'hello@childrenofindia.in',
-                                );
-                                if (await canLaunch(
-                                    emailLaunchUri.toString())) {
-                                  await launch(emailLaunchUri.toString());
-                                } else {
-                                  throw "Could not launch $emailLaunchUri";
-                                }
+                              onPressed: () {
+                                _verifyPasswordAndExecute(() async {
+                                  final Uri emailLaunchUri = Uri(
+                                    scheme: 'mailto',
+                                    path: 'hello@childrenofindia.in',
+                                  );
+                                  if (await canLaunch(
+                                      emailLaunchUri.toString())) {
+                                    await launch(emailLaunchUri.toString());
+                                  } else {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                          content: Text(
+                                              "Could not launch email client")),
+                                    );
+                                  }
+                                });
                               },
                             ),
                           ],

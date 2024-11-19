@@ -8,17 +8,15 @@ const tWhiteColor = Color(0xffffffff);
 const tDarkColor = Color(0xFF000000);
 
 //onboarding color
-
 const tOnBoardingPage1Color = Colors.white;
 const tOnBoardingPage2Color = Color(0xfffddcdf);
 const tOnBoardingPage3Color = Color(0xffffdcbd);
 
 //constant color for HomePage
 const tHomePageButtonColor = Color.fromARGB(255, 239, 73, 52);
-
 const tNavBarColorButton = Colors.white;
 const tNavBarColor = Color.fromARGB(255, 239, 73, 52);
-
 const tTextPrimary = Color.fromRGBO(34, 34, 38, 1.0);
 
-// const tPrimaryColor = Colors.blue;
+// Constant for transparent background 
+const tTransparentBackground = Colors.transparent;
