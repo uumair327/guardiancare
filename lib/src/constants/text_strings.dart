@@ -13,3 +13,5 @@ const String tOnBoardingSubTitle3 =
 const String tOnBoardingCounter1 = "1/3";
 const String tOnBoardingCounter2 = "2/3";
 const String tOnBoardingCounter3 = "3/3";
+
+const String tCorrectPassword = "123"; // Hardcoded password for testing
