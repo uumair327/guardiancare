@@ -19,9 +19,7 @@ class Pages extends StatefulWidget {
 class _PagesState extends State<Pages> {
   int index = 0;
   bool hasSeenConsent = false;
-  bool hasVerifiedOtp = false;
   bool isConsentFormVisible = true;
-  bool isOtpFormVisible = false;
 
   final ConsentController _consentController = ConsentController();
   final TextEditingController formController = TextEditingController();
@@ -36,12 +34,10 @@ class _PagesState extends State<Pages> {
   Future<void> _checkAndShowConsent() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     hasSeenConsent = prefs.getBool('has_seen_consent') ?? false;
-    hasVerifiedOtp = prefs.getBool('has_verified_otp') ?? false;
 
-    if (!hasSeenConsent || !hasVerifiedOtp) {
+    if (!hasSeenConsent) {
       setState(() {
         isConsentFormVisible = !hasSeenConsent;
-        isOtpFormVisible = hasSeenConsent && !hasVerifiedOtp;
       });
     }
   }
@@ -52,16 +48,6 @@ class _PagesState extends State<Pages> {
 
     setState(() {
       isConsentFormVisible = false;
-      isOtpFormVisible = true;
-    });
-  }
-
-  void submitOtp() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setBool('has_verified_otp', true);
-
-    setState(() {
-      isOtpFormVisible = false;
     });
   }
 
@@ -125,27 +111,8 @@ class _PagesState extends State<Pages> {
                 ConsentForm(
                   consentController: _consentController,
                   controller: formController,
-                  onSubmit: submitConsent, // This just hides the form, the logic is handled inside ConsentForm
-                ),
-              ],
-            ),
-          ),
-
-        // OTP form overlay
-        if (isOtpFormVisible)
-          Positioned.fill(
-            child: Stack(
-              children: [
-                BackdropFilter(
-                  filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
-                  child: Container(
-                    color: Colors.black.withOpacity(0.5),
-                  ),
-                ),
-                OtpForm(
-                  consentController: _consentController,
-                  controller: otpController,
-                  onSubmit: submitOtp,
+                  onSubmit:
+                      submitConsent, // This just hides the form, the logic is handled inside ConsentForm
                 ),
               ],
             ),
@@ -154,4 +121,3 @@ class _PagesState extends State<Pages> {
     );
   }
 }
-
