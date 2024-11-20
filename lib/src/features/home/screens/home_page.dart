@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:guardiancare/src/common_widgets/web_view_page.dart';
+import 'package:guardiancare/src/features/consent/controllers/consent_controller.dart';
 import 'package:guardiancare/src/features/emergency/screens/emergency_contact_page.dart';
 import 'package:guardiancare/src/features/home/controllers/home_controller.dart';
 import 'package:guardiancare/src/features/home/widgets/circular_button.dart';
@@ -10,8 +11,6 @@ import 'package:guardiancare/src/features/learn/screens/video_page.dart';
 import 'package:guardiancare/src/features/profile/screens/account.dart';
 import 'package:guardiancare/src/features/quiz/screens/quiz_page.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:guardiancare/src/constants/text_strings.dart';
-import 'package:guardiancare/src/common_widgets/password_dialog.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -24,6 +23,7 @@ class _HomePageState extends State<HomePage> {
   late double carouselHeight;
   List<Map<String, dynamic>> carouselData = [];
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  final ConsentController _consentController = ConsentController();
   User? _user;
 
   @override
@@ -45,31 +45,6 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       carouselData = data;
     });
-  }
-
-  Future<void> _verifyPasswordAndExecute(VoidCallback onSuccess) async {
-    await showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return PasswordDialog(
-          onSubmit: (password) {
-            if (password == tCorrectPassword) {
-              Navigator.of(context).pop(); // Close the dialog
-              onSuccess(); // Execute the callback if the password is correct
-            } else {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text("Incorrect password!")),
-              );
-              Navigator.of(context).pop(); // Close the dialog
-            }
-          },
-          onCancel: () {
-            Navigator.of(context).pop(); // Close the dialog
-          },
-        );
-      },
-    );
   }
 
   @override
@@ -111,7 +86,8 @@ class _HomePageState extends State<HomePage> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => const QuizPage()),
+                                    builder: (context) => const QuizPage(),
+                                  ),
                                 );
                               },
                             ),
@@ -122,7 +98,8 @@ class _HomePageState extends State<HomePage> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => const VideoPage()),
+                                    builder: (context) => const VideoPage(),
+                                  ),
                                 );
                               },
                             ),
@@ -133,8 +110,9 @@ class _HomePageState extends State<HomePage> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) =>
-                                          const EmergencyContactPage()),
+                                    builder: (context) =>
+                                        const EmergencyContactPage(),
+                                  ),
                                 );
                               },
                             ),
@@ -148,14 +126,18 @@ class _HomePageState extends State<HomePage> {
                               iconData: Icons.person,
                               label: 'Profile',
                               onPressed: () {
-                                _verifyPasswordAndExecute(() {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
+                                _consentController.verifyParentalKey(
+                                  context,
+                                  () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
                                         builder: (context) =>
-                                            Account(user: _user)),
-                                  );
-                                });
+                                            Account(user: _user),
+                                      ),
+                                    );
+                                  },
+                                );
                               },
                             ),
                             CircularButton(
@@ -175,22 +157,30 @@ class _HomePageState extends State<HomePage> {
                               iconData: Icons.email,
                               label: 'Mail Us',
                               onPressed: () {
-                                _verifyPasswordAndExecute(() async {
-                                  final Uri emailLaunchUri = Uri(
-                                    scheme: 'mailto',
-                                    path: 'hello@childrenofindia.in',
-                                  );
-                                  if (await canLaunch(
-                                      emailLaunchUri.toString())) {
-                                    await launch(emailLaunchUri.toString());
-                                  } else {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                          content: Text(
-                                              "Could not launch email client")),
+                                _consentController.verifyParentalKey(
+                                  context,
+                                  () async {
+                                    final Uri emailLaunchUri = Uri(
+                                      scheme: 'mailto',
+                                      path: 'hello@childrenofindia.in',
                                     );
-                                  }
-                                });
+                                    // ignore: deprecated_member_use
+                                    if (await canLaunch(
+                                        emailLaunchUri.toString())) {
+                                      // ignore: deprecated_member_use
+                                      await launch(emailLaunchUri.toString());
+                                    } else {
+                                      // ignore: use_build_context_synchronously
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        const SnackBar(
+                                          content: Text(
+                                              "Could not launch email client"),
+                                        ),
+                                      );
+                                    }
+                                  },
+                                );
                               },
                             ),
                           ],

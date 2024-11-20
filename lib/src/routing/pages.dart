@@ -98,7 +98,7 @@ class _PagesState extends State<Pages> {
         ),
 
         // Consent form overlay
-        if (isConsentFormVisible)
+        if (!isConsentFormVisible)
           Positioned.fill(
             child: Stack(
               children: [
