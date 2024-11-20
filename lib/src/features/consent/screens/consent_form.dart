@@ -37,28 +37,6 @@ class _ConsentFormState extends State<ConsentForm> {
 
   final String securityQuestion = "What is your favorite color ?";
 
-  /// Validation for Parental Key
-  String? _validateParentalKey(String? key) {
-    if (key == null || key.isEmpty) {
-      return 'Parental Key is required';
-    }
-    if (key.length < 8) {
-      return 'Key must be at least 8 characters long';
-    }
-
-    final hasUppercase = key.contains(RegExp(r'[A-Z]'));
-    final hasLowercase = key.contains(RegExp(r'[a-z]'));
-    final hasDigits = key.contains(RegExp(r'[0-9]'));
-    final hasSpecialCharacters =
-        key.contains(RegExp(r'[!@#$%^&*()_+\-=\[\]{}|;:]'));
-
-    if (!(hasUppercase && hasLowercase && hasDigits && hasSpecialCharacters)) {
-      return 'Include Uppercase, Lowercase, Numbers, and Special Characters.';
-    }
-
-    return null;
-  }
-
   void _submitForm() async {
     if (_formKey.currentState!.validate()) {
       // Check if parental key and confirm parental key match
@@ -199,7 +177,7 @@ class _ConsentFormState extends State<ConsentForm> {
                       isDense: true,
                     ),
                     obscureText: true,
-                    validator: _validateParentalKey,
+                    validator: validateParentalKey,
                   ),
 
                   // Confirm Parental Key
@@ -237,7 +215,7 @@ class _ConsentFormState extends State<ConsentForm> {
                       isDense: true, // Makes the field more compact
                     ),
                     validator: (value) => value == null || value.isEmpty
-                        ? 'Please enter a security question'
+                        ? 'Please enter your security answer'
                         : null,
                   ),
 
