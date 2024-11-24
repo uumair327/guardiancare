@@ -37,7 +37,7 @@ class ForumPage extends StatelessWidget {
         },
       ),
       floatingActionButton: Transform.translate(
-        offset: const Offset(-5, -12),
+        offset: const Offset(-5, -50),
         child: FloatingActionButton(
           onPressed: () {
             Navigator.push(
