@@ -18,6 +18,12 @@ class ConsentController {
     return hash.toString();
   }
 
+  String hashSecurityAnswer(String answer) {
+    final bytes = utf8.encode(answer.toLowerCase());
+    final hash = sha256.convert(bytes);
+    return hash.toString();
+  }
+
   // Submit consent form data to Firestore
   Future<bool> submitConsentForm({
     required String parentName,
@@ -30,13 +36,12 @@ class ConsentController {
     required bool isParentConsentGiven,
   }) async {
     try {
-      // Ensure user is authenticated
       User? user = _auth.currentUser;
-      if (user == null) {
-        throw Exception('User is not authenticated.');
-      }
 
-      parentalKey = hashParentalKey(parentalKey); // Hash the parental key
+      // Ensure user is authenticated
+      if (user == null || user.email == null || user.displayName == null) {
+        throw Exception('User is not authenticated or lacks profile details.');
+      }
 
       // Prepare the data to be saved in Firestore
       final formData = {
@@ -45,18 +50,21 @@ class ConsentController {
         'childName': childName,
         'isChildAbove12': isChildAbove12,
         'isParentConsentGiven': isParentConsentGiven,
-        'parentalKey': parentalKey,
+        'parentalKey': hashParentalKey(parentalKey),
         'securityQuestion': securityQuestion,
-        'securityAnswer': securityAnswer,
+        'securityAnswer': hashSecurityAnswer(securityAnswer),
         'userEmail': user.email, // Include the current user's email
-        '_Id': user.uid, // Associate the form with the current user
+        'userName': user.displayName,
         'timestamp': FieldValue.serverTimestamp(),
       };
 
-      print(formData);
+      // print(formData);
 
       // Save the data to Firestore
-      await _firestore.collection('consents').add(formData);
+      await _firestore
+          .collection('consents')
+          .doc(user.uid)
+          .set(formData, SetOptions(merge: true));
       print('Consent form data saved successfully.');
 
       return true;
@@ -68,25 +76,22 @@ class ConsentController {
   // Fetch and verify the parental key from Firestore
   Future<bool> matchParentalKey(String enteredKey) async {
     try {
-      // Ensure user is authenticated
       User? user = _auth.currentUser;
+
+      // Ensure user is authenticated
       if (user == null) {
         throw Exception('User is not authenticated.');
       }
 
-      // Fetch the consent document associated with the current user
-      final querySnapshot = await _firestore
-          .collection('consents')
-          .where('_Id', isEqualTo: user.uid)
-          .limit(1)
-          .get();
+      final consentDoc =
+          await _firestore.collection('consents').doc(user.uid).get();
 
-      if (querySnapshot.docs.isEmpty) {
+      if (!consentDoc.exists) {
         throw Exception('No consent data found for the user.');
       }
 
       // Get the hashed parental key from Firestore
-      final storedHash = querySnapshot.docs.first.get('parentalKey');
+      final storedHash = consentDoc.get('parentalKey');
 
       // Hash the entered key and compare
       final enteredHash = hashParentalKey(enteredKey);
@@ -177,35 +182,25 @@ class ConsentController {
         throw Exception('User is not authenticated.');
       }
 
-      // Fetch the consent document for the current user
-      final querySnapshot = await _firestore
-          .collection('consents')
-          .where('_Id', isEqualTo: user.uid)
-          .limit(1)
-          .get();
+      final consentDocRef = _firestore.collection('consents').doc(user.uid);
+      final consentDoc = await consentDocRef.get();
 
-      if (querySnapshot.docs.isEmpty) {
+      if (!consentDoc.exists) {
         throw Exception('No consent data found for the user.');
       }
 
-      // Get the stored security answer and convert to lowercase for comparison
-      final consentDoc = querySnapshot.docs.first;
-      String storedAnswer =
-          consentDoc.get('securityAnswer').toString().toLowerCase();
+      String storedAnswerHash = consentDoc.get('securityAnswer');
+      String enteredAnswerHash = hashSecurityAnswer(answer);
 
-      // Convert the provided answer to lowercase for case-insensitive comparison
-      String providedAnswer = answer.toLowerCase();
-
-      if (storedAnswer != providedAnswer) {
-        throw Exception(
-            'The provided answer does not match the stored security answer.');
+      if (storedAnswerHash != enteredAnswerHash) {
+        throw Exception('The provided answer does not match the stored security answer.');
       }
 
       // Hash the new parental key
       String hashedNewPassword = hashParentalKey(newPassword);
 
       // Update the parental key in Firestore
-      await consentDoc.reference.update({
+      await consentDocRef.update({
         'parentalKey': hashedNewPassword,
       });
 
@@ -269,22 +264,17 @@ class ConsentController {
 
 /// Validation for Parental Key
 String? validateParentalKey(String? key) {
-  if (key == null || key.isEmpty) {
-    return 'Parental Key is required';
-  }
-  if (key.length < 8) {
-    return 'Key must be at least 8 characters long';
-  }
+  if (key == null || key.isEmpty) return 'Parental Key is required';
+  if (key.length < 8) return 'Key must be at least 8 characters long';
 
-  final hasUppercase = key.contains(RegExp(r'[A-Z]'));
-  final hasLowercase = key.contains(RegExp(r'[a-z]'));
-  final hasDigits = key.contains(RegExp(r'[0-9]'));
-  final hasSpecialCharacters =
-      key.contains(RegExp(r'[!@#$%^&*()_+\-=\[\]{}|;:]'));
+  List<String> errors = [];
+  if (!key.contains(RegExp(r'[A-Z]'))) errors.add('an uppercase letter');
+  if (!key.contains(RegExp(r'[a-z]'))) errors.add('a lowercase letter');
+  if (!key.contains(RegExp(r'[0-9]'))) errors.add('a number');
+  if (!key.contains(RegExp(r'[!@#$%^&*()_+\-=\[\]{}|;:]'))) errors.add('a special character');
 
-  if (!(hasUppercase && hasLowercase && hasDigits && hasSpecialCharacters)) {
-    return 'Include Uppercase, Lowercase, Numbers, and Special Characters.';
+  if (errors.isNotEmpty) {
+    return 'Key must include ${errors.join(', ')}.';
   }
-
   return null;
 }
