@@ -118,12 +118,14 @@ class ConsentController {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text("Incorrect password!")),
                 );
+                Navigator.of(context).pop(); // Close the dialog
               }
             } catch (e) {
               // ignore: use_build_context_synchronously
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(content: Text("Error: ${e.toString()}")),
               );
+              Navigator.of(context).pop(); // Close the dialog
             }
           },
           onCancel: () {
