@@ -29,8 +29,6 @@ class _VideoPlayerPageState extends State<VideoPlayerPage> {
           mute: false,
         ),
       );
-    } else {
-      _isVideoUrlValid = false; // Invalid URL
     }
   }
 
