@@ -20,6 +20,7 @@ class _PagesState extends State<Pages> {
   int index = 0;
   bool hasSeenConsent = false;
   bool isConsentFormVisible = true;
+  final GlobalKey<CurvedNavigationBarState> _bottomNavigationKey = GlobalKey();
 
   final ConsentController _consentController = ConsentController();
   final TextEditingController formController = TextEditingController();
@@ -51,11 +52,22 @@ class _PagesState extends State<Pages> {
     });
   }
 
-  void _verifyParentalKeyForForum(
-      BuildContext context, VoidCallback onSuccess) {
-    _consentController.verifyParentalKey(
+  void _verifyParentalKeyForForum(BuildContext context, int newIndex) {
+    _consentController.verifyParentalKeyWithError(
       context,
-      onSuccess,
+      onSuccess: () {
+        setState(() {
+          index = newIndex;
+        });
+      },
+      onError: () {
+        // Reset to previous index on error
+        setState(() {
+          index = 0; // Reset to home page
+        });
+        // Force bottom navigation to update
+        _bottomNavigationKey.currentState?.setPage(0);
+      },
     );
   }
 
@@ -92,19 +104,16 @@ class _PagesState extends State<Pages> {
           backgroundColor: Colors.white,
           body: screens[index],
           bottomNavigationBar: CurvedNavigationBar(
+            key: _bottomNavigationKey,
             items: items,
             backgroundColor: Colors.transparent,
             color: tNavBarColor,
             height: 55,
             index: index,
-            onTap: (newIndex) async {
+            onTap: (newIndex) {
               if (newIndex == 2) {
                 // If ForumPage is selected, verify parental key
-                _verifyParentalKeyForForum(context, () {
-                  setState(() {
-                    index = newIndex;
-                  });
-                });
+                _verifyParentalKeyForForum(context, newIndex);
               } else {
                 setState(() {
                   index = newIndex;

@@ -214,6 +214,57 @@ class ConsentController {
       throw Exception('Error resetting parental key: $e');
     }
   }
+
+  Future<void> verifyParentalKeyWithError(
+    BuildContext context, {
+    required VoidCallback onSuccess,
+    required VoidCallback onError,
+  }) async {
+    await showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return PasswordDialog(
+          onSubmit: (password) async {
+            try {
+              bool isMatch = await matchParentalKey(password);
+
+              if (isMatch) {
+                // ignore: use_build_context_synchronously
+                Navigator.of(context).pop(); // Close the dialog
+                onSuccess();
+              } else {
+                // ignore: use_build_context_synchronously
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text("Incorrect password!")),
+                );
+                // ignore: use_build_context_synchronously
+                Navigator.of(context).pop(); // Close the dialog
+                onError(); // Call error callback
+              }
+            } catch (e) {
+              // ignore: use_build_context_synchronously
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text("Error: ${e.toString()}")),
+              );
+              // ignore: use_build_context_synchronously
+              Navigator.of(context).pop(); // Close the dialog
+              onError(); // Call error callback
+            }
+          },
+          onCancel: () {
+            Navigator.of(context).pop(); // Close the dialog
+            onError(); // Call error callback on cancel
+          },
+          onForgotPassword: () {
+            Navigator.of(context).pop();
+            _showResetParentalKeyDialog(context);
+            onError(); // Call error callback when showing reset dialog
+          },
+        );
+      },
+    );
+  }
 }
 
 /// Validation for Parental Key
