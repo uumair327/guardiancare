@@ -67,7 +67,7 @@ class _PagesState extends State<Pages> {
 
   void submitConsent() async {
     setState(() {
-      hasSeenConsent = false;
+      hasSeenConsent = true;
     });
   }
 
