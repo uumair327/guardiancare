@@ -51,6 +51,14 @@ class _PagesState extends State<Pages> {
     });
   }
 
+  void _verifyParentalKeyForForum(
+      BuildContext context, VoidCallback onSuccess) {
+    _consentController.verifyParentalKey(
+      context,
+      onSuccess,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final items = <Widget>[
@@ -90,9 +98,18 @@ class _PagesState extends State<Pages> {
             height: 55,
             index: index,
             onTap: (newIndex) async {
-              setState(() {
-                index = newIndex;
-              });
+              if (newIndex == 2) {
+                // If ForumPage is selected, verify parental key
+                _verifyParentalKeyForForum(context, () {
+                  setState(() {
+                    index = newIndex;
+                  });
+                });
+              } else {
+                setState(() {
+                  index = newIndex;
+                });
+              }
             },
           ),
         ),
@@ -111,8 +128,7 @@ class _PagesState extends State<Pages> {
                 ConsentForm(
                   consentController: _consentController,
                   controller: formController,
-                  onSubmit:
-                      submitConsent, // This just hides the form, the logic is handled inside ConsentForm
+                  onSubmit: submitConsent,
                 ),
               ],
             ),
