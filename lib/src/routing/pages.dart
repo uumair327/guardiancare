@@ -9,6 +9,7 @@ import 'package:guardiancare/src/features/explore/screens/explore.dart';
 import 'package:guardiancare/src/features/forum/screens/forum_page.dart';
 import 'package:guardiancare/src/features/home/screens/home_page.dart';
 import 'dart:ui'; // For BackdropFilter
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Pages extends StatefulWidget {
   const Pages({super.key});
@@ -20,10 +21,10 @@ class Pages extends StatefulWidget {
 class _PagesState extends State<Pages> {
   int index = 0;
   bool hasSeenConsent = false;
+  bool hasSeenForumGuidelines = false;
   final GlobalKey<CurvedNavigationBarState> _bottomNavigationKey = GlobalKey();
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-
 
   final ConsentController _consentController = ConsentController();
   final TextEditingController formController = TextEditingController();
@@ -71,13 +72,14 @@ class _PagesState extends State<Pages> {
     });
   }
 
-  void _verifyParentalKeyForForum(BuildContext context, int newIndex) {
+  void _verifyParentalKeyForForum(BuildContext context, int newIndex) async {
     _consentController.verifyParentalKeyWithError(
       context,
       onSuccess: () {
         setState(() {
           index = newIndex;
         });
+        _checkAndShowGuidelines();
       },
       onError: () {
         // Reset to previous index on error
@@ -86,6 +88,64 @@ class _PagesState extends State<Pages> {
         });
         // Force bottom navigation to update
         _bottomNavigationKey.currentState?.setPage(0);
+      },
+    );
+  }
+  void _checkAndShowGuidelines() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    hasSeenForumGuidelines =
+        prefs.getBool('has_seen_forum_guidelines') ?? false;
+
+    if (index == 2 && !hasSeenForumGuidelines) {
+      _showGuidelinesDialog();
+      await prefs.setBool('has_seen_forum_guidelines', true);
+      setState(() {
+        hasSeenForumGuidelines = true;
+      });
+    }
+  }
+
+  void _showGuidelinesDialog() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // Prevent dismissing by tapping outside
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text(
+            'Forum Guidelines',
+            style: TextStyle(
+              color: tPrimaryColor,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          content: const SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text(
+                    'Welcome to the guardiancare Global Forum. Kindly follow these guidelines:'),
+                SizedBox(height: 10),
+                Text('• Be respectful and courteous to all members.'),
+                Text(
+                    '• Do not use any language that is abusive, harassing, or harmful.'),
+                Text(
+                    '• Avoid sharing content that is inappropriate or harmful, especially related to children.'),
+                Text(
+                    '• Remember that this is a space for constructive discussions on child safety.'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text(
+                'I Agree',
+                style: TextStyle(color: tPrimaryColor),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+            ),
+          ],
+        );
       },
     );
   }
