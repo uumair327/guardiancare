@@ -4,8 +4,6 @@ import 'package:guardiancare/src/constants/colors.dart';
 import 'package:guardiancare/src/features/quiz/screens/quiz_questions_page.dart';
 
 class QuizPage extends StatefulWidget {
-  const QuizPage({super.key});
-
   @override
   _QuizPageState createState() => _QuizPageState();
 }
@@ -24,17 +22,17 @@ class _QuizPageState extends State<QuizPage> {
   Future<void> getQuizes() async {
     QuerySnapshot querySnapshot =
         await FirebaseFirestore.instance.collection('quizes').get();
-    List<Map<String, dynamic>> quizes = [];
+    List<Map<String, dynamic>> _quizes = [];
     for (var doc in querySnapshot.docs) {
       if (doc["name"] != null && doc["use"]) {
-        quizes.add({
+        _quizes.add({
           "name": doc["name"],
           "thumbnail": doc["thumbnail"],
         });
       }
     }
     setState(() {
-      quizes = quizes;
+      quizes = _quizes;
     });
   }
 
@@ -112,14 +110,14 @@ class QuizTile extends StatelessWidget {
             fit: BoxFit.cover,
           ),
           Container(
-            padding: const EdgeInsets.all(8),
-            child: Text(
-              capitalizeEach(quiz["name"]),
-              style: const TextStyle(
-                  fontSize: 25,
-                  color: tPrimaryColor,
-                  fontWeight: FontWeight.w600),
-            ))
+              padding: EdgeInsets.all(8),
+              child: Text(
+                capitalizeEach(quiz["name"]),
+                style: const TextStyle(
+                    fontSize: 25,
+                    color: tPrimaryColor,
+                    fontWeight: FontWeight.w600),
+              ))
         ],
       ),
     );

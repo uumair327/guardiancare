@@ -7,7 +7,7 @@ import 'package:guardiancare/src/features/quiz/controllers/quiz_controller.dart'
 class QuizQuestionsPage extends StatefulWidget {
   final List<Map<String, dynamic>> questions;
 
-  const QuizQuestionsPage({super.key, required this.questions});
+  QuizQuestionsPage({required this.questions});
 
   @override
   _QuizQuestionsPageState createState() => _QuizQuestionsPageState();
@@ -84,7 +84,7 @@ class _QuizQuestionsPageState extends State<QuizQuestionsPage> {
                     onPressed: isBlocked ? null : _goToPreviousQuestion,
                     child: const Text(
                       'Previous',
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: tPrimaryColor,
                       ),
                     ),

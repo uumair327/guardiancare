@@ -8,12 +8,12 @@ class QuizQuestionWidget extends StatefulWidget {
   final Function(int) onPressed;
 
   const QuizQuestionWidget({
-    super.key,
+    Key? key,
     required this.questionIndex,
     required this.correctAnswerIndex,
     required this.question,
     required this.onPressed,
-  });
+  }) : super(key: key);
 
   @override
   _QuizQuestionWidgetState createState() => _QuizQuestionWidgetState();
