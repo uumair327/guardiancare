@@ -1,7 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:guardiancare/src/common_widgets/web_view_page.dart';
 import 'package:guardiancare/src/features/consent/controllers/consent_controller.dart';
 import 'package:guardiancare/src/features/emergency/screens/emergency_contact_page.dart';
 import 'package:guardiancare/src/features/home/controllers/home_controller.dart';
@@ -128,29 +126,33 @@ class _HomePageState extends State<HomePage> {
                               onPressed: () {
                                 _consentController.verifyParentalKey(
                                   context,
-                                  () {
+                                  onSuccess: () {
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
                                         builder: (context) =>
-                                            Account(user: _user),
+                                            Account(user: _user!),
                                       ),
+                                    );
+                                  },
+                                  onError: () {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                          content: Text(
+                                              "Failed to verify parental key")),
                                     );
                                   },
                                 );
                               },
                             ),
                             CircularButton(
-                              iconData: CupertinoIcons.globe,
+                              iconData: Icons.web,
                               label: 'Website',
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => const WebViewPage(
-                                        url: "https://childrenofindia.in/"),
-                                  ),
-                                );
+                              onPressed: () async {
+                                final url = 'https://www.example.com';
+                                if (await canLaunch(url)) {
+                                  await launch(url);
+                                }
                               },
                             ),
                             CircularButton(
@@ -159,18 +161,15 @@ class _HomePageState extends State<HomePage> {
                               onPressed: () {
                                 _consentController.verifyParentalKey(
                                   context,
-                                  () async {
+                                  onSuccess: () async {
                                     final Uri emailLaunchUri = Uri(
                                       scheme: 'mailto',
                                       path: 'hello@childrenofindia.in',
                                     );
-                                    // ignore: deprecated_member_use
                                     if (await canLaunch(
                                         emailLaunchUri.toString())) {
-                                      // ignore: deprecated_member_use
                                       await launch(emailLaunchUri.toString());
                                     } else {
-                                      // ignore: use_build_context_synchronously
                                       ScaffoldMessenger.of(context)
                                           .showSnackBar(
                                         const SnackBar(
@@ -179,6 +178,13 @@ class _HomePageState extends State<HomePage> {
                                         ),
                                       );
                                     }
+                                  },
+                                  onError: () {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                          content: Text(
+                                              "Failed to verify parental key")),
+                                    );
                                   },
                                 );
                               },
@@ -190,7 +196,6 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
               ),
-              const SizedBox(height: 15.0),
             ],
           ),
         ),

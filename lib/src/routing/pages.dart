@@ -1,3 +1,5 @@
+import 'dart:ui'; // For BackdropFilter
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -8,7 +10,6 @@ import 'package:guardiancare/src/features/consent/screens/consent_form.dart';
 import 'package:guardiancare/src/features/explore/screens/explore.dart';
 import 'package:guardiancare/src/features/forum/screens/forum_page.dart';
 import 'package:guardiancare/src/features/home/screens/home_page.dart';
-import 'dart:ui'; // For BackdropFilter
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Pages extends StatefulWidget {
@@ -46,7 +47,6 @@ class _PagesState extends State<Pages> {
         setState(() {
           hasSeenConsent = false;
         });
-
         return;
       }
 
@@ -73,7 +73,7 @@ class _PagesState extends State<Pages> {
   }
 
   void _verifyParentalKeyForForum(BuildContext context, int newIndex) async {
-    _consentController.verifyParentalKeyWithError(
+    _consentController.verifyParentalKey(
       context,
       onSuccess: () {
         setState(() {
@@ -91,6 +91,7 @@ class _PagesState extends State<Pages> {
       },
     );
   }
+
   void _checkAndShowGuidelines() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     hasSeenForumGuidelines =
