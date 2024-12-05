@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:guardiancare/src/common_widgets/web_view_page.dart';
 import 'package:guardiancare/src/features/consent/controllers/consent_controller.dart';
 import 'package:guardiancare/src/features/emergency/screens/emergency_contact_page.dart';
 import 'package:guardiancare/src/features/home/controllers/home_controller.dart';
@@ -148,11 +149,14 @@ class _HomePageState extends State<HomePage> {
                             CircularButton(
                               iconData: Icons.web,
                               label: 'Website',
-                              onPressed: () async {
-                                final url = 'https://www.example.com';
-                                if (await canLaunch(url)) {
-                                  await launch(url);
-                                }
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => WebViewPage(
+                                        url: 'https://childrenofindia.in/'),
+                                  ),
+                                );
                               },
                             ),
                             CircularButton(
