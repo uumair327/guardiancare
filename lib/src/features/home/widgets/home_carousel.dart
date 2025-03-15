@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:guardiancare/src/common_widgets/sufasec_content.dart';
 import 'package:guardiancare/src/common_widgets/web_view_page.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -46,12 +47,23 @@ class HomeCarousel extends StatelessWidget {
                 builder: (BuildContext context) {
                   return GestureDetector(
                     onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => WebViewPage(url: link),
-                        ),
-                      );
+                      if (type == 'custom') {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => CustomContentPage(
+                              content: item['content'] ?? {},
+                            ),
+                          ),
+                        );
+                      } else {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => WebViewPage(url: link),
+                          ),
+                        );
+                      }
                     },
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(20.0),
