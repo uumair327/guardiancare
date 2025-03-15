@@ -30,7 +30,7 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     _user = _auth.currentUser;
-    fetchCarouselData();
+    _fetchCarouselData();
   }
 
   @override
@@ -39,12 +39,19 @@ class _HomePageState extends State<HomePage> {
     carouselHeight = MediaQuery.of(context).size.height / 3;
   }
 
-  Future<void> fetchCarouselData() async {
-    List<Map<String, dynamic>> data =
-        await HomeController().fetchCarouselData();
-    setState(() {
-      carouselData = data;
-    });
+  Future<void> _fetchCarouselData() async {
+    try {
+      final data = await HomeController().fetchCarouselData();
+      if (mounted) {
+        setState(() {
+          carouselData = data
+              .where((item) => item['imageUrl'] != null && item['link'] != null)
+              .toList();
+        });
+      }
+    } catch (e) {
+      print('Error loading carousel data: $e');
+    }
   }
 
   @override
