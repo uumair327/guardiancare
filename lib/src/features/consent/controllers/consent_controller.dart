@@ -265,16 +265,16 @@ class ConsentController {
 /// Validation for Parental Key
 String? validateParentalKey(String? key) {
   if (key == null || key.isEmpty) return 'Parental Key is required';
-  if (key.length < 8) return 'Key must be at least 8 characters long';
+  // if (key.length < 8) return 'Key must be at least 8 characters long';
 
   List<String> errors = [];
-  if (!key.contains(RegExp(r'[A-Z]'))) errors.add('an uppercase letter');
-  if (!key.contains(RegExp(r'[a-z]'))) errors.add('a lowercase letter');
-  if (!key.contains(RegExp(r'[0-9]'))) errors.add('a number');
-  if (!key.contains(RegExp(r'[!@#$%^&*()_+\-=\[\]{}|;:]'))) errors.add('a special character');
+  // if (!key.contains(RegExp(r'[A-Z]'))) errors.add('an uppercase letter');
+  // if (!key.contains(RegExp(r'[a-z]'))) errors.add('a lowercase letter');
+  // if (!key.contains(RegExp(r'[0-9]'))) errors.add('a number');
+  // if (!key.contains(RegExp(r'[!@#$%^&*()_+\-=\[\]{}|;:]'))) errors.add('a special character');
 
-  if (errors.isNotEmpty) {
-    return 'Key must include ${errors.join(', ')}.';
-  }
+  // if (errors.isNotEmpty) {
+  //    return 'Key must include ${errors.join(', ')}.';
+  // }
   return null;
 }
