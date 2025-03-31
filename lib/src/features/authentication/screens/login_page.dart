@@ -56,6 +56,8 @@ class _LoginPageState extends State<LoginPage> {
               onPressed: () async {
                 Navigator.of(context).pop(); // Close the dialog
                 // Proceed with Google sign-in if terms are accepted
+
+                print("Is this the onPressed after I agree ?");
                 UserCredential? userCredential = await signInWithGoogle();
 
                 if (userCredential != null) {

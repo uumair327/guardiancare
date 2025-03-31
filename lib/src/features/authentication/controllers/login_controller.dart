@@ -4,16 +4,22 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 Future<UserCredential?> signInWithGoogle() async {
   try {
+    print("Attempting Google Sign-In...");
+    
     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
     print(googleUser);
 
-    final GoogleSignInAuthentication? googleAuth =
-        await googleUser?.authentication;
+    if (googleUser == null) {
+      print("User canceled Google Sign-In");
+      return null;
+    }
+
+    final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
     print(googleAuth);
 
     final credential = GoogleAuthProvider.credential(
-      accessToken: googleAuth?.accessToken,
-      idToken: googleAuth?.idToken,
+      accessToken: googleAuth.accessToken,
+      idToken: googleAuth.idToken,
     );
     print(credential);
 
@@ -26,7 +32,7 @@ Future<UserCredential?> signInWithGoogle() async {
 
       if (!userDoc.exists) {
         await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
-          'displayName': googleUser?.displayName,
+          'displayName': googleUser.displayName,
           'email': user.email,
           'photoURL': user.photoURL,
           'uid': user.uid,

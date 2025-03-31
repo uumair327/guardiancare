@@ -71,11 +71,27 @@
           }
         },
         {
+          "client_id": "331315801686-9p41vtn3l9cikkai2o0ee7tgkr8egqv5.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "app.guardiancare.guardiancare",
+            "certificate_hash": "e551ab3984b14e04369656b4304608f854eb4177"
+          }
+        },
+        {
           "client_id": "331315801686-a2d1llf9i6q5qcpuc8bvco11ngkk3ucg.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "app.guardiancare.guardiancare",
             "certificate_hash": "d88ff7a0965f19b02e4eef63799967a851c6e235"
+          }
+        },
+        {
+          "client_id": "331315801686-enh2f47vv2mfg4o1slpfqphamh6n8vfp.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "app.guardiancare.guardiancare",
+            "certificate_hash": "9abdac2f1f9b1f8381f6819574b61454c4c619d7"
           }
         },
         {
@@ -132,66 +148,6 @@
           "android_info": {
             "package_name": "app.guardiancare.guardiancare",
             "certificate_hash": "52b10f3654acfef1f6a351465797c7b998db4146"
-          }
-        },
-        {
-          "client_id": "331315801686-f57icrckmccqe3mu1airrgtpvho4lcva.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyBiK-huaMXXmnI4M0LxYNtH5NasP1o1iHQ"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "331315801686-f57icrckmccqe3mu1airrgtpvho4lcva.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "331315801686-0hcdvdo15e87a8lmqnartjpuea9lr2jl.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "app.guardiancare.guardiancare"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:331315801686:android:bbc3124e1812cc917595f7",
-        "android_client_info": {
-          "package_name": "app.guardiancare.guardianscare"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "331315801686-cddom9qkj9arrom00k6lib9eblfoir4t.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "app.guardiancare.guardianscare",
-            "certificate_hash": "52b10f3654acfef1f6a351465797c7b998db4146"
-          }
-        },
-        {
-          "client_id": "331315801686-nnlvp6jcvtc7o0h1mljp4sbkg10qf4ia.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "app.guardiancare.guardianscare",
-            "certificate_hash": "9f253fc9da6f895b1d78051273a33370900d1118"
-          }
-        },
-        {
-          "client_id": "331315801686-r0g5lqjqphvdbapdk61fin6moju18945.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "app.guardiancare.guardianscare",
-            "certificate_hash": "52914ad0b6d258a9e8cb12ea5dfe071569d31fea"
           }
         },
         {
