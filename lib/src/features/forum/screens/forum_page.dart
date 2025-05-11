@@ -49,7 +49,7 @@ class ForumPage extends StatelessWidget {
           shape: const CircleBorder(),
           child: const Icon(
             Icons.add,
-            color: tWhiteColor,
+            color: Colors.white,
           ),
         ),
       ),

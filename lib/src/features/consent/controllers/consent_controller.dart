@@ -11,6 +11,17 @@ class ConsentController {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
+  // Check if user has given consent
+  Future<bool> hasUserConsent(String userId) async {
+    try {
+      final doc = await _firestore.collection('userConsents').doc(userId).get();
+      return doc.exists && doc.data()?['hasConsent'] == true;
+    } catch (e) {
+      debugPrint('Error checking user consent: $e');
+      return false;
+    }
+  }
+
   // Hash the parental key using SHA-256
   String hashParentalKey(String keyPhrase) {
     final bytes = utf8.encode(keyPhrase); // Convert string to bytes

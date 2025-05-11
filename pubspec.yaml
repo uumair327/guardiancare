@@ -34,13 +34,21 @@ dependencies:
   youtube_player_flutter: ^9.1.1
   cached_network_image: ^3.4.1
   video_player: ^2.8.6
-  intl: ^0.20.1
+  intl: ^0.18.1
   flutter_launcher_icons: ^0.14.2
-  google_sign_in: ^6.2.2
+  google_sign_in: ^6.3.0
   firebase_crashlytics: ^4.2.0
   firebase_analytics: ^11.3.6
   flutter_inappwebview: ^6.1.5
   email_validator: ^3.0.0
+  connectivity_plus: ^5.0.2
+  logger: ^2.0.2
+  flutter_svg: ^2.0.10+1
+  image_picker: ^1.0.7
+  path_provider: ^2.1.2
+  path: ^1.8.3
+  permission_handler: ^11.3.0
+  device_info_plus: ^9.1.1
 
 dev_dependencies:
   flutter_test:

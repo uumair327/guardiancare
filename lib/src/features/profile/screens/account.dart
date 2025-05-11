@@ -1,12 +1,26 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:guardiancare/src/features/authentication/controllers/auth_controller.dart';
 import 'package:guardiancare/src/constants/colors.dart';
-import 'package:guardiancare/src/features/authentication/controllers/account_controller.dart';
-import 'package:guardiancare/src/features/authentication/controllers/login_controller.dart';
 import 'package:guardiancare/src/features/authentication/screens/login_page.dart';
 import 'package:guardiancare/src/features/emergency/screens/emergency_contact_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+// Extension to add deleteAccount method to AuthController
+extension AuthControllerExtension on AuthController {
+  Future<void> deleteAccount() async {
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        await user.delete();
+      }
+    } catch (e) {
+      throw Exception('Failed to delete account: $e');
+    }
+  }
+}
 
 class Account extends StatelessWidget {
   final User? user;
@@ -76,32 +90,34 @@ class Account extends StatelessWidget {
       // Simulate a delay for 10 seconds
       await Future.delayed(const Duration(seconds: 10));
 
-      // Proceed with account deletion
-      bool result = await deleteUserAccount();
-
-      // Clear user preferences
-      await _clearUserPreferences();
-
-      // Close the loading indicator
-      // ignore: use_build_context_synchronously
-      Navigator.of(context).pop();
-
-      if (result) {
+      try {
+        // Get the auth controller
+        final authController = Get.find<AuthController>();
+        
+        // Delete the user account
+        await authController.deleteAccount();
+        
+        // Clear user preferences
+        await _clearUserPreferences();
+        
+        // Close the loading indicator
+        if (context.mounted) {
+          Navigator.of(context).pop();
+        }
+        
         // Navigate back to the login page after successful deletion
-        Navigator.pop(
-          // ignore: use_build_context_synchronously
-          context,
-          MaterialPageRoute(
-            builder: (context) => const LoginPage(),
-          ),
-        );
-        print("Account is Deleted!!");
-      } else {
-        // Handle failure case
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-              content: Text("Failed to delete account. Please try again.")),
-        );
+        Get.offAllNamed('/login');
+      } catch (e) {
+        // Close the loading indicator
+        if (context.mounted) {
+          Navigator.of(context).pop();
+          // Show error message if deletion failed
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Failed to delete account: ${e.toString()}'),
+            ),
+          );
+        }
       }
     }
   }
@@ -214,18 +230,34 @@ class Account extends StatelessWidget {
                     leading: const Icon(Icons.logout, color: tPrimaryColor),
                     title: const Text('Log Out'),
                     onTap: () async {
-                      await _clearUserPreferences();
-                      bool result = await signOutFromGoogle();
-                      print(result);
-
-                      Navigator.pop(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const LoginPage(),
-                        ),
-                      );
-
-                      if (result) print("Signed Out Successfully !!");
+                      try {
+                        await _clearUserPreferences();
+                        final authController = Get.find<AuthController>();
+                        await authController.signOut();
+                        
+                        // Navigate to login page using GetX
+                        Get.offAllNamed('/login');
+                        
+                        if (Get.isSnackbarOpen) {
+                          Get.back(); // Close any open snackbar
+                        }
+                        
+                        Get.snackbar(
+                          'Success',
+                          'Signed out successfully',
+                          snackPosition: SnackPosition.BOTTOM,
+                          duration: const Duration(seconds: 2),
+                        );
+                      } catch (e) {
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('Error signing out: $e'),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                        }
+                      }
                     },
                   ),
                   ListTile(

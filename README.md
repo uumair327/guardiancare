@@ -6,8 +6,6 @@
 <h1 align="center">GuardianCare</h1> <br>
 <h3 align="center">Helping to make every step forward a leap towards a brighter and safer future for children.</h3>
 
-
-
 <p align="center">
   A Flutter-based cross-platform mobile application that provides resources, reporting mechanisms, and support to combat online sexual exploitation of children.
 </p>
@@ -55,7 +53,9 @@ The app features a user-friendly design with secure login, multimedia educationa
 - **Backend**: Firebase (Authentication, Firestore, Cloud Functions, Crashlytics)
 
 ### Future Steps
+
 **Potential Scaling**:
+
 - Direct integration with government and non-governmental organizations (NGOs) for broader outreach.
 - Advanced AI models for more sophisticated content filtering and reporting mechanisms.
 
@@ -77,11 +77,13 @@ To run the GuardianCare app, you need to configure the environment on your machi
 ### Flutter
 
 - Clone the repository:
+
   ```bash
   git clone https://github.com/uumair327/guardiancare.git
   cd guardiancare
 
   ```
+
 - Install dependencies:
   ```bash
   flutter pub get
@@ -100,13 +102,15 @@ To run the GuardianCare app, you need to configure the environment on your machi
   ```
 
 <!-- FIREBASE -->
+
 ## Firebase
 
-
 ### Firestore Databases
+
 - **users**: Stores user details.
 
 - **forum**: Stores details about individual forum posts.
+
   - **comments**: Stores details about each individual comment on a forum post.
 
 - **quizes**: Stores names and thumbnail references of all available quizes.
@@ -121,61 +125,69 @@ To run the GuardianCare app, you need to configure the environment on your machi
 
 - **learn**: Stores names and thumbnail references of all available video categories.
 
-
 ### Storage
+
 - **carousel_images**: Stores images to be displayed on the carousel on the home page.
 
 - **learn_thumbnails**: Stores image thumbnails for learn cards.
 
 - **quiz_thumbnails**: Stores image thumbnails for quiz cards.
 
-
 ### Authentication
+
 #### Methods
-- Email/Password 
+
+- Email/Password
 - Google
 - Anonymous
 
-
 <!-- SCREENSHOTS -->
+
 ## Screenshots of Application [APK]
 
 ### Home and Explore Pages
-| Home Page | Explore Page |
-|:---------:|:------------:|
-|<img src="https://firebasestorage.googleapis.com/v0/b/guardiancare-a210f.appspot.com/o/screenshots%2FhomePage.jpg?alt=media&token=8fbcd6eb-69dd-4907-8f68-557f3b20da07" alt="Home Page" width="240"/>|<img src="https://firebasestorage.googleapis.com/v0/b/guardiancare-a210f.appspot.com/o/screenshots%2FexplorePage.jpg?alt=media&token=4bef8770-a96b-4e84-9104-071a68fb6367" alt="Explore Page" width="240"/>|
+
+|                                                                                               Home Page                                                                                               |                                                                                                Explore Page                                                                                                 |
+| :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
+| <img src="https://firebasestorage.googleapis.com/v0/b/guardiancare-a210f.appspot.com/o/screenshots%2FhomePage.jpg?alt=media&token=8fbcd6eb-69dd-4907-8f68-557f3b20da07" alt="Home Page" width="240"/> | <img src="https://firebasestorage.googleapis.com/v0/b/guardiancare-a210f.appspot.com/o/screenshots%2FexplorePage.jpg?alt=media&token=4bef8770-a96b-4e84-9104-071a68fb6367" alt="Explore Page" width="240"/> |
 
 ### Forum Page
-| Forum Page 1 | Forum Page 2 | Forum Page 3 |
-|:------------:|:------------:|:------------:|
-|<img src="https://firebasestorage.googleapis.com/v0/b/guardiancare-a210f.appspot.com/o/screenshots%2FforumPage.jpg?alt=media&token=088b74dd-97d0-4928-af77-10447ed33b24" alt="Forum Page" width="240"/>|<img src="https://firebasestorage.googleapis.com/v0/b/guardiancare-a210f.appspot.com/o/screenshots%2FforumPage2.jpg?alt=media&token=bb99b3bb-2cea-4aea-ab3f-a85ab2c96a16" alt="Forum Page 2" width="240"/>|<img src="https://firebasestorage.googleapis.com/v0/b/guardiancare-a210f.appspot.com/o/screenshots%2FforumPage3.jpg?alt=media&token=1155cf11-c328-408f-a0b7-4c15619a2747" alt="Forum Page 3" width="240"/>|
+
+|                                                                                              Forum Page 1                                                                                               |                                                                                                Forum Page 2                                                                                                |                                                                                                Forum Page 3                                                                                                |
+| :-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
+| <img src="https://firebasestorage.googleapis.com/v0/b/guardiancare-a210f.appspot.com/o/screenshots%2FforumPage.jpg?alt=media&token=088b74dd-97d0-4928-af77-10447ed33b24" alt="Forum Page" width="240"/> | <img src="https://firebasestorage.googleapis.com/v0/b/guardiancare-a210f.appspot.com/o/screenshots%2FforumPage2.jpg?alt=media&token=bb99b3bb-2cea-4aea-ab3f-a85ab2c96a16" alt="Forum Page 2" width="240"/> | <img src="https://firebasestorage.googleapis.com/v0/b/guardiancare-a210f.appspot.com/o/screenshots%2FforumPage3.jpg?alt=media&token=1155cf11-c328-408f-a0b7-4c15619a2747" alt="Forum Page 3" width="240"/> |
 
 ### Learn Page
-| Learn Page 1 | Learn Page 2 | Learn Page 3 |
-|:------------:|:------------:|:------------:|
-|<img src="https://firebasestorage.googleapis.com/v0/b/guardiancare-a210f.appspot.com/o/screenshots%2FlearnPage.jpg?alt=media&token=48e1f85e-04e7-45bb-a2f2-cbc13a86f1cc" alt="Learn Page" width="240"/>|<img src="https://firebasestorage.googleapis.com/v0/b/guardiancare-a210f.appspot.com/o/screenshots%2FlearnPage2.jpg?alt=media&token=2f749f94-a9e4-48c9-b299-975ff5b479b3" alt="Learn Page 2" width="240"/>|<img src="https://firebasestorage.googleapis.com/v0/b/guardiancare-a210f.appspot.com/o/screenshots%2FlearnPage3.jpg?alt=media&token=c8ed5821-c1bf-4b5d-83e3-d5b1a03b55cf" alt="Learn Page 3" width="240"/>|
+
+|                                                                                              Learn Page 1                                                                                               |                                                                                                Learn Page 2                                                                                                |                                                                                                Learn Page 3                                                                                                |
+| :-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
+| <img src="https://firebasestorage.googleapis.com/v0/b/guardiancare-a210f.appspot.com/o/screenshots%2FlearnPage.jpg?alt=media&token=48e1f85e-04e7-45bb-a2f2-cbc13a86f1cc" alt="Learn Page" width="240"/> | <img src="https://firebasestorage.googleapis.com/v0/b/guardiancare-a210f.appspot.com/o/screenshots%2FlearnPage2.jpg?alt=media&token=2f749f94-a9e4-48c9-b299-975ff5b479b3" alt="Learn Page 2" width="240"/> | <img src="https://firebasestorage.googleapis.com/v0/b/guardiancare-a210f.appspot.com/o/screenshots%2FlearnPage3.jpg?alt=media&token=c8ed5821-c1bf-4b5d-83e3-d5b1a03b55cf" alt="Learn Page 3" width="240"/> |
 
 ### Quiz Page
-| Quiz Page 1 | Quiz Page 2 |
-|:-----------:|:-----------:|
-|<img src="https://firebasestorage.googleapis.com/v0/b/guardiancare-a210f.appspot.com/o/screenshots%2FquizPage.jpg?alt=media&token=354061bd-7c48-4de6-beb9-11ddaacbc85e" alt="Quiz Page" width="240"/>|<img src="https://firebasestorage.googleapis.com/v0/b/guardiancare-a210f.appspot.com/o/screenshots%2FquizPage2.jpg?alt=media&token=7f46c41f-8373-4196-be1c-00c79a58d60b" alt="Quiz Page 2" width="240"/>|
+
+|                                                                                              Quiz Page 1                                                                                              |                                                                                               Quiz Page 2                                                                                                |
+| :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
+| <img src="https://firebasestorage.googleapis.com/v0/b/guardiancare-a210f.appspot.com/o/screenshots%2FquizPage.jpg?alt=media&token=354061bd-7c48-4de6-beb9-11ddaacbc85e" alt="Quiz Page" width="240"/> | <img src="https://firebasestorage.googleapis.com/v0/b/guardiancare-a210f.appspot.com/o/screenshots%2FquizPage2.jpg?alt=media&token=7f46c41f-8373-4196-be1c-00c79a58d60b" alt="Quiz Page 2" width="240"/> |
 
 ### Emergency Page
-| Emergency Page |
-|:--------------:|
-|<img src="https://firebasestorage.googleapis.com/v0/b/guardiancare-a210f.appspot.com/o/screenshots%2FemergencyPage.jpg?alt=media&token=bc2f536c-fedd-4416-a058-19b3e349dd84" alt="Emergency Page" width="240"/>|
+
+|                                                                                                 Emergency Page                                                                                                  |
+| :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
+| <img src="https://firebasestorage.googleapis.com/v0/b/guardiancare-a210f.appspot.com/o/screenshots%2FemergencyPage.jpg?alt=media&token=bc2f536c-fedd-4416-a058-19b3e349dd84" alt="Emergency Page" width="240"/> |
 
 ### Profile Page
-| Profile Page |
-|:------------:|
-|<img src="https://firebasestorage.googleapis.com/v0/b/guardiancare-a210f.appspot.com/o/screenshots%2FprofilePage.jpg?alt=media&token=4f1d2e28-5af5-4a5e-a3c4-a1d2ec04a176" alt="Profile Page" width="240"/>|
+
+|                                                                                                Profile Page                                                                                                 |
+| :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
+| <img src="https://firebasestorage.googleapis.com/v0/b/guardiancare-a210f.appspot.com/o/screenshots%2FprofilePage.jpg?alt=media&token=4f1d2e28-5af5-4a5e-a3c4-a1d2ec04a176" alt="Profile Page" width="240"/> |
 
 ### Web View
-| Web View |
-|:--------:|
-|<img src="https://firebasestorage.googleapis.com/v0/b/guardiancare-a210f.appspot.com/o/screenshots%2FwebPage.jpg?alt=media&token=6a9e63c1-fe94-4625-98c6-fe613e59aad1" alt="Web View" width="240"/>|
 
-## Testing and Feedback 
+|                                                                                              Web View                                                                                               |
+| :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
+| <img src="https://firebasestorage.googleapis.com/v0/b/guardiancare-a210f.appspot.com/o/screenshots%2FwebPage.jpg?alt=media&token=6a9e63c1-fe94-4625-98c6-fe613e59aad1" alt="Web View" width="240"/> |
+
+## Testing and Feedback
 
 We value your input and strive to make our app the best it can be. If you're interested in helping us test new features and provide feedback, we invite you to join our list of testers.
 

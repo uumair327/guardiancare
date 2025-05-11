@@ -19,18 +19,18 @@ class PasswordDialog extends StatelessWidget {
     TextEditingController passwordController = TextEditingController();
 
     return Dialog(
-      backgroundColor: tTransparentBackground, // Transparent background
+      backgroundColor: Colors.transparent, // Transparent background
       child: Stack(
         children: [
           Positioned.fill(
             child: BackdropFilter(
               filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
-              child: Container(color: tTransparentBackground),
+              child: Container(color: Colors.transparent),
             ),
           ),
           Center(
             child: Material(
-              color: tTransparentBackground,
+              color: Colors.transparent,
               child: Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
