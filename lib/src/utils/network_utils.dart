@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:guardiancare/src/constants/colors.dart';
 import 'package:guardiancare/src/utils/ui_utils.dart';
 
@@ -34,7 +35,7 @@ class NetworkUtils {
       if (connectivityResult == ConnectivityResult.none) {
         return false;
       }
-      
+
       // Additional check to verify actual internet connectivity
       final result = await InternetAddress.lookup('google.com');
       return result.isNotEmpty && result[0].rawAddress.isNotEmpty;
@@ -137,7 +138,7 @@ class NetworkUtils {
     try {
       final httpClient = HttpClient();
       final request = await httpClient.openUrl(method, Uri.parse(url));
-      
+
       // Set headers
       request.headers.set('Content-Type', 'application/json');
       if (headers != null) {
@@ -154,7 +155,7 @@ class NetworkUtils {
       // Get response
       final response = await request.close();
       final responseBody = await response.transform(utf8.decoder).join();
-      
+
       // Close loading dialog
       if (context != null && Navigator.canPop(context)) {
         Navigator.of(context).pop();
@@ -163,9 +164,10 @@ class NetworkUtils {
       // Handle response
       final statusCode = response.statusCode;
       dynamic jsonResponse;
-      
+
       try {
-        jsonResponse = responseBody.isNotEmpty ? json.decode(responseBody) : null;
+        jsonResponse =
+            responseBody.isNotEmpty ? json.decode(responseBody) : null;
       } catch (e) {
         // If response is not JSON, return as string
         return responseBody;
@@ -174,7 +176,8 @@ class NetworkUtils {
       // Check for error status codes
       if (statusCode >= 400) {
         final error = NetworkException(
-          message: jsonResponse?['message'] ?? 'Request failed with status: $statusCode',
+          message: jsonResponse?['message'] ??
+              'Request failed with status: $statusCode',
           statusCode: statusCode,
           data: jsonResponse,
         );
@@ -196,7 +199,8 @@ class NetworkUtils {
       _handleError(error, showError, context);
       rethrow;
     } catch (e) {
-      final error = NetworkException(message: 'An unexpected error occurred: $e');
+      final error =
+          NetworkException(message: 'An unexpected error occurred: $e');
       _handleError(error, showError, context);
       rethrow;
     } finally {
@@ -234,7 +238,7 @@ class NetworkUtils {
   }) async {
     try {
       final request = await HttpClient().postUrl(Uri.parse(url));
-      
+
       // Set headers
       request.headers.set('Content-Type', 'multipart/form-data');
       if (headers != null) {
@@ -244,9 +248,11 @@ class NetworkUtils {
       }
 
       // Create multipart request
-      final boundary = '----WebKitFormBoundary${DateTime.now().millisecondsSinceEpoch}';
-      request.headers.set('Content-Type', 'multipart/form-data; boundary=$boundary');
-      
+      final boundary =
+          '----WebKitFormBoundary${DateTime.now().millisecondsSinceEpoch}';
+      request.headers
+          .set('Content-Type', 'multipart/form-data; boundary=$boundary');
+
       // Add form fields
       final buffer = StringBuffer();
       if (fields != null) {
@@ -256,38 +262,40 @@ class NetworkUtils {
           buffer.write('$value\r\n');
         });
       }
-      
+
       // Add file
       final file = File(filePath);
       final fileBytes = await file.readAsBytes();
       final fileName = file.path.split('/').last;
-      
+
       buffer.write('--$boundary\r\n');
-      buffer.write('Content-Disposition: form-data; name="file"; filename="$fileName"\r\n');
+      buffer.write(
+          'Content-Disposition: form-data; name="file"; filename="$fileName"\r\n');
       buffer.write('Content-Type: application/octet-stream\r\n\r\n');
-      
+
       final headerBytes = utf8.encode(buffer.toString());
       final footerBytes = utf8.encode('\r\n--$boundary--\r\n');
-      
-      final contentLength = headerBytes.length + fileBytes.length + footerBytes.length;
+
+      final contentLength =
+          headerBytes.length + fileBytes.length + footerBytes.length;
       request.contentLength = contentLength;
-      
+
       // Write to request
       request.add(headerBytes);
       request.add(fileBytes);
       request.add(footerBytes);
-      
+
       // Get response
       final response = await request.close();
       final responseBody = await response.transform(utf8.decoder).join();
-      
+
       if (response.statusCode >= 400) {
         throw NetworkException(
           message: 'Upload failed with status: ${response.statusCode}',
           statusCode: response.statusCode,
         );
       }
-      
+
       return json.decode(responseBody);
     } catch (e) {
       _handleError(

@@ -4,8 +4,10 @@ import 'package:sign_in_button/sign_in_button.dart';
 import 'package:guardiancare/src/constants/colors.dart';
 import 'package:guardiancare/src/features/authentication/controllers/login_controller.dart';
 import 'package:guardiancare/src/features/authentication/controllers/auth_controller.dart';
+import 'package:guardiancare/src/features/authentication/exceptions/auth_exception.dart';
 
 class LoginPage extends StatefulWidget {
+  static const String routeName = '/login';
   const LoginPage({super.key});
 
   @override

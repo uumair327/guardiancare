@@ -47,6 +47,46 @@ The app aims to centralize critical information and resources, empowering commun
 
 The app features a user-friendly design with secure login, multimedia educational content, real-time reporting capabilities, and a moderated forum for support. The backend utilizes Firebase for authentication, real-time database management, and secure data storage.
 
+## Web Deployment
+
+GuardianCare can be deployed as a web application to GitHub Pages. Here's how to deploy it:
+
+### Prerequisites
+
+- Flutter SDK (with web support enabled)
+- GitHub account
+- Firebase project with Web app configured
+
+### Deployment Steps
+
+1. **Build the web version**:
+   ```bash
+   flutter build web --release --base-href "/guardiancare/"
+   ```
+
+2. **Deploy to GitHub Pages**:
+   - Push your code to a GitHub repository
+   - Go to the repository Settings > Pages
+   - Set the source to deploy from the `gh-pages` branch
+   - Set the folder to `/ (root)`
+
+3. **Configure Firebase for Web**:
+   - Add your web app in Firebase Console
+   - Update the Firebase configuration in `web/index.html`
+   - Enable Google Sign-In in the Firebase Console
+
+4. **Custom Domain (Optional)**:
+   - Add a `CNAME` file in the `web` directory with your domain
+   - Configure your domain's DNS settings to point to GitHub Pages
+
+### Development
+
+To run the web version locally:
+
+```bash
+flutter run -d chrome --web-hostname localhost --web-port 3000
+```
+
 ### Technology Stack
 
 - **Frontend**: Flutter

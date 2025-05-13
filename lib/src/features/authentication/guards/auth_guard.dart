@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:guardiancare/src/features/authentication/controllers/login_controller.dart';
-import 'package:guardiancare/src/features/authentication/screens/login_page.dart';
+import 'package:guardiancare/src/features/authentication/controllers/auth_service.dart';
 
 class AuthGuard extends GetMiddleware {
-  final AuthService _authService = AuthService();
-
   @override
   RouteSettings? redirect(String? route) {
-    if (_authService.getCurrentUser() == null) {
+    final authService = Get.find<AuthService>();
+    if (authService.getCurrentUser() == null) {
       return const RouteSettings(
         name: '/login',
         arguments: {'requireLogin': true},
@@ -19,11 +17,10 @@ class AuthGuard extends GetMiddleware {
 }
 
 class ParentalGuard extends GetMiddleware {
-  final AuthService _authService = AuthService();
-
   @override
   RouteSettings? redirect(String? route) {
-    if (_authService.isGuestUser()) {
+    final authService = Get.find<AuthService>();
+    if (authService.getCurrentUser()?.isAnonymous ?? true) {
       return const RouteSettings(
         name: '/login',
         arguments: {

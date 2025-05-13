@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:guardiancare/src/features/authentication/controllers/login_controller.dart';
+import 'package:guardiancare/services/auth_service.dart';
 import 'package:guardiancare/src/features/authentication/screens/login_page.dart';
 
 class GuestRestrictedWidget extends StatelessWidget {
   final Widget child;
   final String message;
-  
+
   const GuestRestrictedWidget({
     Key? key,
     required this.child,
@@ -42,7 +42,8 @@ class GuestRestrictedWidget extends StatelessWidget {
                   },
                   child: const Text('SIGN IN / SIGN UP'),
                   style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 32, vertical: 12),
                   ),
                 ),
               ],

@@ -35,6 +35,11 @@ migrate_working_dir/
 pubspec.lock
 
 # Web related
+.web/
+.firebase/
+.firebaserc
+firebase-debug.log
+firebase-debug.*.log
 
 # Symbolication related
 app.*.symbols

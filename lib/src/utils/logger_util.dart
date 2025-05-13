@@ -1,4 +1,5 @@
 import 'package:logger/logger.dart';
+import 'dart:convert';
 
 /// A utility class for logging messages throughout the app.
 /// Provides different logging levels and formatting options.

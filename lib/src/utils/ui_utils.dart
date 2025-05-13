@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:guardiancare/src/constants/colors.dart';
+
+enum FeedbackType { success, error, warning, light, medium, heavy }
 
 class UIUtils {
   // Show a loading dialog
-  static void showLoadingDialog(BuildContext context, {String message = 'Loading...'}) {
+  static void showLoadingDialog(BuildContext context,
+      {String message = 'Loading...'}) {
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -20,7 +24,8 @@ class UIUtils {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(tPrimaryColor)),
+                const CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(tPrimaryColor)),
                 const SizedBox(height: 16),
                 Text(
                   message,
@@ -154,9 +159,10 @@ class UIUtils {
       enableDrag: enableDrag,
       backgroundColor: backgroundColor ?? Colors.white,
       elevation: elevation,
-      shape: shape ?? const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-      ),
+      shape: shape ??
+          const RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+          ),
       clipBehavior: clipBehavior,
       constraints: constraints,
       useRootNavigator: useRootNavigator,
@@ -167,13 +173,15 @@ class UIUtils {
   }
 
   // Get screen size helpers
-  static double getScreenWidth(BuildContext context) => MediaQuery.of(context).size.width;
-  static double getScreenHeight(BuildContext context) => MediaQuery.of(context).size.height;
-  
+  static double getScreenWidth(BuildContext context) =>
+      MediaQuery.of(context).size.width;
+  static double getScreenHeight(BuildContext context) =>
+      MediaQuery.of(context).size.height;
+
   // Check if the screen is in portrait mode
-  static bool isPortrait(BuildContext context) => 
+  static bool isPortrait(BuildContext context) =>
       MediaQuery.of(context).orientation == Orientation.portrait;
-  
+
   // Get responsive padding based on screen size
   static EdgeInsets getResponsivePadding(BuildContext context) {
     final width = getScreenWidth(context);
@@ -188,17 +196,14 @@ class UIUtils {
 
   // Add haptic feedback
   static void lightImpact() {
-    // ignore: deprecated_member_use
-    Feedback.forTap(FeedbackType.light);
+    HapticFeedback.lightImpact();
   }
 
   static void mediumImpact() {
-    // ignore: deprecated_member_use
-    Feedback.forTap(FeedbackType.medium);
+    HapticFeedback.mediumImpact();
   }
 
   static void heavyImpact() {
-    // ignore: deprecated_member_use
-    Feedback.forTap(FeedbackType.heavy);
+    HapticFeedback.heavyImpact();
   }
 }

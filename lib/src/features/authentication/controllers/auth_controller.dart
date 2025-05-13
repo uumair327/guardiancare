@@ -1,177 +1,183 @@
 import 'dart:async';
-import 'dart:developer';
+import 'dart:developer' as developer;
 
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:get/get.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
-class FirebaseAuthService extends GetxService {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  final StreamController<User?> _authStateController = StreamController<User?>.broadcast();
-  StreamSubscription<User?>? _authSubscription;
-  
-  @override
-  void onInit() {
-    super.onInit();
-    _authSubscription = _auth.authStateChanges().listen(_authStateController.add);
-  }
-  
-  @override
-  void onClose() {
-    _authSubscription?.cancel();
-    _authStateController.close();
-    super.onClose();
-  }
-  
-  User? getCurrentUser() => _auth.currentUser;
-  
-  Stream<User?> get authStateChanges => _authStateController.stream;
-  
-  Future<UserCredential> signInAnonymously() async {
-    try {
-      return await _auth.signInAnonymously();
-    } catch (e) {
-      rethrow;
-    }
-  }
-  
-  Future<void> signOut() async {
-    try {
-      await _auth.signOut();
-    } catch (e) {
-      rethrow;
-    }
-  }
-}
+import 'auth_service.dart';
+import '../exceptions/auth_exception.dart';
 
 class AuthController extends GetxController {
-  final FirebaseAuthService _authService = Get.find<FirebaseAuthService>();
+  final AuthService _authService = Get.find<AuthService>();
   
   // Reactive user state
   final Rx<User?> _user = Rx<User?>(null);
-  bool _isInitialized = false;
+  final RxBool _isInitialized = false.obs;
+  final RxBool _isLoading = true.obs;
   
   User? get user => _user.value;
-  Stream<User?> get userStream => _authService.authStateChanges;
-  bool get isInitialized => _isInitialized;
+  bool get isInitialized => _isInitialized.value;
   bool get isAuthenticated => _user.value != null && !_user.value!.isAnonymous;
   bool get isGuest => _user.value?.isAnonymous ?? true;
+  bool get isLoading => _isLoading.value;
   
   StreamSubscription<User?>? _authSubscription;
   
   @override
   void onInit() {
     super.onInit();
-    _initialize();
+    
+    // Initialize with current user first
+    _initializeUser();
+    _listenForAuthStateChanges();
   }
-  
-  Future<void> _initialize() async {
-    try {
-      // Initialize with current user
-      _user.value = _authService.getCurrentUser();
-      _isInitialized = _user.value != null;
-      update();
-      
-      // Listen for auth state changes
-      _authSubscription = _authService.authStateChanges.listen(_handleAuthStateChange);
-    } catch (e) {
-      debugPrint('Error initializing AuthController: $e');
-      _isInitialized = true; // Mark as initialized even if there was an error
-      update();
-    }
+
+  void _initializeUser() {
+    _user.value = _authService.getCurrentUser();
+    _isInitialized.value = true;
+    _isLoading.value = false;
   }
-  
+
+  void _listenForAuthStateChanges() {
+    _authSubscription = _authService.authStateChanges.listen(
+      _handleAuthStateChange,
+      onError: (error) {
+        developer.log('Error in auth state stream', error: error);
+        Get.snackbar(
+          'Error',
+          'An error occurred while updating authentication state',
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+      },
+    );
+  }
+
   void _handleAuthStateChange(User? user) {
     try {
       final currentUid = _user.value?.uid;
       final newUid = user?.uid;
-      
+
+      // Only update if the user has changed
       if (currentUid != newUid) {
         _user.value = user;
-        _isInitialized = true;
-        update(); // Notify listeners
-      } else if (!_isInitialized) {
-        _isInitialized = true;
-        update();
+        _isInitialized.value = true;
+        _isLoading.value = false;
       }
     } catch (e) {
-      debugPrint('Error handling auth state change: $e');
+      developer.log('Error in auth state change', error: e);
+      // Don't throw here as it would break the stream
     }
   }
-  
+
   @override
   void onClose() {
     _authSubscription?.cancel();
     super.onClose();
   }
 
-  @override
-  void onReady() {
-    super.onReady();
-    // Any post-initialization logic can go here
-  }
+  // Get the user stream
+  Stream<User?> get userStream => _authService.authStateChanges;
 
-  // Sign in with Google
-  Future<void> signInWithGoogle() async {
+  // Authentication methods
+  Future<void> signInWithEmail({
+    required String email,
+    required String password,
+  }) async {
     try {
-      final googleSignIn = GoogleSignIn();
-      final googleUser = await googleSignIn.signIn();
-      if (googleUser == null) return;
-      
-      final googleAuth = await googleUser.authentication;
-      final credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
+      await _authService.signInWithEmail(
+        email: email,
+        password: password,
       );
-      
-      await _authService._auth.signInWithCredential(credential);
       Get.offAllNamed('/home');
     } catch (e) {
-      Get.snackbar('Error', 'Failed to sign in with Google');
+      debugPrint('Error signing in with email: $e');
+      rethrow;
     }
   }
 
-  // Sign in as guest
+  Future<void> signUpWithEmail({
+    required String email,
+    required String password,
+    String? displayName,
+  }) async {
+    try {
+      await _authService.signUpWithEmail(
+        email: email,
+        password: password,
+        displayName: displayName,
+      );
+      Get.offAllNamed('/home');
+    } catch (e) {
+      debugPrint('Error signing up with email: $e');
+      rethrow;
+    }
+  }
+
+  Future<void> signInWithGoogle() async {
+    try {
+      await _authService.signInWithGoogle();
+      Get.offAllNamed('/home');
+    } catch (e) {
+      debugPrint('Error signing in with Google: $e');
+      rethrow;
+    }
+  }
+
+  Future<void> sendPasswordResetEmail(String email) async {
+    try {
+      await _authService.sendPasswordResetEmail(email);
+      Get.snackbar(
+        'Success',
+        'Password reset email sent',
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+      );
+    } catch (e) {
+      debugPrint('Error sending password reset email: $e');
+      rethrow;
+    }
+  }
+
+  Future<void> signOut() async {
+    try {
+      await _authService.signOut();
+      Get.offAllNamed('/login');
+    } catch (e) {
+      debugPrint('Error signing out: $e');
+      rethrow;
+    }
+  }
+
   Future<void> signInAsGuest() async {
     try {
       await _authService.signInAnonymously();
       Get.offAllNamed('/home');
     } catch (e) {
-      Get.snackbar('Error', 'Failed to sign in as guest');
-    }
-  }
-
-  // Sign out
-  Future<void> signOut() async {
-    try {
-      await _authService.signOut();
-    } catch (e) {
+      debugPrint('Error signing in as guest: $e');
       rethrow;
     }
   }
+}
 
-  // Check if current route requires authentication
-  bool requiresAuth(String routeName) {
-    // Add routes that don't require authentication
-    final publicRoutes = [
-      '/login',
-      '/forgot-password',
-      '/signup',
-    ];
-    
-    return !publicRoutes.contains(routeName);
-  }
+// Check if current route requires authentication
+bool requiresAuth(String routeName) {
+  // Add routes that require authentication
+  final authRequiredRoutes = [
+    '/profile',
+    '/settings',
+    '/home',
+  ];
+  return authRequiredRoutes.any((route) => routeName.startsWith(route));
+}
 
-  // Check if current route requires full account (not guest)
-  bool requiresFullAccount(String routeName) {
-    // Add routes that require full account
-    final restrictedRoutes = [
-      '/parental-controls',
-      '/account',
-      '/settings',
-    ];
-    
-    return restrictedRoutes.contains(routeName);
-  }
+// Check if current route requires full account (not guest)
+bool requiresFullAccount(String routeName) {
+  // Add routes that require a full account (not guest)
+  final fullAccountRequiredRoutes = [
+    '/profile/edit',
+    '/settings/account',
+  ];
+  return fullAccountRequiredRoutes.any((route) => routeName.startsWith(route));
 }

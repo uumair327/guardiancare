@@ -1,192 +1,261 @@
 import 'dart:async';
+import 'dart:developer' as developer;
 import 'dart:io';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:google_sign_in/google_sign_in.dart';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
-class AuthException implements Exception {
-  final String message;
-  final String code;
+import 'auth_service.dart';
+import '../exceptions/auth_exception.dart';
 
-  AuthException(this.message, {this.code = 'unknown'});
-
-  @override
-  String toString() => 'AuthException: $message (code: $code)';
-}
-
-class AuthService {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  final GoogleSignIn _googleSignIn = GoogleSignIn();
+class LoginController extends GetxController {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-
-  // Stream to listen to auth state changes
-  Stream<User?> get authStateChanges => _auth.authStateChanges();
-
-  // Sign in with Google
-  Future<UserCredential> signInWithGoogle() async {
-    try {
-      // Show the account picker and get the selected account
-      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-      if (googleUser == null) {
-        throw AuthException('Sign in was cancelled by user', code: 'sign_in_cancelled');
-      }
-
-      // Get the authentication details
-      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
-      
-      // Create a new credential
-      final AuthCredential credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
-      );
-
-      // Sign in to Firebase with the Google credential
-      final UserCredential userCredential = await _auth.signInWithCredential(credential);
-      final User? user = userCredential.user;
-      
-      if (user == null) {
-        throw AuthException('Failed to sign in with Google', code: 'sign_in_failed');
-      }
-
-      // Check if user exists in Firestore, if not create a new document
-      await _updateUserData(user, googleUser);
-      
-      return userCredential;
-    } on FirebaseAuthException catch (e) {
-      throw AuthException(_getErrorMessage(e.code), code: e.code);
-    } on SocketException {
-      throw AuthException('No internet connection', code: 'network_error');
-    } catch (e) {
-      throw AuthException('An unexpected error occurred: $e');
-    }
-  }
-
-  // Update user data in Firestore
-  Future<void> _updateUserData(User user, GoogleSignInAccount? googleUser) async {
-    if (user.email == null) return;
-
-    final userData = <String, dynamic>{
-      'uid': user.uid,
-      'email': user.email,
-      'displayName': user.displayName ?? googleUser?.displayName ?? 'User',
-      'photoURL': user.photoURL ?? googleUser?.photoUrl,
-      'lastSignInTime': user.metadata.lastSignInTime?.toIso8601String(),
-      'creationTime': user.metadata.creationTime?.toIso8601String(),
-      'isAnonymous': user.isAnonymous,
-    };
-
-    await FirebaseFirestore.instance
-        .collection('users')
-        .doc(user.uid)
-        .set(userData, SetOptions(merge: true));
-  }
-
-  // Get user-friendly error message from error code
-  String _getErrorMessage(String code) {
-    switch (code) {
-      // User related errors
-      case 'user-not-found':
-        return 'No user found with this email';
-      case 'wrong-password':
-        return 'Incorrect password';
-      case 'user-disabled':
-        return 'This account has been disabled';
-      case 'too-many-requests':
-        return 'Too many login attempts. Please try again later.';
-      case 'operation-not-allowed':
-        return 'This operation is not allowed. Please contact support.';
-      case 'invalid-email':
-        return 'The email address is invalid';
-      case 'email-already-in-use':
-        return 'This email is already in use';
-      case 'weak-password':
-        return 'The password is too weak';
-      case 'requires-recent-login':
-        return 'Please log in again before retrying this operation';
-      case 'network-request-failed':
-        return 'Network error. Please check your internet connection';
-      case 'account-exists-with-different-credential':
-        return 'An account already exists with the same email but different sign-in credentials.';
-      case 'invalid-credential':
-        return 'The credential is malformed or has expired.';
-      default:
-        return 'An error occurred. Please try again';
-    }
-  }
-
-  // Sign out
-  Future<bool> signOut() async {
-    try {
-      await Future.wait([
-        _auth.signOut(),
-        _googleSignIn.signOut(),
-      ]);
-      return true;
-    } catch (e) {
-      debugPrint('Error signing out: $e');
-      return false;
-    }
-  }
-
+  final AuthService _authService = Get.find<AuthService>();
+  
   // Get current user
-  User? getCurrentUser() {
-    return _auth.currentUser;
+  User? getCurrentUser() => _authService.getCurrentUser();
+  
+  // Check if user is authenticated
+  bool get isAuthenticated => _authService.isAuthenticated;
+  
+  // Check if user is not authenticated
+  bool get isNotAuthenticated => _authService.isNotAuthenticated;
+  
+  // Check if loading
+  bool get isLoading => _authService.isLoading;
+  
+  // Stream of auth state changes
+  Stream<User?> get userStream => _authService.authStateChanges;
+  
+  @override
+  void onInit() {
+    super.onInit();
   }
-
-  // Sign in as guest
-  Future<UserCredential> signInAsGuest() async {
-    try {
-      final userCredential = await _auth.signInAnonymously();
-      if (userCredential.user != null) {
-        await _updateUserData(userCredential.user!, null);
-      }
-      return userCredential;
-    } on FirebaseAuthException catch (e) {
-      throw AuthException(_getErrorMessage(e.code), code: e.code);
-    } on SocketException {
-      throw AuthException('No internet connection', code: 'network_error');
-    } catch (e) {
-      throw AuthException('An unexpected error occurred: $e');
-    }
-  }
-
-  // Check if current user is a guest
-  bool isGuestUser() {
-    final user = _auth.currentUser;
-    return user != null && user.isAnonymous;
-  }
-
+  
+  // Check if user is logged in with email/password
+  bool get isEmailUser => getCurrentUser()?.providerData.any((userInfo) => userInfo.providerId == 'password') ?? false;
+  
+  // Check if user is logged in with Google
+  bool get isGoogleUser => getCurrentUser()?.providerData.any((userInfo) => userInfo.providerId == 'google.com') ?? false;
+  
   // Upgrade guest to full account
   Future<UserCredential> upgradeGuestToFullAccount({
     required String email,
     required String password,
   }) async {
     try {
-      final user = _auth.currentUser;
-      if (user == null || !user.isAnonymous) {
-        throw AuthException('No guest user found');
-      }
-
-      // Create credential for the new account
-      final credential = EmailAuthProvider.credential(
+      return await _authService.linkWithEmailAndPassword(
         email: email,
         password: password,
       );
-
-      // Link the credential to the anonymous account and return the UserCredential
-      final userCredential = await user.linkWithCredential(credential);
+    } on FirebaseAuthException catch (e) {
+      throw e.toAuthException();
+    } on SocketException {
+      throw AuthException.networkError();
+    } on AuthException {
+      rethrow;
+    } catch (e) {
+      developer.log('Upgrade guest account error', error: e);
+      throw AuthException('An unexpected error occurred', code: 'unexpected-error');
+    }
+  }
+  
+  // Sign in with email and password
+  Future<UserCredential> signInWithEmail({
+    required String email,
+    required String password,
+  }) async {
+    try {
+      return await _authService.signInWithEmail(
+        email: email.trim(),
+        password: password,
+      );
+    } on FirebaseAuthException catch (e) {
+      throw e.toAuthException();
+    } on SocketException {
+      throw AuthException.networkError();
+    } on AuthException {
+      rethrow;
+    } catch (e) {
+      developer.log('Email sign in error', error: e);
+      throw AuthException('An unexpected error occurred', code: 'unexpected-error');
+    }
+  }
+  
+  // Sign up with email and password
+  Future<UserCredential> signUpWithEmail({
+    required String email,
+    required String password,
+    String? displayName,
+  }) async {
+    try {
+      final credential = await _authService.signUpWithEmail(
+        email: email.trim(),
+        password: password,
+        displayName: displayName,
+      );
       
-      // Update user data in Firestore if needed
-      if (userCredential.user?.email != null) {
-        await _updateUserData(userCredential.user!, null);
+      // Update user data in Firestore
+      if (credential.user != null) {
+        await _updateUserData(credential.user!);
       }
       
-      return userCredential;
+      return credential;
     } on FirebaseAuthException catch (e) {
-      throw AuthException(_getErrorMessage(e.code), code: e.code);
+      throw e.toAuthException();
+    } on SocketException {
+      throw AuthException.networkError();
+    } on AuthException {
+      rethrow;
     } catch (e) {
-      throw AuthException('Failed to upgrade account: $e');
+      developer.log('Email sign up error', error: e);
+      throw AuthException('An unexpected error occurred', code: 'unexpected-error');
+    }
+  }
+  
+  // Sign in with Google
+  Future<UserCredential> signInWithGoogle() async {
+    try {
+      final credential = await _authService.signInWithGoogle();
+      
+      // Update user data in Firestore
+      if (credential.user != null) {
+        await _updateUserData(credential.user!);
+      }
+      
+      return credential;
+    } on FirebaseAuthException catch (e) {
+      throw e.toAuthException();
+    } on SocketException {
+      throw AuthException.networkError();
+    } on AuthException {
+      rethrow;
+    } catch (e) {
+      developer.log('Google sign in error', error: e);
+      throw AuthException('An unexpected error occurred', code: 'unexpected-error');
+    }
+  }
+  
+  // Send password reset email
+  Future<void> sendPasswordResetEmail(String email) async {
+    try {
+      await _authService.sendPasswordResetEmail(email);
+    } on FirebaseAuthException catch (e) {
+      throw e.toAuthException();
+    } on SocketException {
+      throw AuthException.networkError();
+    } on AuthException {
+      rethrow;
+    } catch (e) {
+      developer.log('Password reset error', error: e);
+      throw AuthException('An unexpected error occurred', code: 'unexpected-error');
+    }
+  }
+  
+  // Sign out
+  Future<void> signOut() async {
+    try {
+      await _authService.signOut();
+    } catch (e) {
+      developer.log('Sign out error', error: e);
+      rethrow;
+    }
+  }
+  
+  // Delete account
+  Future<void> deleteAccount() async {
+    try {
+      final user = _authService.getCurrentUser();
+      if (user != null) {
+        // Delete user data from Firestore
+        await _firestore.collection('users').doc(user.uid).delete();
+        
+        // Delete the user account
+        await user.delete();
+      }
+    } on FirebaseException catch (e) {
+      throw AuthException(_getErrorMessage(e.code ?? ''), code: e.code);
+    } on SocketException {
+      throw AuthException.networkError();
+    } on AuthException {
+      rethrow;
+    } catch (e) {
+      developer.log('Delete account error', error: e);
+      throw AuthException('An unexpected error occurred', code: 'unexpected-error');
+    }
+  }
+  
+  // Update user data in Firestore
+  Future<void> _updateUserData(User user) async {
+    try {
+      final userData = {
+        'uid': user.uid,
+        'email': user.email,
+        'displayName': user.displayName,
+        'photoURL': user.photoURL,
+        'phoneNumber': user.phoneNumber,
+        'emailVerified': user.emailVerified,
+        'isAnonymous': user.isAnonymous,
+        'metadata': {
+          'creationTime': user.metadata.creationTime?.toIso8601String(),
+          'lastSignInTime': user.metadata.lastSignInTime?.toIso8601String(),
+        },
+        'providerData': user.providerData
+            .map((info) => ({
+                  'providerId': info.providerId,
+                  'uid': info.uid,
+                  'displayName': info.displayName,
+                  'email': info.email,
+                  'phoneNumber': info.phoneNumber,
+                  'photoURL': info.photoURL,
+                }))
+            .toList(),
+        'lastUpdated': FieldValue.serverTimestamp(),
+      };
+
+      await _firestore.collection('users').doc(user.uid).set(
+            userData,
+            SetOptions(merge: true),
+          );
+    } catch (e) {
+      developer.log('Error updating user data', error: e);
+      // Don't throw, as this is a non-critical operation
+    }
+  }
+  
+  // Get user-friendly error message from error code
+  String _getErrorMessage(String code) {
+    switch (code) {
+      case 'user-not-found':
+        return 'No user found with this email address.';
+      case 'wrong-password':
+        return 'Incorrect password. Please try again.';
+      case 'invalid-email':
+        return 'The email address is not valid.';
+      case 'user-disabled':
+        return 'This account has been disabled. Please contact support.';
+      case 'too-many-requests':
+        return 'Too many failed login attempts. Please try again later.';
+      case 'operation-not-allowed':
+        return 'Email/password accounts are not enabled.';
+      case 'email-already-in-use':
+        return 'An account already exists with this email address.';
+      case 'weak-password':
+        return 'The password is too weak. Please choose a stronger password.';
+      case 'requires-recent-login':
+        return 'This operation is sensitive and requires recent authentication. Please log in again.';
+      case 'network-request-failed':
+      case 'network_error':
+        return 'A network error occurred. Please check your internet connection and try again.';
+      case 'account-exists-with-different-credential':
+        return 'An account already exists with the same email but different sign-in credentials.';
+      case 'sign_in_cancelled':
+        return 'Sign in was cancelled.';
+      default:
+        return 'An error occurred. Please try again.';
     }
   }
 }

@@ -5,5 +5,7 @@ class TTextTheme {
   static TextTheme lightTextTheme = TextTheme(
     displayMedium: GoogleFonts.montserrat(),
   );
-  static TextTheme darkTextTheme = const TextTheme();
+  static TextTheme darkTextTheme = TextTheme(
+    displayMedium: GoogleFonts.montserrat(),
+  );
 }

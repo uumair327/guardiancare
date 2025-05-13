@@ -3,7 +3,9 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
-class AuthService {
+import 'package:get/get.dart';
+
+class AuthService extends GetxController {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn(
     clientId: kIsWeb
@@ -15,6 +17,11 @@ class AuthService {
 
   // Get current user
   User? get currentUser => _auth.currentUser;
+
+  // Check if current user is a guest (not signed in)
+  bool isGuestUser() {
+    return currentUser == null;
+  }
 
   // Stream of auth state changes
   Stream<User?> get authStateChanges => _auth.authStateChanges();
