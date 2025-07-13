@@ -41,6 +41,7 @@ dependencies:
   firebase_analytics: ^11.3.6
   flutter_inappwebview: ^6.1.5
   email_validator: ^3.0.0
+  pdfx: ^2.4.0
 
 dev_dependencies:
   flutter_test:
