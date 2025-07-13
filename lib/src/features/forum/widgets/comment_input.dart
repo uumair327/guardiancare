@@ -3,35 +3,30 @@ import 'package:guardiancare/src/features/forum/controllers/comment_controller.d
 
 class CommentInput extends StatefulWidget {
   final String forumId;
-
-  const CommentInput({super.key, required this.forumId});
+  const CommentInput({Key? key, required this.forumId}) : super(key: key);
 
   @override
   _CommentInputState createState() => _CommentInputState();
 }
 
 class _CommentInputState extends State<CommentInput> {
-  final _controller = TextEditingController();
+  final TextEditingController _controller = TextEditingController();
   bool _loading = false;
   final CommentController _commentController = CommentController();
 
   Future<void> _addComment() async {
     if (_controller.text.trim().isEmpty) return;
-
     setState(() {
       _loading = true;
     });
-
     try {
       await _commentController.addComment(
           widget.forumId, _controller.text.trim());
       _controller.clear();
-    } catch (e) {
-      print(e);
+    } catch (_) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Failed to add comment. Please try again.'),
-        ),
+            content: Text('Failed to add comment. Please try again.')),
       );
     } finally {
       setState(() {

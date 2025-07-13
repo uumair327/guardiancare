@@ -6,24 +6,45 @@ import 'package:guardiancare/src/features/forum/models/forum.dart';
 import 'package:guardiancare/src/features/forum/widgets/comment_input.dart';
 import 'package:guardiancare/src/features/forum/widgets/reminder_dialog.dart';
 import 'package:guardiancare/src/features/forum/widgets/user_details.dart';
+
 import 'package:intl/intl.dart';
 
-class ForumDetailPage extends StatelessWidget {
+class ForumDetailPage extends StatefulWidget {
   final Forum forum;
-  final ForumController _forumController = ForumController();
+  const ForumDetailPage({Key? key, required this.forum}) : super(key: key);
 
-  ForumDetailPage({super.key, required this.forum});
+  @override
+  _ForumDetailPageState createState() => _ForumDetailPageState();
+}
+
+class _ForumDetailPageState extends State<ForumDetailPage> {
+  final ForumController _controller = ForumController();
+  bool _reminderShown = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!_reminderShown) {
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (_) => ReminderDialog(
+            onAgree: () => {},
+          ),
+        );
+        _reminderShown = true;
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(forum.title),
-      ),
+      appBar: AppBar(title: Text(widget.forum.title)),
       body: LayoutBuilder(
         builder: (context, constraints) {
           bool isTablet = constraints.maxWidth > 600;
-
           return Column(
             children: [
               Expanded(
@@ -35,7 +56,7 @@ class ForumDetailPage extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          forum.title,
+                          widget.forum.title,
                           style: TextStyle(
                             fontSize: isTablet ? 24.0 : 20.0,
                             fontWeight: FontWeight.bold,
@@ -44,21 +65,18 @@ class ForumDetailPage extends StatelessWidget {
                         ),
                         Text(
                           DateFormat('dd MMM yy - hh:mm a')
-                              .format(forum.createdAt),
+                              .format(widget.forum.createdAt),
+                          style: TextStyle(fontSize: isTablet ? 16 : 14),
                         ),
                         const SizedBox(height: 10),
                         Text(
-                          forum.description,
+                          widget.forum.description,
                           textAlign: TextAlign.left,
                           style: TextStyle(fontSize: isTablet ? 18.0 : 14.0),
                         ),
-                        const SizedBox(height: 10),
                         const Divider(),
-                        // In-App Reminder
-                        const ReminderWidget(),
-                        const SizedBox(height: 10),
                         StreamBuilder<List<Comment>>(
-                          stream: _forumController.getComments(forum.id),
+                          stream: _controller.getComments(widget.forum.id),
                           builder: (context, snapshot) {
                             if (!snapshot.hasData) {
                               return const Center(
@@ -84,14 +102,6 @@ class ForumDetailPage extends StatelessWidget {
                                         ),
                                       ),
                                       const SizedBox(height: 4),
-                                      // Optionally, add the comment's timestamp
-                                      // Text(
-                                      //   DateFormat('dd MMM yy - hh:mm a').format(comment.createdAt),
-                                      //   style: TextStyle(
-                                      //     color: Colors.grey.shade600,
-                                      //     fontSize: isTablet ? 14 : 12,
-                                      //   ),
-                                      // ),
                                     ],
                                   ),
                                   isThreeLine: true,
@@ -105,59 +115,11 @@ class ForumDetailPage extends StatelessWidget {
                   ),
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.only(bottom: 3.0),
-                child: CommentInput(forumId: forum.id),
-              ),
+              CommentInput(forumId: widget.forum.id),
             ],
           );
         },
       ),
     );
-  }
-}
-
-class ReminderWidget extends StatefulWidget {
-  const ReminderWidget({super.key});
-
-  @override
-  _ReminderWidgetState createState() => _ReminderWidgetState();
-}
-
-class _ReminderWidgetState extends State<ReminderWidget> {
-  bool _isReminderShown = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _checkAndShowReminder();
-  }
-
-  Future<void> _checkAndShowReminder() async {
-    // Implement your logic to determine if the user is a child.
-    // For demonstration, we'll assume all users are children.
-    bool isChildUser = true;
-
-    if (isChildUser && !_isReminderShown) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (context) => ReminderDialog(
-            onAgree: () {
-              // You can add additional actions here if needed
-            },
-          ),
-        );
-      });
-      setState(() {
-        _isReminderShown = true;
-      });
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(); // Placeholder, as the dialog handles the reminder
   }
 }
