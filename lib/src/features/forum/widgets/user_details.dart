@@ -1,50 +1,35 @@
 import 'package:flutter/material.dart';
-import 'package:guardiancare/src/constants/colors.dart';
 import 'package:guardiancare/src/features/forum/forum_service.dart';
 
 class UserDetails extends StatelessWidget {
   final String userId;
-  final ForumService _forumService = ForumService();
+  final ForumService _service = ForumService();
 
-  UserDetails({super.key, required this.userId});
+  UserDetails({Key? key, required this.userId}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<Map<String, String>>(
-      future: _forumService.fetchUserDetails(userId),
-      builder: (context, snapshot) {
-        if (!snapshot.hasData) {
-          return const Center(child: CircularProgressIndicator());
-        }
-        var user = snapshot.data!;
+      future: _service.fetchUserDetails(userId),
+      builder: (c, snap) {
+        if (!snap.hasData) return const SizedBox.shrink();
+        final u = snap.data!;
         return Row(
           children: [
             CircleAvatar(
-              backgroundImage: user['userImage']!.isNotEmpty
-                  ? NetworkImage(user['userImage']!)
+              backgroundImage: u['userImage']!.isNotEmpty
+                  ? NetworkImage(u['userImage']!)
                   : null,
-              child:
-                  user['userImage']!.isEmpty ? const Icon(Icons.person) : null,
+              child: u['userImage']!.isEmpty ? const Icon(Icons.person) : null,
             ),
-            const SizedBox(width: 10),
+            const SizedBox(width: 8),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  user['userName']!,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 14,
-                    color: tPrimaryColor,
-                  ),
-                ),
-                Text(
-                  user['userEmail']!,
-                  style: const TextStyle(
-                    color: Colors.grey,
-                    fontSize: 12,
-                  ),
-                ),
+                Text(u['userName']!,
+                    style: const TextStyle(fontWeight: FontWeight.bold)),
+                Text(u['userEmail']!,
+                    style: const TextStyle(fontSize: 12, color: Colors.grey)),
               ],
             ),
           ],
