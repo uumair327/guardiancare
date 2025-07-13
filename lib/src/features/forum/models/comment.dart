@@ -15,11 +15,11 @@ class Comment {
 
   factory Comment.fromMap(Map<String, dynamic> map) {
     return Comment(
-      id: map['id'],
-      userId: map['userId'],
-      forumId: map['forumId'],
-      text: map['text'],
-      createdAt: DateTime.parse(map['createdAt']),
+      id: map['id'] as String,
+      userId: map['userId'] as String,
+      forumId: map['forumId'] as String,
+      text: map['text'] as String,
+      createdAt: DateTime.parse(map['createdAt'] as String),
     );
   }
 
