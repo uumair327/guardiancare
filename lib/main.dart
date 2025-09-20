@@ -1,9 +1,17 @@
 import 'dart:ui';
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:guardiancare/src/core/core.dart';
+import 'package:guardiancare/src/features/authentication/authentication.dart';
+import 'package:guardiancare/src/features/consent/consent.dart';
+import 'package:guardiancare/src/features/home/home.dart';
+import 'package:guardiancare/src/features/forum/forum.dart';
+import 'package:guardiancare/src/features/profile/profile.dart';
+import 'package:guardiancare/src/features/quiz/quiz.dart';
 import 'package:guardiancare/src/features/authentication/screens/login_page.dart';
 import 'package:guardiancare/src/routing/pages.dart';
 
@@ -11,7 +19,27 @@ import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  
+  // Initialize Firebase
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+  // Initialize dependency injection
+  await DependencyInjection.init();
+
+  // Set up BLoC observer for logging and error reporting
+  if (kDebugMode) {
+    // Use enhanced debugging observer in debug mode
+    Bloc.observer = DebugBlocObserver();
+    BlocPerformanceMonitor.startMonitoring();
+    
+    // Run architecture validation after a short delay
+    Future.delayed(const Duration(seconds: 2), () {
+      BlocValidation.printValidationReport();
+    });
+  } else {
+    // Use standard observer in release mode
+    Bloc.observer = AppBlocObserver();
+  }
 
   // Pass all uncaught "fatal" errors from the framework to Crashlytics
   FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
@@ -25,63 +53,93 @@ void main() async {
     return true;
   };
 
-  runApp(const guardiancareApp());
+  runApp(const GuardianCareApp());
 }
 
-class guardiancareApp extends StatelessWidget {
-  const guardiancareApp({super.key});
+class GuardianCareApp extends StatelessWidget {
+  const GuardianCareApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const guardiancare();
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<AuthenticationBloc>(
+          create: (context) => DependencyInjection.get<AuthenticationBloc>()
+            ..add(const AuthenticationStarted()),
+        ),
+        BlocProvider<NavigationCubit>(
+          create: (context) => DependencyInjection.get<NavigationCubit>(),
+        ),
+        BlocProvider<ConsentBloc>(
+          create: (context) => DependencyInjection.get<ConsentBloc>(),
+        ),
+        BlocProvider<HomeBloc>(
+          create: (context) => DependencyInjection.get<HomeBloc>(),
+        ),
+        BlocProvider<ForumBloc>(
+          create: (context) => DependencyInjection.get<ForumBloc>(),
+        ),
+        BlocProvider<CommentBloc>(
+          create: (context) => DependencyInjection.get<CommentBloc>(),
+        ),
+        BlocProvider<ProfileBloc>(
+          create: (context) => DependencyInjection.get<ProfileBloc>(),
+        ),
+        BlocProvider<QuizBloc>(
+          create: (context) => DependencyInjection.get<QuizBloc>(),
+        ),
+      ],
+      child: const GuardianCare(),
+    );
   }
 }
 
-class guardiancare extends StatefulWidget {
-  const guardiancare({super.key});
-
-  @override
-  State<guardiancare> createState() => _guardiancareState();
-}
-
-class _guardiancareState extends State<guardiancare> {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  User? _user;
-
-  @override
-  void initState() {
-    super.initState();
-    _auth.authStateChanges().listen((User? user) {
-      setState(() {
-        _user = user;
-      });
-    });
-    print("I am the user: $_user");
-  }
+class GuardianCare extends StatelessWidget {
+  const GuardianCare({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: "Guardian Care",
-      home: StreamBuilder<User?>(
-        stream: _auth.authStateChanges(),
-        builder: (BuildContext context, AsyncSnapshot<User?> snapshot) {
-          if (snapshot.hasError) {
+      home: BlocBuilder<AuthenticationBloc, AuthenticationState>(
+        builder: (context, state) {
+          if (state is AuthenticationLoading || state is AuthenticationInitial) {
+            return const Scaffold(
+              body: Center(
+                child: CircularProgressIndicator(),
+              ),
+            );
+          } else if (state is AuthenticationAuthenticated) {
+            return const Pages();
+          } else if (state is AuthenticationUnauthenticated) {
+            return const LoginPage();
+          } else if (state is AuthenticationError) {
             return Scaffold(
               body: Center(
-                child: Text("Error: ${snapshot.error}"),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      "Error: ${state.message}",
+                      style: const TextStyle(color: Colors.red),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 16),
+                    ElevatedButton(
+                      onPressed: () {
+                        context.read<AuthenticationBloc>().add(
+                          const AuthenticationStarted(),
+                        );
+                      },
+                      child: const Text('Retry'),
+                    ),
+                  ],
+                ),
               ),
             );
           }
-          if (snapshot.connectionState == ConnectionState.active) {
-            print("Snapshot Data is: ${snapshot.data ?? 'No data'}");
-
-            if (snapshot.data == null) {
-              return const LoginPage();
-            } else {
-              return const Pages();
-            }
-          }
+          
+          // Fallback state
           return const Scaffold(
             body: Center(
               child: CircularProgressIndicator(),
@@ -89,7 +147,7 @@ class _guardiancareState extends State<guardiancare> {
           );
         },
       ),
-      debugShowCheckedModeBanner: false, //debug symbol remove
+      debugShowCheckedModeBanner: false, // debug symbol remove
     );
   }
 }

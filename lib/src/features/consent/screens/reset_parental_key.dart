@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:guardiancare/src/constants/colors.dart';
-import 'package:guardiancare/src/features/consent/controllers/consent_controller.dart';
+import 'package:guardiancare/src/features/consent/bloc/consent_bloc.dart';
+import 'package:guardiancare/src/features/consent/bloc/consent_event.dart';
 
 class ResetPasswordDialog extends StatelessWidget {
   final Function(String, String) onSubmit; // Question, answer, new password
@@ -64,7 +66,9 @@ class ResetPasswordDialog extends StatelessWidget {
                 isDense: true,
               ),
               obscureText: true,
-              validator: validateParentalKey,
+              validator: (value) => value == null || value.isEmpty
+                  ? 'Please enter a parental key'
+                  : null,
             ),
             const SizedBox(height: 20),
             Row(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:guardiancare/src/features/forum/controllers/forum_controller.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:guardiancare/src/features/forum/forum.dart';
 import 'package:guardiancare/src/features/forum/widgets/reminder_dialog.dart';
 
 class AddForumScreen extends StatefulWidget {
@@ -13,8 +14,6 @@ class _AddForumScreenState extends State<AddForumScreen> {
   final TextEditingController titleController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-  bool loading = false;
-  final ForumController _forumController = ForumController();
 
   @override
   Widget build(BuildContext context) {
@@ -32,9 +31,29 @@ class _AddForumScreenState extends State<AddForumScreen> {
           )
         ],
       ),
-      body: loading
-          ? const Center(child: CircularProgressIndicator())
-          : Form(
+      body: BlocListener<ForumBloc, ForumState>(
+        listener: (context, state) {
+          if (state is ForumAdded) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Successfully added Forum Post')),
+            );
+            Navigator.pop(context);
+          } else if (state is ForumError) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Failed to add Forum Post: ${state.message}'),
+                backgroundColor: Colors.red,
+              ),
+            );
+          }
+        },
+        child: BlocBuilder<ForumBloc, ForumState>(
+          builder: (context, state) {
+            final isLoading = state is ForumAdding;
+            
+            return isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : Form(
               key: _formKey,
               child: ListView(
                 padding: const EdgeInsets.all(15),
@@ -71,7 +90,10 @@ class _AddForumScreenState extends State<AddForumScreen> {
                   ),
                 ],
               ),
-            ),
+            );
+          },
+        ),
+      ),
     );
   }
 
@@ -87,35 +109,12 @@ class _AddForumScreenState extends State<AddForumScreen> {
     );
   }
 
-  Future<void> _submitForum() async {
-    setState(() {
-      loading = true;
-    });
-
-    try {
-      await _forumController.addForum(
-        titleController.text.trim(),
-        descriptionController.text.trim(),
-      );
-      setState(() {
-        loading = false;
-      });
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Successfully added Forum Post'),
-        ),
-      );
-      Navigator.pop(context);
-    } catch (e) {
-      print(e);
-      setState(() {
-        loading = false;
-      });
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Failed to add Forum Post'),
-        ),
-      );
-    }
+  void _submitForum() {
+    context.read<ForumBloc>().add(
+      ForumAddRequested(
+        title: titleController.text.trim(),
+        description: descriptionController.text.trim(),
+      ),
+    );
   }
 }
