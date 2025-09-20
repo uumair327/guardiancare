@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:email_validator/email_validator.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:guardiancare/src/constants/colors.dart';
-import 'package:guardiancare/src/features/consent/controllers/consent_controller.dart';
+import 'package:guardiancare/src/features/consent/bloc/consent_bloc.dart';
+import 'package:guardiancare/src/features/consent/bloc/consent_event.dart';
 
 class ConsentForm extends StatefulWidget {
   final VoidCallback onSubmit;
   final TextEditingController controller;
-  final ConsentController consentController;
 
   const ConsentForm({
     super.key,
     required this.controller,
     required this.onSubmit,
-    required this.consentController,
   });
 
   @override
@@ -55,10 +55,9 @@ class _ConsentFormState extends State<ConsentForm> {
         return;
       }
 
-      // Save form data (send to backend or database)
-      try {
-        // Submit form to the backend
-        bool result = await widget.consentController.submitConsentForm(
+      // Submit form using BLoC
+      context.read<ConsentBloc>().add(
+        ConsentSubmitRequested(
           parentName: parentNameController.text,
           parentEmail: parentEmailController.text,
           childName: childNameController.text,
@@ -67,28 +66,14 @@ class _ConsentFormState extends State<ConsentForm> {
           securityAnswer: securityQuestionController.text,
           isChildAbove12: isChildAbove12,
           isParentConsentGiven: isParentConsentGiven,
-        );
-
-        if (result) {
-          // Clear error message on successful submission
-          setState(() {
-            errorMessage = null;
-          });
-          // Proceed to the next step (e.g., OTP screen)
-          widget.onSubmit();
-        } else {
-          setState(() {
-            errorMessage =
-                'There was an error saving the consent. Please try again.';
-          });
-        }
-        // Proceed to the next step (e.g., OTP screen)
-        widget.onSubmit();
-      } catch (e) {
-        setState(() {
-          errorMessage = 'Error saving consent: $e';
-        });
-      }
+        ),
+      );
+      
+      // Clear error message and proceed
+      setState(() {
+        errorMessage = null;
+      });
+      widget.onSubmit();
     }
   }
 
@@ -177,7 +162,9 @@ class _ConsentFormState extends State<ConsentForm> {
                       isDense: true,
                     ),
                     obscureText: true,
-                    validator: validateParentalKey,
+                    validator: (value) => value == null || value.isEmpty
+                        ? 'Please enter a parental key'
+                        : null,
                   ),
 
                   // Confirm Parental Key

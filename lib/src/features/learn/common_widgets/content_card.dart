@@ -1,27 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:guardiancare/src/common_widgets/video_player_page.dart';
+import '../models/learning_video.dart';
 
 class ContentCard extends StatelessWidget {
-  final String imageUrl;
-  final String title;
-  final String description;
-  final BuildContext context;
+  final LearningVideo video;
+  final VoidCallback? onTap;
 
-  const ContentCard({super.key, 
-    required this.imageUrl,
-    required this.title,
-    required this.description,
-    required this.context,
+  const ContentCard({
+    super.key,
+    required this.video,
+    this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () {
+      onTap: onTap ?? () {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => VideoPlayerPage(videoUrl: description),
+            builder: (context) => VideoPlayerPage(videoUrl: video.videoUrl),
           ),
         );
       },
@@ -31,7 +29,7 @@ class ContentCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Image.network(
-              imageUrl,
+              video.thumbnailUrl,
               fit: BoxFit.cover,
               height: 200,
             ),
@@ -41,19 +39,22 @@ class ContentCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    title,
+                    video.title,
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 16.0,
                     ),
                   ),
                   const SizedBox(height: 3.0),
-                  // Text(
-                  //   description,
-                  //   style: const TextStyle(
-                  //     fontSize: 14.0,
-                  //   ),
-                  // ),
+                  if (video.description.isNotEmpty)
+                    Text(
+                      video.description,
+                      style: const TextStyle(
+                        fontSize: 14.0,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                 ],
               ),
             ),

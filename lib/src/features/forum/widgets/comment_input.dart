@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:guardiancare/src/features/forum/controllers/comment_controller.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:guardiancare/src/features/forum/bloc/comment_bloc.dart';
+import 'package:guardiancare/src/features/forum/bloc/comment_event.dart';
 
 class CommentInput extends StatefulWidget {
   final String forumId;
@@ -13,31 +15,17 @@ class CommentInput extends StatefulWidget {
 class _CommentInputState extends State<CommentInput> {
   final _controller = TextEditingController();
   bool _loading = false;
-  final CommentController _commentController = CommentController();
 
-  Future<void> _addComment() async {
+  void _addComment() {
     if (_controller.text.trim().isEmpty) return;
 
-    setState(() {
-      _loading = true;
-    });
-
-    try {
-      await _commentController.addComment(
-          widget.forumId, _controller.text.trim());
-      _controller.clear();
-    } catch (e) {
-      print(e);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Failed to add comment. Please try again.'),
-        ),
-      );
-    } finally {
-      setState(() {
-        _loading = false;
-      });
-    }
+    context.read<CommentBloc>().add(
+      CommentAddRequested(
+        forumId: widget.forumId,
+        text: _controller.text.trim(),
+      ),
+    );
+    _controller.clear();
   }
 
   @override
