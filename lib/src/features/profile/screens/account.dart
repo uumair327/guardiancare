@@ -1,38 +1,36 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:guardiancare/src/constants/colors.dart';
-import 'package:guardiancare/src/features/authentication/controllers/account_controller.dart';
-import 'package:guardiancare/src/features/authentication/controllers/login_controller.dart';
-import 'package:guardiancare/src/features/authentication/screens/login_page.dart';
+import 'package:guardiancare/src/features/authentication/authentication.dart';
+import 'package:guardiancare/src/features/profile/profile.dart';
 import 'package:guardiancare/src/features/emergency/screens/emergency_contact_page.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
-class Account extends StatelessWidget {
+class Account extends StatefulWidget {
   final User? user;
 
   const Account({super.key, this.user});
 
-  Future<DocumentSnapshot> getUserDetails() async {
-    if (user != null) {
-      return await FirebaseFirestore.instance
-          .collection('users')
-          .doc(user!.uid)
-          .get();
+  @override
+  State<Account> createState() => _AccountState();
+}
+
+class _AccountState extends State<Account> {
+  @override
+  void initState() {
+    super.initState();
+    // Load user profile when screen initializes
+    if (widget.user != null) {
+      context.read<ProfileBloc>().add(ProfileLoadRequested(widget.user!.uid));
     }
-
-    throw Exception("User is null");
   }
 
-  Future<void> _clearUserPreferences() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.remove('has_seen_forum_guidelines');
-  }
-
-  Future<void> _confirmAndDeleteAccount(BuildContext context) async {
-    bool shouldDelete = await showDialog(
+  void _confirmAndDeleteAccount() {
+    final profileBloc = context.read<ProfileBloc>();
+    
+    showDialog<bool>(
       context: context,
-      builder: (BuildContext context) {
+      builder: (BuildContext dialogContext) {
         return AlertDialog(
           title: const Text('Delete Account',
               style:
@@ -42,13 +40,13 @@ class Account extends StatelessWidget {
           actions: [
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop(false); // User clicked "No"
+                Navigator.of(dialogContext).pop(false); // User clicked "No"
               },
               child: const Text('No'),
             ),
             ElevatedButton(
               onPressed: () {
-                Navigator.of(context).pop(true); // User clicked "Yes"
+                Navigator.of(dialogContext).pop(true); // User clicked "Yes"
               },
               style: TextButton.styleFrom(
                 foregroundColor: tPrimaryColor, // Sets the text color
@@ -58,52 +56,12 @@ class Account extends StatelessWidget {
           ],
         );
       },
-    );
-
-    if (shouldDelete) {
-      // Show loading indicator for 10 seconds
-      showDialog(
-        // ignore: use_build_context_synchronously
-        context: context,
-        barrierDismissible: false,
-        builder: (BuildContext context) {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
-        },
-      );
-
-      // Simulate a delay for 10 seconds
-      await Future.delayed(const Duration(seconds: 10));
-
-      // Proceed with account deletion
-      bool result = await deleteUserAccount();
-
-      // Clear user preferences
-      await _clearUserPreferences();
-
-      // Close the loading indicator
-      // ignore: use_build_context_synchronously
-      Navigator.of(context).pop();
-
-      if (result) {
-        // Navigate back to the login page after successful deletion
-        Navigator.pop(
-          // ignore: use_build_context_synchronously
-          context,
-          MaterialPageRoute(
-            builder: (context) => const LoginPage(),
-          ),
-        );
-        print("Account is Deleted!!");
-      } else {
-        // Handle failure case
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-              content: Text("Failed to delete account. Please try again.")),
-        );
+    ).then((shouldDelete) {
+      if (shouldDelete == true) {
+        // Trigger account deletion through BLoC
+        profileBloc.add(const ProfileDeleteAccountRequested());
       }
-    }
+    });
   }
 
   @override
@@ -112,59 +70,89 @@ class Account extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Account'),
       ),
-      body: FutureBuilder<DocumentSnapshot>(
-        future: getUserDetails(),
-        builder:
-            (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          if (snapshot.hasError) {
-            return Center(child: Text("Error: ${snapshot.error}"));
-          }
-          if (!snapshot.hasData || !snapshot.data!.exists) {
-            return const Center(child: Text("User data not found"));
-          }
-
-          var userData = snapshot.data!.data() as Map<String, dynamic>;
-
-          return SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  CircleAvatar(
-                    radius: 50,
-                    backgroundImage: userData['photoURL'] != null
-                        ? NetworkImage(userData['photoURL'])
-                        : null,
-                    child: userData['displayName'] != null &&
-                            userData['displayName'].isNotEmpty
-                        ? Text(userData['displayName'][0].toUpperCase())
-                        : null,
+      body: MultiBlocListener(
+        listeners: [
+          BlocListener<ProfileBloc, ProfileState>(
+            listener: (context, state) {
+              if (state is ProfileSignedOut) {
+                // Navigate to login and clear navigation stack
+                context.read<AuthenticationBloc>().add(const AuthenticationSignOutRequested());
+              } else if (state is ProfileAccountDeleted) {
+                // Navigate to login and clear navigation stack
+                context.read<AuthenticationBloc>().add(const AuthenticationSignOutRequested());
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Account deleted successfully')),
+                );
+              } else if (state is ProfileError) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Error: ${state.message}'),
+                    backgroundColor: Colors.red,
                   ),
-                  const SizedBox(height: 20),
-                  const Text(
-                    'Profile Information',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: tPrimaryColor,
+                );
+              }
+            },
+          ),
+        ],
+        child: BlocBuilder<ProfileBloc, ProfileState>(
+          builder: (context, state) {
+            if (state is ProfileLoading || state is ProfileSigningOut) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (state is ProfileDeletingAccount) {
+              return const Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    CircularProgressIndicator(),
+                    SizedBox(height: 16),
+                    Text('Deleting account...'),
+                    SizedBox(height: 8),
+                    Text(
+                      'This may take a few moments',
+                      style: TextStyle(color: Colors.grey),
                     ),
-                  ),
-                  // const SizedBox(height: 5),
-                  ListTile(
-                    leading: const Icon(Icons.person, color: tPrimaryColor),
-                    title: Text(
-                        'Name: ${userData['displayName'] ?? 'Not available'}'),
-                  ),
-                  ListTile(
-                    minTileHeight: 5,
-                    leading: const Icon(Icons.email, color: tPrimaryColor),
-                    title:
-                        Text('Email: ${userData['email'] ?? 'Not available'}'),
-                  ),
+                  ],
+                ),
+              );
+            } else if (state is ProfileLoaded) {
+              final profile = state.profile;
+
+              return SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      CircleAvatar(
+                        radius: 50,
+                        backgroundImage: profile.photoURL != null
+                            ? NetworkImage(profile.photoURL!)
+                            : null,
+                        child: profile.photoURL == null
+                            ? Text(
+                                profile.initials,
+                                style: const TextStyle(fontSize: 24),
+                              )
+                            : null,
+                      ),
+                      const SizedBox(height: 20),
+                      const Text(
+                        'Profile Information',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: tPrimaryColor,
+                        ),
+                      ),
+                      ListTile(
+                        leading: const Icon(Icons.person, color: tPrimaryColor),
+                        title: Text('Name: ${profile.displayName}'),
+                      ),
+                      ListTile(
+                        minTileHeight: 5,
+                        leading: const Icon(Icons.email, color: tPrimaryColor),
+                        title: Text('Email: ${profile.email}'),
+                      ),
                   const Divider(),
                   const SizedBox(height: 5),
                   const Text(
@@ -210,42 +198,60 @@ class Account extends StatelessWidget {
                       color: tPrimaryColor,
                     ),
                   ),
-                  ListTile(
-                    leading: const Icon(Icons.logout, color: tPrimaryColor),
-                    title: const Text('Log Out'),
-                    onTap: () async {
-                      await _clearUserPreferences();
-                      bool result = await signOutFromGoogle();
-                      print(result);
-
-                      Navigator.pop(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const LoginPage(),
+                      ListTile(
+                        leading: const Icon(Icons.logout, color: tPrimaryColor),
+                        title: const Text('Log Out'),
+                        onTap: () {
+                          context.read<ProfileBloc>().add(const ProfileSignOutRequested());
+                        },
+                      ),
+                      ListTile(
+                        minTileHeight: 5,
+                        leading: const Icon(Icons.delete, color: tPrimaryColor),
+                        title: const Text(
+                          'Delete My Account',
+                          style: TextStyle(
+                              color: tPrimaryColor, fontWeight: FontWeight.bold),
                         ),
-                      );
-
-                      if (result) print("Signed Out Successfully !!");
-                    },
+                        onTap: () {
+                          // Trigger the confirmation and deletion logic
+                          _confirmAndDeleteAccount();
+                        },
+                      ),
+                    ],
                   ),
-                  ListTile(
-                    minTileHeight: 5,
-                    leading: const Icon(Icons.delete, color: tPrimaryColor),
-                    title: const Text(
-                      'Delete My Account',
-                      style: TextStyle(
-                          color: tPrimaryColor, fontWeight: FontWeight.bold),
+                ),
+              );
+            } else if (state is ProfileError) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Error: ${state.message}',
+                      style: const TextStyle(color: Colors.red),
+                      textAlign: TextAlign.center,
                     ),
-                    onTap: () async {
-                      // Trigger the confirmation and deletion logic
-                      await _confirmAndDeleteAccount(context);
-                    },
-                  ),
-                ],
-              ),
-            ),
-          );
-        },
+                    const SizedBox(height: 16),
+                    ElevatedButton(
+                      onPressed: () {
+                        if (widget.user != null) {
+                          context.read<ProfileBloc>().add(
+                            ProfileLoadRequested(widget.user!.uid),
+                          );
+                        }
+                      },
+                      child: const Text('Retry'),
+                    ),
+                  ],
+                ),
+              );
+            }
+            
+            // Default case
+            return const Center(child: CircularProgressIndicator());
+          },
+        ),
       ),
     );
   }

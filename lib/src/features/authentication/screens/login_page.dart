@@ -1,26 +1,11 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:guardiancare/src/constants/colors.dart';
 import 'package:sign_in_button/sign_in_button.dart';
-import 'package:guardiancare/src/features/authentication/controllers/login_controller.dart';
+import 'package:guardiancare/src/features/authentication/authentication.dart';
 
-class LoginPage extends StatefulWidget {
+class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
-
-  @override
-  State<LoginPage> createState() => _LoginPageState();
-}
-
-class _LoginPageState extends State<LoginPage> {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-
-  @override
-  void initState() {
-    super.initState();
-    _auth.authStateChanges().listen((User? user) {
-      setState(() {});
-    });
-  }
 
   Future<void> _showTermsAndConditions(BuildContext context) async {
     return showDialog<void>(
@@ -53,14 +38,12 @@ class _LoginPageState extends State<LoginPage> {
             TextButton(
               child:
                   const Text('I Agree', style: TextStyle(color: tPrimaryColor)),
-              onPressed: () async {
+              onPressed: () {
                 Navigator.of(context).pop(); // Close the dialog
                 // Proceed with Google sign-in if terms are accepted
-                UserCredential? userCredential = await signInWithGoogle();
-
-                if (userCredential != null) {
-                  print("Signed in: ${userCredential.user?.displayName}");
-                }
+                context.read<AuthenticationBloc>().add(
+                  const AuthenticationSignInRequested(),
+                );
               },
             ),
             TextButton(
@@ -80,59 +63,78 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(16.0),
+      body: BlocListener<AuthenticationBloc, AuthenticationState>(
+        listener: (context, state) {
+          if (state is AuthenticationError) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(state.message),
+                backgroundColor: Colors.red,
+              ),
+            );
+          }
+        },
+        child: BlocBuilder<AuthenticationBloc, AuthenticationState>(
+          builder: (context, state) {
+            return Center(
               child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Image.asset(
-                    'assets/logo/logo.png',
-                    width: 120,
-                  ),
-                  const SizedBox(height: 3),
-                  const Text(
-                    'A Children of India App',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.normal,
-                      fontStyle: FontStyle.italic
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      children: [
+                        Image.asset(
+                          'assets/logo/logo.png',
+                          width: 120,
+                        ),
+                        const SizedBox(height: 3),
+                        const Text(
+                          'A Children of India App',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.normal,
+                            fontStyle: FontStyle.italic
+                          ),
+                        )
+                      ],
                     ),
-                  )
+                  ),
+                  const SizedBox(height: 10),
+                  const Text(
+                    'Welcome to Guardian Care',
+                    style: TextStyle(
+                      color: Color.fromRGBO(239, 72, 53, 1),
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 30),
+                  if (state is AuthenticationLoading)
+                    const CircularProgressIndicator()
+                  else
+                    Center(
+                      child: SizedBox(
+                        height: 50,
+                        width: 250,
+                        child: SignInButton(
+                          Buttons.google,
+                          text: "Sign In With Google",
+                          onPressed: () {
+                            // Show the terms and conditions dialog before signing in
+                            _showTermsAndConditions(context);
+                          },
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(50.0),
+                          ),
+                          padding: const EdgeInsets.symmetric(horizontal: 30.0),
+                        ),
+                      ),
+                    ),
                 ],
               ),
-            ),
-            const SizedBox(height: 10),
-            const Text(
-              'Welcome to Guardian Care',
-              style: TextStyle(
-                color: Color.fromRGBO(239, 72, 53, 1),
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 30),
-            Center(
-              child: SizedBox(
-                height: 50,
-                width: 250,
-                child: SignInButton(
-                  Buttons.google,
-                  text: "Sign In With Google",
-                  onPressed: () {
-                    // Show the terms and conditions dialog before signing in
-                    _showTermsAndConditions(context);
-                  },
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(50.0),
-                  ),
-                  padding: const EdgeInsets.symmetric(horizontal: 30.0),
-                ),
-              ),
-            ),
-          ],
+            );
+          },
         ),
       ),
     );
