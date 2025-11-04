@@ -2,8 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:guardiancare/src/constants/colors.dart';
 import 'package:guardiancare/src/features/explore/controllers/explore_controller.dart';
-import 'package:guardiancare/src/features/learn/common_widgets/content_card.dart';
 import 'package:guardiancare/src/features/quiz/screens/quiz_page.dart';
+import 'package:guardiancare/src/common_widgets/video_player_page.dart';
 
 class RecommendedVideos extends StatelessWidget {
   final ExploreController controller = ExploreController();
@@ -105,11 +105,51 @@ class RecommendedVideos extends StatelessWidget {
           itemCount: videos.length,
           itemBuilder: (context, index) {
             final video = videos[index];
-            return ContentCard(
-              imageUrl: video['thumbnail'],
-              title: video['title'],
-              description: video['video'],
-              context: context,
+            return Card(
+              margin: const EdgeInsets.all(16.0),
+              child: InkWell(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => VideoPlayerPage(
+                        videoUrl: video['video'] ?? '',
+                      ),
+                    ),
+                  );
+                },
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Image.network(
+                      video['thumbnail'] ?? '',
+                      fit: BoxFit.cover,
+                      height: 200,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Container(
+                          height: 200,
+                          color: Colors.grey[300],
+                          child: const Icon(
+                            Icons.video_library_outlined,
+                            size: 50,
+                            color: Colors.grey,
+                          ),
+                        );
+                      },
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        video['title'] ?? 'Untitled',
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16.0,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             );
           },
         );
