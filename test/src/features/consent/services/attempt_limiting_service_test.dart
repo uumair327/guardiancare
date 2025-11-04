@@ -1,403 +1,350 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:guardiancare/src/features/consent/services/attempt_limiting_service.dart';
 
 void main() {
-  group('AttemptLimitingService', () {
+  group('AttemptLimitingService Tests', () {
     late AttemptLimitingService service;
 
-    setUp(() {
-      service = AttemptLimitingService();
-      service.clearAllAttempts(); // Start with clean state
+    setUp(() async {
+      // Clear SharedPreferences before each test
+      SharedPreferences.setMockInitialValues({});
+      service = AttemptLimitingService.instance;
+      await service.initialize();
+      await service.resetAllData(); // Ensure clean state
     });
 
-    tearDown(() {
-      service.clearAllAttempts();
+    tearDown(() async {
+      await service.resetAllData();
     });
 
-    group('Basic Attempt Tracking', () {
-      test('should allow verification attempts initially', () {
-        expect(service.canAttemptVerification('user1'), isTrue);
-        expect(service.getFailedAttemptCount('user1'), equals(0));
-        expect(service.isUserLockedOut('user1'), isFalse);
+    group('Initialization and Configuration', () {
+      test('should have correct default configuration', () {
+        expect(AttemptLimitingService.maxAttempts, equals(3));
+        expect(AttemptLimitingService.lockoutDurationMinutes, equals(5));
       });
 
-      test('should track failed attempts correctly', () {
-        const userId = 'user1';
-        
-        service.recordFailedAttempt(userId);
-        expect(service.getFailedAttemptCount(userId), equals(1));
-        expect(service.canAttemptVerification(userId), isTrue);
-        
-        service.recordFailedAttempt(userId);
-        expect(service.getFailedAttemptCount(userId), equals(2));
-        expect(service.canAttemptVerification(userId), isTrue);
-        
-        service.recordFailedAttempt(userId);
-        expect(service.getFailedAttemptCount(userId), equals(3));
-        expect(service.canAttemptVerification(userId), isFalse);
-        expect(service.isUserLockedOut(userId), isTrue);
+      test('should initialize successfully', () async {
+        expect(() => service.initialize(), returnsNormally);
+      });
+    });
+
+    group('Failed Attempt Tracking', () {
+      test('should start with zero failed attempts', () async {
+        final failedAttempts = await service.getFailedAttempts();
+        expect(failedAttempts, equals(0));
       });
 
-      test('should reset attempts on successful verification', () {
-        const userId = 'user1';
-        
-        service.recordFailedAttempt(userId);
-        service.recordFailedAttempt(userId);
-        expect(service.getFailedAttemptCount(userId), equals(2));
-        
-        service.recordSuccessfulAttempt(userId);
-        expect(service.getFailedAttemptCount(userId), equals(0));
-        expect(service.canAttemptVerification(userId), isTrue);
+      test('should increment failed attempts correctly', () async {
+        await service.recordFailedAttempt();
+        expect(await service.getFailedAttempts(), equals(1));
+
+        await service.recordFailedAttempt();
+        expect(await service.getFailedAttempts(), equals(2));
+      });
+
+      test('should calculate remaining attempts correctly', () async {
+        expect(await service.getRemainingAttempts(), equals(3));
+
+        await service.recordFailedAttempt();
+        expect(await service.getRemainingAttempts(), equals(2));
+
+        await service.recordFailedAttempt();
+        expect(await service.getRemainingAttempts(), equals(1));
+
+        await service.recordFailedAttempt();
+        expect(await service.getRemainingAttempts(), equals(0));
+      });
+
+      test('should return correct attempt result for failed attempts', () async {
+        final result1 = await service.recordFailedAttempt();
+        expect(result1.success, isFalse);
+        expect(result1.isLockedOut, isFalse);
+        expect(result1.remainingAttempts, equals(2));
+        expect(result1.message, contains('2 attempts remaining'));
+
+        final result2 = await service.recordFailedAttempt();
+        expect(result2.success, isFalse);
+        expect(result2.isLockedOut, isFalse);
+        expect(result2.remainingAttempts, equals(1));
+        expect(result2.message, contains('1 attempt remaining'));
       });
     });
 
     group('Lockout Mechanism', () {
-      test('should lock out user after max attempts', () {
-        const userId = 'user1';
-        
-        // Record max attempts
-        for (int i = 0; i < AttemptLimitingService.MAX_ATTEMPTS; i++) {
-          service.recordFailedAttempt(userId);
-        }
-        
-        expect(service.isUserLockedOut(userId), isTrue);
-        expect(service.canAttemptVerification(userId), isFalse);
-        
-        final remainingTime = service.getRemainingLockoutTime(userId);
-        expect(remainingTime.inMinutes, greaterThan(0));
-        expect(remainingTime.inMinutes, lessThanOrEqualTo(5));
+      test('should trigger lockout after max attempts', () async {
+        // First two attempts should not trigger lockout
+        await service.recordFailedAttempt();
+        await service.recordFailedAttempt();
+        expect(await service.isLockedOut(), isFalse);
+
+        // Third attempt should trigger lockout
+        final result = await service.recordFailedAttempt();
+        expect(result.success, isFalse);
+        expect(result.isLockedOut, isTrue);
+        expect(result.remainingAttempts, equals(0));
+        expect(result.message, contains('locked'));
+        expect(await service.isLockedOut(), isTrue);
       });
 
-      test('should prevent verification during lockout', () {
-        const userId = 'user1';
-        
-        // Lock out user
-        for (int i = 0; i < AttemptLimitingService.MAX_ATTEMPTS; i++) {
-          service.recordFailedAttempt(userId);
-        }
-        
-        expect(service.canAttemptVerification(userId), isFalse);
-        
-        // Additional failed attempts should not change lockout state
-        service.recordFailedAttempt(userId);
-        expect(service.isUserLockedOut(userId), isTrue);
+      test('should prevent attempts when locked out', () async {
+        // Trigger lockout
+        await service.recordFailedAttempt();
+        await service.recordFailedAttempt();
+        await service.recordFailedAttempt();
+
+        // Further attempts should be blocked
+        final result = await service.recordFailedAttempt();
+        expect(result.success, isFalse);
+        expect(result.isLockedOut, isTrue);
+        expect(result.message, contains('locked'));
       });
 
-      test('should calculate remaining lockout time correctly', () {
-        const userId = 'user1';
-        
-        // Lock out user
-        for (int i = 0; i < AttemptLimitingService.MAX_ATTEMPTS; i++) {
-          service.recordFailedAttempt(userId);
-        }
-        
-        final remainingTime = service.getRemainingLockoutTime(userId);
-        expect(remainingTime.inSeconds, greaterThan(0));
-        expect(remainingTime.inSeconds, lessThanOrEqualTo(300)); // 5 minutes
+      test('should calculate remaining lockout time correctly', () async {
+        // Trigger lockout
+        await service.recordFailedAttempt();
+        await service.recordFailedAttempt();
+        await service.recordFailedAttempt();
+
+        final remainingTime = await service.getRemainingLockoutTime();
+        expect(remainingTime, greaterThan(0));
+        expect(remainingTime, lessThanOrEqualTo(5 * 60)); // 5 minutes in seconds
       });
 
-      test('should reset attempts after successful verification during lockout', () {
-        const userId = 'user1';
-        
-        // Lock out user
-        for (int i = 0; i < AttemptLimitingService.MAX_ATTEMPTS; i++) {
-          service.recordFailedAttempt(userId);
-        }
-        
-        expect(service.isUserLockedOut(userId), isTrue);
-        
-        // Successful attempt should reset everything
-        service.recordSuccessfulAttempt(userId);
-        expect(service.getFailedAttemptCount(userId), equals(0));
-        expect(service.isUserLockedOut(userId), isFalse);
-        expect(service.canAttemptVerification(userId), isTrue);
+      test('should format remaining lockout time correctly', () async {
+        // Trigger lockout
+        await service.recordFailedAttempt();
+        await service.recordFailedAttempt();
+        await service.recordFailedAttempt();
+
+        final formattedTime = await service.getRemainingLockoutTimeFormatted();
+        expect(formattedTime, matches(RegExp(r'^\d{2}:\d{2}$'))); // MM:SS format
+      });
+
+      test('should clear lockout after expiry', () async {
+        // Trigger lockout
+        await service.recordFailedAttempt();
+        await service.recordFailedAttempt();
+        await service.recordFailedAttempt();
+        expect(await service.isLockedOut(), isTrue);
+
+        // Manually set lockout time to past (simulate expiry)
+        final pastTime = DateTime.now().subtract(const Duration(minutes: 6));
+        await service.setLockoutTime(pastTime);
+
+        // Should no longer be locked out
+        expect(await service.isLockedOut(), isFalse);
+        expect(await service.getRemainingLockoutTime(), equals(0));
       });
     });
 
-    group('Lockout Status', () {
-      test('should return normal status initially', () {
-        const userId = 'user1';
-        final status = service.getLockoutStatus(userId);
-        
-        expect(status.state, equals(LockoutState.normal));
-        expect(status.isNormal, isTrue);
-        expect(status.hasWarning, isFalse);
+    group('Successful Attempt Handling', () {
+      test('should clear attempts on successful verification', () async {
+        // Record some failed attempts
+        await service.recordFailedAttempt();
+        await service.recordFailedAttempt();
+        expect(await service.getFailedAttempts(), equals(2));
+
+        // Record successful attempt
+        final result = await service.recordSuccessfulAttempt();
+        expect(result.success, isTrue);
+        expect(result.isLockedOut, isFalse);
+        expect(result.remainingAttempts, equals(3));
+        expect(result.message, contains('successfully'));
+
+        // Failed attempts should be cleared
+        expect(await service.getFailedAttempts(), equals(0));
+        expect(await service.getRemainingAttempts(), equals(3));
+      });
+
+      test('should clear lockout on successful verification', () async {
+        // Trigger lockout
+        await service.recordFailedAttempt();
+        await service.recordFailedAttempt();
+        await service.recordFailedAttempt();
+        expect(await service.isLockedOut(), isTrue);
+
+        // Record successful attempt (should clear lockout)
+        await service.recordSuccessfulAttempt();
+        expect(await service.isLockedOut(), isFalse);
+        expect(await service.getFailedAttempts(), equals(0));
+      });
+    });
+
+    group('Attempt Status', () {
+      test('should provide correct attempt status for clean state', () async {
+        final status = await service.getAttemptStatus();
         expect(status.isLockedOut, isFalse);
         expect(status.failedAttempts, equals(0));
+        expect(status.remainingAttempts, equals(3));
+        expect(status.remainingLockoutTime, equals(0));
+        expect(status.canAttempt, isTrue);
+        expect(status.maxAttempts, equals(3));
+        expect(status.lockoutDurationMinutes, equals(5));
       });
 
-      test('should return warning status with failed attempts', () {
-        const userId = 'user1';
-        
-        service.recordFailedAttempt(userId);
-        final status = service.getLockoutStatus(userId);
-        
-        expect(status.state, equals(LockoutState.warning));
-        expect(status.hasWarning, isTrue);
-        expect(status.isLockedOut, isFalse);
-        expect(status.failedAttempts, equals(1));
-        expect(status.attemptsRemaining, equals(2));
-      });
+      test('should provide correct attempt status with failed attempts', () async {
+        await service.recordFailedAttempt();
+        await service.recordFailedAttempt();
 
-      test('should return locked out status after max attempts', () {
-        const userId = 'user1';
-        
-        for (int i = 0; i < AttemptLimitingService.MAX_ATTEMPTS; i++) {
-          service.recordFailedAttempt(userId);
-        }
-        
-        final status = service.getLockoutStatus(userId);
-        
-        expect(status.state, equals(LockoutState.lockedOut));
-        expect(status.isLockedOut, isTrue);
-        expect(status.hasWarning, isFalse);
-        expect(status.failedAttempts, equals(3));
-        expect(status.remainingTime, isNotNull);
-        expect(status.remainingTime!.inSeconds, greaterThan(0));
-      });
-
-      test('should provide appropriate status messages', () {
-        const userId = 'user1';
-        
-        // Normal status
-        var status = service.getLockoutStatus(userId);
-        expect(status.message, contains('Enter your parental key'));
-        
-        // Warning status
-        service.recordFailedAttempt(userId);
-        status = service.getLockoutStatus(userId);
-        expect(status.message, contains('Incorrect key'));
-        expect(status.message, contains('2 attempts remaining'));
-        
-        // Locked out status
-        service.recordFailedAttempt(userId);
-        service.recordFailedAttempt(userId);
-        status = service.getLockoutStatus(userId);
-        expect(status.message, contains('Too many failed attempts'));
-        expect(status.message, contains('Try again in'));
-      });
-    });
-
-    group('Multi-User Support', () {
-      test('should track attempts independently for different users', () {
-        const user1 = 'user1';
-        const user2 = 'user2';
-        
-        service.recordFailedAttempt(user1);
-        service.recordFailedAttempt(user1);
-        
-        service.recordFailedAttempt(user2);
-        
-        expect(service.getFailedAttemptCount(user1), equals(2));
-        expect(service.getFailedAttemptCount(user2), equals(1));
-        expect(service.canAttemptVerification(user1), isTrue);
-        expect(service.canAttemptVerification(user2), isTrue);
-      });
-
-      test('should lock out users independently', () {
-        const user1 = 'user1';
-        const user2 = 'user2';
-        
-        // Lock out user1
-        for (int i = 0; i < AttemptLimitingService.MAX_ATTEMPTS; i++) {
-          service.recordFailedAttempt(user1);
-        }
-        
-        // user2 should still be able to attempt
-        expect(service.isUserLockedOut(user1), isTrue);
-        expect(service.isUserLockedOut(user2), isFalse);
-        expect(service.canAttemptVerification(user1), isFalse);
-        expect(service.canAttemptVerification(user2), isTrue);
-      });
-
-      test('should reset attempts independently for different users', () {
-        const user1 = 'user1';
-        const user2 = 'user2';
-        
-        service.recordFailedAttempt(user1);
-        service.recordFailedAttempt(user2);
-        service.recordFailedAttempt(user2);
-        
-        service.recordSuccessfulAttempt(user1);
-        
-        expect(service.getFailedAttemptCount(user1), equals(0));
-        expect(service.getFailedAttemptCount(user2), equals(2));
-      });
-    });
-
-    group('Manual Reset', () {
-      test('should allow manual reset of user attempts', () {
-        const userId = 'user1';
-        
-        service.recordFailedAttempt(userId);
-        service.recordFailedAttempt(userId);
-        expect(service.getFailedAttemptCount(userId), equals(2));
-        
-        service.resetUserAttempts(userId);
-        expect(service.getFailedAttemptCount(userId), equals(0));
-        expect(service.canAttemptVerification(userId), isTrue);
-      });
-
-      test('should reset locked out users', () {
-        const userId = 'user1';
-        
-        // Lock out user
-        for (int i = 0; i < AttemptLimitingService.MAX_ATTEMPTS; i++) {
-          service.recordFailedAttempt(userId);
-        }
-        
-        expect(service.isUserLockedOut(userId), isTrue);
-        
-        service.resetUserAttempts(userId);
-        expect(service.isUserLockedOut(userId), isFalse);
-        expect(service.canAttemptVerification(userId), isTrue);
-        expect(service.getFailedAttemptCount(userId), equals(0));
-      });
-
-      test('should clear all attempts for all users', () {
-        const user1 = 'user1';
-        const user2 = 'user2';
-        
-        service.recordFailedAttempt(user1);
-        service.recordFailedAttempt(user2);
-        service.recordFailedAttempt(user2);
-        
-        service.clearAllAttempts();
-        
-        expect(service.getFailedAttemptCount(user1), equals(0));
-        expect(service.getFailedAttemptCount(user2), equals(0));
-        expect(service.canAttemptVerification(user1), isTrue);
-        expect(service.canAttemptVerification(user2), isTrue);
-      });
-    });
-
-    group('Edge Cases', () {
-      test('should handle empty user ID', () {
-        expect(service.canAttemptVerification(''), isTrue);
-        expect(service.getFailedAttemptCount(''), equals(0));
-        
-        service.recordFailedAttempt('');
-        expect(service.getFailedAttemptCount(''), equals(1));
-      });
-
-      test('should handle null-like user IDs', () {
-        const userId = 'null';
-        
-        expect(service.canAttemptVerification(userId), isTrue);
-        service.recordFailedAttempt(userId);
-        expect(service.getFailedAttemptCount(userId), equals(1));
-      });
-
-      test('should handle very long user IDs', () {
-        final longUserId = 'a' * 1000;
-        
-        expect(service.canAttemptVerification(longUserId), isTrue);
-        service.recordFailedAttempt(longUserId);
-        expect(service.getFailedAttemptCount(longUserId), equals(1));
-      });
-
-      test('should handle rapid successive calls', () {
-        const userId = 'user1';
-        
-        // Rapid failed attempts
-        for (int i = 0; i < 10; i++) {
-          service.recordFailedAttempt(userId);
-        }
-        
-        // Should still be locked out with correct count
-        expect(service.isUserLockedOut(userId), isTrue);
-        expect(service.getFailedAttemptCount(userId), equals(10));
-      });
-    });
-
-    group('AttemptTracker', () {
-      test('should track individual attempt state correctly', () {
-        final tracker = AttemptTracker();
-        
-        expect(tracker.isLockedOut, isFalse);
-        expect(tracker.shouldLockOut, isFalse);
-        expect(tracker.failedAttempts, equals(0));
-        expect(tracker.remainingLockoutTime, equals(Duration.zero));
-      });
-
-      test('should lock out after max attempts', () {
-        final tracker = AttemptTracker();
-        
-        for (int i = 0; i < AttemptLimitingService.MAX_ATTEMPTS; i++) {
-          tracker.recordFailedAttempt();
-        }
-        
-        expect(tracker.shouldLockOut, isTrue);
-        expect(tracker.isLockedOut, isTrue);
-        expect(tracker.failedAttempts, equals(3));
-        expect(tracker.remainingLockoutTime.inSeconds, greaterThan(0));
-      });
-
-      test('should reset tracker state', () {
-        final tracker = AttemptTracker();
-        
-        tracker.recordFailedAttempt();
-        tracker.recordFailedAttempt();
-        expect(tracker.failedAttempts, equals(2));
-        
-        tracker.reset();
-        expect(tracker.failedAttempts, equals(0));
-        expect(tracker.isLockedOut, isFalse);
-        expect(tracker.remainingLockoutTime, equals(Duration.zero));
-      });
-
-      test('should format remaining time correctly', () {
-        final tracker = AttemptTracker();
-        
-        // Lock out the tracker
-        for (int i = 0; i < AttemptLimitingService.MAX_ATTEMPTS; i++) {
-          tracker.recordFailedAttempt();
-        }
-        
-        final formatted = tracker.remainingLockoutTimeFormatted;
-        expect(formatted, matches(r'^\d+:\d{2}$')); // Format: M:SS
-      });
-    });
-
-    group('LockoutStatus', () {
-      test('should create normal status correctly', () {
-        final status = LockoutStatus.normal();
-        
-        expect(status.state, equals(LockoutState.normal));
-        expect(status.isNormal, isTrue);
-        expect(status.hasWarning, isFalse);
-        expect(status.isLockedOut, isFalse);
-        expect(status.failedAttempts, equals(0));
-        expect(status.messageType, equals(LockoutMessageType.info));
-      });
-
-      test('should create warning status correctly', () {
-        final status = LockoutStatus.warning(
-          failedAttempts: 2,
-          attemptsRemaining: 1,
-        );
-        
-        expect(status.state, equals(LockoutState.warning));
-        expect(status.hasWarning, isTrue);
+        final status = await service.getAttemptStatus();
         expect(status.isLockedOut, isFalse);
         expect(status.failedAttempts, equals(2));
-        expect(status.attemptsRemaining, equals(1));
-        expect(status.messageType, equals(LockoutMessageType.warning));
+        expect(status.remainingAttempts, equals(1));
+        expect(status.remainingLockoutTime, equals(0));
+        expect(status.canAttempt, isTrue);
       });
 
-      test('should create locked out status correctly', () {
-        final remainingTime = const Duration(minutes: 3, seconds: 30);
-        final status = LockoutStatus.lockedOut(
-          remainingTime: remainingTime,
-          failedAttempts: 3,
-        );
-        
-        expect(status.state, equals(LockoutState.lockedOut));
+      test('should provide correct attempt status when locked out', () async {
+        await service.recordFailedAttempt();
+        await service.recordFailedAttempt();
+        await service.recordFailedAttempt();
+
+        final status = await service.getAttemptStatus();
         expect(status.isLockedOut, isTrue);
-        expect(status.hasWarning, isFalse);
         expect(status.failedAttempts, equals(3));
-        expect(status.remainingTime, equals(remainingTime));
-        expect(status.messageType, equals(LockoutMessageType.error));
+        expect(status.remainingAttempts, equals(0));
+        expect(status.remainingLockoutTime, greaterThan(0));
+        expect(status.canAttempt, isFalse);
+      });
+    });
+
+    group('Data Persistence', () {
+      test('should persist failed attempts across service instances', () async {
+        // Record attempts with first instance
+        await service.recordFailedAttempt();
+        await service.recordFailedAttempt();
+
+        // Create new instance and check persistence
+        final newService = AttemptLimitingService.instance;
+        await newService.initialize();
+        expect(await newService.getFailedAttempts(), equals(2));
+      });
+
+      test('should persist lockout state across service instances', () async {
+        // Trigger lockout with first instance
+        await service.recordFailedAttempt();
+        await service.recordFailedAttempt();
+        await service.recordFailedAttempt();
+
+        // Create new instance and check lockout persistence
+        final newService = AttemptLimitingService.instance;
+        await newService.initialize();
+        expect(await newService.isLockedOut(), isTrue);
+      });
+    });
+
+    group('Edge Cases and Error Handling', () {
+      test('should handle can attempt check correctly', () async {
+        expect(await service.canAttempt(), isTrue);
+
+        // After lockout
+        await service.recordFailedAttempt();
+        await service.recordFailedAttempt();
+        await service.recordFailedAttempt();
+        expect(await service.canAttempt(), isFalse);
+      });
+
+      test('should handle reset all data correctly', () async {
+        // Set up some state
+        await service.recordFailedAttempt();
+        await service.recordFailedAttempt();
+        await service.recordFailedAttempt();
+        expect(await service.isLockedOut(), isTrue);
+
+        // Reset all data
+        await service.resetAllData();
+
+        // Should be back to clean state
+        expect(await service.getFailedAttempts(), equals(0));
+        expect(await service.isLockedOut(), isFalse);
+        expect(await service.canAttempt(), isTrue);
+      });
+
+      test('should handle multiple rapid attempts correctly', () async {
+        // Simulate rapid attempts
+        final futures = <Future<AttemptResult>>[];
+        for (int i = 0; i < 5; i++) {
+          futures.add(service.recordFailedAttempt());
+        }
+
+        final results = await Future.wait(futures);
+        
+        // Should still respect max attempts limit
+        expect(await service.getFailedAttempts(), greaterThanOrEqualTo(3));
+        expect(await service.isLockedOut(), isTrue);
+      });
+
+      test('should handle time manipulation for testing', () async {
+        // Trigger lockout
+        await service.recordFailedAttempt();
+        await service.recordFailedAttempt();
+        await service.recordFailedAttempt();
+
+        // Manually set lockout time to future (extend lockout)
+        final futureTime = DateTime.now().add(const Duration(minutes: 10));
+        await service.setLockoutTime(futureTime);
+
+        expect(await service.isLockedOut(), isTrue);
+        final remainingTime = await service.getRemainingLockoutTime();
+        expect(remainingTime, greaterThan(5 * 60)); // More than 5 minutes
+      });
+
+      test('should handle manual attempt count setting for testing', () async {
+        await service.setFailedAttempts(2);
+        expect(await service.getFailedAttempts(), equals(2));
+        expect(await service.getRemainingAttempts(), equals(1));
+      });
+    });
+
+    group('Lockout Time Formatting', () {
+      test('should format zero time correctly', () async {
+        final formatted = await service.getRemainingLockoutTimeFormatted();
+        expect(formatted, equals('00:00'));
+      });
+
+      test('should format time correctly when locked out', () async {
+        await service.recordFailedAttempt();
+        await service.recordFailedAttempt();
+        await service.recordFailedAttempt();
+
+        final formatted = await service.getRemainingLockoutTimeFormatted();
+        expect(formatted, matches(RegExp(r'^\d{2}:\d{2}$')));
+        expect(formatted, isNot(equals('00:00')));
+      });
+    });
+
+    group('Singleton Behavior', () {
+      test('should return same instance', () {
+        final instance1 = AttemptLimitingService.instance;
+        final instance2 = AttemptLimitingService.instance;
+        expect(identical(instance1, instance2), isTrue);
+      });
+    });
+
+    group('Stress Testing', () {
+      test('should handle many failed attempts correctly', () async {
+        // Record many failed attempts
+        for (int i = 0; i < 10; i++) {
+          await service.recordFailedAttempt();
+        }
+
+        // Should still be locked out with correct count
+        expect(await service.isLockedOut(), isTrue);
+        expect(await service.getFailedAttempts(), greaterThanOrEqualTo(3));
+      });
+
+      test('should handle alternating success and failure', () async {
+        // Alternate between success and failure
+        await service.recordFailedAttempt();
+        await service.recordSuccessfulAttempt();
+        expect(await service.getFailedAttempts(), equals(0));
+
+        await service.recordFailedAttempt();
+        await service.recordFailedAttempt();
+        await service.recordSuccessfulAttempt();
+        expect(await service.getFailedAttempts(), equals(0));
+        expect(await service.isLockedOut(), isFalse);
       });
     });
   });

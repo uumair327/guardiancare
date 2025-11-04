@@ -95,7 +95,7 @@ class SecurityQuestionResult {
 class ConsentController {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  final AttemptLimitingService _attemptService = AttemptLimitingService();
+  final AttemptLimitingService _attemptService = AttemptLimitingService.instance;
 
   // Hash the parental key using SHA-256
   String hashParentalKey(String keyPhrase) {
@@ -199,22 +199,22 @@ class ConsentController {
     }
 
     // Check if user is locked out
-    if (!_attemptService.canAttemptVerification(user.uid)) {
-      final status = _attemptService.getLockoutStatus(user.uid);
+    if (await _attemptService.isLockedOut()) {
+      final remainingTime = await _attemptService.getRemainingLockoutTimeFormatted();
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(status.message)),
+        SnackBar(content: Text('Account is locked. Please wait $remainingTime before trying again.')),
       );
       return;
     }
 
-    final lockoutStatus = _attemptService.getLockoutStatus(user.uid);
+    final attemptStatus = await _attemptService.getAttemptStatus();
     
     await showDialog(
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
         return EnhancedPasswordDialog(
-          lockoutStatus: lockoutStatus,
+          attemptStatus: attemptStatus,
           onSubmit: (password) async {
             await _handlePasswordSubmission(
               context, 
@@ -299,10 +299,10 @@ class ConsentController {
   ) async {
     try {
       // Check if user can still attempt (double-check)
-      if (!_attemptService.canAttemptVerification(userId)) {
-        final status = _attemptService.getLockoutStatus(userId);
+      if (await _attemptService.isLockedOut()) {
+        final remainingTime = await _attemptService.getRemainingLockoutTimeFormatted();
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(status.message)),
+          SnackBar(content: Text('Account is locked. Please wait $remainingTime before trying again.')),
         );
         Navigator.of(context).pop();
         onError?.call();
@@ -314,18 +314,17 @@ class ConsentController {
 
       if (isMatch) {
         // Success - reset attempts and execute callback
-        _attemptService.recordSuccessfulAttempt(userId);
+        await _attemptService.recordSuccessfulAttempt();
         Navigator.of(context).pop();
         onSuccess();
       } else {
         // Failed attempt - record it
-        _attemptService.recordFailedAttempt(userId);
-        final status = _attemptService.getLockoutStatus(userId);
+        final result = await _attemptService.recordFailedAttempt();
         
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(status.message),
-            backgroundColor: _getSnackBarColor(status.messageType),
+            content: Text(result.message),
+            backgroundColor: result.isLockedOut ? Colors.red : Colors.orange,
           ),
         );
         Navigator.of(context).pop();
@@ -340,58 +339,53 @@ class ConsentController {
     }
   }
 
-  /// Get appropriate color for snackbar based on message type
-  Color _getSnackBarColor(LockoutMessageType messageType) {
-    switch (messageType) {
-      case LockoutMessageType.info:
-        return Colors.blue;
-      case LockoutMessageType.warning:
-        return Colors.orange;
-      case LockoutMessageType.error:
-        return Colors.red;
-    }
+  /// Get appropriate color for snackbar based on attempt status
+  Color _getSnackBarColor(bool isError, bool isWarning) {
+    if (isError) return Colors.red;
+    if (isWarning) return Colors.orange;
+    return Colors.blue;
   }
 
-  /// Get current lockout status for the authenticated user
-  LockoutStatus? getCurrentUserLockoutStatus() {
+  /// Get current attempt status for the authenticated user
+  Future<AttemptStatus?> getCurrentUserAttemptStatus() async {
     final user = _auth.currentUser;
     if (user == null) return null;
-    return _attemptService.getLockoutStatus(user.uid);
+    return await _attemptService.getAttemptStatus();
   }
 
   /// Check if current user can attempt verification
-  bool canCurrentUserAttemptVerification() {
+  Future<bool> canCurrentUserAttemptVerification() async {
     final user = _auth.currentUser;
     if (user == null) return false;
-    return _attemptService.canAttemptVerification(user.uid);
+    return await _attemptService.canAttempt();
   }
 
   /// Get failed attempt count for current user
-  int getCurrentUserFailedAttempts() {
+  Future<int> getCurrentUserFailedAttempts() async {
     final user = _auth.currentUser;
     if (user == null) return 0;
-    return _attemptService.getFailedAttemptCount(user.uid);
+    return await _attemptService.getFailedAttempts();
   }
 
   /// Get remaining lockout time for current user
-  Duration getCurrentUserRemainingLockoutTime() {
+  Future<int> getCurrentUserRemainingLockoutTime() async {
     final user = _auth.currentUser;
-    if (user == null) return Duration.zero;
-    return _attemptService.getRemainingLockoutTime(user.uid);
+    if (user == null) return 0;
+    return await _attemptService.getRemainingLockoutTime();
   }
 
   /// Check if current user is locked out
-  bool isCurrentUserLockedOut() {
+  Future<bool> isCurrentUserLockedOut() async {
     final user = _auth.currentUser;
     if (user == null) return false;
-    return _attemptService.isUserLockedOut(user.uid);
+    return await _attemptService.isLockedOut();
   }
 
   /// Reset attempts for current user (admin function)
-  void resetCurrentUserAttempts() {
+  Future<void> resetCurrentUserAttempts() async {
     final user = _auth.currentUser;
     if (user == null) return;
-    _attemptService.resetUserAttempts(user.uid);
+    await _attemptService.resetAllData();
   }
 
   /// Verify parental key with enhanced error handling and logging
@@ -405,12 +399,13 @@ class ConsentController {
     }
 
     // Check lockout status first
-    if (!_attemptService.canAttemptVerification(user.uid)) {
-      final status = _attemptService.getLockoutStatus(user.uid);
+    if (await _attemptService.isLockedOut()) {
+      final remainingTime = await _attemptService.getRemainingLockoutTime();
+      final formattedTime = await _attemptService.getRemainingLockoutTimeFormatted();
       return ParentalVerificationResult.failure(
-        status.message,
+        'Account is locked. Please wait $formattedTime before trying again.',
         ParentalVerificationErrorType.lockedOut,
-        remainingLockoutTime: status.remainingTime,
+        remainingLockoutTime: Duration(seconds: remainingTime),
       );
     }
 
@@ -419,20 +414,19 @@ class ConsentController {
       bool isMatch = await matchParentalKey(enteredKey);
 
       if (isMatch) {
-        _attemptService.recordSuccessfulAttempt(user.uid);
+        await _attemptService.recordSuccessfulAttempt();
         return ParentalVerificationResult.success();
       } else {
-        _attemptService.recordFailedAttempt(user.uid);
-        final status = _attemptService.getLockoutStatus(user.uid);
+        final result = await _attemptService.recordFailedAttempt();
         
         return ParentalVerificationResult.failure(
-          status.message,
-          status.isLockedOut 
+          result.message,
+          result.isLockedOut 
             ? ParentalVerificationErrorType.lockedOut 
             : ParentalVerificationErrorType.incorrectKey,
-          failedAttempts: status.failedAttempts,
-          attemptsRemaining: status.attemptsRemaining,
-          remainingLockoutTime: status.remainingTime,
+          failedAttempts: await _attemptService.getFailedAttempts(),
+          attemptsRemaining: result.remainingAttempts,
+          remainingLockoutTime: Duration(seconds: result.remainingLockoutTime),
         );
       }
     } catch (e) {
@@ -478,7 +472,7 @@ class ConsentController {
       });
 
       // Reset attempts after successful password reset
-      _attemptService.recordSuccessfulAttempt(user.uid);
+      await _attemptService.recordSuccessfulAttempt();
 
       return SecurityQuestionResult.success();
     } catch (e) {
@@ -487,7 +481,7 @@ class ConsentController {
   }
 
   /// Get security statistics for current user
-  Map<String, dynamic> getCurrentUserSecurityStats() {
+  Future<Map<String, dynamic>> getCurrentUserSecurityStats() async {
     final user = _auth.currentUser;
     if (user == null) {
       return {
@@ -499,16 +493,17 @@ class ConsentController {
       };
     }
 
-    final status = _attemptService.getLockoutStatus(user.uid);
+    final status = await _attemptService.getAttemptStatus();
     
     return {
       'authenticated': true,
-      'canAttempt': _attemptService.canAttemptVerification(user.uid),
+      'canAttempt': status.canAttempt,
       'failedAttempts': status.failedAttempts,
-      'attemptsRemaining': status.attemptsRemaining ?? 0,
+      'attemptsRemaining': status.remainingAttempts,
       'isLockedOut': status.isLockedOut,
-      'remainingLockoutTime': status.remainingTime ?? Duration.zero,
-      'lockoutStatus': status.state.toString(),
+      'remainingLockoutTime': Duration(seconds: status.remainingLockoutTime),
+      'maxAttempts': status.maxAttempts,
+      'lockoutDurationMinutes': status.lockoutDurationMinutes,
     };
   }
 
@@ -599,7 +594,7 @@ class ConsentController {
       });
 
       // Reset attempts after successful password reset
-      _attemptService.recordSuccessfulAttempt(user.uid);
+      await _attemptService.recordSuccessfulAttempt();
 
       print('Parental key updated successfully.');
     } catch (e) {
@@ -622,23 +617,23 @@ class ConsentController {
     }
 
     // Check if user is locked out
-    if (!_attemptService.canAttemptVerification(user.uid)) {
-      final status = _attemptService.getLockoutStatus(user.uid);
+    if (await _attemptService.isLockedOut()) {
+      final remainingTime = await _attemptService.getRemainingLockoutTimeFormatted();
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(status.message)),
+        SnackBar(content: Text('Account is locked. Please wait $remainingTime before trying again.')),
       );
       onError();
       return;
     }
 
-    final lockoutStatus = _attemptService.getLockoutStatus(user.uid);
+    final attemptStatus = await _attemptService.getAttemptStatus();
     
     await showDialog(
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
         return EnhancedPasswordDialog(
-          lockoutStatus: lockoutStatus,
+          attemptStatus: attemptStatus,
           onSubmit: (password) async {
             await _handlePasswordSubmission(
               context, 
