@@ -86,64 +86,82 @@
   - Test attempt counter reset on successful verification
   - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5_
 
-- [ ] 3. Fix Report System Checkbox State Management
+- [x] 3. Fix Report System Checkbox State Management
+
+
   - Implement proper checkbox state management for report forms
   - Create ReportFormState to track checkbox selections persistently
   - Update CaseQuestionsPage to use stateful widget with proper state management
   - Add form validation to ensure at least one checkbox is selected before submission
   - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.5_
 
-- [ ] 3.1 Convert CaseQuestionsPage to StatefulWidget
+- [x] 3.1 Convert CaseQuestionsPage to StatefulWidget
+
+
   - Change from StatelessWidget to StatefulWidget to manage checkbox states
   - Implement proper state management for checkbox selections
   - Add form validation logic for submission requirements
   - _Requirements: 3.1, 3.3, 3.4_
 
-- [ ] 3.2 Implement checkbox state persistence
+- [x] 3.2 Implement checkbox state persistence
+
   - Create ReportFormState class to manage checkbox selections
   - Add state persistence across navigation using SharedPreferences
   - Implement state restoration when returning to the form
   - _Requirements: 3.1, 3.2, 3.5_
 
-- [ ] 3.3 Add form validation and submission logic
+- [x] 3.3 Add form validation and submission logic
+
   - Implement validation to require at least one checkbox selection
   - Add proper error messages for validation failures
   - Create submission logic that processes selected checkboxes
   - Clear form state after successful submission
   - _Requirements: 3.3, 3.4, 3.5_
 
-- [ ] 3.4 Add tests for report form state management
+- [x] 3.4 Add tests for report form state management
+
+
   - Test checkbox state persistence and restoration
   - Verify form validation logic
   - Test successful form submission and state clearing
   - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.5_
 
-- [ ] 4. Enhance Forum Comment System
+- [x] 4. Enhance Forum Comment System
+
+
   - Implement proper comment validation and error handling
   - Add retry logic for failed comment submissions
   - Create CommentSubmissionService for robust comment posting
   - Update CommentInput widget with better state management and user feedback
   - _Requirements: 4.1, 4.2, 4.3, 4.4, 4.5_
 
-- [ ] 4.1 Create CommentSubmissionService
+- [x] 4.1 Create CommentSubmissionService
+
+
   - Implement service with retry logic for failed comment submissions
   - Add proper validation for comment content before submission
   - Include exponential backoff for retry attempts
   - _Requirements: 4.2, 4.3_
 
-- [ ] 4.2 Update CommentInput with enhanced validation
+- [x] 4.2 Update CommentInput with enhanced validation
+
+
   - Add proper validation to prevent empty comment submission
   - Implement better error handling and user feedback
   - Add comment draft preservation during submission failures
   - _Requirements: 4.1, 4.3, 4.4_
 
-- [ ] 4.3 Improve comment submission state management
+- [x] 4.3 Improve comment submission state management
+
+
   - Prevent duplicate submissions by disabling submit button during processing
   - Add loading indicators during comment submission
   - Implement proper error recovery and user feedback
   - _Requirements: 4.3, 4.4, 4.5_
 
-- [ ] 4.4 Add tests for comment system enhancements
+- [x] 4.4 Add tests for comment system enhancements
+
+
   - Test comment validation and submission retry logic
   - Verify proper state management during submission
   - Test error handling and recovery scenarios
