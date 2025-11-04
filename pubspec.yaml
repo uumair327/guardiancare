@@ -3,25 +3,25 @@ description: "A Educational App."
 
 publish_to: 'none'
 
-version: 1.0.0+14
+version: 1.0.0+16
 
 environment:
-  sdk: '>=3.2.5 <4.0.0'
+  sdk: '>=3.4.0 <4.0.0'
 
 dependencies:
   flutter:
     sdk: flutter
-  shared_preferences: ^2.3.4
-  flutter_gemini: ^2.0.4
-  cupertino_icons: ^1.0.6
+  shared_preferences: ^2.4.0
+  flutter_gemini: ^2.0.5
+  cupertino_icons: ^1.0.8
   google_fonts: ^6.2.1
   flutter_native_splash: ^2.4.3
   get: ^4.6.6
   liquid_swipe: ^3.1.0
   smooth_page_indicator: ^1.2.0+3
   curved_navigation_bar: ^1.0.6
-  carousel_slider: ^5.0.0
-  firebase_auth: ^5.3.4
+  carousel_slider: ^5.1.0
+  firebase_auth: ^5.3.5
   firebase_core: ^3.9.0
   sign_in_button: ^3.2.0
   youtube_parser: ^2.1.3
@@ -33,7 +33,7 @@ dependencies:
   cloud_firestore: ^5.6.0
   youtube_player_flutter: ^9.1.1
   cached_network_image: ^3.4.1
-  video_player: ^2.8.6
+  video_player: ^2.9.2
   intl: ^0.20.1
   flutter_launcher_icons: ^0.14.2
   google_sign_in: ^6.2.2
@@ -41,12 +41,17 @@ dependencies:
   firebase_analytics: ^11.3.6
   flutter_inappwebview: ^6.1.5
   email_validator: ^3.0.0
-  pdfx: ^2.4.0
+  pdfx: ^2.7.0
+  flutter_bloc: ^8.1.6
+  equatable: ^2.0.5
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^4.0.0
+  flutter_lints: ^5.0.0
+  fake_cloud_firestore: ^3.0.3
+  mockito: ^5.4.4
+  build_runner: ^2.4.13
 
 flutter_native_splash:
   android: true
@@ -72,7 +77,6 @@ flutter_launcher_icons:
   android: "launcher_icon"
   ios: true
   image_path: "assets/logo/logo.png"
-  min_sdk_android: 21
-
-lib:
-  - .env
+  min_sdk_android: 23
+  adaptive_icon_background: "#ffffff"
+  adaptive_icon_foreground: "assets/logo/logo.png"
