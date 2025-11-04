@@ -1,381 +1,385 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:guardiancare/src/constants/colors.dart';
-import 'package:guardiancare/src/features/consent/controllers/consent_controller.dart';
 import 'package:guardiancare/src/features/consent/services/attempt_limiting_service.dart';
 import 'package:guardiancare/src/features/consent/widgets/security_status_indicator.dart';
 
-/// Comprehensive dashboard for parental control security status
+/// Dashboard widget for parental control security management
 class ParentalControlDashboard extends StatefulWidget {
-  final ConsentController consentController;
-  final bool showDetailedStats;
-  final VoidCallback? onSecuritySettingsTap;
+  final AttemptStatus attemptStatus;
+  final VoidCallback? onResetAttempts;
+  final VoidCallback? onChangePassword;
+  final VoidCallback? onViewSecurityLog;
 
   const ParentalControlDashboard({
     Key? key,
-    required this.consentController,
-    this.showDetailedStats = true,
-    this.onSecuritySettingsTap,
+    required this.attemptStatus,
+    this.onResetAttempts,
+    this.onChangePassword,
+    this.onViewSecurityLog,
   }) : super(key: key);
 
   @override
-  State<ParentalControlDashboard> createState() => _ParentalControlDashboardState();
+  _ParentalControlDashboardState createState() => _ParentalControlDashboardState();
 }
 
 class _ParentalControlDashboardState extends State<ParentalControlDashboard> {
-  Timer? _refreshTimer;
-  Map<String, dynamic>? _securityStats;
-
-  @override
-  void initState() {
-    super.initState();
-    _refreshSecurityStats();
-    _startRefreshTimer();
-  }
-
-  @override
-  void dispose() {
-    _refreshTimer?.cancel();
-    super.dispose();
-  }
-
-  void _refreshSecurityStats() {
-    if (mounted) {
-      setState(() {
-        _securityStats = widget.consentController.getCurrentUserSecurityStats();
-      });
-    }
-  }
-
-  void _startRefreshTimer() {
-    _refreshTimer = Timer.periodic(const Duration(seconds: 1), (_) {
-      _refreshSecurityStats();
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
-    if (_securityStats == null) {
-      return const Center(child: CircularProgressIndicator());
-    }
-
-    final status = widget.consentController.getCurrentUserLockoutStatus();
-    if (status == null) {
-      return _buildUnauthenticatedView();
-    }
-
     return Card(
-      elevation: 2,
+      elevation: 4,
+      margin: const EdgeInsets.all(16),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildHeader(),
+            // Header
+            Row(
+              children: [
+                const Icon(
+                  Icons.admin_panel_settings,
+                  color: tPrimaryColor,
+                  size: 28,
+                ),
+                const SizedBox(width: 12),
+                const Expanded(
+                  child: Text(
+                    'Parental Control Security',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: tPrimaryColor,
+                    ),
+                  ),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.refresh),
+                  onPressed: () {
+                    setState(() {
+                      // Trigger rebuild to refresh status
+                    });
+                  },
+                  tooltip: 'Refresh Status',
+                ),
+              ],
+            ),
             const SizedBox(height: 16),
+
+            // Security Status Indicator
             SecurityStatusIndicator(
-              status: status,
+              attemptStatus: widget.attemptStatus,
               showDetails: true,
-              onTap: widget.onSecuritySettingsTap,
             ),
-            if (widget.showDetailedStats) ...[
-              const SizedBox(height: 16),
-              _buildDetailedStats(status),
-            ],
-            const SizedBox(height: 16),
-            _buildActionButtons(status),
+            const SizedBox(height: 20),
+
+            // Security Statistics
+            _buildSecurityStatistics(),
+            const SizedBox(height: 20),
+
+            // Action Buttons
+            _buildActionButtons(),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildHeader() {
-    return Row(
+  Widget _buildSecurityStatistics() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Icon(
-          Icons.security,
-          color: tPrimaryColor,
-          size: 24,
-        ),
-        const SizedBox(width: 8),
         const Text(
-          'Parental Control Security',
+          'Security Statistics',
           style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-            color: tPrimaryColor,
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            color: tTextPrimary,
           ),
         ),
-        const Spacer(),
-        IconButton(
-          icon: const Icon(Icons.refresh),
-          onPressed: _refreshSecurityStats,
-          tooltip: 'Refresh Status',
+        const SizedBox(height: 12),
+        Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: Colors.grey.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: Colors.grey.withOpacity(0.2)),
+          ),
+          child: Column(
+            children: [
+              _buildStatRow(
+                'Failed Attempts',
+                '${widget.attemptStatus.failedAttempts}',
+                Icons.error_outline,
+                widget.attemptStatus.failedAttempts > 0 ? Colors.red : Colors.grey,
+              ),
+              const Divider(height: 16),
+              _buildStatRow(
+                'Remaining Attempts',
+                '${widget.attemptStatus.remainingAttempts}',
+                Icons.security,
+                widget.attemptStatus.remainingAttempts > 1 ? Colors.green : Colors.orange,
+              ),
+              const Divider(height: 16),
+              _buildStatRow(
+                'Max Attempts Allowed',
+                '${widget.attemptStatus.maxAttempts}',
+                Icons.policy,
+                Colors.blue,
+              ),
+              const Divider(height: 16),
+              _buildStatRow(
+                'Lockout Duration',
+                '${widget.attemptStatus.lockoutDurationMinutes} minutes',
+                Icons.timer,
+                Colors.purple,
+              ),
+              if (widget.attemptStatus.lastAttemptTime != null) ...[
+                const Divider(height: 16),
+                _buildStatRow(
+                  'Last Attempt',
+                  _formatLastAttemptTime(widget.attemptStatus.lastAttemptTime!),
+                  Icons.access_time,
+                  Colors.grey,
+                ),
+              ],
+            ],
+          ),
         ),
       ],
     );
   }
 
-  Widget _buildUnauthenticatedView() {
-    return Card(
-      elevation: 2,
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            const Icon(
-              Icons.warning_amber,
-              color: Colors.orange,
-              size: 48,
-            ),
-            const SizedBox(height: 16),
-            const Text(
-              'Authentication Required',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: Colors.orange,
-              ),
-            ),
-            const SizedBox(height: 8),
-            const Text(
-              'Please sign in to view parental control status',
-              textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.grey),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildDetailedStats(LockoutStatus status) {
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.grey[50],
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.grey[300]!),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'Security Statistics',
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-              color: tPrimaryColor,
-            ),
-          ),
-          const SizedBox(height: 8),
-          _buildStatRow('Failed Attempts', '${status.failedAttempts}'),
-          if (status.attemptsRemaining != null)
-            _buildStatRow('Attempts Remaining', '${status.attemptsRemaining}'),
-          if (status.isLockedOut && status.remainingTime != null)
-            _buildStatRow('Lockout Expires In', _formatDuration(status.remainingTime!)),
-          _buildStatRow('Can Attempt Verification', 
-            _securityStats!['canAttempt'] ? 'Yes' : 'No'),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildStatRow(String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 2),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            label,
-            style: const TextStyle(fontSize: 12, color: Colors.grey),
-          ),
-          Text(
-            value,
-            style: const TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildActionButtons(LockoutStatus status) {
+  Widget _buildStatRow(String label, String value, IconData icon, Color color) {
     return Row(
       children: [
-        if (status.isLockedOut)
-          Expanded(
-            child: ElevatedButton.icon(
-              onPressed: null, // Disabled during lockout
-              icon: const Icon(Icons.timer),
-              label: const Text('Locked Out'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red[100],
-                foregroundColor: Colors.red[700],
-              ),
-            ),
-          )
-        else
-          Expanded(
-            child: ElevatedButton.icon(
-              onPressed: () => _testParentalVerification(),
-              icon: const Icon(Icons.verified_user),
-              label: const Text('Test Verification'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: tPrimaryColor,
-                foregroundColor: Colors.white,
-              ),
+        Icon(icon, color: color, size: 20),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Text(
+            label,
+            style: const TextStyle(
+              fontSize: 14,
+              color: tTextPrimary,
             ),
           ),
-        const SizedBox(width: 8),
-        ElevatedButton.icon(
-          onPressed: widget.onSecuritySettingsTap,
-          icon: const Icon(Icons.settings),
-          label: const Text('Settings'),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.grey[200],
-            foregroundColor: Colors.grey[700],
+        ),
+        Text(
+          value,
+          style: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.bold,
+            color: color,
           ),
         ),
       ],
     );
   }
 
-  void _testParentalVerification() {
-    widget.consentController.verifyParentalKey(
-      context,
-      () {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Parental verification successful!'),
-            backgroundColor: Colors.green,
+  Widget _buildActionButtons() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Security Actions',
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            color: tTextPrimary,
           ),
-        );
-      },
+        ),
+        const SizedBox(height: 12),
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: [
+            // Change Password Button
+            _buildActionButton(
+              label: 'Change Password',
+              icon: Icons.key,
+              color: tPrimaryColor,
+              onPressed: widget.onChangePassword,
+              enabled: true,
+            ),
+            
+            // Reset Attempts Button (only show if there are failed attempts)
+            if (widget.attemptStatus.failedAttempts > 0 && widget.onResetAttempts != null)
+              _buildActionButton(
+                label: 'Reset Attempts',
+                icon: Icons.refresh,
+                color: Colors.orange,
+                onPressed: widget.onResetAttempts,
+                enabled: true,
+              ),
+            
+            // View Security Log Button
+            if (widget.onViewSecurityLog != null)
+              _buildActionButton(
+                label: 'Security Log',
+                icon: Icons.history,
+                color: Colors.blue,
+                onPressed: widget.onViewSecurityLog,
+                enabled: true,
+              ),
+          ],
+        ),
+        
+        // Emergency Actions (if locked out)
+        if (widget.attemptStatus.isLockedOut) ...[
+          const SizedBox(height: 16),
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colors.red.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: Colors.red.withOpacity(0.2)),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Row(
+                  children: [
+                    Icon(Icons.emergency, color: Colors.red, size: 16),
+                    SizedBox(width: 8),
+                    Text(
+                      'Emergency Options',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.red,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                const Text(
+                  'Your account is locked. You can either wait for the lockout to expire or reset your password using the security question.',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.red,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                ElevatedButton.icon(
+                  onPressed: widget.onChangePassword,
+                  icon: const Icon(Icons.lock_reset, size: 16),
+                  label: const Text('Reset Password Now'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ],
     );
   }
 
-  String _formatDuration(Duration duration) {
-    final minutes = duration.inMinutes;
-    final seconds = duration.inSeconds % 60;
-    return '${minutes}:${seconds.toString().padLeft(2, '0')}';
+  Widget _buildActionButton({
+    required String label,
+    required IconData icon,
+    required Color color,
+    required VoidCallback? onPressed,
+    required bool enabled,
+  }) {
+    return ElevatedButton.icon(
+      onPressed: enabled ? onPressed : null,
+      icon: Icon(icon, size: 16),
+      label: Text(label),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: enabled ? color : Colors.grey,
+        foregroundColor: Colors.white,
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+      ),
+    );
+  }
+
+  String _formatLastAttemptTime(DateTime lastAttempt) {
+    final now = DateTime.now();
+    final difference = now.difference(lastAttempt);
+    
+    if (difference.inMinutes < 1) {
+      return 'Just now';
+    } else if (difference.inMinutes < 60) {
+      return '${difference.inMinutes}m ago';
+    } else if (difference.inHours < 24) {
+      return '${difference.inHours}h ago';
+    } else {
+      return '${difference.inDays}d ago';
+    }
   }
 }
 
-/// Compact version of the parental control dashboard
-class CompactParentalControlStatus extends StatefulWidget {
-  final ConsentController consentController;
+/// Simplified version of the dashboard for embedding in other screens
+class CompactParentalControlDashboard extends StatelessWidget {
+  final AttemptStatus attemptStatus;
   final VoidCallback? onTap;
 
-  const CompactParentalControlStatus({
+  const CompactParentalControlDashboard({
     Key? key,
-    required this.consentController,
+    required this.attemptStatus,
     this.onTap,
   }) : super(key: key);
 
   @override
-  State<CompactParentalControlStatus> createState() => _CompactParentalControlStatusState();
-}
-
-class _CompactParentalControlStatusState extends State<CompactParentalControlStatus> {
-  Timer? _refreshTimer;
-
-  @override
-  void initState() {
-    super.initState();
-    _startRefreshTimer();
-  }
-
-  @override
-  void dispose() {
-    _refreshTimer?.cancel();
-    super.dispose();
-  }
-
-  void _startRefreshTimer() {
-    _refreshTimer = Timer.periodic(const Duration(seconds: 5), (_) {
-      if (mounted) setState(() {});
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
-    final status = widget.consentController.getCurrentUserLockoutStatus();
-    
-    if (status == null) {
-      return const SizedBox.shrink();
-    }
-
     return GestureDetector(
-      onTap: widget.onTap,
+      onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: _getStatusColor(status).withOpacity(0.1),
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: _getStatusColor(status).withOpacity(0.3)),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              _getStatusIcon(status),
-              size: 16,
-              color: _getStatusColor(status),
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.1),
+              spreadRadius: 1,
+              blurRadius: 4,
+              offset: const Offset(0, 2),
             ),
-            const SizedBox(width: 6),
-            Text(
-              _getStatusText(status),
-              style: TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w500,
-                color: _getStatusColor(status),
-              ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                const Icon(
+                  Icons.security,
+                  color: tPrimaryColor,
+                  size: 20,
+                ),
+                const SizedBox(width: 8),
+                const Expanded(
+                  child: Text(
+                    'Parental Control Security',
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      color: tPrimaryColor,
+                    ),
+                  ),
+                ),
+                if (onTap != null)
+                  const Icon(
+                    Icons.chevron_right,
+                    color: tPrimaryColor,
+                    size: 16,
+                  ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            CompactSecurityStatusIndicator(
+              attemptStatus: attemptStatus,
             ),
           ],
         ),
       ),
     );
-  }
-
-  Color _getStatusColor(LockoutStatus status) {
-    switch (status.state) {
-      case LockoutState.normal:
-        return Colors.green;
-      case LockoutState.warning:
-        return Colors.orange;
-      case LockoutState.lockedOut:
-        return Colors.red;
-    }
-  }
-
-  IconData _getStatusIcon(LockoutStatus status) {
-    switch (status.state) {
-      case LockoutState.normal:
-        return Icons.security;
-      case LockoutState.warning:
-        return Icons.warning_amber;
-      case LockoutState.lockedOut:
-        return Icons.lock;
-    }
-  }
-
-  String _getStatusText(LockoutStatus status) {
-    switch (status.state) {
-      case LockoutState.normal:
-        return 'Secure';
-      case LockoutState.warning:
-        return '${status.attemptsRemaining} left';
-      case LockoutState.lockedOut:
-        if (status.remainingTime != null) {
-          final minutes = status.remainingTime!.inMinutes;
-          return 'Locked ${minutes}m';
-        }
-        return 'Locked';
-    }
   }
 }

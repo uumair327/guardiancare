@@ -1,156 +1,385 @@
 import 'package:flutter/material.dart';
 import 'package:guardiancare/src/features/consent/controllers/consent_controller.dart';
 import 'package:guardiancare/src/features/consent/services/attempt_limiting_service.dart';
+import 'package:guardiancare/src/features/consent/widgets/security_status_indicator.dart';
 
-/// Helper class for managing parental verification flows with enhanced UX
+/// Helper class for parental verification operations
 class ParentalVerificationHelper {
-  final ConsentController _consentController;
+  static final ConsentController _consentController = ConsentController();
 
-  ParentalVerificationHelper(this._consentController);
-
-  /// Show parental verification with pre-check and enhanced error handling
-  Future<bool> showVerificationDialog(
+  /// Show parental verification dialog with enhanced security features
+  static Future<bool> showVerificationDialog(
     BuildContext context, {
     String? title,
     String? message,
-    VoidCallback? onSuccess,
-    VoidCallback? onCancel,
-    bool showPreCheckDialog = true,
+    bool showSecurityStatus = true,
   }) async {
-    // Pre-check if user can attempt verification
-    if (!_consentController.canCurrentUserAttemptVerification()) {
-      if (showPreCheckDialog) {
-        await _showLockoutInfoDialog(context);
-      }
+    // Get current attempt status
+    final attemptStatus = await _consentController.getCurrentUserAttemptStatus();
+    if (attemptStatus == null) {
+      _showErrorSnackBar(context, 'Unable to verify user authentication status');
       return false;
     }
 
-    // Show custom pre-verification dialog if provided
-    if (title != null || message != null) {
-      final shouldProceed = await _showPreVerificationDialog(
-        context,
-        title: title,
-        message: message,
-      );
-      if (!shouldProceed) {
-        onCancel?.call();
-        return false;
-      }
+    // Show pre-verification security status if requested
+    if (showSecurityStatus) {
+      final shouldProceed = await _showSecurityStatusDialog(context, attemptStatus);
+      if (!shouldProceed) return false;
     }
 
     // Show verification dialog
-    bool verified = false;
+    bool verificationResult = false;
+    
     await _consentController.verifyParentalKeyWithError(
       context,
       onSuccess: () {
-        verified = true;
-        onSuccess?.call();
+        verificationResult = true;
       },
       onError: () {
-        verified = false;
-        onCancel?.call();
+        verificationResult = false;
       },
     );
 
-    return verified;
+    return verificationResult;
   }
 
-  /// Show verification with custom success/failure actions
-  Future<ParentalVerificationResult> verifyWithResult(
+  /// Show security status dialog before verification
+  static Future<bool> _showSecurityStatusDialog(
     BuildContext context,
-    String enteredKey, {
-    String? context_,
-  }) async {
-    return await _consentController.verifyParentalKeyWithLogging(
-      enteredKey,
-      context: context_,
+    AttemptStatus attemptStatus,
+  ) async {
+    if (attemptStatus.isLockedOut) {
+      // Show lockout information
+      await showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => AlertDialog(
+          title: const Row(
+            children: [
+              Icon(Icons.block, color: Colors.red),
+              SizedBox(width: 8),
+              Text('Account Locked'),
+            ],
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SecurityStatusIndicator(
+                attemptStatus: attemptStatus,
+                showDetails: true,
+              ),
+              const SizedBox(height: 16),
+              const Text(
+                'You cannot attempt verification while your account is locked. Please wait for the lockout to expire or reset your password.',
+                style: TextStyle(fontSize: 14),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
+      return false;
+    }
+
+    if (attemptStatus.failedAttempts > 0) {
+      // Show warning for previous failed attempts
+      final shouldProceed = await showDialog<bool>(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Row(
+            children: [
+              Icon(Icons.warning, color: Colors.orange),
+              SizedBox(width: 8),
+              Text('Security Warning'),
+            ],
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SecurityStatusIndicator(
+                attemptStatus: attemptStatus,
+                showDetails: true,
+              ),
+              const SizedBox(height: 16),
+              const Text(
+                'Previous verification attempts have failed. Be careful with your parental key to avoid account lockout.',
+                style: TextStyle(fontSize: 14),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: const Text('Continue'),
+            ),
+          ],
+        ),
+      );
+      return shouldProceed ?? false;
+    }
+
+    return true; // No issues, proceed with verification
+  }
+
+  /// Quick verification without showing security status
+  static Future<bool> quickVerification(BuildContext context) async {
+    return await showVerificationDialog(
+      context,
+      showSecurityStatus: false,
     );
   }
 
-  /// Check if verification is currently possible
-  bool canAttemptVerification() {
-    return _consentController.canCurrentUserAttemptVerification();
-  }
-
-  /// Get current security status
-  LockoutStatus? getCurrentStatus() {
-    return _consentController.getCurrentUserLockoutStatus();
-  }
-
-  /// Show lockout information dialog
-  Future<void> _showLockoutInfoDialog(BuildContext context) async {
-    final status = _consentController.getCurrentUserLockoutStatus();
-    if (status == null) return;
-
+  /// Verification with custom message
+  static Future<bool> verifyWithMessage(
+    BuildContext context,
+    String message,
+  ) async {
+    bool verificationResult = false;
+    
     await showDialog(
       context: context,
+      barrierDismissible: false,
       builder: (context) => AlertDialog(
-        title: Row(
-          children: [
-            Icon(
-              status.isLockedOut ? Icons.lock : Icons.warning_amber,
-              color: status.isLockedOut ? Colors.red : Colors.orange,
-            ),
-            const SizedBox(width: 8),
-            Text(
-              status.isLockedOut ? 'Access Locked' : 'Security Warning',
-              style: TextStyle(
-                color: status.isLockedOut ? Colors.red : Colors.orange,
-              ),
-            ),
-          ],
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(status.message),
-            if (status.isLockedOut && status.remainingTime != null) ...[
-              const SizedBox(height: 16),
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: Colors.red.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Row(
-                  children: [
-                    const Icon(Icons.timer, color: Colors.red, size: 16),
-                    const SizedBox(width: 8),
-                    Text(
-                      'Time remaining: ${_formatDuration(status.remainingTime!)}',
-                      style: const TextStyle(
-                        fontWeight: FontWeight.w500,
-                        color: Colors.red,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ],
-        ),
+        title: const Text('Parental Verification Required'),
+        content: Text(message),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('OK'),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              Navigator.of(context).pop();
+              verificationResult = await showVerificationDialog(context);
+            },
+            child: const Text('Verify'),
+          ),
+        ],
+      ),
+    );
+
+    return verificationResult;
+  }
+
+  /// Check if verification is currently possible
+  static Future<bool> canVerify() async {
+    final attemptStatus = await _consentController.getCurrentUserAttemptStatus();
+    return attemptStatus?.canAttempt ?? false;
+  }
+
+  /// Get current security status
+  static Future<AttemptStatus?> getSecurityStatus() async {
+    return await _consentController.getCurrentUserAttemptStatus();
+  }
+
+  /// Show security dashboard
+  static void showSecurityDashboard(BuildContext context) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => const ParentalSecurityDashboardScreen(),
+      ),
+    );
+  }
+
+  /// Reset attempts (admin function)
+  static Future<void> resetAttempts() async {
+    await _consentController.resetCurrentUserAttempts();
+  }
+
+  /// Show error snack bar
+  static void _showErrorSnackBar(BuildContext context, String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.red,
+      ),
+    );
+  }
+
+  /// Show success snack bar
+  static void _showSuccessSnackBar(BuildContext context, String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.green,
+      ),
+    );
+  }
+
+  /// Verify and execute action
+  static Future<void> verifyAndExecute(
+    BuildContext context,
+    VoidCallback action, {
+    String? verificationMessage,
+  }) async {
+    final verified = verificationMessage != null
+        ? await verifyWithMessage(context, verificationMessage)
+        : await showVerificationDialog(context);
+
+    if (verified) {
+      action();
+    }
+  }
+
+  /// Batch verification for multiple actions
+  static Future<bool> batchVerification(
+    BuildContext context,
+    List<String> actionDescriptions,
+  ) async {
+    final message = 'You are about to perform the following actions:\n\n'
+        '${actionDescriptions.map((desc) => '• $desc').join('\n')}\n\n'
+        'Please verify your parental key to continue.';
+
+    return await verifyWithMessage(context, message);
+  }
+}
+
+/// Full-screen security dashboard
+class ParentalSecurityDashboardScreen extends StatefulWidget {
+  const ParentalSecurityDashboardScreen({Key? key}) : super(key: key);
+
+  @override
+  _ParentalSecurityDashboardScreenState createState() => _ParentalSecurityDashboardScreenState();
+}
+
+class _ParentalSecurityDashboardScreenState extends State<ParentalSecurityDashboardScreen> {
+  final ConsentController _consentController = ConsentController();
+  AttemptStatus? _attemptStatus;
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSecurityStatus();
+  }
+
+  Future<void> _loadSecurityStatus() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final status = await _consentController.getCurrentUserAttemptStatus();
+      setState(() {
+        _attemptStatus = status;
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error loading security status: $e')),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Parental Control Security'),
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black,
+        elevation: 1,
+      ),
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : _attemptStatus == null
+              ? const Center(child: Text('Unable to load security status'))
+              : SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      // Security Dashboard
+                      // ParentalControlDashboard(
+                      //   attemptStatus: _attemptStatus!,
+                      //   onResetAttempts: _handleResetAttempts,
+                      //   onChangePassword: _handleChangePassword,
+                      //   onViewSecurityLog: _handleViewSecurityLog,
+                      // ),
+                      
+                      // Additional security information
+                      _buildSecurityTips(),
+                    ],
+                  ),
+                ),
+    );
+  }
+
+  Widget _buildSecurityTips() {
+    return Card(
+      margin: const EdgeInsets.all(16),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Security Tips',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 12),
+            _buildTip(
+              'Use a strong, memorable parental key that only you know.',
+              Icons.key,
+            ),
+            _buildTip(
+              'Never share your parental key with children or unauthorized users.',
+              Icons.visibility_off,
+            ),
+            _buildTip(
+              'Change your parental key regularly for better security.',
+              Icons.refresh,
+            ),
+            _buildTip(
+              'Remember your security question answer for password recovery.',
+              Icons.help_outline,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTip(String text, IconData icon) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(icon, size: 16, color: Colors.grey[600]),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              text,
+              style: const TextStyle(fontSize: 14),
+            ),
           ),
         ],
       ),
     );
   }
 
-  /// Show pre-verification dialog with custom message
-  Future<bool> _showPreVerificationDialog(
-    BuildContext context, {
-    String? title,
-    String? message,
-  }) async {
-    final result = await showDialog<bool>(
+  void _handleResetAttempts() async {
+    final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: title != null ? Text(title) : null,
-        content: message != null ? Text(message) : null,
+        title: const Text('Reset Failed Attempts'),
+        content: const Text(
+          'Are you sure you want to reset the failed attempt counter? This will clear the security warning.',
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
@@ -158,180 +387,36 @@ class ParentalVerificationHelper {
           ),
           ElevatedButton(
             onPressed: () => Navigator.of(context).pop(true),
-            child: const Text('Continue'),
+            child: const Text('Reset'),
           ),
         ],
       ),
     );
-    return result ?? false;
-  }
 
-  /// Format duration for display
-  String _formatDuration(Duration duration) {
-    final minutes = duration.inMinutes;
-    final seconds = duration.inSeconds % 60;
-    return '${minutes}:${seconds.toString().padLeft(2, '0')}';
-  }
-
-  /// Show verification with custom UI
-  Future<bool> showCustomVerificationFlow(
-    BuildContext context, {
-    required String title,
-    required String description,
-    required VoidCallback onSuccess,
-    VoidCallback? onFailure,
-    Widget? customIcon,
-  }) async {
-    // Check if verification is possible
-    if (!canAttemptVerification()) {
-      await _showLockoutInfoDialog(context);
-      onFailure?.call();
-      return false;
-    }
-
-    // Show custom verification dialog
-    return await showDialog<bool>(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => _CustomVerificationDialog(
-        title: title,
-        description: description,
-        customIcon: customIcon,
-        consentController: _consentController,
-        onSuccess: () {
-          Navigator.of(context).pop(true);
-          onSuccess();
-        },
-        onFailure: () {
-          Navigator.of(context).pop(false);
-          onFailure?.call();
-        },
-      ),
-    ) ?? false;
-  }
-}
-
-/// Custom verification dialog with enhanced UI
-class _CustomVerificationDialog extends StatefulWidget {
-  final String title;
-  final String description;
-  final Widget? customIcon;
-  final ConsentController consentController;
-  final VoidCallback onSuccess;
-  final VoidCallback onFailure;
-
-  const _CustomVerificationDialog({
-    required this.title,
-    required this.description,
-    this.customIcon,
-    required this.consentController,
-    required this.onSuccess,
-    required this.onFailure,
-  });
-
-  @override
-  State<_CustomVerificationDialog> createState() => _CustomVerificationDialogState();
-}
-
-class _CustomVerificationDialogState extends State<_CustomVerificationDialog> {
-  final TextEditingController _passwordController = TextEditingController();
-  bool _isVerifying = false;
-  String? _errorMessage;
-
-  @override
-  void dispose() {
-    _passwordController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AlertDialog(
-      title: Row(
-        children: [
-          widget.customIcon ?? const Icon(Icons.security, color: Colors.blue),
-          const SizedBox(width: 8),
-          Expanded(child: Text(widget.title)),
-        ],
-      ),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(widget.description),
-          const SizedBox(height: 16),
-          TextField(
-            controller: _passwordController,
-            obscureText: true,
-            enabled: !_isVerifying,
-            decoration: InputDecoration(
-              labelText: 'Parental Key',
-              border: const OutlineInputBorder(),
-              errorText: _errorMessage,
-              suffixIcon: _isVerifying
-                  ? const Padding(
-                      padding: EdgeInsets.all(12),
-                      child: SizedBox(
-                        width: 16,
-                        height: 16,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      ),
-                    )
-                  : null,
-            ),
-            onSubmitted: _isVerifying ? null : (_) => _handleVerification(),
-          ),
-        ],
-      ),
-      actions: [
-        TextButton(
-          onPressed: _isVerifying ? null : widget.onFailure,
-          child: const Text('Cancel'),
+    if (confirmed == true) {
+      await _consentController.resetCurrentUserAttempts();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Failed attempts have been reset'),
+          backgroundColor: Colors.green,
         ),
-        ElevatedButton(
-          onPressed: _isVerifying ? null : _handleVerification,
-          child: const Text('Verify'),
-        ),
-      ],
-    );
-  }
-
-  void _handleVerification() async {
-    if (_passwordController.text.trim().isEmpty) {
-      setState(() {
-        _errorMessage = 'Please enter your parental key';
-      });
-      return;
-    }
-
-    setState(() {
-      _isVerifying = true;
-      _errorMessage = null;
-    });
-
-    try {
-      final result = await widget.consentController.verifyParentalKeySecure(
-        _passwordController.text,
       );
-
-      if (result.success) {
-        widget.onSuccess();
-      } else {
-        setState(() {
-          _errorMessage = result.errorMessage;
-          _isVerifying = false;
-        });
-        
-        if (result.isLockedOut) {
-          // Close dialog and show lockout info
-          widget.onFailure();
-        }
-      }
-    } catch (e) {
-      setState(() {
-        _errorMessage = 'Verification failed. Please try again.';
-        _isVerifying = false;
-      });
+      _loadSecurityStatus(); // Refresh the status
     }
+  }
+
+  void _handleChangePassword() {
+    // This would typically navigate to a password change screen
+    // or show the reset dialog
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Password change feature coming soon')),
+    );
+  }
+
+  void _handleViewSecurityLog() {
+    // This would typically show a security log screen
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Security log feature coming soon')),
+    );
   }
 }

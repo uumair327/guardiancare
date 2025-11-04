@@ -1,430 +1,594 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:guardiancare/src/features/consent/controllers/consent_controller.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:guardiancare/src/features/consent/services/attempt_limiting_service.dart';
+import 'package:guardiancare/src/features/consent/widgets/security_status_indicator.dart';
+import 'package:guardiancare/src/features/consent/widgets/parental_control_dashboard.dart';
+import 'package:guardiancare/src/features/consent/screens/enhanced_password_dialog.dart';
+import 'package:guardiancare/src/features/consent/screens/enhanced_reset_dialog.dart';
 
 void main() {
   group('Parental Control Security Integration Tests', () {
-    late ConsentController controller;
     late AttemptLimitingService attemptService;
 
-    setUp(() {
-      controller = ConsentController();
-      attemptService = AttemptLimitingService();
-      attemptService.clearAllAttempts();
+    setUp(() async {
+      SharedPreferences.setMockInitialValues({});
+      attemptService = AttemptLimitingService.instance;
+      await attemptService.initialize();
+      await attemptService.resetAllData();
     });
 
-    tearDown(() {
-      attemptService.clearAllAttempts();
+    tearDown(() async {
+      await attemptService.resetAllData();
     });
 
-    group('Complete Lockout Flow', () {
-      test('should handle complete brute force attack scenario', () async {
-        const userId = 'attacker-user';
+    group('SecurityStatusIndicator Widget Tests', () {
+      testWidgets('should display secure status correctly', (WidgetTester tester) async {
+        final attemptStatus = await attemptService.getAttemptStatus();
         
-        // Simulate brute force attack
-        List<String> commonPasswords = [
-          'password', '123456', 'admin', 'test', 'user',
-          'parent', 'child', 'family', 'home', 'secure'
-        ];
-        
-        int attemptCount = 0;
-        bool isLockedOut = false;
-        
-        for (String password in commonPasswords) {
-          if (attemptService.canAttemptVerification(userId)) {
-            attemptService.recordFailedAttempt(userId);
-            attemptCount++;
-            
-            if (attemptCount >= AttemptLimitingService.MAX_ATTEMPTS) {
-              isLockedOut = true;
-              break;
-            }
-          } else {
-            break;
-          }
-        }
-        
-        // Verify lockout occurred after max attempts
-        expect(isLockedOut, isTrue);
-        expect(attemptService.isUserLockedOut(userId), isTrue);
-        expect(attemptService.canAttemptVerification(userId), isFalse);
-        expect(attemptService.getFailedAttemptCount(userId), equals(3));
-        
-        // Verify lockout duration
-        final remainingTime = attemptService.getRemainingLockoutTime(userId);
-        expect(remainingTime.inSeconds, greaterThan(0));
-        expect(remainingTime.inSeconds, lessThanOrEqualTo(300));
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Scaffold(
+              body: SecurityStatusIndicator(
+                attemptStatus: attemptStatus,
+                showDetails: true,
+              ),
+            ),
+          ),
+        );
+
+        expect(find.text('Security Status: Good'), findsOneWidget);
+        expect(find.byIcon(Icons.security), findsOneWidget);
+        expect(find.text('Your parental controls are secure and ready for verification.'), findsOneWidget);
       });
 
-      test('should prevent verification during entire lockout period', () {
-        const userId = 'locked-user';
+      testWidgets('should display warning status after failed attempts', (WidgetTester tester) async {
+        // Record failed attempts
+        await attemptService.recordFailedAttempt();
+        await attemptService.recordFailedAttempt();
         
-        // Lock out user
-        for (int i = 0; i < AttemptLimitingService.MAX_ATTEMPTS; i++) {
-          attemptService.recordFailedAttempt(userId);
-        }
+        final attemptStatus = await attemptService.getAttemptStatus();
         
-        // Verify lockout state
-        expect(attemptService.isUserLockedOut(userId), isTrue);
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Scaffold(
+              body: SecurityStatusIndicator(
+                attemptStatus: attemptStatus,
+                showDetails: true,
+              ),
+            ),
+          ),
+        );
+
+        expect(find.text('Security Warning'), findsOneWidget);
+        expect(find.byIcon(Icons.warning), findsOneWidget);
+        expect(find.text('1 attempt remaining'), findsOneWidget);
+      });
+
+      testWidgets('should display locked status when locked out', (WidgetTester tester) async {
+        // Trigger lockout
+        await attemptService.recordFailedAttempt();
+        await attemptService.recordFailedAttempt();
+        await attemptService.recordFailedAttempt();
         
-        // Multiple verification attempts should all be blocked
+        final attemptStatus = await attemptService.getAttemptStatus();
+        
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Scaffold(
+              body: SecurityStatusIndicator(
+                attemptStatus: attemptStatus,
+                showDetails: true,
+              ),
+            ),
+          ),
+        );
+
+        expect(find.text('Account Locked'), findsOneWidget);
+        expect(find.byIcon(Icons.block), findsOneWidget);
+        expect(find.textContaining('Time remaining:'), findsOneWidget);
+        expect(find.text('Failed attempts: 3/3'), findsOneWidget);
+      });
+
+      testWidgets('should handle tap events correctly', (WidgetTester tester) async {
+        bool tapped = false;
+        final attemptStatus = await attemptService.getAttemptStatus();
+        
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Scaffold(
+              body: SecurityStatusIndicator(
+                attemptStatus: attemptStatus,
+                onTap: () => tapped = true,
+              ),
+            ),
+          ),
+        );
+
+        await tester.tap(find.byType(SecurityStatusIndicator));
+        expect(tapped, isTrue);
+      });
+    });
+
+    group('CompactSecurityStatusIndicator Widget Tests', () {
+      testWidgets('should display compact secure status', (WidgetTester tester) async {
+        final attemptStatus = await attemptService.getAttemptStatus();
+        
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Scaffold(
+              body: CompactSecurityStatusIndicator(
+                attemptStatus: attemptStatus,
+              ),
+            ),
+          ),
+        );
+
+        expect(find.text('Secure'), findsOneWidget);
+        expect(find.byIcon(Icons.check_circle), findsOneWidget);
+      });
+
+      testWidgets('should display compact warning status', (WidgetTester tester) async {
+        await attemptService.recordFailedAttempt();
+        final attemptStatus = await attemptService.getAttemptStatus();
+        
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Scaffold(
+              body: CompactSecurityStatusIndicator(
+                attemptStatus: attemptStatus,
+              ),
+            ),
+          ),
+        );
+
+        expect(find.text('2 attempts left'), findsOneWidget);
+        expect(find.byIcon(Icons.warning), findsOneWidget);
+      });
+
+      testWidgets('should display compact locked status', (WidgetTester tester) async {
+        // Trigger lockout
+        await attemptService.recordFailedAttempt();
+        await attemptService.recordFailedAttempt();
+        await attemptService.recordFailedAttempt();
+        
+        final attemptStatus = await attemptService.getAttemptStatus();
+        
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Scaffold(
+              body: CompactSecurityStatusIndicator(
+                attemptStatus: attemptStatus,
+              ),
+            ),
+          ),
+        );
+
+        expect(find.textContaining('Locked'), findsOneWidget);
+        expect(find.byIcon(Icons.block), findsOneWidget);
+      });
+    });
+
+    group('EnhancedPasswordDialog Widget Tests', () {
+      testWidgets('should display password input for normal state', (WidgetTester tester) async {
+        final attemptStatus = await attemptService.getAttemptStatus();
+        
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Scaffold(
+              body: EnhancedPasswordDialog(
+                attemptStatus: attemptStatus,
+                onSubmit: (password) {},
+                onCancel: () {},
+                onForgotPassword: () {},
+              ),
+            ),
+          ),
+        );
+
+        expect(find.text('Parental Verification'), findsOneWidget);
+        expect(find.text('Please enter your parental key to continue:'), findsOneWidget);
+        expect(find.byType(TextField), findsOneWidget);
+        expect(find.text('Verify'), findsOneWidget);
+        expect(find.text('Cancel'), findsOneWidget);
+        expect(find.text('Forgot Password?'), findsOneWidget);
+      });
+
+      testWidgets('should display warning for failed attempts', (WidgetTester tester) async {
+        await attemptService.recordFailedAttempt();
+        final attemptStatus = await attemptService.getAttemptStatus();
+        
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Scaffold(
+              body: EnhancedPasswordDialog(
+                attemptStatus: attemptStatus,
+                onSubmit: (password) {},
+                onCancel: () {},
+                onForgotPassword: () {},
+              ),
+            ),
+          ),
+        );
+
+        expect(find.text('2 attempts remaining'), findsOneWidget);
+        expect(find.textContaining('Previous attempts failed'), findsOneWidget);
+      });
+
+      testWidgets('should display lockout information when locked', (WidgetTester tester) async {
+        // Trigger lockout
+        await attemptService.recordFailedAttempt();
+        await attemptService.recordFailedAttempt();
+        await attemptService.recordFailedAttempt();
+        
+        final attemptStatus = await attemptService.getAttemptStatus();
+        
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Scaffold(
+              body: EnhancedPasswordDialog(
+                attemptStatus: attemptStatus,
+                onSubmit: (password) {},
+                onCancel: () {},
+                onForgotPassword: () {},
+              ),
+            ),
+          ),
+        );
+
+        expect(find.text('Account Locked'), findsOneWidget);
+        expect(find.textContaining('temporarily locked'), findsOneWidget);
+        expect(find.textContaining('Time remaining:'), findsOneWidget);
+        expect(find.text('Close'), findsOneWidget);
+        expect(find.text('Forgot Password?'), findsOneWidget);
+        
+        // Should not show verify button when locked
+        expect(find.text('Verify'), findsNothing);
+      });
+
+      testWidgets('should handle password submission', (WidgetTester tester) async {
+        String? submittedPassword;
+        final attemptStatus = await attemptService.getAttemptStatus();
+        
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Scaffold(
+              body: EnhancedPasswordDialog(
+                attemptStatus: attemptStatus,
+                onSubmit: (password) => submittedPassword = password,
+                onCancel: () {},
+                onForgotPassword: () {},
+              ),
+            ),
+          ),
+        );
+
+        // Enter password
+        await tester.enterText(find.byType(TextField), 'testpassword');
+        await tester.tap(find.text('Verify'));
+        await tester.pump();
+
+        expect(submittedPassword, equals('testpassword'));
+      });
+
+      testWidgets('should toggle password visibility', (WidgetTester tester) async {
+        final attemptStatus = await attemptService.getAttemptStatus();
+        
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Scaffold(
+              body: EnhancedPasswordDialog(
+                attemptStatus: attemptStatus,
+                onSubmit: (password) {},
+                onCancel: () {},
+                onForgotPassword: () {},
+              ),
+            ),
+          ),
+        );
+
+        // Find the visibility toggle button
+        final visibilityButton = find.byIcon(Icons.visibility_off);
+        expect(visibilityButton, findsOneWidget);
+
+        // Tap to show password
+        await tester.tap(visibilityButton);
+        await tester.pump();
+
+        // Should now show visibility icon
+        expect(find.byIcon(Icons.visibility), findsOneWidget);
+      });
+    });
+
+    group('EnhancedResetDialog Widget Tests', () {
+      testWidgets('should display reset form correctly', (WidgetTester tester) async {
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Scaffold(
+              body: EnhancedResetDialog(
+                onSubmit: (answer, newPassword) {},
+                onCancel: () {},
+              ),
+            ),
+          ),
+        );
+
+        expect(find.text('Reset Parental Key'), findsOneWidget);
+        expect(find.text('Security Question:'), findsOneWidget);
+        expect(find.text('What is your mother\'s maiden name?'), findsOneWidget);
+        expect(find.byType(TextFormField), findsNWidgets(3)); // Answer, new password, confirm password
+        expect(find.text('Reset Key'), findsOneWidget);
+        expect(find.text('Cancel'), findsOneWidget);
+      });
+
+      testWidgets('should validate form fields', (WidgetTester tester) async {
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Scaffold(
+              body: EnhancedResetDialog(
+                onSubmit: (answer, newPassword) {},
+                onCancel: () {},
+              ),
+            ),
+          ),
+        );
+
+        // Try to submit without filling fields
+        await tester.tap(find.text('Reset Key'));
+        await tester.pump();
+
+        expect(find.text('Security answer is required'), findsOneWidget);
+        expect(find.text('New parental key is required'), findsOneWidget);
+      });
+
+      testWidgets('should validate password confirmation', (WidgetTester tester) async {
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Scaffold(
+              body: EnhancedResetDialog(
+                onSubmit: (answer, newPassword) {},
+                onCancel: () {},
+              ),
+            ),
+          ),
+        );
+
+        // Fill in different passwords
+        final textFields = find.byType(TextFormField);
+        await tester.enterText(textFields.at(0), 'security answer');
+        await tester.enterText(textFields.at(1), 'password1');
+        await tester.enterText(textFields.at(2), 'password2');
+
+        await tester.tap(find.text('Reset Key'));
+        await tester.pump();
+
+        expect(find.text('Parental keys do not match'), findsOneWidget);
+      });
+
+      testWidgets('should handle successful form submission', (WidgetTester tester) async {
+        String? submittedAnswer;
+        String? submittedPassword;
+        
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Scaffold(
+              body: EnhancedResetDialog(
+                onSubmit: (answer, newPassword) {
+                  submittedAnswer = answer;
+                  submittedPassword = newPassword;
+                },
+                onCancel: () {},
+              ),
+            ),
+          ),
+        );
+
+        // Fill in valid form
+        final textFields = find.byType(TextFormField);
+        await tester.enterText(textFields.at(0), 'security answer');
+        await tester.enterText(textFields.at(1), 'newpassword123');
+        await tester.enterText(textFields.at(2), 'newpassword123');
+
+        await tester.tap(find.text('Reset Key'));
+        await tester.pump();
+
+        expect(submittedAnswer, equals('security answer'));
+        expect(submittedPassword, equals('newpassword123'));
+      });
+    });
+
+    group('Integration Flow Tests', () {
+      testWidgets('should show progressive security warnings', (WidgetTester tester) async {
+        // Start with clean state
+        var attemptStatus = await attemptService.getAttemptStatus();
+        
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Scaffold(
+              body: Column(
+                children: [
+                  SecurityStatusIndicator(
+                    attemptStatus: attemptStatus,
+                    showDetails: true,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+
+        // Should show secure status
+        expect(find.text('Security Status: Good'), findsOneWidget);
+
+        // Record first failed attempt
+        await attemptService.recordFailedAttempt();
+        attemptStatus = await attemptService.getAttemptStatus();
+        
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Scaffold(
+              body: Column(
+                children: [
+                  SecurityStatusIndicator(
+                    attemptStatus: attemptStatus,
+                    showDetails: true,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+
+        // Should show warning
+        expect(find.text('Security Warning'), findsOneWidget);
+        expect(find.text('2 attempts remaining'), findsOneWidget);
+
+        // Record more failed attempts to trigger lockout
+        await attemptService.recordFailedAttempt();
+        await attemptService.recordFailedAttempt();
+        attemptStatus = await attemptService.getAttemptStatus();
+        
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Scaffold(
+              body: Column(
+                children: [
+                  SecurityStatusIndicator(
+                    attemptStatus: attemptStatus,
+                    showDetails: true,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+
+        // Should show locked status
+        expect(find.text('Account Locked'), findsOneWidget);
+        expect(find.textContaining('Time remaining:'), findsOneWidget);
+      });
+
+      testWidgets('should handle security recovery flow', (WidgetTester tester) async {
+        // Trigger lockout
+        await attemptService.recordFailedAttempt();
+        await attemptService.recordFailedAttempt();
+        await attemptService.recordFailedAttempt();
+        
+        var attemptStatus = await attemptService.getAttemptStatus();
+        expect(attemptStatus.isLockedOut, isTrue);
+
+        // Simulate successful recovery
+        await attemptService.recordSuccessfulAttempt();
+        attemptStatus = await attemptService.getAttemptStatus();
+        
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Scaffold(
+              body: SecurityStatusIndicator(
+                attemptStatus: attemptStatus,
+                showDetails: true,
+              ),
+            ),
+          ),
+        );
+
+        // Should be back to secure state
+        expect(find.text('Security Status: Good'), findsOneWidget);
+        expect(attemptStatus.failedAttempts, equals(0));
+        expect(attemptStatus.isLockedOut, isFalse);
+      });
+    });
+
+    group('Accessibility Tests', () {
+      testWidgets('should have proper accessibility labels', (WidgetTester tester) async {
+        final attemptStatus = await attemptService.getAttemptStatus();
+        
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Scaffold(
+              body: EnhancedPasswordDialog(
+                attemptStatus: attemptStatus,
+                onSubmit: (password) {},
+                onCancel: () {},
+                onForgotPassword: () {},
+              ),
+            ),
+          ),
+        );
+
+        // Check for semantic labels
+        expect(find.byType(TextField), findsOneWidget);
+        expect(find.text('Parental Key'), findsOneWidget);
+        
+        // Buttons should be accessible
+        expect(find.text('Verify'), findsOneWidget);
+        expect(find.text('Cancel'), findsOneWidget);
+        expect(find.text('Forgot Password?'), findsOneWidget);
+      });
+
+      testWidgets('should support keyboard navigation', (WidgetTester tester) async {
+        final attemptStatus = await attemptService.getAttemptStatus();
+        
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Scaffold(
+              body: EnhancedPasswordDialog(
+                attemptStatus: attemptStatus,
+                onSubmit: (password) {},
+                onCancel: () {},
+                onForgotPassword: () {},
+              ),
+            ),
+          ),
+        );
+
+        // Should be able to focus on text field
+        await tester.tap(find.byType(TextField));
+        await tester.pump();
+        
+        // Enter text via keyboard
+        await tester.enterText(find.byType(TextField), 'test');
+        expect(find.text('test'), findsOneWidget);
+      });
+    });
+
+    group('Performance Tests', () {
+      testWidgets('should handle rapid state changes efficiently', (WidgetTester tester) async {
+        var attemptStatus = await attemptService.getAttemptStatus();
+        
+        // Create widget
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Scaffold(
+              body: SecurityStatusIndicator(
+                attemptStatus: attemptStatus,
+                showDetails: true,
+              ),
+            ),
+          ),
+        );
+
+        // Rapidly change state multiple times
         for (int i = 0; i < 5; i++) {
-          expect(attemptService.canAttemptVerification(userId), isFalse);
+          await attemptService.recordFailedAttempt();
+          attemptStatus = await attemptService.getAttemptStatus();
           
-          // Even recording more failed attempts shouldn't change lockout state
-          attemptService.recordFailedAttempt(userId);
-          expect(attemptService.isUserLockedOut(userId), isTrue);
-        }
-      });
-
-      test('should handle legitimate user mixed with attack attempts', () {
-        const legitimateUser = 'legitimate-user';
-        const attackerUser = 'attacker-user';
-        
-        // Legitimate user makes a few failed attempts
-        attemptService.recordFailedAttempt(legitimateUser);
-        attemptService.recordFailedAttempt(legitimateUser);
-        
-        // Attacker gets locked out
-        for (int i = 0; i < AttemptLimitingService.MAX_ATTEMPTS; i++) {
-          attemptService.recordFailedAttempt(attackerUser);
-        }
-        
-        // Legitimate user should still be able to attempt
-        expect(attemptService.canAttemptVerification(legitimateUser), isTrue);
-        expect(attemptService.getFailedAttemptCount(legitimateUser), equals(2));
-        
-        // Attacker should be locked out
-        expect(attemptService.canAttemptVerification(attackerUser), isFalse);
-        expect(attemptService.isUserLockedOut(attackerUser), isTrue);
-        
-        // Legitimate user succeeds
-        attemptService.recordSuccessfulAttempt(legitimateUser);
-        expect(attemptService.getFailedAttemptCount(legitimateUser), equals(0));
-        
-        // Attacker still locked out
-        expect(attemptService.isUserLockedOut(attackerUser), isTrue);
-      });
-    });
-
-    group('Progressive Security Warnings', () {
-      test('should provide appropriate warnings at each attempt level', () {
-        const userId = 'warning-user';
-        
-        // Initial state - normal
-        var status = attemptService.getLockoutStatus(userId);
-        expect(status.state, equals(LockoutState.normal));
-        expect(status.message, contains('Enter your parental key'));
-        
-        // First failed attempt - warning
-        attemptService.recordFailedAttempt(userId);
-        status = attemptService.getLockoutStatus(userId);
-        expect(status.state, equals(LockoutState.warning));
-        expect(status.message, contains('Incorrect key'));
-        expect(status.message, contains('2 attempts remaining'));
-        expect(status.attemptsRemaining, equals(2));
-        
-        // Second failed attempt - final warning
-        attemptService.recordFailedAttempt(userId);
-        status = attemptService.getLockoutStatus(userId);
-        expect(status.state, equals(LockoutState.warning));
-        expect(status.message, contains('1 attempt remaining'));
-        expect(status.attemptsRemaining, equals(1));
-        
-        // Third failed attempt - lockout
-        attemptService.recordFailedAttempt(userId);
-        status = attemptService.getLockoutStatus(userId);
-        expect(status.state, equals(LockoutState.lockedOut));
-        expect(status.message, contains('Too many failed attempts'));
-        expect(status.message, contains('Try again in'));
-        expect(status.remainingTime, isNotNull);
-      });
-
-      test('should handle warning escalation correctly', () {
-        const userId = 'escalation-user';
-        
-        // Track message changes through escalation
-        List<String> messages = [];
-        List<LockoutState> states = [];
-        
-        // Initial state
-        var status = attemptService.getLockoutStatus(userId);
-        messages.add(status.message);
-        states.add(status.state);
-        
-        // Record attempts and track changes
-        for (int i = 0; i < AttemptLimitingService.MAX_ATTEMPTS; i++) {
-          attemptService.recordFailedAttempt(userId);
-          status = attemptService.getLockoutStatus(userId);
-          messages.add(status.message);
-          states.add(status.state);
-        }
-        
-        // Verify progression: normal -> warning -> warning -> locked
-        expect(states[0], equals(LockoutState.normal));
-        expect(states[1], equals(LockoutState.warning));
-        expect(states[2], equals(LockoutState.warning));
-        expect(states[3], equals(LockoutState.lockedOut));
-        
-        // Verify messages become more urgent
-        expect(messages[0], contains('Enter your parental key'));
-        expect(messages[1], contains('2 attempts remaining'));
-        expect(messages[2], contains('1 attempt remaining'));
-        expect(messages[3], contains('Too many failed attempts'));
-      });
-    });
-
-    group('Recovery Scenarios', () {
-      test('should handle successful recovery after warnings', () {
-        const userId = 'recovery-user';
-        
-        // Build up to final warning
-        attemptService.recordFailedAttempt(userId);
-        attemptService.recordFailedAttempt(userId);
-        
-        var status = attemptService.getLockoutStatus(userId);
-        expect(status.state, equals(LockoutState.warning));
-        expect(status.attemptsRemaining, equals(1));
-        
-        // Successful attempt should reset everything
-        attemptService.recordSuccessfulAttempt(userId);
-        
-        status = attemptService.getLockoutStatus(userId);
-        expect(status.state, equals(LockoutState.normal));
-        expect(status.failedAttempts, equals(0));
-        expect(status.message, contains('Enter your parental key'));
-      });
-
-      test('should handle recovery from lockout state', () {
-        const userId = 'lockout-recovery-user';
-        
-        // Lock out user
-        for (int i = 0; i < AttemptLimitingService.MAX_ATTEMPTS; i++) {
-          attemptService.recordFailedAttempt(userId);
-        }
-        
-        expect(attemptService.isUserLockedOut(userId), isTrue);
-        
-        // Successful attempt should unlock immediately
-        attemptService.recordSuccessfulAttempt(userId);
-        
-        expect(attemptService.isUserLockedOut(userId), isFalse);
-        expect(attemptService.canAttemptVerification(userId), isTrue);
-        expect(attemptService.getFailedAttemptCount(userId), equals(0));
-        
-        final status = attemptService.getLockoutStatus(userId);
-        expect(status.state, equals(LockoutState.normal));
-      });
-
-      test('should handle administrative reset scenarios', () {
-        const userId = 'admin-reset-user';
-        
-        // Lock out user
-        for (int i = 0; i < AttemptLimitingService.MAX_ATTEMPTS; i++) {
-          attemptService.recordFailedAttempt(userId);
-        }
-        
-        expect(attemptService.isUserLockedOut(userId), isTrue);
-        
-        // Administrative reset
-        attemptService.resetUserAttempts(userId);
-        
-        expect(attemptService.isUserLockedOut(userId), isFalse);
-        expect(attemptService.canAttemptVerification(userId), isTrue);
-        expect(attemptService.getFailedAttemptCount(userId), equals(0));
-        
-        // User should be able to attempt verification immediately
-        attemptService.recordFailedAttempt(userId);
-        expect(attemptService.getFailedAttemptCount(userId), equals(1));
-        expect(attemptService.canAttemptVerification(userId), isTrue);
-      });
-    });
-
-    group('Concurrent User Scenarios', () {
-      test('should handle multiple users with different security states', () {
-        const user1 = 'user1';
-        const user2 = 'user2';
-        const user3 = 'user3';
-        
-        // User1: Normal state
-        var status1 = attemptService.getLockoutStatus(user1);
-        expect(status1.state, equals(LockoutState.normal));
-        
-        // User2: Warning state
-        attemptService.recordFailedAttempt(user2);
-        var status2 = attemptService.getLockoutStatus(user2);
-        expect(status2.state, equals(LockoutState.warning));
-        
-        // User3: Locked out
-        for (int i = 0; i < AttemptLimitingService.MAX_ATTEMPTS; i++) {
-          attemptService.recordFailedAttempt(user3);
-        }
-        var status3 = attemptService.getLockoutStatus(user3);
-        expect(status3.state, equals(LockoutState.lockedOut));
-        
-        // Verify independent states
-        expect(attemptService.canAttemptVerification(user1), isTrue);
-        expect(attemptService.canAttemptVerification(user2), isTrue);
-        expect(attemptService.canAttemptVerification(user3), isFalse);
-        
-        // User1 fails, should not affect others
-        attemptService.recordFailedAttempt(user1);
-        expect(attemptService.getFailedAttemptCount(user1), equals(1));
-        expect(attemptService.getFailedAttemptCount(user2), equals(1));
-        expect(attemptService.getFailedAttemptCount(user3), equals(3));
-        
-        // User2 succeeds, should not affect others
-        attemptService.recordSuccessfulAttempt(user2);
-        expect(attemptService.getFailedAttemptCount(user1), equals(1));
-        expect(attemptService.getFailedAttemptCount(user2), equals(0));
-        expect(attemptService.getFailedAttemptCount(user3), equals(3));
-        expect(attemptService.isUserLockedOut(user3), isTrue);
-      });
-
-      test('should handle rapid concurrent attempts from same user', () {
-        const userId = 'concurrent-user';
-        
-        // Simulate rapid concurrent failed attempts
-        final futures = <Future>[];
-        for (int i = 0; i < 10; i++) {
-          futures.add(Future(() {
-            attemptService.recordFailedAttempt(userId);
-          }));
-        }
-        
-        // Wait for all concurrent operations
-        Future.wait(futures);
-        
-        // Should maintain consistent state
-        expect(attemptService.getFailedAttemptCount(userId), equals(10));
-        expect(attemptService.isUserLockedOut(userId), isTrue);
-        expect(attemptService.canAttemptVerification(userId), isFalse);
-        
-        // Lockout should still be enforced
-        final status = attemptService.getLockoutStatus(userId);
-        expect(status.state, equals(LockoutState.lockedOut));
-        expect(status.remainingTime, isNotNull);
-      });
-    });
-
-    group('Edge Case Security Scenarios', () {
-      test('should handle system restart simulation', () {
-        const userId = 'restart-user';
-        
-        // Build up failed attempts
-        attemptService.recordFailedAttempt(userId);
-        attemptService.recordFailedAttempt(userId);
-        expect(attemptService.getFailedAttemptCount(userId), equals(2));
-        
-        // Simulate system restart by creating new service instance
-        final newService = AttemptLimitingService(); // Singleton, same instance
-        
-        // State should be maintained (in real app, this would depend on persistence)
-        expect(newService.getFailedAttemptCount(userId), equals(2));
-        expect(newService.canAttemptVerification(userId), isTrue);
-        
-        // Continue with attempts
-        newService.recordFailedAttempt(userId);
-        expect(newService.isUserLockedOut(userId), isTrue);
-      });
-
-      test('should handle memory cleanup scenarios', () {
-        // Create many users to test memory management
-        for (int i = 0; i < 100; i++) {
-          final userId = 'user$i';
-          attemptService.recordFailedAttempt(userId);
+          await tester.pumpWidget(
+            MaterialApp(
+              home: Scaffold(
+                body: SecurityStatusIndicator(
+                  attemptStatus: attemptStatus,
+                  showDetails: true,
+                ),
+              ),
+            ),
+          );
           
-          if (i % 10 == 0) {
-            // Some users succeed to create mixed state
-            attemptService.recordSuccessfulAttempt(userId);
-          }
+          await tester.pump();
         }
-        
-        // Service should still function correctly
-        const testUser = 'test-cleanup-user';
-        expect(attemptService.canAttemptVerification(testUser), isTrue);
-        
-        attemptService.recordFailedAttempt(testUser);
-        expect(attemptService.getFailedAttemptCount(testUser), equals(1));
-        
-        // Clear all should work
-        attemptService.clearAllAttempts();
-        expect(attemptService.getFailedAttemptCount(testUser), equals(0));
-      });
 
-      test('should handle extreme lockout scenarios', () {
-        const userId = 'extreme-user';
-        
-        // Record many failed attempts beyond lockout
-        for (int i = 0; i < 50; i++) {
-          attemptService.recordFailedAttempt(userId);
-        }
-        
-        // Should still maintain correct lockout state
-        expect(attemptService.isUserLockedOut(userId), isTrue);
-        expect(attemptService.canAttemptVerification(userId), isFalse);
-        expect(attemptService.getFailedAttemptCount(userId), equals(50));
-        
-        // Recovery should still work
-        attemptService.recordSuccessfulAttempt(userId);
-        expect(attemptService.isUserLockedOut(userId), isFalse);
-        expect(attemptService.getFailedAttemptCount(userId), equals(0));
-      });
-    });
-
-    group('Security Metrics and Monitoring', () {
-      test('should provide comprehensive security metrics', () {
-        const user1 = 'metrics-user1';
-        const user2 = 'metrics-user2';
-        
-        // Create different security states
-        attemptService.recordFailedAttempt(user1);
-        
-        for (int i = 0; i < AttemptLimitingService.MAX_ATTEMPTS; i++) {
-          attemptService.recordFailedAttempt(user2);
-        }
-        
-        // Verify individual user metrics
-        final status1 = attemptService.getLockoutStatus(user1);
-        final status2 = attemptService.getLockoutStatus(user2);
-        
-        expect(status1.failedAttempts, equals(1));
-        expect(status1.attemptsRemaining, equals(2));
-        expect(status1.state, equals(LockoutState.warning));
-        
-        expect(status2.failedAttempts, equals(3));
-        expect(status2.attemptsRemaining, isNull);
-        expect(status2.state, equals(LockoutState.lockedOut));
-        expect(status2.remainingTime, isNotNull);
-      });
-
-      test('should track security events over time', () {
-        const userId = 'tracking-user';
-        
-        // Simulate security events over time
-        List<LockoutState> stateHistory = [];
-        
-        // Initial state
-        stateHistory.add(attemptService.getLockoutStatus(userId).state);
-        
-        // Failed attempts
-        for (int i = 0; i < AttemptLimitingService.MAX_ATTEMPTS; i++) {
-          attemptService.recordFailedAttempt(userId);
-          stateHistory.add(attemptService.getLockoutStatus(userId).state);
-        }
-        
-        // Recovery
-        attemptService.recordSuccessfulAttempt(userId);
-        stateHistory.add(attemptService.getLockoutStatus(userId).state);
-        
-        // Verify state progression
-        expect(stateHistory, equals([
-          LockoutState.normal,    // Initial
-          LockoutState.warning,   // 1 failed
-          LockoutState.warning,   // 2 failed
-          LockoutState.lockedOut, // 3 failed (locked)
-          LockoutState.normal,    // Recovery
-        ]));
+        // Should handle rapid updates without issues
+        expect(find.byType(SecurityStatusIndicator), findsOneWidget);
       });
     });
   });
