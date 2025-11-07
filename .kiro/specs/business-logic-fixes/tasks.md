@@ -214,7 +214,8 @@
   - Test user profile validation during authentication
   - _Requirements: 5.1, 5.2, 5.3, 5.4, 5.5_
 
-- [ ] 6. Improve Consent System Validation
+- [x] 6. Improve Consent System Validation
+
   - Enhance consent form validation and error handling
   - Implement proper parental key confirmation matching
   - Add comprehensive validation for required consent checkboxes
@@ -247,7 +248,10 @@
   - Implement secure validation against stored hashes
   - _Requirements: 6.3_
 
-- [ ] 6.4 Add tests for consent system improvements
+- [x] 6.4 Add tests for consent system improvements
+
+
+
   - Test form validation logic and error handling
   - Verify security question validation
   - Test successful consent submission flow
