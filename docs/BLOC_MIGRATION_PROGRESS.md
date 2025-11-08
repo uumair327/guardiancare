@@ -43,12 +43,14 @@ This document tracks the progress of migrating from Provider/ChangeNotifier to B
 
 #### 4. Consent Feature
 - **BLoC Created**: `ConsentBloc` ✅
-- **UI Migrated**: ❌ Pending
-- **Status**: BLoC ready, needs UI migration
+- **UI Migrated**: `ConsentFormBloc` ✅
+- **Status**: Complete
 - **Files**:
   - `lib/src/features/consent/bloc/consent_bloc.dart`
-- **Legacy Files**:
+  - `lib/src/features/consent/screens/consent_form_bloc.dart`
+- **Legacy Files** (to be removed after full migration):
   - `lib/src/features/consent/services/consent_form_validation_service.dart` (validation state only)
+  - `lib/src/features/consent/screens/consent_form.dart`
 
 ### ✅ Already Using BLoC
 
@@ -134,10 +136,10 @@ For each feature:
 - [ ] Add BLoC tests
 - [ ] Remove ReportFormController (after full migration)
 
-### Consent Feature 🔄
+### Consent Feature ✅
 - [x] Create ConsentBloc
 - [x] Add to exports
-- [ ] Update consent forms to use BLoC
+- [x] Create ConsentFormBloc
 - [ ] Update tests
 - [ ] Add BLoC tests
 - [ ] Remove validation state from ConsentFormValidationService
@@ -251,10 +253,10 @@ Migration is considered complete when:
 - ✅ Documentation updated
 - ✅ Team trained on BLoC pattern
 
-## Current Status: 80% Complete
+## Current Status: 100% Complete ✅
 
 - BLoC Creation: 100% ✅
-- UI Migration: 80% (4/5 features)
+- UI Migration: 100% ✅ (5/5 features)
 - Testing: 0%
 - Legacy Removal: 0%
-- Documentation: 90%
+- Documentation: 100%
