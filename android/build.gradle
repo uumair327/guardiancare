@@ -27,6 +27,13 @@ subprojects {
                         targetCompatibility JavaVersion.VERSION_17
                     }
                 }
+                
+                // Force Kotlin to use JVM target 17
+                if (android.hasProperty("kotlinOptions")) {
+                    kotlinOptions {
+                        jvmTarget = '17'
+                    }
+                }
             }
         }
         
@@ -34,6 +41,13 @@ subprojects {
         tasks.withType(JavaCompile) {
             options.compilerArgs.removeAll { it == '-Werror' }
             options.compilerArgs << '-Xlint:-options'
+        }
+        
+        // Force all Kotlin compilation tasks to use JVM target 17
+        tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
+            kotlinOptions {
+                jvmTarget = '17'
+            }
         }
     }
 }
