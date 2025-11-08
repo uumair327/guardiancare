@@ -1072,45 +1072,7 @@ class ConsentController {
     // But we could remove any listeners if we had them
   }
 
-  // Logic to handle password reset (verify security question and update password)
-  Future<void> resetParentalKey(String answer, String newPassword) async {
-    try {
-      // Ensure the user is authenticated
-      User? user = _auth.currentUser;
-      if (user == null) {
-        throw Exception('User is not authenticated.');
-      }
 
-      final consentDocRef = _firestore.collection('consents').doc(user.uid);
-      final consentDoc = await consentDocRef.get();
-
-      if (!consentDoc.exists) {
-        throw Exception('No consent data found for the user.');
-      }
-
-      String storedAnswerHash = consentDoc.get('securityAnswer');
-      String enteredAnswerHash = hashSecurityAnswer(answer);
-
-      if (storedAnswerHash != enteredAnswerHash) {
-        throw Exception('The provided answer does not match the stored security answer.');
-      }
-
-      // Hash the new parental key
-      String hashedNewPassword = hashParentalKey(newPassword);
-
-      // Update the parental key in Firestore
-      await consentDocRef.update({
-        'parentalKey': hashedNewPassword,
-      });
-
-      // Reset attempts after successful password reset
-      await _attemptService.recordSuccessfulAttempt();
-
-      print('Parental key updated successfully.');
-    } catch (e) {
-      throw Exception('Error resetting parental key: $e');
-    }
-  }
 
   Future<void> verifyParentalKeyWithError(
     BuildContext context, {
