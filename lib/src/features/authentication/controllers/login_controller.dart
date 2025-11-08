@@ -29,6 +29,9 @@ class AuthenticationService {
     Duration currentTimeout = _baseTimeout;
     Duration currentRetryDelay = _baseRetryDelay;
     
+    // Initialize GoogleSignIn instance
+    final GoogleSignIn googleSignIn = GoogleSignIn();
+    
     while (attemptCount < _maxRetries) {
       attemptCount++;
       
@@ -36,7 +39,7 @@ class AuthenticationService {
         print("🔐 Authentication attempt $attemptCount/$_maxRetries (timeout: ${currentTimeout.inSeconds}s)");
         
         // Step 1: Google Sign-In
-        final GoogleSignInAccount? googleUser = await GoogleSignIn()
+        final GoogleSignInAccount? googleUser = await googleSignIn
             .signIn()
             .timeout(currentTimeout);
         
@@ -51,17 +54,11 @@ class AuthenticationService {
         
         print("✅ Google user obtained: ${googleUser.email}");
 
-        // Step 2: Get authentication credentials
-        final GoogleSignInAuthentication? googleAuth =
-            await googleUser.authentication.timeout(currentTimeout);
-        
-        if (googleAuth == null) {
-          throw AuthenticationException(
-            'Failed to get authentication credentials',
-            'auth_credentials_failed',
-            AuthErrorType.credential,
-          );
-        }
+        // Step 2: Get authentication credentials with timeout wrapper
+        final GoogleSignInAuthentication googleAuth = await Future.any([
+          googleUser.authentication,
+          Future.delayed(currentTimeout, () => throw TimeoutException('Authentication timeout')),
+        ]);
         
         print("✅ Google authentication credentials obtained");
 
@@ -371,7 +368,8 @@ class AuthenticationService {
       print("✅ Firebase sign out completed");
       
       // Step 2: Sign out from Google
-      await GoogleSignIn().signOut().timeout(const Duration(seconds: 10));
+      final GoogleSignIn googleSignIn = GoogleSignIn();
+      await googleSignIn.signOut().timeout(const Duration(seconds: 10));
       print("✅ Google sign out completed");
       
       // Step 3: Clear local session data
