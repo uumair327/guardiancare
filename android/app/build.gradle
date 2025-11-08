@@ -33,7 +33,7 @@ if (keystorePropertiesFile.exists()) {
 }
 android {
     namespace = "app.guardiancare.guardiancare"
-    compileSdk = 34
+    compileSdk = 36
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
