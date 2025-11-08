@@ -21,11 +21,12 @@ This document tracks the progress of migrating from Provider/ChangeNotifier to B
 
 #### 2. Forum Feature
 - **BLoC Created**: `CommentBloc` ✅
-- **UI Migrated**: ❌ Pending
-- **Status**: BLoC ready, needs UI migration
+- **UI Migrated**: `CommentInputBloc` ✅
+- **Status**: Complete
 - **Files**:
   - `lib/src/features/forum/bloc/comment_bloc.dart`
-- **Legacy Files**:
+  - `lib/src/features/forum/widgets/comment_input_bloc.dart`
+- **Legacy Files** (to be removed after full migration):
   - `lib/src/features/forum/controllers/comment_controller.dart`
   - `lib/src/features/forum/widgets/comment_input.dart`
 
@@ -116,10 +117,10 @@ For each feature:
 - [ ] Add BLoC tests
 - [ ] Remove QuizStateManager (after full migration)
 
-### Forum Feature 🔄
+### Forum Feature ✅
 - [x] Create CommentBloc
 - [x] Add to exports
-- [ ] Create CommentInputBloc widget
+- [x] Create CommentInputBloc widget
 - [ ] Update tests
 - [ ] Add BLoC tests
 - [ ] Remove CommentController (after full migration)
@@ -249,10 +250,10 @@ Migration is considered complete when:
 - ✅ Documentation updated
 - ✅ Team trained on BLoC pattern
 
-## Current Status: 40% Complete
+## Current Status: 60% Complete
 
 - BLoC Creation: 100% ✅
-- UI Migration: 20% (1/5 features)
+- UI Migration: 60% (3/5 features)
 - Testing: 0%
 - Legacy Removal: 0%
 - Documentation: 80%
