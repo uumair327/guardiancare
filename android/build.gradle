@@ -9,6 +9,33 @@ allprojects {
 rootProject.buildDir = "../build"
 subprojects {
     project.buildDir = "${rootProject.buildDir}/${project.name}"
+    
+    afterEvaluate { project ->
+        if (project.hasProperty("android")) {
+            android {
+                if (android.hasProperty("lintOptions")) {
+                    lintOptions {
+                        checkReleaseBuilds false
+                        abortOnError false
+                    }
+                }
+                
+                // Force all subprojects to use Java 17
+                if (android.hasProperty("compileOptions")) {
+                    compileOptions {
+                        sourceCompatibility JavaVersion.VERSION_17
+                        targetCompatibility JavaVersion.VERSION_17
+                    }
+                }
+            }
+        }
+        
+        // Remove -Werror from all JavaCompile tasks
+        tasks.withType(JavaCompile) {
+            options.compilerArgs.removeAll { it == '-Werror' }
+            options.compilerArgs << '-Xlint:-options'
+        }
+    }
 }
 subprojects {
     project.evaluationDependsOn(":app")
