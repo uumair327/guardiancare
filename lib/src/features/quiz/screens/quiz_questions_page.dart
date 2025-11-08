@@ -146,6 +146,7 @@ class _QuizQuestionsPageState extends State<QuizQuestionsPage> {
           ],
         ),
       ),
+      ),
     );
   }
 
