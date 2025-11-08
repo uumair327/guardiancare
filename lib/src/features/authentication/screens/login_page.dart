@@ -56,10 +56,10 @@ class _LoginPageState extends State<LoginPage> {
               onPressed: () async {
                 Navigator.of(context).pop(); // Close the dialog
                 // Proceed with Google sign-in if terms are accepted
-                UserCredential? userCredential = await signInWithGoogle();
+                final result = await signInWithGoogle();
 
-                if (userCredential != null) {
-                  print("Signed in: ${userCredential.user?.displayName}");
+                if (result.success && result.userCredential != null) {
+                  print("Signed in: ${result.userCredential!.user?.displayName}");
                 }
               },
             ),
