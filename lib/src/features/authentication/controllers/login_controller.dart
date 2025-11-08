@@ -4,87 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
-
-// Enhanced exception classes for better error handling
-class AuthenticationException implements Exception {
-  final String message;
-  final String code;
-  final AuthErrorType errorType;
-  
-  AuthenticationException(this.message, this.code, this.errorType);
-  
-  @override
-  String toString() => message;
-}
-
-/// Types of authentication errors for better categorization
-enum AuthErrorType {
-  network,
-  credential,
-  permission,
-  validation,
-  timeout,
-  cancelled,
-  system,
-}
-
-/// Enhanced authentication result with detailed information
-class AuthResult {
-  final bool success;
-  final String? error;
-  final UserCredential? userCredential;
-  final AuthErrorType? errorType;
-  final int? attemptCount;
-  final Duration? totalDuration;
-  final Map<String, dynamic>? metadata;
-  
-  AuthResult._({
-    required this.success,
-    this.error,
-    this.userCredential,
-    this.errorType,
-    this.attemptCount,
-    this.totalDuration,
-    this.metadata,
-  });
-  
-  factory AuthResult.success(
-    UserCredential userCredential, {
-    int? attemptCount,
-    Duration? totalDuration,
-    Map<String, dynamic>? metadata,
-  }) {
-    return AuthResult._(
-      success: true,
-      userCredential: userCredential,
-      attemptCount: attemptCount,
-      totalDuration: totalDuration,
-      metadata: metadata,
-    );
-  }
-  
-  factory AuthResult.failure(
-    String error,
-    AuthErrorType errorType, {
-    int? attemptCount,
-    Duration? totalDuration,
-    Map<String, dynamic>? metadata,
-  }) {
-    return AuthResult._(
-      success: false,
-      error: error,
-      errorType: errorType,
-      attemptCount: attemptCount,
-      totalDuration: totalDuration,
-      metadata: metadata,
-    );
-  }
-
-  @override
-  String toString() {
-    return 'AuthResult{success: $success, error: $error, errorType: $errorType, attempts: $attemptCount}';
-  }
-}
+import 'package:guardiancare/src/features/authentication/models/auth_models.dart';
 
 /// Enhanced authentication service with improved retry logic
 class AuthenticationService {
@@ -260,115 +180,6 @@ class AuthenticationService {
       totalDuration: stopwatch.elapsed,
     );
   }
-
-Future<AuthResult> signInWithGoogle() async {
-  const int maxRetries = 3;
-  const Duration timeout = Duration(seconds: 30);
-  
-  for (int attempt = 1; attempt <= maxRetries; attempt++) {
-    try {
-      print("Authentication attempt $attempt/$maxRetries");
-      
-      final GoogleSignInAccount? googleUser = await GoogleSignIn()
-          .signIn()
-          .timeout(timeout);
-      
-      if (googleUser == null) {
-        return AuthResult.failure('Sign-in was cancelled by user');
-      }
-      
-      print("Google user obtained: ${googleUser.email}");
-
-      final GoogleSignInAuthentication? googleAuth =
-          await googleUser.authentication.timeout(timeout);
-      
-      if (googleAuth == null) {
-        return AuthResult.failure('Failed to get authentication credentials');
-      }
-      
-      print("Google authentication obtained");
-
-      final credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
-      );
-
-      final UserCredential userCredential = await FirebaseAuth.instance
-          .signInWithCredential(credential)
-          .timeout(timeout);
-      
-      print("Firebase authentication successful: ${userCredential.user?.email}");
-
-      final user = userCredential.user;
-      if (user != null) {
-        // Validate user profile completeness
-        if (user.email == null || user.displayName == null) {
-          throw AuthenticationException(
-            'Incomplete user profile. Please ensure your Google account has a name and email.',
-            'incomplete_profile'
-          );
-        }
-
-        final userDoc = await FirebaseFirestore.instance
-            .collection('users')
-            .doc(user.uid)
-            .get()
-            .timeout(timeout);
-
-        if (!userDoc.exists) {
-          await FirebaseFirestore.instance
-              .collection('users')
-              .doc(user.uid)
-              .set({
-            'displayName': user.displayName,
-            'email': user.email,
-            'photoURL': user.photoURL,
-            'uid': user.uid,
-            'createdAt': FieldValue.serverTimestamp(),
-            'lastLoginAt': FieldValue.serverTimestamp(),
-          }).timeout(timeout);
-          
-          print("New user profile created");
-        } else {
-          // Update last login time
-          await FirebaseFirestore.instance
-              .collection('users')
-              .doc(user.uid)
-              .update({
-            'lastLoginAt': FieldValue.serverTimestamp(),
-          }).timeout(timeout);
-          
-          print("User login time updated");
-        }
-      }
-
-      return AuthResult.success(userCredential);
-      
-    } on TimeoutException {
-      if (attempt == maxRetries) {
-        return AuthResult.failure('Connection timeout. Please check your internet connection and try again.');
-      }
-      print("Timeout on attempt $attempt, retrying...");
-      await Future.delayed(Duration(seconds: attempt * 2)); // Exponential backoff
-      
-    } on FirebaseAuthException catch (e) {
-      return AuthResult.failure(_getReadableAuthError(e));
-      
-    } on AuthenticationException catch (e) {
-      return AuthResult.failure(e.message);
-      
-    } catch (e) {
-      if (attempt == maxRetries) {
-        print("Error signing in with Google: $e");
-        return AuthResult.failure('An unexpected error occurred. Please try again.');
-      }
-      print("Error on attempt $attempt: $e, retrying...");
-      await Future.delayed(Duration(seconds: attempt * 2));
-    }
-  }
-  
-  return AuthResult.failure('Failed to sign in after $maxRetries attempts');
-}
 
   /// Validate and setup user profile with enhanced checks
   Future<void> _validateAndSetupUserProfile(User user, Duration timeout) async {
@@ -646,13 +457,6 @@ Future<AuthResult> signInWithGoogle() async {
       'lastSignInTime': user.metadata.lastSignInTime?.toIso8601String(),
     };
   }
-}
-
-/// Authentication status enumeration
-enum AuthStatus {
-  signedOut,
-  signedIn,
-  incompleteProfile,
 }
 
 // Backward compatibility functions
