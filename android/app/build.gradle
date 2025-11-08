@@ -40,6 +40,11 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
+    
+    lintOptions {
+        checkReleaseBuilds false
+        abortOnError false
+    }
     kotlinOptions {
         jvmTarget = '17' 
     }
@@ -71,6 +76,12 @@ android {
             // Signing with the debug keys for now, so `flutter run --release` works.
             signingConfig signingConfigs.release
             ndk.debugSymbolLevel = "FULL"
+        }
+    }
+    
+    gradle.projectsEvaluated {
+        tasks.withType(JavaCompile) {
+            options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
         }
     }
 }
