@@ -29,10 +29,8 @@ class AuthenticationService {
     Duration currentTimeout = _baseTimeout;
     Duration currentRetryDelay = _baseRetryDelay;
     
-    // Initialize GoogleSignIn instance with standard configuration
-    final GoogleSignIn googleSignIn = GoogleSignIn(
-      scopes: ['email', 'profile'],
-    );
+    // Initialize GoogleSignIn instance
+    final GoogleSignIn googleSignIn = GoogleSignIn();
     
     while (attemptCount < _maxRetries) {
       attemptCount++;
@@ -42,9 +40,7 @@ class AuthenticationService {
         
         // Step 1: Google Sign-In
         final GoogleSignInAccount? googleUser = await googleSignIn
-            .signInSilently()
-            .timeout(currentTimeout)
-            .catchError((_) => googleSignIn.signInInteractively())
+            .signIn()
             .timeout(currentTimeout);
         
         if (googleUser == null) {
@@ -58,15 +54,16 @@ class AuthenticationService {
         
         print("✅ Google user obtained: ${googleUser.email}");
 
-        // Step 2: Get authentication credentials
-        final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+        // Step 2: Get authentication credentials with timeout
+        final GoogleSignInAuthentication googleAuth = await googleUser.authentication
+            .timeout(currentTimeout);
         
         print("✅ Google authentication credentials obtained");
 
         // Step 3: Create Firebase credential
         final credential = GoogleAuthProvider.credential(
-          accessToken: googleAuth.data?.accessToken,
-          idToken: googleAuth.data?.idToken,
+          accessToken: googleAuth.accessToken,
+          idToken: googleAuth.idToken,
         );
 
         // Step 4: Sign in to Firebase
@@ -369,9 +366,7 @@ class AuthenticationService {
       print("✅ Firebase sign out completed");
       
       // Step 2: Sign out from Google
-      final GoogleSignIn googleSignIn = GoogleSignIn(
-        scopes: ['email', 'profile'],
-      );
+      final GoogleSignIn googleSignIn = GoogleSignIn();
       await googleSignIn.signOut().timeout(const Duration(seconds: 10));
       print("✅ Google sign out completed");
       
