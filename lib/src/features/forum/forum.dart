@@ -2,4 +2,5 @@
 export 'bloc/comment_bloc.dart';
 export 'controllers/comment_controller.dart'; // Legacy - migrate to BLoC
 export 'services/comment_submission_service.dart';
-export 'widgets/comment_input.dart';
+export 'widgets/comment_input.dart'; // Legacy - use comment_input_bloc.dart
+export 'widgets/comment_input_bloc.dart'; // New BLoC version
