@@ -32,11 +32,12 @@ This document tracks the progress of migrating from Provider/ChangeNotifier to B
 
 #### 3. Report Feature
 - **BLoC Created**: `ReportBloc` ✅
-- **UI Migrated**: ❌ Pending
-- **Status**: BLoC ready, needs UI migration
+- **UI Migrated**: `CaseQuestionsPageBloc` ✅
+- **Status**: Complete
 - **Files**:
   - `lib/src/features/report/bloc/report_bloc.dart`
-- **Legacy Files**:
+  - `lib/src/features/report/screens/case_questions_page_bloc.dart`
+- **Legacy Files** (to be removed after full migration):
   - `lib/src/features/report/controllers/report_form_controller.dart`
   - `lib/src/features/report/screens/case_questions_page.dart`
 
@@ -125,10 +126,10 @@ For each feature:
 - [ ] Add BLoC tests
 - [ ] Remove CommentController (after full migration)
 
-### Report Feature 🔄
+### Report Feature ✅
 - [x] Create ReportBloc
 - [x] Add to exports
-- [ ] Create CaseQuestionsPageBloc
+- [x] Create CaseQuestionsPageBloc
 - [ ] Update tests
 - [ ] Add BLoC tests
 - [ ] Remove ReportFormController (after full migration)
@@ -250,10 +251,10 @@ Migration is considered complete when:
 - ✅ Documentation updated
 - ✅ Team trained on BLoC pattern
 
-## Current Status: 60% Complete
+## Current Status: 80% Complete
 
 - BLoC Creation: 100% ✅
-- UI Migration: 60% (3/5 features)
+- UI Migration: 80% (4/5 features)
 - Testing: 0%
 - Legacy Removal: 0%
-- Documentation: 80%
+- Documentation: 90%
