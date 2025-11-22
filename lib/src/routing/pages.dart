@@ -1,15 +1,25 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:guardiancare/core/di/injection_container.dart';
 import 'package:guardiancare/src/constants/colors.dart';
-import 'package:guardiancare/src/core/core.dart';
-import 'package:guardiancare/src/features/authentication/authentication.dart';
-import 'package:guardiancare/src/features/consent/consent.dart';
-import 'package:guardiancare/src/features/consent/screens/password_dialog.dart';
-import 'package:guardiancare/src/features/explore/screens/explore.dart';
-import 'package:guardiancare/src/features/forum/screens/forum_page.dart';
-import 'package:guardiancare/src/features/home/screens/home_page.dart';
+import 'package:guardiancare/features/consent/presentation/bloc/consent_bloc.dart';
+import 'package:guardiancare/features/consent/presentation/pages/enhanced_consent_form_page.dart';
+import 'package:guardiancare/features/consent/presentation/widgets/forgot_parental_key_dialog.dart';
+import 'package:guardiancare/core/widgets/parental_verification_dialog.dart';
+import 'package:guardiancare/core/services/parental_verification_service.dart';
+import 'package:guardiancare/features/explore/presentation/bloc/explore_bloc.dart';
+import 'package:guardiancare/features/explore/presentation/pages/explore_page.dart';
+import 'package:guardiancare/features/forum/presentation/bloc/forum_bloc.dart';
+import 'package:guardiancare/features/forum/presentation/pages/forum_page.dart';
+import 'package:guardiancare/features/home/presentation/bloc/home_bloc.dart';
+import 'package:guardiancare/features/home/presentation/pages/home_page.dart';
 import 'dart:ui'; // For BackdropFilter
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:crypto/crypto.dart';
+import 'dart:convert';
 
 class Pages extends StatefulWidget {
   const Pages({super.key});
@@ -19,92 +29,291 @@ class Pages extends StatefulWidget {
 }
 
 class _PagesState extends State<Pages> {
+  int index = 0;
+  bool hasSeenConsent = false;
+  bool isCheckingConsent = true; // Add loading state
+  bool hasSeenForumGuidelines = false;
   final GlobalKey<CurvedNavigationBarState> _bottomNavigationKey = GlobalKey();
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
   final TextEditingController formController = TextEditingController();
+  final TextEditingController otpController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    // Check consent status will be handled in the build method
+    _checkAndShowConsent();
+  }
+
+  Future<void> _checkAndShowConsent() async {
+    try {
+      // Get the current user's ID from FirebaseAuth
+      final String? userId = _auth.currentUser?.uid;
+
+      if (userId == null) {
+        // If no user is logged in, default `hasSeenConsent` to false
+        setState(() {
+          hasSeenConsent = false;
+          isCheckingConsent = false;
+        });
+
+        return;
+      }
+
+      // Check if the user's document exists in the 'consents' collection
+      DocumentSnapshot consentDoc =
+          await _firestore.collection('consents').doc(userId).get();
+
+      setState(() {
+        hasSeenConsent = consentDoc.exists; // true if the document exists
+        isCheckingConsent = false; // Done checking
+      });
+    } catch (e) {
+      print("Error fetching consent data: $e");
+
+      setState(() {
+        hasSeenConsent = false; // Default to false if there's an error
+        isCheckingConsent = false;
+      });
+    }
+  }
+
+  void submitConsent() async {
+    setState(() {
+      hasSeenConsent = true;
+    });
   }
 
   void _verifyParentalKeyForForum(BuildContext context, int newIndex) async {
-    await showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return PasswordDialog(
-          onSubmit: (password) async {
-            context.read<ConsentBloc>().add(
-              ParentalKeyVerificationRequested(password),
-            );
-          },
-          onCancel: () {
-            Navigator.of(context).pop();
-            context.read<NavigationCubit>().resetToHome();
-            _bottomNavigationKey.currentState?.setPage(0);
-          },
-          onForgotPassword: () {
-            Navigator.of(context).pop();
-            // Handle forgot password - could show reset dialog
-            context.read<NavigationCubit>().resetToHome();
-            _bottomNavigationKey.currentState?.setPage(0);
-          },
-        );
+    showParentalVerification(
+      context,
+      'Forum',
+      () {
+        setState(() {
+          index = newIndex;
+        });
+        _checkAndShowGuidelines();
       },
     );
   }
-
-  void _showGuidelinesDialog() async {
-    if (!mounted) return;
+  
+  void _verifyParentalKeyForForumOld(BuildContext context, int newIndex) async {
+    // Show dialog to verify parental key
+    final TextEditingController keyController = TextEditingController();
+    bool obscureKey = true;
     
-    final hasSeenGuidelines = await context.read<NavigationCubit>().hasSeenForumGuidelines();
-    
-    if (!hasSeenGuidelines && mounted) {
-      await showDialog<void>(
-        context: context,
-        barrierDismissible: false,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text(
-              'Forum Guidelines',
-              style: TextStyle(
-                color: tPrimaryColor,
-                fontWeight: FontWeight.bold,
+    showDialog(
+      context: context,
+      builder: (dialogContext) => StatefulBuilder(
+        builder: (context, setDialogState) => AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          title: Row(
+            children: const [
+              Icon(Icons.lock, color: tPrimaryColor),
+              SizedBox(width: 12),
+              Text('Parental Verification'),
+            ],
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+                'Enter your parental key to access the forum',
+                style: TextStyle(color: Colors.grey),
               ),
-            ),
-            content: const SingleChildScrollView(
-              child: ListBody(
-                children: <Widget>[
-                  Text(
-                      'Welcome to the guardiancare Global Forum. Kindly follow these guidelines:'),
-                  SizedBox(height: 10),
-                  Text('• Be respectful and courteous to all members.'),
-                  Text(
-                      '• Do not use any language that is abusive, harassing, or harmful.'),
-                  Text(
-                      '• Avoid sharing content that is inappropriate or harmful, especially related to children.'),
-                  Text(
-                      '• Remember that this is a space for constructive discussions on child safety.'),
-                ],
-              ),
-            ),
-            actions: <Widget>[
-              TextButton(
-                child: const Text(
-                  'I Agree',
-                  style: TextStyle(color: tPrimaryColor),
+              const SizedBox(height: 16),
+              TextField(
+                controller: keyController,
+                decoration: InputDecoration(
+                  labelText: 'Parental Key',
+                  hintText: 'Enter your key',
+                  border: const OutlineInputBorder(),
+                  prefixIcon: const Icon(Icons.vpn_key, color: tPrimaryColor),
+                  suffixIcon: IconButton(
+                    icon: Icon(obscureKey ? Icons.visibility : Icons.visibility_off),
+                    onPressed: () {
+                      setDialogState(() {
+                        obscureKey = !obscureKey;
+                      });
+                    },
+                  ),
                 ),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  context.read<NavigationCubit>().markForumGuidelinesAsSeen();
-                },
+                keyboardType: TextInputType.text,
+                obscureText: obscureKey,
+              ),
+              const SizedBox(height: 8),
+              Align(
+                alignment: Alignment.centerRight,
+                child: TextButton(
+                  onPressed: () async {
+                    Navigator.of(dialogContext).pop();
+                    final result = await showDialog<bool>(
+                      context: context,
+                      builder: (context) => const ForgotParentalKeyDialog(),
+                    );
+                    if (result == true) {
+                      // Key was reset successfully
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('You can now use your new parental key'),
+                          backgroundColor: Colors.green,
+                        ),
+                      );
+                    }
+                  },
+                  child: const Text(
+                    'Forgot Key?',
+                    style: TextStyle(color: tPrimaryColor),
+                  ),
+                ),
               ),
             ],
-          );
-        },
-      );
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(dialogContext).pop();
+                setState(() {
+                  index = 0;
+                });
+                _bottomNavigationKey.currentState?.setPage(0);
+              },
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                final key = keyController.text;
+                if (key.length >= 4) {
+                  // Verify key from Firestore
+                  try {
+                    final user = _auth.currentUser;
+                    if (user != null) {
+                      final doc = await _firestore
+                          .collection('consents')
+                          .doc(user.uid)
+                          .get();
+                      
+                      if (doc.exists) {
+                        final storedHash = doc.data()?['parentalKey'] as String?;
+                        final enteredHash = _hashKey(key);
+                        
+                        if (storedHash == enteredHash) {
+                          Navigator.of(dialogContext).pop();
+                          setState(() {
+                            index = newIndex;
+                          });
+                          _checkAndShowGuidelines();
+                        } else {
+                          Navigator.of(dialogContext).pop();
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Invalid parental key'),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                          setState(() {
+                            index = 0;
+                          });
+                          _bottomNavigationKey.currentState?.setPage(0);
+                        }
+                      }
+                    }
+                  } catch (e) {
+                    Navigator.of(dialogContext).pop();
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Error: $e'),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                    setState(() {
+                      index = 0;
+                    });
+                    _bottomNavigationKey.currentState?.setPage(0);
+                  }
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Key must be at least 4 characters'),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                }
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: tPrimaryColor,
+              ),
+              child: const Text('Verify'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+  
+  String _hashKey(String key) {
+    return sha256.convert(utf8.encode(key)).toString();
+  }
+  void _checkAndShowGuidelines() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    hasSeenForumGuidelines =
+        prefs.getBool('has_seen_forum_guidelines') ?? false;
+
+    if (index == 2 && !hasSeenForumGuidelines) {
+      _showGuidelinesDialog();
+      await prefs.setBool('has_seen_forum_guidelines', true);
+      setState(() {
+        hasSeenForumGuidelines = true;
+      });
     }
+  }
+
+  void _showGuidelinesDialog() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // Prevent dismissing by tapping outside
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text(
+            'Forum Guidelines',
+            style: TextStyle(
+              color: tPrimaryColor,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          content: const SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text(
+                    'Welcome to the guardiancare Global Forum. Kindly follow these guidelines:'),
+                SizedBox(height: 10),
+                Text('• Be respectful and courteous to all members.'),
+                Text(
+                    '• Do not use any language that is abusive, harassing, or harmful.'),
+                Text(
+                    '• Avoid sharing content that is inappropriate or harmful, especially related to children.'),
+                Text(
+                    '• Remember that this is a space for constructive discussions on child safety.'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text(
+                'I Agree',
+                style: TextStyle(color: tPrimaryColor),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -116,144 +325,92 @@ class _PagesState extends State<Pages> {
     ];
 
     final screens = <Widget>[
-      const HomePage(),
-      const Explore(),
-      ForumPage(),
+      BlocProvider(
+        create: (_) => sl<HomeBloc>(),
+        child: const HomePage(),
+      ),
+      BlocProvider(
+        create: (_) => sl<ExploreBloc>(),
+        child: const ExplorePage(),
+      ),
+      BlocProvider(
+        create: (_) => sl<ForumBloc>(),
+        child: const ForumPage(),
+      ),
     ];
 
-    return MultiBlocListener(
-      listeners: [
-        BlocListener<ConsentBloc, ConsentState>(
-          listener: (context, state) {
-            if (state is ParentalKeyVerified) {
-              Navigator.of(context).pop(); // Close password dialog
-              context.read<NavigationCubit>().enableForumNavigation();
-              context.read<NavigationCubit>().navigateToForum();
-              _showGuidelinesDialog();
-            } else if (state is ParentalKeyVerificationFailed) {
-              Navigator.of(context).pop(); // Close password dialog
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(state.message)),
-              );
-              context.read<NavigationCubit>().resetToHome();
-              _bottomNavigationKey.currentState?.setPage(0);
-            } else if (state is ConsentSubmitted) {
-              // Consent form was submitted successfully
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Consent submitted successfully!')),
-              );
-            }
-          },
-        ),
-      ],
-      child: BlocBuilder<NavigationCubit, NavigationState>(
-        builder: (context, navigationState) {
-          return BlocBuilder<AuthenticationBloc, AuthenticationState>(
-            builder: (context, authState) {
-              // Check consent status when authenticated user is available
-              if (authState is AuthenticationAuthenticated && 
-                  context.read<ConsentBloc>().state is ConsentInitial) {
-                context.read<ConsentBloc>().add(ConsentCheckRequested(authState.user.uid));
-              }
-              
-              return BlocBuilder<ConsentBloc, ConsentState>(
-                builder: (context, consentState) {
-              return Stack(
-                children: [
-                  Scaffold(
-                    extendBody: true,
-                    appBar: AppBar(
-                      title: const Text(
-                        "Guardian Care",
-                        style: TextStyle(
-                          color: tPrimaryColor,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 25,
-                          fontStyle: FontStyle.italic,
-                        ),
-                      ),
-                      centerTitle: true,
-                    ),
-                    backgroundColor: Colors.white,
-                    body: screens[navigationState.selectedIndex],
-                    bottomNavigationBar: CurvedNavigationBar(
-                      key: _bottomNavigationKey,
-                      items: items,
-                      backgroundColor: Colors.transparent,
-                      color: tNavBarColor,
-                      height: 55,
-                      index: navigationState.selectedIndex,
-                      onTap: (newIndex) {
-                        if (newIndex == 2) {
-                          // If ForumPage is selected, verify parental key
-                          _verifyParentalKeyForForum(context, newIndex);
-                        } else {
-                          context.read<NavigationCubit>().changeTab(newIndex);
-                        }
-                      },
-                    ),
-                  ),
-
-                  // Consent form overlay
-                  if (consentState is ConsentNotGranted)
-                    Positioned.fill(
-                      child: Stack(
-                        children: [
-                          BackdropFilter(
-                            filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
-                            child: Container(
-                              color: Colors.black.withValues(alpha: 0.5),
-                            ),
-                          ),
-                          BlocProvider.value(
-                            value: context.read<ConsentBloc>(),
-                            child: ConsentFormBlocWrapper(
-                              controller: formController,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                ],
-              );
-                },
-              );
-            },
-          );
-        },
-      ),
-    );
-  }
-}
-
-/// Wrapper to integrate ConsentForm with BLoC
-class ConsentFormBlocWrapper extends StatelessWidget {
-  final TextEditingController controller;
-
-  const ConsentFormBlocWrapper({
-    super.key,
-    required this.controller,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    // For now, we'll use a placeholder until we can properly migrate ConsentForm
-    // This maintains the existing functionality while we transition
-    return Container(
-      color: Colors.white,
-      child: const Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            CircularProgressIndicator(),
-            SizedBox(height: 16),
-            Text(
-              'Loading consent form...',
-              style: TextStyle(fontSize: 16),
+    return Stack(
+      children: [
+        Scaffold(
+          extendBody: true,
+          appBar: AppBar(
+            title: const Text(
+              "Guardian Care",
+              style: TextStyle(
+                color: tPrimaryColor,
+                fontWeight: FontWeight.bold,
+                fontSize: 25,
+                fontStyle: FontStyle.italic,
+              ),
             ),
-          ],
+            centerTitle: true,
+          ),
+          backgroundColor: Colors.white,
+          body: screens[index],
+          bottomNavigationBar: CurvedNavigationBar(
+            key: _bottomNavigationKey,
+            items: items,
+            backgroundColor: Colors.transparent,
+            color: tNavBarColor,
+            height: 55,
+            index: index,
+            onTap: (newIndex) {
+              if (newIndex == 2) {
+                // If ForumPage is selected, verify parental key
+                _verifyParentalKeyForForum(context, newIndex);
+              } else {
+                setState(() {
+                  index = newIndex;
+                });
+              }
+            },
+          ),
         ),
-      ),
+
+        // Loading indicator while checking consent
+        if (isCheckingConsent)
+          Positioned.fill(
+            child: Container(
+              color: Colors.white,
+              child: const Center(
+                child: CircularProgressIndicator(
+                  color: tPrimaryColor,
+                ),
+              ),
+            ),
+          ),
+
+        // Consent form overlay
+        if (!hasSeenConsent && !isCheckingConsent)
+          Positioned.fill(
+            child: Stack(
+              children: [
+                BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
+                  child: Container(
+                    color: Colors.black.withOpacity(0.5),
+                  ),
+                ),
+                BlocProvider(
+                  create: (_) => sl<ConsentBloc>(),
+                  child: EnhancedConsentFormPage(
+                    onSubmit: submitConsent,
+                  ),
+                ),
+              ],
+            ),
+          ),
+      ],
     );
   }
 }
