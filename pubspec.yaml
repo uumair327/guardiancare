@@ -67,19 +67,36 @@ dev_dependencies:
   hive_generator: ^2.0.1
 
 flutter_native_splash:
+  # Splash screen configuration
   android: true
   ios: true
+  web: false
+  
+  # Background color (white for clean look)
   color: "#ffffff"
   color_dark: "#ffffff"
+  
+  # Your custom logo
   image: "assets/logo/logo_splash.png"
   image_dark: "assets/logo/logo_splash.png"
+  
+  # Branding (optional - bottom text)
+  # branding: "assets/logo/branding.png"
+  # branding_dark: "assets/logo/branding_dark.png"
+  
+  # Android specific
   android_gravity: "center"
-
   android_12:
-    image: assets/logo/logo_splash.png
+    image: "assets/logo/logo_splash.png"
     icon_background_color: "#ffffff"
-    image_dark: assets/logo/logo_splash.png
+    image_dark: "assets/logo/logo_splash.png"
     icon_background_color_dark: "#ffffff"
+  
+  # iOS specific
+  ios_content_mode: "center"
+  
+  # Fullscreen mode
+  fullscreen: true
 
 flutter:
   uses-material-design: true
@@ -87,9 +104,27 @@ flutter:
     - assets/logo/
     
 flutter_launcher_icons:
+  # App icon configuration
   android: "launcher_icon"
   ios: true
   image_path: "assets/logo/logo.png"
+  
+  # Android specific
   min_sdk_android: 23
   adaptive_icon_background: "#ffffff"
   adaptive_icon_foreground: "assets/logo/logo.png"
+  
+  # Remove old launcher icons
+  remove_alpha_ios: true
+  
+  # Web (if needed)
+  web:
+    generate: false
+  
+  # Windows (if needed)
+  windows:
+    generate: false
+  
+  # macOS (if needed)
+  macos:
+    generate: false
