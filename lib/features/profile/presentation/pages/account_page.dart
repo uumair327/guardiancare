@@ -75,10 +75,7 @@ class AccountPage extends StatelessWidget {
           listener: (context, state) {
             if (state is AccountDeleted) {
               // Navigate to login page after successful deletion
-              Navigator.of(context).pushAndRemoveUntil(
-                MaterialPageRoute(builder: (context) => const LoginPage()),
-                (route) => false,
-              );
+              context.go('/login');
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text('Account deleted successfully')),
               );
