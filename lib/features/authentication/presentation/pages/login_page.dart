@@ -83,8 +83,12 @@ class LoginPage extends StatelessWidget {
                 ),
               );
             } else if (state is AuthAuthenticated) {
-              // Navigate to home page
-              Navigator.pushReplacementNamed(context, '/home');
+              // Navigate to home page and remove all previous routes
+              Navigator.pushNamedAndRemoveUntil(
+                context,
+                '/home',
+                (route) => false,
+              );
             }
           },
           builder: (context, state) {
