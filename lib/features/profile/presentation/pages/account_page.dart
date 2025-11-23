@@ -1,11 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:guardiancare/core/di/injection_container.dart';
 import 'package:guardiancare/features/authentication/presentation/bloc/auth_bloc.dart';
 import 'package:guardiancare/features/authentication/presentation/bloc/auth_event.dart';
-import 'package:guardiancare/features/authentication/presentation/pages/login_page.dart';
-import 'package:guardiancare/features/emergency/presentation/pages/emergency_contact_page.dart';
 import 'package:guardiancare/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:guardiancare/features/profile/presentation/bloc/profile_event.dart';
 import 'package:guardiancare/features/profile/presentation/bloc/profile_state.dart';
@@ -148,15 +147,7 @@ class AccountPage extends StatelessWidget {
                       ListTile(
                         leading: const Icon(Icons.phone, color: tPrimaryColor),
                         title: const Text('Emergency Contact'),
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  const EmergencyContactPage(),
-                            ),
-                          );
-                        },
+                        onTap: () => context.push('/emergency'),
                       ),
                       const Divider(),
                       const SizedBox(height: 5),
