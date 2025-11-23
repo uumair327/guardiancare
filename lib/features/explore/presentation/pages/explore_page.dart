@@ -1,9 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:guardiancare/core/constants/app_colors.dart';
 import 'package:guardiancare/core/widgets/content_card.dart';
-import 'package:guardiancare/features/quiz/presentation/pages/quiz_page.dart';
 
 class ExplorePage extends StatelessWidget {
   const ExplorePage({Key? key}) : super(key: key);
@@ -139,12 +139,7 @@ class _RecommendedVideosState extends State<RecommendedVideos> {
                           ),
                           const SizedBox(height: 24),
                           ElevatedButton(
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(builder: (context) => const QuizPage()),
-                              );
-                            },
+                            onPressed: () => context.push('/quiz'),
                             style: ElevatedButton.styleFrom(
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 24, vertical: 12),

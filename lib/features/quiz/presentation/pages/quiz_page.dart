@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:guardiancare/core/constants/app_colors.dart';
-import 'package:guardiancare/features/quiz/presentation/pages/quiz_questions_page.dart';
 
 class QuizPage extends StatefulWidget {
   const QuizPage({Key? key}) : super(key: key);
@@ -116,17 +116,11 @@ class _QuizPageState extends State<QuizPage> {
                       padding: const EdgeInsets.all(8.0),
                       child: InkWell(
                         onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => QuizQuestionsPage(
-                                questions: questions
-                                    .where((question) =>
-                                        question["quiz"] == quizes[index]["name"])
-                                    .toList(),
-                              ),
-                            ),
-                          );
+                          final quizQuestions = questions
+                              .where((question) =>
+                                  question["quiz"] == quizes[index]["name"])
+                              .toList();
+                          context.push('/quiz-questions', extra: quizQuestions);
                         },
                         child: QuizTile(quiz: quizes[index]),
                       ),
