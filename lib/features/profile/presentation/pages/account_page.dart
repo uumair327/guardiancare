@@ -172,20 +172,50 @@ class AccountPage extends StatelessWidget {
                         leading: const Icon(Icons.logout, color: tPrimaryColor),
                         title: const Text('Log Out'),
                         onTap: () async {
-                          // Clear preferences
-                          context
-                              .read<ProfileBloc>()
-                              .add(const ClearPreferencesRequested());
+                          // Show confirmation dialog
+                          bool shouldLogout = await showDialog(
+                            context: context,
+                            builder: (BuildContext dialogContext) {
+                              return AlertDialog(
+                                title: const Text('Log Out',
+                                    style: TextStyle(
+                                        color: tPrimaryColor,
+                                        fontWeight: FontWeight.bold)),
+                                content: const Text(
+                                    'Are you sure you want to log out?'),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(dialogContext).pop(false);
+                                    },
+                                    child: const Text('Cancel'),
+                                  ),
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      Navigator.of(dialogContext).pop(true);
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: tPrimaryColor,
+                                    ),
+                                    child: const Text('Log Out'),
+                                  ),
+                                ],
+                              );
+                            },
+                          ) ?? false;
 
-                          // Sign out using AuthBloc
-                          context.read<AuthBloc>().add(SignOutRequested());
+                          if (shouldLogout && context.mounted) {
+                            // Clear preferences
+                            context
+                                .read<ProfileBloc>()
+                                .add(const ClearPreferencesRequested());
 
-                          // Navigate to login page
-                          Navigator.of(context).pushAndRemoveUntil(
-                            MaterialPageRoute(
-                                builder: (context) => const LoginPage()),
-                            (route) => false,
-                          );
+                            // Sign out using AuthBloc
+                            context.read<AuthBloc>().add(SignOutRequested());
+
+                            // Pop all routes and let main.dart's StreamBuilder handle navigation
+                            Navigator.of(context).popUntil((route) => route.isFirst);
+                          }
                         },
                       ),
                       ListTile(
