@@ -44,6 +44,14 @@ class _PagesState extends State<Pages> {
   void initState() {
     super.initState();
     _checkAndShowConsent();
+    
+    // Listen to auth state changes to reset consent check on logout/login
+    _auth.authStateChanges().listen((User? user) {
+      if (user != null) {
+        // User logged in, check consent
+        _checkAndShowConsent();
+      }
+    });
   }
 
   Future<void> _checkAndShowConsent() async {
@@ -52,12 +60,14 @@ class _PagesState extends State<Pages> {
       final String? userId = _auth.currentUser?.uid;
 
       if (userId == null) {
-        // If no user is logged in, default `hasSeenConsent` to false
-        setState(() {
-          hasSeenConsent = false;
-          isCheckingConsent = false;
-        });
-
+        // If no user is logged in, don't show consent form
+        // User should be on login page, not here
+        if (mounted) {
+          setState(() {
+            hasSeenConsent = true; // Don't show consent if no user
+            isCheckingConsent = false;
+          });
+        }
         return;
       }
 
@@ -65,17 +75,21 @@ class _PagesState extends State<Pages> {
       DocumentSnapshot consentDoc =
           await _firestore.collection('consents').doc(userId).get();
 
-      setState(() {
-        hasSeenConsent = consentDoc.exists; // true if the document exists
-        isCheckingConsent = false; // Done checking
-      });
+      if (mounted) {
+        setState(() {
+          hasSeenConsent = consentDoc.exists; // true if the document exists
+          isCheckingConsent = false; // Done checking
+        });
+      }
     } catch (e) {
       print("Error fetching consent data: $e");
 
-      setState(() {
-        hasSeenConsent = false; // Default to false if there's an error
-        isCheckingConsent = false;
-      });
+      if (mounted) {
+        setState(() {
+          hasSeenConsent = false; // Default to false if there's an error
+          isCheckingConsent = false;
+        });
+      }
     }
   }
 
