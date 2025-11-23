@@ -54,6 +54,8 @@ class AccountPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print('I am the user: ${user?.uid}');
+    
     if (user == null) {
       return Scaffold(
         appBar: AppBar(
@@ -198,14 +200,8 @@ class AccountPage extends StatelessWidget {
                                 .read<ProfileBloc>()
                                 .add(const ClearPreferencesRequested());
 
-                            // Sign out using AuthBloc - this will trigger auth state change
+                            // Sign out using AuthBloc - router will automatically redirect to login
                             context.read<AuthBloc>().add(SignOutRequested());
-                            
-                            // Navigate to login page and remove all previous routes
-                            Navigator.of(context).pushNamedAndRemoveUntil(
-                              '/login',
-                              (route) => false,
-                            );
                           }
                         },
                       ),

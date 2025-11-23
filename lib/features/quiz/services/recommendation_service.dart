@@ -135,7 +135,7 @@ class RecommendationService {
 
                   print('  📹 Video ID: $videoId');
                   print('  📝 Title: $title');
-                  print('  🖼️ Thumbnail: ${thumbnail.substring(0, 50)}...');
+                  print('  🖼️ Thumbnail: ${thumbnail.length > 50 ? thumbnail.substring(0, 50) + "..." : thumbnail}');
                   print('  🔗 URL: $videoUrl');
                   
                   print('  💾 Saving to Firestore...');
