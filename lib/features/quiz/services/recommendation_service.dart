@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_gemini/flutter_gemini.dart';
-import 'package:guardiancare/src/constants/keys.dart';
-import 'package:guardiancare/src/api/youtube/services/youtube_service.dart';
+import 'package:guardiancare/core/constants/api_keys.dart';
+import 'package:guardiancare/core/services/youtube_service.dart';
 
 class RecommendationService {
   static final FirebaseFirestore _firestore = FirebaseFirestore.instance;

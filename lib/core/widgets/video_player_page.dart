@@ -12,13 +12,12 @@ class VideoPlayerPage extends StatefulWidget {
 
 class _VideoPlayerPageState extends State<VideoPlayerPage> {
   late YoutubePlayerController _controller;
-  bool _isVideoUrlValid = false; // Default to false until validated
+  bool _isVideoUrlValid = false;
 
   @override
   void initState() {
     super.initState();
 
-    // Extract video ID and check validity
     String? videoId = YoutubePlayer.convertUrlToId(widget.videoUrl);
     if (videoId != null) {
       _isVideoUrlValid = true;

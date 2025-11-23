@@ -4,7 +4,7 @@ import 'package:guardiancare/core/di/injection_container.dart' as di;
 import 'package:guardiancare/features/authentication/presentation/bloc/auth_bloc.dart';
 import 'package:guardiancare/features/authentication/presentation/bloc/auth_event.dart';
 import 'package:guardiancare/features/authentication/presentation/bloc/auth_state.dart';
-import 'package:guardiancare/src/constants/colors.dart';
+import 'package:guardiancare/core/constants/app_colors.dart';
 
 class PasswordResetPage extends StatefulWidget {
   const PasswordResetPage({Key? key}) : super(key: key);

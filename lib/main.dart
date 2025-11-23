@@ -9,7 +9,7 @@ import 'package:guardiancare/features/authentication/presentation/bloc/auth_bloc
 import 'package:guardiancare/features/authentication/presentation/pages/login_page.dart';
 import 'package:guardiancare/features/authentication/presentation/pages/signup_page.dart';
 import 'package:guardiancare/features/authentication/presentation/pages/password_reset_page.dart';
-import 'package:guardiancare/src/routing/pages.dart';
+import 'package:guardiancare/core/routing/pages.dart';
 import 'package:guardiancare/core/di/injection_container.dart' as di;
 import 'package:guardiancare/core/services/parental_verification_service.dart';
 
