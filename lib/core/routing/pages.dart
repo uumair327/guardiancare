@@ -3,6 +3,7 @@ import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:guardiancare/core/di/injection_container.dart';
 import 'package:guardiancare/core/constants/app_colors.dart';
 import 'package:guardiancare/features/consent/presentation/bloc/consent_bloc.dart';
@@ -207,6 +208,26 @@ class _PagesState extends State<Pages> {
               ),
             ),
             centerTitle: true,
+            actions: [
+              StreamBuilder<User?>(
+                stream: _auth.authStateChanges(),
+                builder: (context, snapshot) {
+                  final user = snapshot.data;
+                  if (user == null) {
+                    // User not signed in - show sign in button
+                    return IconButton(
+                      icon: const Icon(Icons.login, color: tPrimaryColor),
+                      tooltip: 'Sign In',
+                      onPressed: () {
+                        context.go('/login');
+                      },
+                    );
+                  }
+                  // User is signed in - no action needed
+                  return const SizedBox.shrink();
+                },
+              ),
+            ],
           ),
           backgroundColor: Colors.white,
           body: screens[index],
