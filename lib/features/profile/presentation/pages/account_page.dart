@@ -210,11 +210,14 @@ class AccountPage extends StatelessWidget {
                                 .read<ProfileBloc>()
                                 .add(const ClearPreferencesRequested());
 
-                            // Sign out using AuthBloc
+                            // Sign out using AuthBloc - this will trigger auth state change
                             context.read<AuthBloc>().add(SignOutRequested());
-
-                            // Pop all routes and let main.dart's StreamBuilder handle navigation
-                            Navigator.of(context).popUntil((route) => route.isFirst);
+                            
+                            // Navigate to login page and remove all previous routes
+                            Navigator.of(context).pushNamedAndRemoveUntil(
+                              '/login',
+                              (route) => false,
+                            );
                           }
                         },
                       ),
