@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -23,6 +24,7 @@ class AppRouter {
   static GoRouter router = GoRouter(
     navigatorKey: _rootNavigatorKey,
     initialLocation: '/',
+    refreshListenable: GoRouterRefreshStream(FirebaseAuth.instance.authStateChanges()),
     redirect: (context, state) {
       final user = FirebaseAuth.instance.currentUser;
       final isLoginRoute = state.matchedLocation == '/login' ||
@@ -99,7 +101,10 @@ class AppRouter {
       GoRoute(
         path: '/account',
         name: 'account',
-        builder: (context, state) => const AccountPage(),
+        builder: (context, state) {
+          final user = FirebaseAuth.instance.currentUser;
+          return AccountPage(user: user);
+        },
       ),
 
       // Forum detail route
@@ -138,4 +143,23 @@ class AppRouter {
       ),
     ],
   );
+}
+
+
+// Helper class to convert Stream to ChangeNotifier for GoRouter
+class GoRouterRefreshStream extends ChangeNotifier {
+  GoRouterRefreshStream(Stream<dynamic> stream) {
+    notifyListeners();
+    _subscription = stream.asBroadcastStream().listen(
+          (dynamic _) => notifyListeners(),
+        );
+  }
+
+  late final StreamSubscription<dynamic> _subscription;
+
+  @override
+  void dispose() {
+    _subscription.cancel();
+    super.dispose();
+  }
 }
