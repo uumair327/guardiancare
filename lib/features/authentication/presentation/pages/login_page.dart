@@ -82,14 +82,9 @@ class LoginPage extends StatelessWidget {
                   duration: const Duration(seconds: 3),
                 ),
               );
-            } else if (state is AuthAuthenticated) {
-              // Navigate to home page and remove all previous routes
-              Navigator.pushNamedAndRemoveUntil(
-                context,
-                '/home',
-                (route) => false,
-              );
             }
+            // Note: Navigation is handled by StreamBuilder in main.dart
+            // No need to navigate here as auth state change will trigger it
           },
           builder: (context, state) {
             if (state is AuthLoading) {
