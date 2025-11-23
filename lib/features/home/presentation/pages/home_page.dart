@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:guardiancare/src/common_widgets/web_view_page.dart';
+import 'package:guardiancare/core/widgets/web_view_page.dart';
 import 'package:guardiancare/features/emergency/presentation/pages/emergency_contact_page.dart';
 import 'package:guardiancare/features/profile/presentation/pages/account_page.dart';
 import 'package:guardiancare/features/home/presentation/widgets/circular_button.dart';

@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:guardiancare/features/forum/presentation/bloc/forum_bloc.dart';
 import 'package:guardiancare/features/forum/presentation/bloc/forum_event.dart';
 import 'package:guardiancare/features/forum/presentation/bloc/forum_state.dart';
-import 'package:guardiancare/src/constants/colors.dart';
+import 'package:guardiancare/core/constants/app_colors.dart';
 
 class CommentInputWidget extends StatefulWidget {
   final String forumId;

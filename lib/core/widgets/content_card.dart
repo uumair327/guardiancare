@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:guardiancare/src/common_widgets/video_player_page.dart';
+import 'package:guardiancare/core/widgets/video_player_page.dart';
 
 class ContentCard extends StatelessWidget {
   final String imageUrl;
@@ -47,12 +47,6 @@ class ContentCard extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 3.0),
-                  // Text(
-                  //   description,
-                  //   style: const TextStyle(
-                  //     fontSize: 14.0,
-                  //   ),
-                  // ),
                 ],
               ),
             ),
@@ -62,4 +56,3 @@ class ContentCard extends StatelessWidget {
     );
   }
 }
-

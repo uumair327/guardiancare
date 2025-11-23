@@ -9,7 +9,7 @@ import 'package:guardiancare/features/emergency/presentation/pages/emergency_con
 import 'package:guardiancare/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:guardiancare/features/profile/presentation/bloc/profile_event.dart';
 import 'package:guardiancare/features/profile/presentation/bloc/profile_state.dart';
-import 'package:guardiancare/src/constants/colors.dart';
+import 'package:guardiancare/core/constants/app_colors.dart';
 
 class AccountPage extends StatelessWidget {
   final User? user;

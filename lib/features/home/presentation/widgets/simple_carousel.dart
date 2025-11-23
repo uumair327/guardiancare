@@ -1,8 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:guardiancare/src/common_widgets/sufasec_content.dart';
-import 'package:guardiancare/src/common_widgets/web_view_page.dart';
+import 'package:guardiancare/core/widgets/sufasec_content.dart';
+import 'package:guardiancare/core/widgets/web_view_page.dart';
 import 'package:shimmer/shimmer.dart';
 
 class SimpleCarousel extends StatelessWidget {

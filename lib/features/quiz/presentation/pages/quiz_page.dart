@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:guardiancare/src/constants/colors.dart';
+import 'package:guardiancare/core/constants/app_colors.dart';
 import 'package:guardiancare/features/quiz/presentation/pages/quiz_questions_page.dart';
 
 class QuizPage extends StatefulWidget {

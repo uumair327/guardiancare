@@ -4,7 +4,7 @@ import 'package:guardiancare/core/di/injection_container.dart';
 import 'package:guardiancare/features/emergency/presentation/bloc/emergency_bloc.dart';
 import 'package:guardiancare/features/emergency/presentation/bloc/emergency_event.dart';
 import 'package:guardiancare/features/emergency/presentation/bloc/emergency_state.dart';
-import 'package:guardiancare/src/constants/colors.dart';
+import 'package:guardiancare/core/constants/app_colors.dart';
 
 class EmergencyContactPage extends StatelessWidget {
   const EmergencyContactPage({super.key});

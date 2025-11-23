@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:guardiancare/src/constants/colors.dart';
+import 'package:guardiancare/core/constants/app_colors.dart';
 import 'package:guardiancare/core/services/parental_verification_service.dart';
 import 'package:guardiancare/features/consent/presentation/widgets/forgot_parental_key_dialog.dart';
 
