@@ -157,8 +157,7 @@ class RecommendationService {
               }
             }
           } else {
-            print('❌ Empty response from Gemini API for category: $category');
-            print('   Response: $response');
+            print('❌ No search terms generated for category: $category');
           }
         } catch (e, stackTrace) {
           print('❌ Error processing category $category: $e');
