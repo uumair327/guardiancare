@@ -4,6 +4,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:guardiancare/core/network/network_info.dart';
+import 'package:guardiancare/core/database/storage_manager.dart';
+import 'package:guardiancare/core/database/hive_service.dart';
+import 'package:guardiancare/core/database/database_service.dart';
 import 'package:guardiancare/features/authentication/data/datasources/auth_remote_datasource.dart';
 import 'package:guardiancare/features/authentication/data/repositories/auth_repository_impl.dart';
 import 'package:guardiancare/features/authentication/domain/repositories/auth_repository.dart';
@@ -97,6 +100,15 @@ Future<void> init() async {
   sl.registerLazySingleton(() => FirebaseAuth.instance);
   sl.registerLazySingleton(() => FirebaseFirestore.instance);
   sl.registerLazySingleton(() => GoogleSignIn());
+  
+  // Initialize Storage Manager (SQLite + Hive)
+  final storageManager = StorageManager.instance;
+  await storageManager.init();
+  sl.registerLazySingleton(() => storageManager);
+  
+  // Register storage services for dependency injection
+  sl.registerLazySingleton(() => HiveService.instance);
+  sl.registerLazySingleton(() => DatabaseService.instance);
 
   // ============================================================================
   // Features
@@ -354,7 +366,7 @@ void _initEmergencyFeature() {
 void _initReportFeature() {
   // Data sources
   sl.registerLazySingleton<ReportLocalDataSource>(
-    () => ReportLocalDataSourceImpl(sharedPreferences: sl()),
+    () => ReportLocalDataSourceImpl(hiveService: sl()),
   );
 
   // Repositories

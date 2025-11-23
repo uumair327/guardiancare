@@ -1,9 +1,11 @@
 import 'dart:convert';
 import 'package:guardiancare/core/error/exceptions.dart';
 import 'package:guardiancare/features/report/data/models/report_model.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:guardiancare/core/database/hive_service.dart';
 
 /// Local data source for report operations
+/// Uses Hive for fast, efficient storage of report data
+/// Follows Clean Architecture: Data layer can depend on infrastructure
 abstract class ReportLocalDataSource {
   /// Save report to local storage
   Future<void> saveReport(ReportModel report);
@@ -22,10 +24,12 @@ abstract class ReportLocalDataSource {
 }
 
 class ReportLocalDataSourceImpl implements ReportLocalDataSource {
-  final SharedPreferences sharedPreferences;
+  final HiveService _hiveService;
+  static const String _boxName = 'reports';
   static const String _keyPrefix = 'report_form_';
 
-  ReportLocalDataSourceImpl({required this.sharedPreferences});
+  ReportLocalDataSourceImpl({required HiveService hiveService})
+      : _hiveService = hiveService;
 
   @override
   Future<void> saveReport(ReportModel report) async {
@@ -34,7 +38,7 @@ class ReportLocalDataSourceImpl implements ReportLocalDataSource {
       final json = report.toJson();
       json['version'] = 1;
 
-      await sharedPreferences.setString(key, jsonEncode(json));
+      await _hiveService.put(_boxName, key, json);
     } catch (e) {
       throw CacheException('Failed to save report: ${e.toString()}');
     }
@@ -45,14 +49,14 @@ class ReportLocalDataSourceImpl implements ReportLocalDataSource {
       String caseName, List<String> questions) async {
     try {
       final key = '$_keyPrefix$caseName';
-      final jsonString = sharedPreferences.getString(key);
+      final json = _hiveService.get<Map<dynamic, dynamic>>(_boxName, key);
 
-      if (jsonString == null) {
+      if (json == null) {
         throw CacheException('Report not found: $caseName');
       }
 
-      final json = jsonDecode(jsonString) as Map<String, dynamic>;
-      final model = ReportModel.fromJson(json);
+      final jsonMap = Map<String, dynamic>.from(json);
+      final model = ReportModel.fromJson(jsonMap);
 
       // Add questions back (they're not stored in JSON)
       return ReportModel(
@@ -71,11 +75,7 @@ class ReportLocalDataSourceImpl implements ReportLocalDataSource {
   Future<void> deleteReport(String caseName) async {
     try {
       final key = '$_keyPrefix$caseName';
-      final removed = await sharedPreferences.remove(key);
-
-      if (!removed) {
-        throw CacheException('Failed to delete report: $caseName');
-      }
+      await _hiveService.delete(_boxName, key);
     } catch (e) {
       throw CacheException('Failed to delete report: ${e.toString()}');
     }
@@ -84,11 +84,11 @@ class ReportLocalDataSourceImpl implements ReportLocalDataSource {
   @override
   Future<List<String>> getSavedReportNames() async {
     try {
-      final keys = sharedPreferences.getKeys();
+      final keys = _hiveService.getKeys(_boxName);
 
       return keys
-          .where((key) => key.startsWith(_keyPrefix))
-          .map((key) => key.replaceFirst(_keyPrefix, ''))
+          .where((key) => key.toString().startsWith(_keyPrefix))
+          .map((key) => key.toString().replaceFirst(_keyPrefix, ''))
           .toList();
     } catch (e) {
       throw CacheException('Failed to get saved reports: ${e.toString()}');
@@ -99,7 +99,7 @@ class ReportLocalDataSourceImpl implements ReportLocalDataSource {
   Future<bool> reportExists(String caseName) async {
     try {
       final key = '$_keyPrefix$caseName';
-      return sharedPreferences.containsKey(key);
+      return _hiveService.containsKey(_boxName, key);
     } catch (e) {
       throw CacheException(
           'Failed to check report existence: ${e.toString()}');
