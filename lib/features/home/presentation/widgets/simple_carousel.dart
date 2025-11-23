@@ -45,6 +45,7 @@ class SimpleCarousel extends StatelessWidget {
                 builder: (BuildContext context) {
                   return GestureDetector(
                     onTap: () {
+                      final type = item['type'] ?? 'web';
                       if (type == 'custom') {
                         Navigator.push(
                           context,
