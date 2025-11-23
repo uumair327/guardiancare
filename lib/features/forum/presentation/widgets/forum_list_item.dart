@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:guardiancare/features/forum/domain/entities/forum_entity.dart';
-import 'package:guardiancare/features/forum/presentation/pages/forum_detail_page.dart';
 import 'package:intl/intl.dart';
 
 class ForumListItem extends StatelessWidget {
@@ -11,12 +11,14 @@ class ForumListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () => Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (_) => ForumDetailPage(forumId: forum.id, forumTitle: forum.title),
-        ),
-      ),
+      onTap: () {
+        final forumData = {
+          'title': forum.title,
+          'description': forum.description,
+          'createdAt': forum.createdAt.toIso8601String(),
+        };
+        context.push('/forum/${forum.id}', extra: forumData);
+      },
       child: Card(
         elevation: 2,
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
