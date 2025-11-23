@@ -184,7 +184,7 @@ class _QuizQuestionsPageState extends State<QuizQuestionsPage> {
     });
   }
 
-  void _goToNextQuestion() {
+  void _goToNextQuestion() async {
     if (currentQuestionIndex < widget.questions.length - 1) {
       setState(() {
         currentQuestionIndex++;
@@ -192,13 +192,13 @@ class _QuizQuestionsPageState extends State<QuizQuestionsPage> {
         showFeedback = false;
       });
     } else {
-      // Process quiz completion and generate recommendations
-      _processQuizCompletion();
-      
-      // Show completion
+      // Show loading while processing
       setState(() {
         currentQuestionIndex = widget.questions.length;
       });
+      
+      // Process quiz completion and generate recommendations
+      await _processQuizCompletion();
     }
   }
 
@@ -299,6 +299,20 @@ class _QuizQuestionsPageState extends State<QuizQuestionsPage> {
                 color: tPrimaryColor,
               ),
             ),
+            const SizedBox(height: 24),
+            const Text(
+              'Generating personalized recommendations...',
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.black54,
+                fontStyle: FontStyle.italic,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 16),
+            const CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation<Color>(tPrimaryColor),
+            ),
             const SizedBox(height: 32),
             ElevatedButton(
               onPressed: () {
@@ -309,7 +323,7 @@ class _QuizQuestionsPageState extends State<QuizQuestionsPage> {
                 padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
               ),
               child: const Text(
-                'Back to Quizzes',
+                'View Recommendations',
                 style: TextStyle(fontSize: 18, color: Colors.white),
               ),
             ),

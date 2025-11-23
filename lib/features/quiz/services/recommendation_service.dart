@@ -20,7 +20,12 @@ class RecommendationService {
       print('Starting recommendation generation for categories: $categories');
       
       // Initialize Gemini with v1 API (flutter_gemini 3.0.0)
-      Gemini.init(apiKey: kGeminiApiKey);
+      // Only initialize if not already initialized
+      try {
+        Gemini.init(apiKey: kGeminiApiKey);
+      } catch (e) {
+        print('Gemini already initialized or error: $e');
+      }
       final gemini = Gemini.instance;
 
       // Clear existing recommendations for this user
