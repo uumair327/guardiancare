@@ -325,6 +325,35 @@ class _QuizQuestionsPageState extends State<QuizQuestionsPage> {
                 color: tPrimaryColor,
               ),
             ),
+            const SizedBox(height: 24),
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: tPrimaryColor.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: const Column(
+                children: [
+                  Icon(Icons.auto_awesome, color: tPrimaryColor, size: 32),
+                  SizedBox(height: 8),
+                  Text(
+                    'Generating Personalized Recommendations',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: tPrimaryColor,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(height: 4),
+                  Text(
+                    'Check the Explore tab to see your recommendations!',
+                    style: TextStyle(fontSize: 14, color: Colors.black54),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+            ),
             const SizedBox(height: 32),
             ElevatedButton(
               onPressed: () {
@@ -337,6 +366,22 @@ class _QuizQuestionsPageState extends State<QuizQuestionsPage> {
               child: const Text(
                 'Back to Quizzes',
                 style: TextStyle(fontSize: 18, color: Colors.white),
+              ),
+            ),
+            const SizedBox(height: 16),
+            OutlinedButton(
+              onPressed: () {
+                // Navigate to explore page to see recommendations
+                Navigator.pop(context); // Go back to quiz page
+                // The user can then navigate to Explore tab
+              },
+              style: OutlinedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                side: const BorderSide(color: tPrimaryColor, width: 2),
+              ),
+              child: const Text(
+                'View Recommendations',
+                style: TextStyle(fontSize: 18, color: tPrimaryColor),
               ),
             ),
           ],
