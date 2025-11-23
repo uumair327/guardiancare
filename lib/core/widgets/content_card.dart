@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:guardiancare/core/widgets/video_player_page.dart';
+import 'package:go_router/go_router.dart';
 
 class ContentCard extends StatelessWidget {
   final String imageUrl;
@@ -16,14 +16,7 @@ class ContentCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => VideoPlayerPage(videoUrl: description),
-          ),
-        );
-      },
+      onTap: () => context.push('/video-player', extra: description),
       child: Card(
         margin: const EdgeInsets.all(16.0),
         child: Column(

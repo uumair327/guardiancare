@@ -1,8 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:guardiancare/core/widgets/sufasec_content.dart';
-import 'package:guardiancare/core/widgets/web_view_page.dart';
 import 'package:shimmer/shimmer.dart';
 
 class SimpleCarousel extends StatelessWidget {
@@ -47,6 +47,8 @@ class SimpleCarousel extends StatelessWidget {
                     onTap: () {
                       final type = item['type'] ?? 'web';
                       if (type == 'custom') {
+                        // For custom content, navigate to a custom page
+                        // You may need to add a route for this in app_router.dart
                         Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -56,12 +58,7 @@ class SimpleCarousel extends StatelessWidget {
                           ),
                         );
                       } else {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => WebViewPage(url: link),
-                          ),
-                        );
+                        context.push('/webview', extra: link);
                       }
                     },
                     child: ClipRRect(

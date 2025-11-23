@@ -1,9 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:guardiancare/features/home/domain/entities/carousel_item_entity.dart';
 import 'package:guardiancare/core/widgets/sufasec_content.dart';
-import 'package:guardiancare/core/widgets/web_view_page.dart';
 import 'package:shimmer/shimmer.dart';
 
 class HomeCarouselWidget extends StatelessWidget {
@@ -40,6 +40,7 @@ class HomeCarouselWidget extends StatelessWidget {
                   return GestureDetector(
                     onTap: () {
                       if (item.type == 'custom') {
+                        // For custom content, keep using Navigator for now
                         Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -49,12 +50,7 @@ class HomeCarouselWidget extends StatelessWidget {
                           ),
                         );
                       } else {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => WebViewPage(url: item.link),
-                          ),
-                        );
+                        context.push('/webview', extra: item.link);
                       }
                     },
                     child: ClipRRect(
