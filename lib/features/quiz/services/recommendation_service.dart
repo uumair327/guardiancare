@@ -66,29 +66,49 @@ class RecommendationService {
         
         try {
           // Use Gemini to generate YouTube search terms
-          print('🤖 Calling Gemini API for category: $category');
-          final prompt = "Summarize the subtopics under the main topic '$category' for child safety and parenting into a single search term for YouTube. The term should effectively encompass the topic, consisting of 4-5 words, to yield highly relevant and accurate search results. Only provide 2 YouTube search terms, each separated by a new line, and nothing else. Search terms must not be in bullet point format. The search term should be highly relevant with child safety, parenting, and $category!";
-          print('📤 Prompt length: ${prompt.length} characters');
+          List<String> searchTerms = [];
           
-          final response = await gemini.text(prompt);
-          print('📥 Gemini API response received');
-          print('📝 Response type: ${response.runtimeType}');
-          print('📝 Response output: ${response?.output}');
-
-          if (response != null && response.output != null) {
-            List<String> searchTerms = response.output!
-                .split('\n')
-                .where((term) => term.trim().isNotEmpty)
-                .map((term) => term.trim())
-                .toList();
+          try {
+            print('🤖 Calling Gemini API for category: $category');
+            final prompt = "Summarize the subtopics under the main topic '$category' for child safety and parenting into a single search term for YouTube. The term should effectively encompass the topic, consisting of 4-5 words, to yield highly relevant and accurate search results. Only provide 2 YouTube search terms, each separated by a new line, and nothing else. Search terms must not be in bullet point format. The search term should be highly relevant with child safety, parenting, and $category!";
+            print('📤 Prompt length: ${prompt.length} characters');
             
-            print('✅ Gemini generated ${searchTerms.length} search terms for $category:');
+            final response = await gemini.text(prompt);
+            print('📥 Gemini API response received');
+            print('📝 Response type: ${response.runtimeType}');
+            print('📝 Response output: ${response?.output}');
+
+            if (response != null && response.output != null) {
+              searchTerms = response.output!
+                  .split('\n')
+                  .where((term) => term.trim().isNotEmpty)
+                  .map((term) => term.trim())
+                  .toList();
+              
+              print('✅ Gemini generated ${searchTerms.length} search terms for $category:');
+              for (int j = 0; j < searchTerms.length; j++) {
+                print('  ${j + 1}. "${searchTerms[j]}"');
+              }
+            }
+          } catch (geminiError) {
+            print('⚠️ Gemini API failed: $geminiError');
+            print('🔄 Using fallback search terms for category: $category');
+            
+            // Fallback: Generate search terms directly from category
+            searchTerms = [
+              'child safety $category parenting tips',
+              'parenting guide $category children',
+            ];
+            print('✅ Generated ${searchTerms.length} fallback search terms:');
             for (int j = 0; j < searchTerms.length; j++) {
               print('  ${j + 1}. "${searchTerms[j]}"');
             }
+          }
 
-            // Fetch and save videos for each search term
-            print('\n🎥 Fetching YouTube videos for ${searchTerms.length} search terms...');
+          if (searchTerms.isNotEmpty) {
+
+          // Fetch and save videos for each search term
+          print('\n🎥 Fetching YouTube videos for ${searchTerms.length} search terms...');
             
             for (int k = 0; k < searchTerms.length; k++) {
               String term = searchTerms[k];
