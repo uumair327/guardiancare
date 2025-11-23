@@ -4,7 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:guardiancare/core/di/injection_container.dart';
-import 'package:guardiancare/src/constants/colors.dart';
+import 'package:guardiancare/core/constants/app_colors.dart';
 import 'package:guardiancare/features/consent/presentation/bloc/consent_bloc.dart';
 import 'package:guardiancare/features/consent/presentation/pages/enhanced_consent_form_page.dart';
 import 'package:guardiancare/features/consent/presentation/widgets/forgot_parental_key_dialog.dart';
@@ -16,7 +16,7 @@ import 'package:guardiancare/features/forum/presentation/bloc/forum_bloc.dart';
 import 'package:guardiancare/features/forum/presentation/pages/forum_page.dart';
 import 'package:guardiancare/features/home/presentation/bloc/home_bloc.dart';
 import 'package:guardiancare/features/home/presentation/pages/home_page.dart';
-import 'dart:ui'; // For BackdropFilter
+import 'dart:ui';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:crypto/crypto.dart';
 import 'dart:convert';
@@ -31,7 +31,7 @@ class Pages extends StatefulWidget {
 class _PagesState extends State<Pages> {
   int index = 0;
   bool hasSeenConsent = false;
-  bool isCheckingConsent = true; // Add loading state
+  bool isCheckingConsent = true;
   bool hasSeenForumGuidelines = false;
   final GlobalKey<CurvedNavigationBarState> _bottomNavigationKey = GlobalKey();
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -45,10 +45,8 @@ class _PagesState extends State<Pages> {
     super.initState();
     _checkAndShowConsent();
     
-    // Listen to auth state changes to reset consent check on logout/login
     _auth.authStateChanges().listen((User? user) {
       if (user != null) {
-        // User logged in, check consent
         _checkAndShowConsent();
       }
     });
@@ -56,29 +54,25 @@ class _PagesState extends State<Pages> {
 
   Future<void> _checkAndShowConsent() async {
     try {
-      // Get the current user's ID from FirebaseAuth
       final String? userId = _auth.currentUser?.uid;
 
       if (userId == null) {
-        // If no user is logged in, don't show consent form
-        // User should be on login page, not here
         if (mounted) {
           setState(() {
-            hasSeenConsent = true; // Don't show consent if no user
+            hasSeenConsent = true;
             isCheckingConsent = false;
           });
         }
         return;
       }
 
-      // Check if the user's document exists in the 'consents' collection
       DocumentSnapshot consentDoc =
           await _firestore.collection('consents').doc(userId).get();
 
       if (mounted) {
         setState(() {
-          hasSeenConsent = consentDoc.exists; // true if the document exists
-          isCheckingConsent = false; // Done checking
+          hasSeenConsent = consentDoc.exists;
+          isCheckingConsent = false;
         });
       }
     } catch (e) {
@@ -86,7 +80,7 @@ class _PagesState extends State<Pages> {
 
       if (mounted) {
         setState(() {
-          hasSeenConsent = false; // Default to false if there's an error
+          hasSeenConsent = false;
           isCheckingConsent = false;
         });
       }
@@ -112,165 +106,10 @@ class _PagesState extends State<Pages> {
     );
   }
   
-  void _verifyParentalKeyForForumOld(BuildContext context, int newIndex) async {
-    // Show dialog to verify parental key
-    final TextEditingController keyController = TextEditingController();
-    bool obscureKey = true;
-    
-    showDialog(
-      context: context,
-      builder: (dialogContext) => StatefulBuilder(
-        builder: (context, setDialogState) => AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-          title: Row(
-            children: const [
-              Icon(Icons.lock, color: tPrimaryColor),
-              SizedBox(width: 12),
-              Text('Parental Verification'),
-            ],
-          ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text(
-                'Enter your parental key to access the forum',
-                style: TextStyle(color: Colors.grey),
-              ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: keyController,
-                decoration: InputDecoration(
-                  labelText: 'Parental Key',
-                  hintText: 'Enter your key',
-                  border: const OutlineInputBorder(),
-                  prefixIcon: const Icon(Icons.vpn_key, color: tPrimaryColor),
-                  suffixIcon: IconButton(
-                    icon: Icon(obscureKey ? Icons.visibility : Icons.visibility_off),
-                    onPressed: () {
-                      setDialogState(() {
-                        obscureKey = !obscureKey;
-                      });
-                    },
-                  ),
-                ),
-                keyboardType: TextInputType.text,
-                obscureText: obscureKey,
-              ),
-              const SizedBox(height: 8),
-              Align(
-                alignment: Alignment.centerRight,
-                child: TextButton(
-                  onPressed: () async {
-                    Navigator.of(dialogContext).pop();
-                    final result = await showDialog<bool>(
-                      context: context,
-                      builder: (context) => const ForgotParentalKeyDialog(),
-                    );
-                    if (result == true) {
-                      // Key was reset successfully
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('You can now use your new parental key'),
-                          backgroundColor: Colors.green,
-                        ),
-                      );
-                    }
-                  },
-                  child: const Text(
-                    'Forgot Key?',
-                    style: TextStyle(color: tPrimaryColor),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(dialogContext).pop();
-                setState(() {
-                  index = 0;
-                });
-                _bottomNavigationKey.currentState?.setPage(0);
-              },
-              child: const Text('Cancel'),
-            ),
-            ElevatedButton(
-              onPressed: () async {
-                final key = keyController.text;
-                if (key.length >= 4) {
-                  // Verify key from Firestore
-                  try {
-                    final user = _auth.currentUser;
-                    if (user != null) {
-                      final doc = await _firestore
-                          .collection('consents')
-                          .doc(user.uid)
-                          .get();
-                      
-                      if (doc.exists) {
-                        final storedHash = doc.data()?['parentalKey'] as String?;
-                        final enteredHash = _hashKey(key);
-                        
-                        if (storedHash == enteredHash) {
-                          Navigator.of(dialogContext).pop();
-                          setState(() {
-                            index = newIndex;
-                          });
-                          _checkAndShowGuidelines();
-                        } else {
-                          Navigator.of(dialogContext).pop();
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Invalid parental key'),
-                              backgroundColor: Colors.red,
-                            ),
-                          );
-                          setState(() {
-                            index = 0;
-                          });
-                          _bottomNavigationKey.currentState?.setPage(0);
-                        }
-                      }
-                    }
-                  } catch (e) {
-                    Navigator.of(dialogContext).pop();
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('Error: $e'),
-                        backgroundColor: Colors.red,
-                      ),
-                    );
-                    setState(() {
-                      index = 0;
-                    });
-                    _bottomNavigationKey.currentState?.setPage(0);
-                  }
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Key must be at least 4 characters'),
-                      backgroundColor: Colors.red,
-                    ),
-                  );
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: tPrimaryColor,
-              ),
-              child: const Text('Verify'),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-  
   String _hashKey(String key) {
     return sha256.convert(utf8.encode(key)).toString();
   }
+  
   void _checkAndShowGuidelines() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     hasSeenForumGuidelines =
@@ -288,7 +127,7 @@ class _PagesState extends State<Pages> {
   void _showGuidelinesDialog() async {
     return showDialog<void>(
       context: context,
-      barrierDismissible: false, // Prevent dismissing by tapping outside
+      barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text(
@@ -321,7 +160,7 @@ class _PagesState extends State<Pages> {
                 style: TextStyle(color: tPrimaryColor),
               ),
               onPressed: () {
-                Navigator.of(context).pop(); // Close the dialog
+                Navigator.of(context).pop();
               },
             ),
           ],
@@ -380,7 +219,6 @@ class _PagesState extends State<Pages> {
             index: index,
             onTap: (newIndex) {
               if (newIndex == 2) {
-                // If ForumPage is selected, verify parental key
                 _verifyParentalKeyForForum(context, newIndex);
               } else {
                 setState(() {
@@ -391,7 +229,6 @@ class _PagesState extends State<Pages> {
           ),
         ),
 
-        // Loading indicator while checking consent
         if (isCheckingConsent)
           Positioned.fill(
             child: Container(
@@ -404,7 +241,6 @@ class _PagesState extends State<Pages> {
             ),
           ),
 
-        // Consent form overlay
         if (!hasSeenConsent && !isCheckingConsent)
           Positioned.fill(
             child: Stack(

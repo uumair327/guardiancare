@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:guardiancare/src/constants/colors.dart';
+import 'package:guardiancare/core/constants/app_colors.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ConsentFormPage extends StatefulWidget {

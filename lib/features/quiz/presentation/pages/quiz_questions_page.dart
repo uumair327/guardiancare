@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:guardiancare/src/constants/colors.dart';
+import 'package:guardiancare/core/constants/app_colors.dart';
 import 'package:guardiancare/features/quiz/services/recommendation_service.dart';
 
 class QuizQuestionsPage extends StatefulWidget {
