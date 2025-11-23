@@ -6,10 +6,7 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:guardiancare/features/authentication/presentation/bloc/auth_bloc.dart';
-import 'package:guardiancare/features/authentication/presentation/pages/login_page.dart';
-import 'package:guardiancare/features/authentication/presentation/pages/signup_page.dart';
-import 'package:guardiancare/features/authentication/presentation/pages/password_reset_page.dart';
-import 'package:guardiancare/core/routing/pages.dart';
+import 'package:guardiancare/core/routing/app_router.dart';
 import 'package:guardiancare/core/di/injection_container.dart' as di;
 import 'package:guardiancare/core/services/parental_verification_service.dart';
 
@@ -90,41 +87,10 @@ class _guardiancareState extends State<guardiancare> with WidgetsBindingObserver
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => di.sl<AuthBloc>(),
-      child: MaterialApp(
+      child: MaterialApp.router(
         title: "Guardian Care",
-        home: StreamBuilder<User?>(
-          stream: _auth.authStateChanges(),
-          builder: (BuildContext context, AsyncSnapshot<User?> snapshot) {
-            if (snapshot.hasError) {
-              return Scaffold(
-                body: Center(
-                  child: Text("Error: ${snapshot.error}"),
-                ),
-              );
-            }
-            if (snapshot.connectionState == ConnectionState.active) {
-              print("Snapshot Data is: ${snapshot.data ?? 'No data'}");
-
-              if (snapshot.data == null) {
-                return const LoginPage();
-              } else {
-                return const Pages();
-              }
-            }
-            return const Scaffold(
-              body: Center(
-                child: CircularProgressIndicator(),
-              ),
-            );
-          },
-        ),
-        routes: {
-          '/login': (context) => const LoginPage(),
-          '/signup': (context) => const SignupPage(),
-          '/password-reset': (context) => const PasswordResetPage(),
-          '/home': (context) => const Pages(),
-        },
-        debugShowCheckedModeBanner: false, //debug symbol remove
+        routerConfig: AppRouter.router,
+        debugShowCheckedModeBanner: false,
       ),
     );
   }

@@ -2,13 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:guardiancare/core/widgets/web_view_page.dart';
-import 'package:guardiancare/features/emergency/presentation/pages/emergency_contact_page.dart';
-import 'package:guardiancare/features/profile/presentation/pages/account_page.dart';
+import 'package:go_router/go_router.dart';
 import 'package:guardiancare/features/home/presentation/widgets/circular_button.dart';
 import 'package:guardiancare/features/home/presentation/widgets/simple_carousel.dart';
-import 'package:guardiancare/features/quiz/presentation/pages/quiz_page.dart';
-import 'package:guardiancare/features/learn/presentation/pages/video_page.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:guardiancare/core/widgets/parental_verification_dialog.dart';
 
@@ -101,39 +97,17 @@ class _HomePageState extends State<HomePage> {
                             CircularButton(
                               iconData: Icons.quiz,
                               label: 'Quiz',
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => const QuizPage(),
-                                  ),
-                                );
-                              },
+                              onPressed: () => context.push('/quiz'),
                             ),
                             CircularButton(
                               iconData: Icons.video_library,
                               label: 'Learn',
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => const VideoPage(),
-                                  ),
-                                );
-                              },
+                              onPressed: () => context.push('/video'),
                             ),
                             CircularButton(
                               iconData: Icons.emergency,
                               label: 'Emergency',
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        const EmergencyContactPage(),
-                                  ),
-                                );
-                              },
+                              onPressed: () => context.push('/emergency'),
                             ),
                           ],
                         ),
@@ -148,30 +122,15 @@ class _HomePageState extends State<HomePage> {
                                 showParentalVerification(
                                   context,
                                   'Profile',
-                                  () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            AccountPage(user: _user),
-                                      ),
-                                    );
-                                  },
+                                  () => context.push('/account'),
                                 );
                               },
                             ),
                             CircularButton(
                               iconData: CupertinoIcons.globe,
                               label: 'Website',
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => const WebViewPage(
-                                        url: "https://childrenofindia.in/"),
-                                  ),
-                                );
-                              },
+                              onPressed: () => context.push('/webview', 
+                                extra: "https://childrenofindia.in/"),
                             ),
                             CircularButton(
                               iconData: Icons.email,

@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:guardiancare/core/widgets/video_player_page.dart';
+import 'package:go_router/go_router.dart';
 import 'package:guardiancare/core/constants/app_colors.dart';
 
 class VideoPage extends StatefulWidget {
@@ -173,14 +173,8 @@ class _VideoPageState extends State<VideoPage> {
               var video = videos[index].data() as Map<String, dynamic>;
               return GestureDetector(
                 onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => VideoPlayerPage(
-                        videoUrl: video['videoUrl'] as String? ?? '',
-                      ),
-                    ),
-                  );
+                  final videoUrl = video['videoUrl'] as String? ?? '';
+                  context.push('/video-player', extra: videoUrl);
                 },
                 child: Card(
                   elevation: 4.0,
