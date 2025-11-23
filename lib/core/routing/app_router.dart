@@ -108,10 +108,11 @@ class AppRouter {
         name: 'forum-detail',
         builder: (context, state) {
           final forumId = state.pathParameters['id']!;
-          final forumData = state.extra as Map<String, dynamic>;
+          final forumData = state.extra as Map<String, dynamic>?;
+          final forumTitle = forumData?['title'] ?? 'Forum';
           return ForumDetailPage(
             forumId: forumId,
-            forumData: forumData,
+            forumTitle: forumTitle,
           );
         },
       ),
