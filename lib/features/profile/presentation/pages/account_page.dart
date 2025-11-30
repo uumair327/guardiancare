@@ -9,6 +9,11 @@ import 'package:guardiancare/features/profile/presentation/bloc/profile_bloc.dar
 import 'package:guardiancare/features/profile/presentation/bloc/profile_event.dart';
 import 'package:guardiancare/features/profile/presentation/bloc/profile_state.dart';
 import 'package:guardiancare/core/constants/app_colors.dart';
+import 'package:guardiancare/core/widgets/language_selector_dialog.dart';
+import 'package:guardiancare/core/services/locale_service.dart';
+import 'package:guardiancare/core/widgets/app_restart_widget.dart';
+import 'package:guardiancare/core/l10n/generated/app_localizations.dart';
+import 'package:guardiancare/main.dart' show guardiancare;
 
 class AccountPage extends StatelessWidget {
   final User? user;
@@ -20,18 +25,18 @@ class AccountPage extends StatelessWidget {
     bool shouldDelete = await showDialog(
       context: context,
       builder: (BuildContext context) {
+        final l10n = AppLocalizations.of(context)!;
         return AlertDialog(
-          title: const Text('Delete Account',
+          title: Text(l10n.deleteAccount,
               style:
-                  TextStyle(color: tPrimaryColor, fontWeight: FontWeight.bold)),
-          content: const Text(
-              'Are you sure you want to delete your account? This action cannot be undone.'),
+                  const TextStyle(color: tPrimaryColor, fontWeight: FontWeight.bold)),
+          content: Text(l10n.deleteAccountConfirm),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop(false);
               },
-              child: const Text('No'),
+              child: Text(l10n.no),
             ),
             ElevatedButton(
               onPressed: () {
@@ -40,7 +45,7 @@ class AccountPage extends StatelessWidget {
               style: TextButton.styleFrom(
                 foregroundColor: tPrimaryColor,
               ),
-              child: const Text('Yes'),
+              child: Text(l10n.yes),
             ),
           ],
         );
@@ -57,12 +62,13 @@ class AccountPage extends StatelessWidget {
     print('I am the user: ${user?.uid}');
     
     if (user == null) {
+      final l10n = AppLocalizations.of(context)!;
       return Scaffold(
         appBar: AppBar(
-          title: const Text('Account'),
+          title: Text(l10n.account),
         ),
-        body: const Center(
-          child: Text('No user is currently signed in'),
+        body: Center(
+          child: Text(l10n.noUserSignedIn),
         ),
       );
     }
@@ -71,7 +77,7 @@ class AccountPage extends StatelessWidget {
       create: (context) => sl<ProfileBloc>()..add(LoadProfile(user!.uid)),
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Account'),
+          title: Text(AppLocalizations.of(context)!.account),
         ),
         body: BlocConsumer<ProfileBloc, ProfileState>(
           listener: (context, state) {
@@ -79,7 +85,7 @@ class AccountPage extends StatelessWidget {
               // Navigate to login page after successful deletion
               context.go('/login');
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Account deleted successfully')),
+                SnackBar(content: Text(AppLocalizations.of(context)!.accountDeletedSuccess)),
               );
             } else if (state is ProfileError) {
               ScaffoldMessenger.of(context).showSnackBar(
@@ -98,6 +104,7 @@ class AccountPage extends StatelessWidget {
 
             if (state is ProfileLoaded) {
               final profile = state.profile;
+              final l10n = AppLocalizations.of(context)!;
 
               return SingleChildScrollView(
                 child: Padding(
@@ -115,9 +122,9 @@ class AccountPage extends StatelessWidget {
                             : null,
                       ),
                       const SizedBox(height: 20),
-                      const Text(
-                        'Profile Information',
-                        style: TextStyle(
+                      Text(
+                        l10n.profile,
+                        style: const TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
                           color: tPrimaryColor,
@@ -126,18 +133,18 @@ class AccountPage extends StatelessWidget {
                       ListTile(
                         leading:
                             const Icon(Icons.person, color: tPrimaryColor),
-                        title: Text('Name: ${profile.displayName}'),
+                        title: Text('${l10n.nameLabel}: ${profile.displayName}'),
                       ),
                       ListTile(
                         minTileHeight: 5,
                         leading: const Icon(Icons.email, color: tPrimaryColor),
-                        title: Text('Email: ${profile.email}'),
+                        title: Text('${l10n.emailLabel}: ${profile.email}'),
                       ),
                       const Divider(),
                       const SizedBox(height: 5),
-                      const Text(
-                        'Child Safety Settings',
-                        style: TextStyle(
+                      Text(
+                        l10n.childSafetySettings,
+                        style: const TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
                           color: tPrimaryColor,
@@ -145,40 +152,59 @@ class AccountPage extends StatelessWidget {
                       ),
                       ListTile(
                         leading: const Icon(Icons.phone, color: tPrimaryColor),
-                        title: const Text('Emergency Contact'),
+                        title: Text(l10n.emergencyContact),
                         onTap: () => context.push('/emergency'),
                       ),
                       const Divider(),
                       const SizedBox(height: 5),
-                      const Text(
-                        'Settings',
-                        style: TextStyle(
+                      Text(
+                        l10n.settings,
+                        style: const TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
                           color: tPrimaryColor,
                         ),
                       ),
                       ListTile(
+                        leading: const Icon(Icons.language, color: tPrimaryColor),
+                        title: Text(l10n.language),
+                        subtitle: Text(
+                          _getCurrentLanguageName(context),
+                          style: const TextStyle(fontSize: 14),
+                        ),
+                        trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                        onTap: () {
+                          final currentLocale = Localizations.localeOf(context);
+                          LanguageSelectorDialog.show(
+                            context,
+                            currentLocale: currentLocale,
+                            onLocaleSelected: (newLocale) {
+                              _changeAppLocale(context, newLocale);
+                            },
+                          );
+                        },
+                      ),
+                      ListTile(
                         leading: const Icon(Icons.logout, color: tPrimaryColor),
-                        title: const Text('Log Out'),
+                        title: Text(l10n.logout),
                         onTap: () async {
                           // Show confirmation dialog
                           bool shouldLogout = await showDialog(
                             context: context,
                             builder: (BuildContext dialogContext) {
+                              final dialogL10n = AppLocalizations.of(dialogContext)!;
                               return AlertDialog(
-                                title: const Text('Log Out',
-                                    style: TextStyle(
+                                title: Text(l10n.logout,
+                                    style: const TextStyle(
                                         color: tPrimaryColor,
                                         fontWeight: FontWeight.bold)),
-                                content: const Text(
-                                    'Are you sure you want to log out?'),
+                                content: Text(l10n.logoutConfirm),
                                 actions: [
                                   TextButton(
                                     onPressed: () {
                                       Navigator.of(dialogContext).pop(false);
                                     },
-                                    child: const Text('Cancel'),
+                                    child: Text(dialogL10n.cancel),
                                   ),
                                   ElevatedButton(
                                     onPressed: () {
@@ -187,7 +213,7 @@ class AccountPage extends StatelessWidget {
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: tPrimaryColor,
                                     ),
-                                    child: const Text('Log Out'),
+                                    child: Text(dialogL10n.logout),
                                   ),
                                 ],
                               );
@@ -208,9 +234,9 @@ class AccountPage extends StatelessWidget {
                       ListTile(
                         minTileHeight: 5,
                         leading: const Icon(Icons.delete, color: tPrimaryColor),
-                        title: const Text(
-                          'Delete My Account',
-                          style: TextStyle(
+                        title: Text(
+                          l10n.deleteMyAccount,
+                          style: const TextStyle(
                               color: tPrimaryColor,
                               fontWeight: FontWeight.bold),
                         ),
@@ -227,10 +253,72 @@ class AccountPage extends StatelessWidget {
               );
             }
 
-            return const Center(child: Text("Loading profile..."));
+            return Center(child: Text(AppLocalizations.of(context)!.loadingProfile));
           },
         ),
       ),
     );
+  }
+
+  String _getCurrentLanguageName(BuildContext context) {
+    final currentLocale = Localizations.localeOf(context);
+    final locales = LocaleService.getSupportedLocales();
+    final localeInfo = locales.firstWhere(
+      (info) => info.locale.languageCode == currentLocale.languageCode,
+      orElse: () => locales.first,
+    );
+    return localeInfo.displayName;
+  }
+
+  void _changeAppLocale(BuildContext context, Locale newLocale) async {
+    print('🌍 _changeAppLocale called with: ${newLocale.languageCode}');
+    
+    // Save locale using LocaleService (Clean Architecture - use service)
+    final localeService = sl<LocaleService>();
+    final saved = await localeService.saveLocale(newLocale);
+    print('💾 Locale saved to storage: $saved');
+    
+    // Update root state
+    final rootState = guardiancare.of(context);
+    if (rootState != null) {
+      rootState.changeLocale(newLocale);
+      print('✅ Root state updated');
+    } else {
+      print('❌ Root state is null!');
+    }
+    
+    // Check if widget is still mounted
+    if (!context.mounted) return;
+    
+    // Get the language name for the snackbar message
+    final locales = LocaleService.getSupportedLocales();
+    final localeInfo = locales.firstWhere(
+      (info) => info.locale.languageCode == newLocale.languageCode,
+      orElse: () => locales.first,
+    );
+    
+    print('📢 Showing snackbar for: ${localeInfo.nativeName}');
+    
+    // Show snackbar with restart button
+    final scaffoldMessenger = ScaffoldMessenger.of(context);
+    final l10n = AppLocalizations.of(context)!;
+    scaffoldMessenger.showSnackBar(
+      SnackBar(
+        content: Text(
+          l10n.languageChangedRestarting(localeInfo.nativeName),
+          style: const TextStyle(color: Colors.white),
+        ),
+        backgroundColor: tPrimaryColor,
+        duration: const Duration(seconds: 2),
+      ),
+    );
+    
+    // Wait a moment then restart automatically
+    await Future.delayed(const Duration(milliseconds: 1500));
+    
+    if (context.mounted) {
+      print('🔄 Restarting app...');
+      AppRestartWidget.restartApp(context);
+    }
   }
 }

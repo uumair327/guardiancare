@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:guardiancare/core/di/injection_container.dart' as di;
 import 'package:guardiancare/features/authentication/presentation/bloc/auth_bloc.dart';
 import 'package:guardiancare/features/authentication/presentation/bloc/auth_event.dart';
@@ -71,7 +72,24 @@ class _SignupPageState extends State<SignupPage> {
                 ),
               );
             } else if (state is AuthAuthenticated) {
-              Navigator.pushReplacementNamed(context, '/home');
+              // Show email verification message
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text(
+                    'Account created! Please check your email to verify your account before signing in.',
+                  ),
+                  backgroundColor: Colors.green,
+                  duration: Duration(seconds: 5),
+                ),
+              );
+              // Sign out the user so they must verify email first
+              context.read<AuthBloc>().add(SignOutRequested());
+              // Navigate to login
+              Future.delayed(const Duration(seconds: 2), () {
+                if (context.mounted) {
+                  context.go('/login');
+                }
+              });
             }
           },
           builder: (context, state) {
@@ -305,7 +323,7 @@ class _SignupPageState extends State<SignupPage> {
                     // Login Link
                     Center(
                       child: TextButton(
-                        onPressed: () => Navigator.pop(context),
+                        onPressed: () => context.go('/login'),
                         child: const Text.rich(
                           TextSpan(
                             text: 'Already have an account? ',

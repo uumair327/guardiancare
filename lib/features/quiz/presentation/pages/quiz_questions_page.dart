@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:guardiancare/core/constants/app_colors.dart';
 import 'package:guardiancare/features/quiz/services/recommendation_service.dart';
+import 'package:guardiancare/core/l10n/generated/app_localizations.dart';
 
 class QuizQuestionsPage extends StatefulWidget {
   final List<Map<String, dynamic>> questions;
@@ -26,9 +27,11 @@ class _QuizQuestionsPageState extends State<QuizQuestionsPage> {
         ? widget.questions[currentQuestionIndex]
         : null;
 
+    final l10n = AppLocalizations.of(context)!;
+    
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Quiz Questions'),
+        title: Text(l10n.quizQuestions),
         backgroundColor: tPrimaryColor,
         foregroundColor: Colors.white,
       ),
@@ -49,7 +52,7 @@ class _QuizQuestionsPageState extends State<QuizQuestionsPage> {
                   
                   // Question number
                   Text(
-                    'Question ${currentQuestionIndex + 1} of ${widget.questions.length}',
+                    l10n.questionOf(currentQuestionIndex + 1, widget.questions.length),
                     style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
@@ -130,7 +133,7 @@ class _QuizQuestionsPageState extends State<QuizQuestionsPage> {
                       if (currentQuestionIndex > 0)
                         ElevatedButton(
                           onPressed: showFeedback ? null : _goToPreviousQuestion,
-                          child: const Text('Previous'),
+                          child: Text(l10n.previous),
                         )
                       else
                         const SizedBox.shrink(),
@@ -146,8 +149,8 @@ class _QuizQuestionsPageState extends State<QuizQuestionsPage> {
                         ),
                         child: Text(
                           showFeedback
-                              ? (isLastQuestion ? 'Finish' : 'Next')
-                              : 'Submit',
+                              ? (isLastQuestion ? l10n.finish : l10n.next)
+                              : l10n.submit,
                           style: const TextStyle(color: Colors.white),
                         ),
                       ),
@@ -290,6 +293,7 @@ class _QuizQuestionsPageState extends State<QuizQuestionsPage> {
 
   Widget _buildCompletionScreen() {
     final percentage = (correctAnswers / widget.questions.length * 100).round();
+    final l10n = AppLocalizations.of(context)!;
     
     return Center(
       child: Padding(
@@ -303,9 +307,9 @@ class _QuizQuestionsPageState extends State<QuizQuestionsPage> {
               color: tPrimaryColor,
             ),
             const SizedBox(height: 24),
-            const Text(
-              'Quiz Completed!',
-              style: TextStyle(
+            Text(
+              l10n.quizCompleted,
+              style: const TextStyle(
                 fontSize: 28,
                 fontWeight: FontWeight.bold,
                 color: tPrimaryColor,
@@ -313,7 +317,7 @@ class _QuizQuestionsPageState extends State<QuizQuestionsPage> {
             ),
             const SizedBox(height: 16),
             Text(
-              'You scored $correctAnswers out of ${widget.questions.length}',
+              l10n.youScored(correctAnswers, widget.questions.length),
               style: const TextStyle(fontSize: 20),
             ),
             const SizedBox(height: 8),
@@ -332,23 +336,23 @@ class _QuizQuestionsPageState extends State<QuizQuestionsPage> {
                 color: tPrimaryColor.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: const Column(
+              child: Column(
                 children: [
-                  Icon(Icons.auto_awesome, color: tPrimaryColor, size: 32),
-                  SizedBox(height: 8),
+                  const Icon(Icons.auto_awesome, color: tPrimaryColor, size: 32),
+                  const SizedBox(height: 8),
                   Text(
-                    'Generating Personalized Recommendations',
-                    style: TextStyle(
+                    l10n.generatingRecommendations,
+                    style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
                       color: tPrimaryColor,
                     ),
                     textAlign: TextAlign.center,
                   ),
-                  SizedBox(height: 4),
+                  const SizedBox(height: 4),
                   Text(
-                    'Check the Explore tab to see your recommendations!',
-                    style: TextStyle(fontSize: 14, color: Colors.black54),
+                    l10n.checkExploreTab,
+                    style: const TextStyle(fontSize: 14, color: Colors.black54),
                     textAlign: TextAlign.center,
                   ),
                 ],
@@ -363,9 +367,9 @@ class _QuizQuestionsPageState extends State<QuizQuestionsPage> {
                 backgroundColor: tPrimaryColor,
                 padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
               ),
-              child: const Text(
-                'Back to Quizzes',
-                style: TextStyle(fontSize: 18, color: Colors.white),
+              child: Text(
+                l10n.backToQuizzes,
+                style: const TextStyle(fontSize: 18, color: Colors.white),
               ),
             ),
             const SizedBox(height: 16),
@@ -379,9 +383,9 @@ class _QuizQuestionsPageState extends State<QuizQuestionsPage> {
                 padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
                 side: const BorderSide(color: tPrimaryColor, width: 2),
               ),
-              child: const Text(
-                'View Recommendations',
-                style: TextStyle(fontSize: 18, color: tPrimaryColor),
+              child: Text(
+                l10n.viewRecommendations,
+                style: const TextStyle(fontSize: 18, color: tPrimaryColor),
               ),
             ),
           ],

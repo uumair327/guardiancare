@@ -5,18 +5,21 @@ import 'package:guardiancare/features/emergency/presentation/bloc/emergency_bloc
 import 'package:guardiancare/features/emergency/presentation/bloc/emergency_event.dart';
 import 'package:guardiancare/features/emergency/presentation/bloc/emergency_state.dart';
 import 'package:guardiancare/core/constants/app_colors.dart';
+import 'package:guardiancare/core/l10n/generated/app_localizations.dart';
 
 class EmergencyContactPage extends StatelessWidget {
   const EmergencyContactPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    
     return BlocProvider(
       create: (context) => sl<EmergencyBloc>()..add(LoadEmergencyContacts()),
       child: SafeArea(
         child: Scaffold(
           appBar: AppBar(
-            title: const Text('Emergency Contact'),
+            title: Text(l10n.emergencyContact),
           ),
           body: BlocConsumer<EmergencyBloc, EmergencyState>(
             listener: (context, state) {
@@ -36,7 +39,7 @@ class EmergencyContactPage extends StatelessWidget {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text('Error: ${state.message}'),
+                      Text(l10n.errorPrefix(state.message)),
                       const SizedBox(height: 16),
                       ElevatedButton(
                         onPressed: () {
@@ -44,7 +47,7 @@ class EmergencyContactPage extends StatelessWidget {
                               .read<EmergencyBloc>()
                               .add(LoadEmergencyContacts());
                         },
-                        child: const Text('Retry'),
+                        child: Text(l10n.retry),
                       ),
                     ],
                   ),
@@ -66,7 +69,7 @@ class EmergencyContactPage extends StatelessWidget {
                           _buildCard(
                             context: context,
                             icon: Icons.medical_services,
-                            title: 'Emergency Services',
+                            title: l10n.emergencyServices,
                             contacts: emergencyServices
                                 .map((c) => {'name': c.name, 'number': c.number})
                                 .toList(),
@@ -76,7 +79,7 @@ class EmergencyContactPage extends StatelessWidget {
                           _buildCard(
                             context: context,
                             icon: Icons.child_care,
-                            title: 'Child Safety',
+                            title: l10n.childSafety,
                             contacts: childSafety
                                 .map((c) => {'name': c.name, 'number': c.number})
                                 .toList(),
@@ -87,7 +90,7 @@ class EmergencyContactPage extends StatelessWidget {
                 );
               }
 
-              return const Center(child: Text('Loading emergency contacts...'));
+              return Center(child: Text(l10n.loadingEmergencyContacts));
             },
           ),
         ),

@@ -1,44 +1,38 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:guardiancare/features/explore/domain/entities/resource_entity.dart';
+import 'package:guardiancare/features/explore/domain/entities/resource.dart';
 
-/// Resource model extending ResourceEntity with Firestore serialization
-class ResourceModel extends ResourceEntity {
+class ResourceModel extends Resource {
   const ResourceModel({
+    required super.id,
     required super.title,
-    required super.url,
-    required super.type,
+    super.description,
+    super.url,
+    super.type,
+    super.category,
     super.timestamp,
   });
 
-  /// Create ResourceModel from Firestore document
-  factory ResourceModel.fromFirestore(Map<String, dynamic> doc) {
+  factory ResourceModel.fromFirestore(DocumentSnapshot doc) {
+    final data = doc.data() as Map<String, dynamic>;
     return ResourceModel(
-      title: doc['title'] as String? ?? 'Untitled',
-      url: doc['url'] as String? ?? '',
-      type: doc['type'] as String? ?? 'link',
-      timestamp: doc['timestamp'] != null
-          ? (doc['timestamp'] as Timestamp).toDate()
-          : null,
+      id: doc.id,
+      title: data['title'] ?? '',
+      description: data['description'],
+      url: data['url'],
+      type: data['type'],
+      category: data['category'],
+      timestamp: (data['timestamp'] as Timestamp?)?.toDate(),
     );
   }
 
-  /// Convert ResourceModel to JSON
-  Map<String, dynamic> toJson() {
+  Map<String, dynamic> toFirestore() {
     return {
       'title': title,
-      'url': url,
-      'type': type,
-      'timestamp': timestamp != null ? Timestamp.fromDate(timestamp!) : null,
+      if (description != null) 'description': description,
+      if (url != null) 'url': url,
+      if (type != null) 'type': type,
+      if (category != null) 'category': category,
+      if (timestamp != null) 'timestamp': Timestamp.fromDate(timestamp!),
     };
-  }
-
-  /// Create ResourceModel from ResourceEntity
-  factory ResourceModel.fromEntity(ResourceEntity entity) {
-    return ResourceModel(
-      title: entity.title,
-      url: entity.url,
-      type: entity.type,
-      timestamp: entity.timestamp,
-    );
   }
 }

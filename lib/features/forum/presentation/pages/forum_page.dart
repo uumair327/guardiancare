@@ -6,12 +6,15 @@ import 'package:guardiancare/features/forum/presentation/bloc/forum_bloc.dart';
 import 'package:guardiancare/features/forum/presentation/bloc/forum_event.dart';
 import 'package:guardiancare/features/forum/presentation/bloc/forum_state.dart';
 import 'package:guardiancare/features/forum/presentation/widgets/forum_list_item.dart';
+import 'package:guardiancare/core/l10n/generated/app_localizations.dart';
 
 class ForumPage extends StatelessWidget {
   const ForumPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    
     return BlocProvider(
       create: (context) => di.sl<ForumBloc>()..add(const LoadForums(ForumCategory.parent)),
       child: DefaultTabController(
@@ -20,15 +23,15 @@ class ForumPage extends StatelessWidget {
           builder: (context) {
             return Scaffold(
               appBar: AppBar(
-                title: const Text('Forums'),
+                title: Text(l10n.forums),
                 bottom: TabBar(
                   onTap: (index) {
                     final category = index == 0 ? ForumCategory.parent : ForumCategory.children;
                     context.read<ForumBloc>().add(LoadForums(category));
                   },
-                  tabs: const [
-                    Tab(text: 'Parents'),
-                    Tab(text: 'Children'),
+                  tabs: [
+                    Tab(text: l10n.parentGuardian),
+                    Tab(text: l10n.child),
                   ],
                 ),
               ),
@@ -53,6 +56,8 @@ class _ForumListView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    
     return BlocConsumer<ForumBloc, ForumState>(
       listener: (context, state) {
         if (state is ForumError) {
@@ -100,7 +105,7 @@ class _ForumListView extends StatelessWidget {
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    'No topics yet',
+                    l10n.noForumsAvailable,
                     style: TextStyle(
                       fontSize: 18,
                       color: Colors.grey[600],
@@ -108,7 +113,7 @@ class _ForumListView extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Be the first to start a discussion!',
+                    l10n.noCommentsYet,
                     style: TextStyle(
                       fontSize: 14,
                       color: Colors.grey[500],
@@ -142,7 +147,7 @@ class _ForumListView extends StatelessWidget {
                 const Icon(Icons.error_outline, size: 64, color: Colors.red),
                 const SizedBox(height: 16),
                 Text(
-                  'Error: ${state.message}',
+                  l10n.errorPrefix(state.message),
                   textAlign: TextAlign.center,
                   style: const TextStyle(color: Colors.red),
                 ),
@@ -151,7 +156,7 @@ class _ForumListView extends StatelessWidget {
                   onPressed: () {
                     context.read<ForumBloc>().add(LoadForums(category));
                   },
-                  child: const Text('Retry'),
+                  child: Text(l10n.retry),
                 ),
               ],
             ),

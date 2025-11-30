@@ -1,0 +1,604 @@
+{
+  "@@locale": "en",
+  
+  "appTitle": "Guardian Care",
+  "@appTitle": {
+    "description": "The application title"
+  },
+  
+  "home": "Home",
+  "@home": {
+    "description": "Home tab label"
+  },
+  
+  "learn": "Learn",
+  "@learn": {
+    "description": "Learn tab label"
+  },
+  
+  "explore": "Explore",
+  "@explore": {
+    "description": "Explore tab label"
+  },
+  
+  "forum": "Forum",
+  "@forum": {
+    "description": "Forum tab label"
+  },
+  
+  "profile": "Profile",
+  "@profile": {
+    "description": "Profile tab label"
+  },
+  
+  "login": "Login",
+  "@login": {
+    "description": "Login button text"
+  },
+  
+  "signup": "Sign Up",
+  "@signup": {
+    "description": "Sign up button text"
+  },
+  
+  "email": "Email",
+  "@email": {
+    "description": "Email field label"
+  },
+  
+  "password": "Password",
+  "@password": {
+    "description": "Password field label"
+  },
+  
+  "forgotPassword": "Forgot Password?",
+  "@forgotPassword": {
+    "description": "Forgot password link text"
+  },
+  
+  "logout": "Logout",
+  "@logout": {
+    "description": "Logout button text"
+  },
+  
+  "settings": "Settings",
+  "@settings": {
+    "description": "Settings menu item"
+  },
+  
+  "language": "Language",
+  "@language": {
+    "description": "Language settings label"
+  },
+  
+  "changeLanguage": "Change Language",
+  "@changeLanguage": {
+    "description": "Change language option"
+  },
+  
+  "selectLanguage": "Select Language",
+  "@selectLanguage": {
+    "description": "Select language dialog title"
+  },
+  
+  "account": "Account",
+  "@account": {
+    "description": "Account page title"
+  },
+  
+  "emergencyContact": "Emergency Contact",
+  "@emergencyContact": {
+    "description": "Emergency contact label"
+  },
+  
+  "quiz": "Quiz",
+  "@quiz": {
+    "description": "Quiz label"
+  },
+  
+  "videos": "Videos",
+  "@videos": {
+    "description": "Videos label"
+  },
+  
+  "resources": "Resources",
+  "@resources": {
+    "description": "Resources label"
+  },
+  
+  "cancel": "Cancel",
+  "@cancel": {
+    "description": "Cancel button text"
+  },
+  
+  "save": "Save",
+  "@save": {
+    "description": "Save button text"
+  },
+  
+  "delete": "Delete",
+  "@delete": {
+    "description": "Delete button text"
+  },
+  
+  "confirm": "Confirm",
+  "@confirm": {
+    "description": "Confirm button text"
+  },
+  
+  "yes": "Yes",
+  "@yes": {
+    "description": "Yes button text"
+  },
+  
+  "no": "No",
+  "@no": {
+    "description": "No button text"
+  },
+  
+  "loading": "Loading...",
+  "@loading": {
+    "description": "Loading indicator text"
+  },
+  
+  "error": "Error",
+  "@error": {
+    "description": "Error message prefix"
+  },
+  
+  "success": "Success",
+  "@success": {
+    "description": "Success message prefix"
+  },
+  
+  "itemsCount": "{count, plural, =0{No items} =1{1 item} other{{count} items}}",
+  "@itemsCount": {
+    "description": "Number of items with plural support",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  
+  "welcome": "Welcome",
+  "@welcome": {
+    "description": "Welcome message"
+  },
+  
+  "welcomeUser": "Welcome, {name}!",
+  "@welcomeUser": {
+    "description": "Welcome message with user name",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  
+  "emergency": "Emergency",
+  "@emergency": {
+    "description": "Emergency button label"
+  },
+  
+  "website": "Website",
+  "@website": {
+    "description": "Website button label"
+  },
+  
+  "mailUs": "Mail Us",
+  "@mailUs": {
+    "description": "Mail us button label"
+  },
+  
+  "yes": "Yes",
+  "@yes": {
+    "description": "Yes button text"
+  },
+  
+  "no": "No",
+  "@no": {
+    "description": "No button text"
+  },
+  
+  "cancel": "Cancel",
+  "@cancel": {
+    "description": "Cancel button text"
+  },
+  
+  "retry": "Retry",
+  "@retry": {
+    "description": "Retry button text"
+  },
+  
+  "back": "Back",
+  "@back": {
+    "description": "Back button text"
+  },
+  
+  "next": "Next",
+  "@next": {
+    "description": "Next button text"
+  },
+  
+  "submit": "Submit",
+  "@submit": {
+    "description": "Submit button text"
+  },
+  
+  "deleteAccount": "Delete Account",
+  "@deleteAccount": {
+    "description": "Delete account dialog title"
+  },
+  
+  "deleteAccountConfirm": "Are you sure you want to delete your account? This action cannot be undone.",
+  "@deleteAccountConfirm": {
+    "description": "Delete account confirmation message"
+  },
+  
+  "accountDeletedSuccess": "Account deleted successfully",
+  "@accountDeletedSuccess": {
+    "description": "Account deletion success message"
+  },
+  
+  "logoutConfirm": "Are you sure you want to log out?",
+  "@logoutConfirm": {
+    "description": "Logout confirmation message"
+  },
+  
+  "deleteMyAccount": "Delete My Account",
+  "@deleteMyAccount": {
+    "description": "Delete my account button text"
+  },
+  
+  "noUserSignedIn": "No user is currently signed in",
+  "@noUserSignedIn": {
+    "description": "No user signed in message"
+  },
+  
+  "loadingProfile": "Loading profile...",
+  "@loadingProfile": {
+    "description": "Loading profile message"
+  },
+  
+  "nameLabel": "Name",
+  "@nameLabel": {
+    "description": "Name label"
+  },
+  
+  "emailLabel": "Email",
+  "@emailLabel": {
+    "description": "Email label"
+  },
+  
+  "account": "Account",
+  "@account": {
+    "description": "Account page title"
+  },
+  
+  "accountSettings": "Account Settings",
+  "@accountSettings": {
+    "description": "Account settings menu item"
+  },
+  
+  "editProfile": "Edit Profile",
+  "@editProfile": {
+    "description": "Edit profile menu item"
+  },
+  
+  "changePassword": "Change Password",
+  "@changePassword": {
+    "description": "Change password menu item"
+  },
+  
+  "notificationSettings": "Notification Settings",
+  "@notificationSettings": {
+    "description": "Notification settings menu item"
+  },
+  
+  "privacySettings": "Privacy Settings",
+  "@privacySettings": {
+    "description": "Privacy settings menu item"
+  },
+  
+  "helpSupport": "Help & Support",
+  "@helpSupport": {
+    "description": "Help and support menu item"
+  },
+  
+  "aboutApp": "About App",
+  "@aboutApp": {
+    "description": "About app menu item"
+  },
+  
+  "logoutMessage": "Are you sure you want to log out?",
+  "@logoutMessage": {
+    "description": "Logout confirmation dialog message"
+  },
+  
+  "deleteAccountWarning": "This action cannot be undone. All your data will be permanently deleted.",
+  "@deleteAccountWarning": {
+    "description": "Delete account warning message"
+  },
+  
+  "childSafetySettings": "Child Safety Settings",
+  "@childSafetySettings": {
+    "description": "Child safety settings section title"
+  },
+  
+  "languageChangedRestarting": "Language changed to {language}. Restarting app...",
+  "@languageChangedRestarting": {
+    "description": "Language change notification with restart message",
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  },
+  
+  "emergencyServices": "Emergency Services",
+  "@emergencyServices": {
+    "description": "Emergency services section title"
+  },
+  
+  "childSafety": "Child Safety",
+  "@childSafety": {
+    "description": "Child safety section title"
+  },
+  
+  "loadingEmergencyContacts": "Loading emergency contacts...",
+  "@loadingEmergencyContacts": {
+    "description": "Loading message for emergency contacts"
+  },
+  
+  "noQuizzesAvailable": "No quizzes available",
+  "@noQuizzesAvailable": {
+    "description": "Message when no quizzes are available"
+  },
+  
+  "quizQuestions": "Quiz Questions",
+  "@quizQuestions": {
+    "description": "Quiz questions page title"
+  },
+  
+  "questionOf": "Question {current} of {total}",
+  "@questionOf": {
+    "description": "Question progress indicator",
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  
+  "previous": "Previous",
+  "@previous": {
+    "description": "Previous button text"
+  },
+  
+  "finish": "Finish",
+  "@finish": {
+    "description": "Finish button text"
+  },
+  
+  "quizCompleted": "Quiz Completed!",
+  "@quizCompleted": {
+    "description": "Quiz completion message"
+  },
+  
+  "youScored": "You scored {score} out of {total}",
+  "@youScored": {
+    "description": "Quiz score message",
+    "placeholders": {
+      "score": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  
+  "generatingRecommendations": "Generating Personalized Recommendations",
+  "@generatingRecommendations": {
+    "description": "Generating recommendations message"
+  },
+  
+  "checkExploreTab": "Check the Explore tab to see your recommendations!",
+  "@checkExploreTab": {
+    "description": "Message to check explore tab"
+  },
+  
+  "backToQuizzes": "Back to Quizzes",
+  "@backToQuizzes": {
+    "description": "Back to quizzes button"
+  },
+  
+  "viewRecommendations": "View Recommendations",
+  "@viewRecommendations": {
+    "description": "View recommendations button"
+  },
+  
+  "noCategoriesAvailable": "No categories available",
+  "@noCategoriesAvailable": {
+    "description": "Message when no categories are available"
+  },
+  
+  "noVideosAvailable": "No videos available",
+  "@noVideosAvailable": {
+    "description": "Message when no videos are available"
+  },
+  
+  "quizQuestions": "Quiz Questions",
+  "@quizQuestions": {
+    "description": "Quiz questions page title"
+  },
+  
+  "noQuizzesAvailable": "No quizzes available",
+  "@noQuizzesAvailable": {
+    "description": "Message when no quizzes are available"
+  },
+  
+  "forums": "Forums",
+  "@forums": {
+    "description": "Forums page title"
+  },
+  
+  "forumDiscussion": "Forum Discussion",
+  "@forumDiscussion": {
+    "description": "Forum discussion page title"
+  },
+  
+  "parentForums": "Parent Forums",
+  "@parentForums": {
+    "description": "Parent forums category title"
+  },
+  
+  "noForumsAvailable": "No forums available",
+  "@noForumsAvailable": {
+    "description": "Message when no forums are available"
+  },
+  
+  "noCommentsYet": "No comments yet. Be the first to comment!",
+  "@noCommentsYet": {
+    "description": "Empty state message for comments"
+  },
+  
+  "commentPostedSuccess": "Comment posted successfully!",
+  "@commentPostedSuccess": {
+    "description": "Success message after posting comment"
+  },
+  
+  "commentSubmittedSuccess": "Comment submitted successfully!",
+  "@commentSubmittedSuccess": {
+    "description": "Success message after submitting comment"
+  },
+  
+  "pleaseEnterComment": "Please enter a comment",
+  "@pleaseEnterComment": {
+    "description": "Validation message for empty comment"
+  },
+  
+  "commentMinLength": "Comment must be at least 2 characters",
+  "@commentMinLength": {
+    "description": "Validation message for short comment"
+  },
+  
+  "pullToRefresh": "Pull to refresh",
+  "@pullToRefresh": {
+    "description": "Pull to refresh hint text"
+  },
+  
+  "pullDownToRefresh": "Pull down to refresh",
+  "@pullDownToRefresh": {
+    "description": "Pull down to refresh hint text"
+  },
+  
+  "somethingWentWrong": "Something went wrong",
+  "@somethingWentWrong": {
+    "description": "Generic error message"
+  },
+  
+  "recommendedForYou": "Recommended for You",
+  "@recommendedForYou": {
+    "description": "Recommended section title"
+  },
+  
+  "takeAQuiz": "Take a Quiz",
+  "@takeAQuiz": {
+    "description": "Take a quiz button text"
+  },
+  
+  "noRecommendationsYet": "No Recommendations Yet",
+  "@noRecommendationsYet": {
+    "description": "Empty recommendations title"
+  },
+  
+  "takeQuizForRecommendations": "Take a quiz to get personalized video recommendations based on your interests!",
+  "@takeQuizForRecommendations": {
+    "description": "Empty recommendations description"
+  },
+  
+  "loginToViewRecommendations": "Please log in to view recommendations",
+  "@loginToViewRecommendations": {
+    "description": "Login required message for recommendations"
+  },
+  
+  "loadingEmergencyContacts": "Loading emergency contacts...",
+  "@loadingEmergencyContacts": {
+    "description": "Loading message for emergency contacts"
+  },
+  
+  "agreeToTerms": "I agree to the terms and conditions",
+  "@agreeToTerms": {
+    "description": "Terms agreement checkbox label"
+  },
+  
+  "pleaseAgreeToTerms": "Please agree to the terms and conditions",
+  "@pleaseAgreeToTerms": {
+    "description": "Validation message for terms agreement"
+  },
+  
+  "isChildAbove12": "Is child above 12 years old?",
+  "@isChildAbove12": {
+    "description": "Child age verification question"
+  },
+  
+  "parentalKeyMinLength": "Parental key must be at least 4 characters",
+  "@parentalKeyMinLength": {
+    "description": "Validation message for parental key"
+  },
+  
+  "incorrectAnswer": "Incorrect answer. Please try again.",
+  "@incorrectAnswer": {
+    "description": "Error message for incorrect answer"
+  },
+  
+  "parentalKeyResetSuccess": "Parental key reset successfully!",
+  "@parentalKeyResetSuccess": {
+    "description": "Success message for parental key reset"
+  },
+  
+  "parentGuardian": "Parent/Guardian",
+  "@parentGuardian": {
+    "description": "Parent/Guardian role label"
+  },
+  
+  "child": "Child",
+  "@child": {
+    "description": "Child role label"
+  },
+  
+  "couldNotLaunchEmail": "Could not launch email client",
+  "@couldNotLaunchEmail": {
+    "description": "Error message when email client fails to launch"
+  },
+  
+  "errorLaunchingEmail": "Error launching email: {error}",
+  "@errorLaunchingEmail": {
+    "description": "Error message with details when launching email",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  
+  "errorPrefix": "Error: {error}",
+  "@errorPrefix": {
+    "description": "Generic error prefix with message",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  
+  "noResourcesAvailable": "No resources available",
+  "@noResourcesAvailable": {
+    "description": "Message when no resources are available"
+  }
+}
