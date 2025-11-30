@@ -7,6 +7,7 @@ import 'package:guardiancare/features/home/presentation/widgets/circular_button.
 import 'package:guardiancare/features/home/presentation/widgets/simple_carousel.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:guardiancare/core/widgets/parental_verification_dialog.dart';
+import 'package:guardiancare/core/l10n/generated/app_localizations.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -64,6 +65,8 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    
     return Scaffold(
       extendBody: true,
       body: SafeArea(
@@ -96,17 +99,17 @@ class _HomePageState extends State<HomePage> {
                           children: [
                             CircularButton(
                               iconData: Icons.quiz,
-                              label: 'Quiz',
+                              label: l10n.quiz,
                               onPressed: () => context.push('/quiz'),
                             ),
                             CircularButton(
                               iconData: Icons.video_library,
-                              label: 'Learn',
+                              label: l10n.learn,
                               onPressed: () => context.push('/video'),
                             ),
                             CircularButton(
                               iconData: Icons.emergency,
-                              label: 'Emergency',
+                              label: l10n.emergency,
                               onPressed: () => context.push('/emergency'),
                             ),
                           ],
@@ -117,28 +120,28 @@ class _HomePageState extends State<HomePage> {
                           children: [
                             CircularButton(
                               iconData: Icons.person,
-                              label: 'Profile',
+                              label: l10n.profile,
                               onPressed: () {
                                 showParentalVerification(
                                   context,
-                                  'Profile',
+                                  l10n.profile,
                                   () => context.push('/account'),
                                 );
                               },
                             ),
                             CircularButton(
                               iconData: CupertinoIcons.globe,
-                              label: 'Website',
+                              label: l10n.website,
                               onPressed: () => context.push('/webview', 
                                 extra: "https://childrenofindia.in/"),
                             ),
                             CircularButton(
                               iconData: Icons.email,
-                              label: 'Mail Us',
+                              label: l10n.mailUs,
                               onPressed: () {
                                 showParentalVerification(
                                   context,
-                                  'Mail Us',
+                                  l10n.mailUs,
                                   () async {
                                     final Uri emailLaunchUri = Uri(
                                       scheme: 'mailto',

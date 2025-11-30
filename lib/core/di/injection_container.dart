@@ -7,6 +7,7 @@ import 'package:guardiancare/core/network/network_info.dart';
 import 'package:guardiancare/core/database/storage_manager.dart';
 import 'package:guardiancare/core/database/hive_service.dart';
 import 'package:guardiancare/core/database/database_service.dart';
+import 'package:guardiancare/core/services/locale_service.dart';
 import 'package:guardiancare/features/authentication/data/datasources/auth_remote_datasource.dart';
 import 'package:guardiancare/features/authentication/data/repositories/auth_repository_impl.dart';
 import 'package:guardiancare/features/authentication/domain/repositories/auth_repository.dart';
@@ -72,10 +73,9 @@ import 'package:guardiancare/features/report/presentation/bloc/report_bloc.dart'
 import 'package:guardiancare/features/explore/data/datasources/explore_remote_datasource.dart';
 import 'package:guardiancare/features/explore/data/repositories/explore_repository_impl.dart';
 import 'package:guardiancare/features/explore/domain/repositories/explore_repository.dart';
-import 'package:guardiancare/features/explore/domain/usecases/get_recommended_resources.dart';
-import 'package:guardiancare/features/explore/domain/usecases/get_recommended_videos.dart';
-import 'package:guardiancare/features/explore/domain/usecases/search_resources.dart';
-import 'package:guardiancare/features/explore/presentation/bloc/explore_bloc.dart';
+import 'package:guardiancare/features/explore/domain/usecases/get_recommendations.dart';
+import 'package:guardiancare/features/explore/domain/usecases/get_resources.dart';
+import 'package:guardiancare/features/explore/presentation/bloc/explore_cubit.dart';
 import 'package:guardiancare/features/consent/data/datasources/consent_remote_datasource.dart';
 import 'package:guardiancare/features/consent/data/repositories/consent_repository_impl.dart';
 import 'package:guardiancare/features/consent/domain/repositories/consent_repository.dart';
@@ -109,6 +109,9 @@ Future<void> init() async {
   // Register storage services for dependency injection
   sl.registerLazySingleton(() => HiveService.instance);
   sl.registerLazySingleton(() => DatabaseService.instance);
+  
+  // Register LocaleService
+  sl.registerLazySingleton(() => LocaleService(sharedPreferences));
 
   // ============================================================================
   // Features
@@ -406,16 +409,14 @@ void _initExploreFeature() {
   );
 
   // Use cases
-  sl.registerLazySingleton(() => GetRecommendedVideos(sl()));
-  sl.registerLazySingleton(() => GetRecommendedResources(sl()));
-  sl.registerLazySingleton(() => SearchResources(sl()));
+  sl.registerLazySingleton(() => GetRecommendations(sl()));
+  sl.registerLazySingleton(() => GetResources(sl()));
 
-  // BLoC
+  // Cubit
   sl.registerFactory(
-    () => ExploreBloc(
-      getRecommendedVideos: sl(),
-      getRecommendedResources: sl(),
-      searchResources: sl(),
+    () => ExploreCubit(
+      getRecommendations: sl(),
+      getResources: sl(),
     ),
   );
 }

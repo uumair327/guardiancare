@@ -11,7 +11,6 @@ import 'package:guardiancare/features/consent/presentation/pages/enhanced_consen
 import 'package:guardiancare/features/consent/presentation/widgets/forgot_parental_key_dialog.dart';
 import 'package:guardiancare/core/widgets/parental_verification_dialog.dart';
 import 'package:guardiancare/core/services/parental_verification_service.dart';
-import 'package:guardiancare/features/explore/presentation/bloc/explore_bloc.dart';
 import 'package:guardiancare/features/explore/presentation/pages/explore_page.dart';
 import 'package:guardiancare/features/forum/presentation/bloc/forum_bloc.dart';
 import 'package:guardiancare/features/forum/presentation/pages/forum_page.dart';
@@ -183,10 +182,7 @@ class _PagesState extends State<Pages> {
         create: (_) => sl<HomeBloc>(),
         child: const HomePage(),
       ),
-      BlocProvider(
-        create: (_) => sl<ExploreBloc>(),
-        child: const ExplorePage(),
-      ),
+      const ExplorePage(),
       BlocProvider(
         create: (_) => sl<ForumBloc>(),
         child: const ForumPage(),

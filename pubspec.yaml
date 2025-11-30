@@ -3,13 +3,15 @@ description: "A Educational App."
 
 publish_to: 'none'
 
-version: 1.0.0+16
+version: 1.0.0+18
 
 environment:
   sdk: '>=3.4.0 <4.0.0'
 
 dependencies:
   flutter:
+    sdk: flutter
+  flutter_localizations:
     sdk: flutter
   shared_preferences: ^2.4.0
   sqflite: ^2.4.2
@@ -100,19 +102,24 @@ flutter_native_splash:
 
 flutter:
   uses-material-design: true
+  generate: true
   assets:
     - assets/logo/
     
 flutter_launcher_icons:
   # App icon configuration
-  android: "launcher_icon"
+  android: true
   ios: true
   image_path: "assets/logo/logo.png"
   
-  # Android specific
+  # Android specific - Adaptive icon with proper padding
   min_sdk_android: 23
   adaptive_icon_background: "#ffffff"
   adaptive_icon_foreground: "assets/logo/logo.png"
+  adaptive_icon_monochrome: "assets/logo/logo.png"
+  
+  # Add padding to prevent cutoff (20% padding recommended)
+  adaptive_icon_padding: 20
   
   # Remove old launcher icons
   remove_alpha_ios: true

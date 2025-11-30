@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:guardiancare/core/constants/app_colors.dart';
+import 'package:guardiancare/core/l10n/generated/app_localizations.dart';
 
 class VideoPage extends StatefulWidget {
   const VideoPage({Key? key}) : super(key: key);
@@ -50,9 +51,11 @@ class _VideoPageState extends State<VideoPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    
     return Scaffold(
       appBar: AppBar(
-        title: Text(selectedCategory ?? 'Learn'),
+        title: Text(selectedCategory ?? l10n.learn),
         backgroundColor: tPrimaryColor,
         foregroundColor: Colors.white,
         leading: selectedCategory != null
@@ -75,9 +78,11 @@ class _VideoPageState extends State<VideoPage> {
   }
 
   Widget buildCategoryList() {
+    final l10n = AppLocalizations.of(context)!;
+    
     if (categories!.isEmpty) {
-      return const Center(
-        child: Text('No categories available'),
+      return Center(
+        child: Text(l10n.noCategoriesAvailable),
       );
     }
 
@@ -143,6 +148,8 @@ class _VideoPageState extends State<VideoPage> {
   }
 
   Widget buildVideoList(String category) {
+    final l10n = AppLocalizations.of(context)!;
+    
     return StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance
           .collection('videos')
@@ -153,10 +160,10 @@ class _VideoPageState extends State<VideoPage> {
           return const Center(child: CircularProgressIndicator());
         }
         if (snapshot.hasError) {
-          return Center(child: Text('Error: ${snapshot.error}'));
+          return Center(child: Text(l10n.errorPrefix(snapshot.error.toString())));
         }
         if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-          return const Center(child: Text('No videos available'));
+          return Center(child: Text(l10n.noVideosAvailable));
         }
 
         List<QueryDocumentSnapshot> videos = snapshot.data!.docs;

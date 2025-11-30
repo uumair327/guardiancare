@@ -47,6 +47,14 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         throw AuthException('Sign in failed: No user returned');
       }
 
+      // Check if email is verified
+      if (!credential.user!.emailVerified) {
+        throw AuthException(
+          'Please verify your email address. Check your inbox for the verification link.',
+          code: 'email-not-verified',
+        );
+      }
+
       // Get user role from Firestore
       final userDoc = await firestore
           .collection('users')
@@ -54,6 +62,11 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
           .get();
 
       final role = userDoc.data()?['role'] as String?;
+
+      // Update email verified status in Firestore
+      await firestore.collection('users').doc(credential.user!.uid).update({
+        'emailVerified': true,
+      });
 
       return UserModel.fromFirebaseUser(credential.user!, role: role);
     } on FirebaseAuthException catch (e) {
@@ -86,6 +99,9 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       // Update display name
       await credential.user!.updateDisplayName(displayName);
 
+      // Send email verification
+      await credential.user!.sendEmailVerification();
+
       // Store user data in Firestore
       await firestore.collection('users').doc(credential.user!.uid).set({
         'uid': credential.user!.uid,
@@ -94,6 +110,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         'role': role,
         'createdAt': FieldValue.serverTimestamp(),
         'photoURL': null,
+        'emailVerified': false,
       });
 
       return UserModel.fromFirebaseUser(credential.user!, role: role);
@@ -266,6 +283,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         return 'This sign-in method is not enabled';
       case 'network-request-failed':
         return 'Network error. Please check your connection';
+      case 'email-not-verified':
+        return 'Please verify your email address before signing in';
       default:
         return 'Authentication failed: $code';
     }

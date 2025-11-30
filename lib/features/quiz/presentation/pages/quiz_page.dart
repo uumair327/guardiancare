@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:guardiancare/core/constants/app_colors.dart';
+import 'package:guardiancare/core/l10n/generated/app_localizations.dart';
 
 class QuizPage extends StatefulWidget {
   const QuizPage({Key? key}) : super(key: key);
@@ -87,9 +88,11 @@ class _QuizPageState extends State<QuizPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Quiz'),
+        title: Text(l10n.quiz),
         backgroundColor: tPrimaryColor,
         foregroundColor: Colors.white,
       ),
@@ -99,12 +102,12 @@ class _QuizPageState extends State<QuizPage> {
               ? Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: const [
-                      Icon(Icons.quiz, size: 100, color: Colors.grey),
-                      SizedBox(height: 20),
+                    children: [
+                      const Icon(Icons.quiz, size: 100, color: Colors.grey),
+                      const SizedBox(height: 20),
                       Text(
-                        'No quizzes available',
-                        style: TextStyle(fontSize: 18, color: Colors.grey),
+                        l10n.noQuizzesAvailable,
+                        style: const TextStyle(fontSize: 18, color: Colors.grey),
                       ),
                     ],
                   ),

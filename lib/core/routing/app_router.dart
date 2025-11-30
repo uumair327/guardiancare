@@ -9,6 +9,7 @@ import 'package:guardiancare/features/authentication/presentation/bloc/auth_bloc
 import 'package:guardiancare/features/authentication/presentation/pages/login_page.dart';
 import 'package:guardiancare/features/authentication/presentation/pages/password_reset_page.dart';
 import 'package:guardiancare/features/authentication/presentation/pages/signup_page.dart';
+import 'package:guardiancare/features/authentication/presentation/pages/email_verification_page.dart';
 import 'package:guardiancare/features/quiz/presentation/pages/quiz_page.dart';
 import 'package:guardiancare/features/quiz/presentation/pages/quiz_questions_page.dart';
 import 'package:guardiancare/features/learn/presentation/pages/video_page.dart';
@@ -16,6 +17,7 @@ import 'package:guardiancare/features/emergency/presentation/pages/emergency_con
 import 'package:guardiancare/features/profile/presentation/pages/account_page.dart';
 import 'package:guardiancare/features/forum/presentation/pages/forum_detail_page.dart';
 import 'package:guardiancare/core/widgets/web_view_page.dart';
+import 'package:guardiancare/core/widgets/pdf_viewer_page.dart';
 import 'package:guardiancare/core/widgets/video_player_page.dart';
 
 class AppRouter {
@@ -27,9 +29,12 @@ class AppRouter {
     refreshListenable: GoRouterRefreshStream(FirebaseAuth.instance.authStateChanges()),
     redirect: (context, state) {
       final user = FirebaseAuth.instance.currentUser;
-      final isLoginRoute = state.matchedLocation == '/login' ||
-          state.matchedLocation == '/signup' ||
-          state.matchedLocation == '/password-reset';
+      // Only login route is public now (Google Sign-In only)
+      final isLoginRoute = state.matchedLocation == '/login';
+      // Email/Password routes commented out
+      // || state.matchedLocation == '/signup'
+      // || state.matchedLocation == '/password-reset'
+      // || state.matchedLocation == '/email-verification';
 
       // If user is not logged in and trying to access protected route
       if (user == null && !isLoginRoute) {
@@ -50,6 +55,9 @@ class AppRouter {
         name: 'login',
         builder: (context, state) => const LoginPage(),
       ),
+      // Email/Password authentication routes - COMMENTED OUT
+      // Only Google Sign-In is enabled
+      /*
       GoRoute(
         path: '/signup',
         name: 'signup',
@@ -60,6 +68,12 @@ class AppRouter {
         name: 'password-reset',
         builder: (context, state) => const PasswordResetPage(),
       ),
+      GoRoute(
+        path: '/email-verification',
+        name: 'email-verification',
+        builder: (context, state) => const EmailVerificationPage(),
+      ),
+      */
 
       // Main app route with bottom navigation
       GoRoute(
@@ -129,6 +143,19 @@ class AppRouter {
         builder: (context, state) {
           final url = state.extra as String;
           return WebViewPage(url: url);
+        },
+      ),
+
+      // PDF Viewer route
+      GoRoute(
+        path: '/pdf-viewer',
+        name: 'pdf-viewer',
+        builder: (context, state) {
+          final params = state.extra as Map<String, String>;
+          return PDFViewerPage(
+            pdfUrl: params['url']!,
+            title: params['title']!,
+          );
         },
       ),
 
