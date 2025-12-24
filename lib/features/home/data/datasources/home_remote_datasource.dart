@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 import 'package:guardiancare/features/home/data/models/carousel_item_model.dart';
 
 /// Abstract interface for home remote data source
@@ -15,12 +16,18 @@ class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
 
   @override
   Stream<List<CarouselItemModel>> getCarouselItems() {
+    debugPrint('HomeRemoteDataSource: Starting to fetch carousel items...');
+    
     return firestore.collection('carousel_items').snapshots().map((snapshot) {
-      return snapshot.docs
+      debugPrint('HomeRemoteDataSource: Received ${snapshot.docs.length} documents');
+      
+      final items = snapshot.docs
           .map((doc) {
             try {
+              debugPrint('HomeRemoteDataSource: Parsing doc ${doc.id}: ${doc.data()}');
               return CarouselItemModel.fromFirestore(doc);
             } catch (e) {
+              debugPrint('Error parsing carousel document ${doc.id}: $e');
               return null;
             }
           })
@@ -30,6 +37,9 @@ class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
               item.link.isNotEmpty)
           .cast<CarouselItemModel>()
           .toList();
+      
+      debugPrint('HomeRemoteDataSource: Returning ${items.length} valid items');
+      return items;
     });
   }
 }

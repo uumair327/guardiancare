@@ -1,6 +1,5 @@
 import 'package:dartz/dartz.dart';
-import 'package:guardiancare/core/error/exceptions.dart';
-import 'package:guardiancare/core/error/failures.dart';
+import 'package:guardiancare/core/error/error.dart';
 import 'package:guardiancare/features/report/data/datasources/report_local_datasource.dart';
 import 'package:guardiancare/features/report/data/models/report_model.dart';
 import 'package:guardiancare/features/report/domain/entities/report_entity.dart';

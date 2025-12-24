@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show kIsWeb, debugPrint;
 import 'package:guardiancare/core/database/database_service.dart';
 import 'package:guardiancare/core/database/hive_service.dart';
 import 'package:guardiancare/core/database/daos/quiz_dao.dart';
@@ -9,7 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 /// Intelligently routes data to the appropriate storage solution:
 /// - SharedPreferences: Simple key-value pairs, app settings
 /// - Hive: Fast access data, user sessions, temporary data
-/// - SQLite: Complex queries, relational data, large datasets
+/// - SQLite: Complex queries, relational data, large datasets (not available on web)
 class StorageManager {
   static final StorageManager instance = StorageManager._internal();
   
@@ -20,10 +21,10 @@ class StorageManager {
   final HiveService _hiveService = HiveService.instance;
   late SharedPreferences _prefs;
 
-  // DAOs
-  late QuizDao quizDao;
-  late VideoDao videoDao;
-  late CacheDao cacheDao;
+  // DAOs (only available on non-web platforms)
+  QuizDao? quizDao;
+  VideoDao? videoDao;
+  CacheDao? cacheDao;
 
   bool _initialized = false;
 
@@ -33,16 +34,22 @@ class StorageManager {
 
     try {
       // Initialize in parallel for faster startup
-      await Future.wait([
+      final futures = <Future>[
         _initSharedPreferences(),
         _initHive(),
-        _initSQLite(),
-      ]);
+      ];
+      
+      // SQLite is not supported on web
+      if (!kIsWeb) {
+        futures.add(_initSQLite());
+      }
+      
+      await Future.wait(futures);
 
       _initialized = true;
-      print('✅ Storage Manager initialized successfully');
+      debugPrint('✅ Storage Manager initialized successfully');
     } catch (e) {
-      print('❌ Storage Manager initialization failed: $e');
+      debugPrint('❌ Storage Manager initialization failed: $e');
       rethrow;
     }
   }
@@ -145,26 +152,47 @@ class StorageManager {
 
   /// Clear all user data (on logout)
   Future<void> clearAllUserData() async {
-    await Future.wait([
-      _dbService.clearAllData(),
+    final futures = <Future>[
       _hiveService.clearAll(),
       // Keep some SharedPreferences (like app settings)
-    ]);
+    ];
+    
+    // SQLite cleanup only on non-web platforms
+    if (!kIsWeb) {
+      futures.add(_dbService.clearAllData());
+    }
+    
+    await Future.wait(futures);
   }
 
   /// Perform maintenance (clear expired cache, old data)
   Future<void> performMaintenance() async {
-    await Future.wait([
-      cacheDao.clearExpiredCache(),
-      _dbService.clearExpiredCache(),
-    ]);
+    final futures = <Future>[];
+    
+    if (!kIsWeb && cacheDao != null) {
+      futures.add(cacheDao!.clearExpiredCache());
+      futures.add(_dbService.clearExpiredCache());
+    }
+    
+    if (futures.isNotEmpty) {
+      await Future.wait(futures);
+    }
   }
 
   /// Get storage statistics
   Future<Map<String, dynamic>> getStorageStatistics(String userId) async {
-    final quizStats = await quizDao.getQuizStatistics(userId);
-    final videoStats = await videoDao.getWatchStatistics(userId);
-    final cacheStats = await cacheDao.getCacheStatistics();
+    if (kIsWeb) {
+      // Return empty stats on web since SQLite is not available
+      return {
+        'quiz': {},
+        'video': {},
+        'cache': {},
+      };
+    }
+    
+    final quizStats = await quizDao!.getQuizStatistics(userId);
+    final videoStats = await videoDao!.getWatchStatistics(userId);
+    final cacheStats = await cacheDao!.getCacheStatistics();
 
     return {
       'quiz': quizStats,
@@ -175,15 +203,23 @@ class StorageManager {
   
   /// Get video watch statistics (helper method)
   Future<Map<String, dynamic>> getVideoWatchStatistics(String userId) async {
-    return await videoDao.getWatchStatistics(userId);
+    if (kIsWeb || videoDao == null) {
+      return {};
+    }
+    return await videoDao!.getWatchStatistics(userId);
   }
 
   /// Close all storage services
   Future<void> close() async {
-    await Future.wait([
-      _dbService.close(),
+    final futures = <Future>[
       _hiveService.close(),
-    ]);
+    ];
+    
+    if (!kIsWeb) {
+      futures.add(_dbService.close());
+    }
+    
+    await Future.wait(futures);
     _initialized = false;
   }
 }

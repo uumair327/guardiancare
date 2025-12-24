@@ -1,46 +1,49 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:guardiancare/features/home/domain/entities/carousel_item_entity.dart';
-import 'package:guardiancare/core/widgets/sufasec_content.dart';
+import 'package:guardiancare/core/core.dart';
+import 'package:guardiancare/features/home/home.dart';
 import 'package:shimmer/shimmer.dart';
 
 class HomeCarouselWidget extends StatelessWidget {
-  final List<CarouselItemEntity> carouselItems;
-  final double carouselHeight;
-
-  const HomeCarouselWidget({
-    Key? key,
-    required this.carouselItems,
-    required this.carouselHeight,
-  }) : super(key: key);
+  const HomeCarouselWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return CarouselSlider(
-      options: CarouselOptions(
-        height: carouselHeight,
-        aspectRatio: 16 / 9,
-        viewportFraction: 0.8,
-        initialPage: 0,
-        enableInfiniteScroll: true,
-        autoPlay: true,
-        autoPlayInterval: const Duration(seconds: 3),
-        autoPlayAnimationDuration: const Duration(milliseconds: 800),
-        enlargeCenterPage: true,
-        enlargeStrategy: CenterPageEnlargeStrategy.scale,
-        scrollDirection: Axis.horizontal,
-      ),
-      items: carouselItems.isEmpty
-          ? _buildShimmerItems()
-          : carouselItems.map((item) {
+    final screenHeight = MediaQuery.of(context).size.height;
+    final carouselHeight = screenHeight * 0.25;
+
+    return BlocBuilder<HomeBloc, HomeState>(
+      builder: (context, state) {
+        if (state is CarouselItemsLoaded) {
+          final items = state.items;
+          
+          if (items.isEmpty) {
+            return _buildShimmerCarousel(carouselHeight);
+          }
+
+          return CarouselSlider(
+            options: CarouselOptions(
+              height: carouselHeight,
+              aspectRatio: 16 / 9,
+              viewportFraction: 0.8,
+              initialPage: 0,
+              enableInfiniteScroll: items.length > 1,
+              autoPlay: items.length > 1,
+              autoPlayInterval: AppDurations.carouselAutoPlay,
+              autoPlayAnimationDuration: AppDurations.animationSlow,
+              enlargeCenterPage: true,
+              enlargeStrategy: CenterPageEnlargeStrategy.scale,
+              scrollDirection: Axis.horizontal,
+            ),
+            items: items.map((item) {
               return Builder(
                 builder: (BuildContext context) {
                   return GestureDetector(
                     onTap: () {
                       if (item.type == 'custom') {
-                        // For custom content, keep using Navigator for now
                         Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -54,13 +57,11 @@ class HomeCarouselWidget extends StatelessWidget {
                       }
                     },
                     child: ClipRRect(
-                      borderRadius: BorderRadius.circular(20.0),
+                      borderRadius: AppDimensions.borderRadiusL,
                       child: Stack(
                         children: [
                           CachedNetworkImage(
-                            imageUrl: item.type == 'video'
-                                ? item.thumbnailUrl
-                                : item.imageUrl,
+                            imageUrl: item.imageUrl,
                             imageBuilder: (context, imageProvider) => Container(
                               decoration: BoxDecoration(
                                 image: DecorationImage(
@@ -69,34 +70,32 @@ class HomeCarouselWidget extends StatelessWidget {
                                 ),
                               ),
                             ),
-                            placeholder: (context, url) => const Center(
-                              child: CircularProgressIndicator(),
-                            ),
-                            errorWidget: (context, url, error) =>
-                                const Icon(Icons.error),
-                          ),
-                          if (item.type == 'video')
-                            const Center(
-                              child: Icon(
-                                Icons.play_circle_outline,
-                                color: Colors.white,
-                                size: 50.0,
+                            placeholder: (context, url) => Center(
+                              child: CircularProgressIndicator(
+                                color: AppColors.primary,
                               ),
                             ),
+                            errorWidget: (context, url, error) => Container(
+                              color: AppColors.divider,
+                              child: Icon(
+                                Icons.error,
+                                color: AppColors.error,
+                                size: AppDimensions.iconL,
+                              ),
+                            ),
+                          ),
                           Positioned(
-                            bottom: 5.0,
-                            right: 10.0,
+                            bottom: AppDimensions.spaceXS,
+                            right: AppDimensions.spaceS,
                             child: Text(
-                              "Source: childrenofindia.in",
-                              style: TextStyle(
-                                fontSize: 10.0,
-                                fontWeight: FontWeight.normal,
-                                color: Colors.white.withOpacity(0.9),
+                              'Source: childrenofindia.in',
+                              style: AppTextStyles.caption.copyWith(
+                                color: AppColors.white.withValues(alpha: 0.9),
                                 shadows: [
                                   Shadow(
                                     offset: const Offset(1.0, 1.0),
                                     blurRadius: 3.0,
-                                    color: Colors.black.withOpacity(0.7),
+                                    color: AppColors.black.withValues(alpha: 0.7),
                                   ),
                                 ],
                               ),
@@ -109,28 +108,98 @@ class HomeCarouselWidget extends StatelessWidget {
                 },
               );
             }).toList(),
+          );
+        } else if (state is HomeError) {
+          return _buildErrorCarousel(carouselHeight, state.message);
+        } else {
+          // HomeLoading or HomeInitial
+          return _buildShimmerCarousel(carouselHeight);
+        }
+      },
+    );
+  }
+
+  Widget _buildShimmerCarousel(double height) {
+    return CarouselSlider(
+      options: CarouselOptions(
+        height: height,
+        aspectRatio: 16 / 9,
+        viewportFraction: 0.8,
+        initialPage: 0,
+        enableInfiniteScroll: true,
+        autoPlay: true,
+        autoPlayInterval: AppDurations.carouselAutoPlay,
+        autoPlayAnimationDuration: AppDurations.animationSlow,
+        enlargeCenterPage: true,
+        enlargeStrategy: CenterPageEnlargeStrategy.scale,
+        scrollDirection: Axis.horizontal,
+      ),
+      items: List.generate(3, (index) => _buildShimmerItem()),
     );
   }
 
   Widget _buildShimmerItem() {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 8.0),
+      margin: EdgeInsets.symmetric(horizontal: AppDimensions.spaceS),
       decoration: BoxDecoration(
-        color: Colors.grey[300],
-        borderRadius: BorderRadius.circular(12.0),
+        color: AppColors.shimmerBase,
+        borderRadius: AppDimensions.borderRadiusL,
       ),
       child: Shimmer.fromColors(
-        baseColor: Colors.grey[300]!,
-        highlightColor: Colors.grey[100]!,
-        child: SizedBox(
+        baseColor: AppColors.shimmerBase,
+        highlightColor: AppColors.shimmerHighlight,
+        child: Container(
           width: double.infinity,
-          height: carouselHeight,
+          decoration: BoxDecoration(
+            color: AppColors.shimmerBase,
+            borderRadius: AppDimensions.borderRadiusL,
+          ),
         ),
       ),
     );
   }
 
-  List<Widget> _buildShimmerItems() {
-    return List.generate(5, (index) => _buildShimmerItem());
+  Widget _buildErrorCarousel(double height, String message) {
+    return Container(
+      height: height,
+      margin: EdgeInsets.symmetric(horizontal: AppDimensions.screenPaddingH),
+      decoration: BoxDecoration(
+        color: AppColors.errorLight,
+        borderRadius: AppDimensions.borderRadiusL,
+        border: Border.all(color: AppColors.error, width: 1),
+      ),
+      child: Center(
+        child: Padding(
+          padding: EdgeInsets.all(AppDimensions.spaceM),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.error_outline,
+                color: AppColors.error,
+                size: AppDimensions.iconXL,
+              ),
+              SizedBox(height: AppDimensions.spaceS),
+              Text(
+                'Failed to load content',
+                style: AppTextStyles.h5.copyWith(
+                  color: AppColors.error,
+                  fontWeight: FontWeight.bold,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: AppDimensions.spaceXS),
+              Text(
+                message,
+                style: AppTextStyles.body2.copyWith(color: AppColors.error),
+                textAlign: TextAlign.center,
+                maxLines: 3,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }

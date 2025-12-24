@@ -1,6 +1,5 @@
 import 'package:dartz/dartz.dart';
-import 'package:guardiancare/core/error/exceptions.dart';
-import 'package:guardiancare/core/error/failures.dart';
+import 'package:guardiancare/core/error/error.dart';
 import 'package:guardiancare/features/consent/data/datasources/consent_remote_datasource.dart';
 import 'package:guardiancare/features/consent/data/models/consent_model.dart';
 import 'package:guardiancare/features/consent/domain/entities/consent_entity.dart';

@@ -1,0 +1,136 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:carousel_slider/carousel_slider.dart';
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:guardiancare/features/home/domain/entities/carousel_item_entity.dart';
+import 'package:guardiancare/core/widgets/sufasec_content.dart';
+import 'package:shimmer/shimmer.dart';
+
+class HomeCarouselWidget extends StatelessWidget {
+  final List<CarouselItemEntity> carouselItems;
+  final double carouselHeight;
+
+  const HomeCarouselWidget({
+    Key? key,
+    required this.carouselItems,
+    required this.carouselHeight,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return CarouselSlider(
+      options: CarouselOptions(
+        height: carouselHeight,
+        aspectRatio: 16 / 9,
+        viewportFraction: 0.8,
+        initialPage: 0,
+        enableInfiniteScroll: true,
+        autoPlay: true,
+        autoPlayInterval: const Duration(seconds: 3),
+        autoPlayAnimationDuration: const Duration(milliseconds: 800),
+        enlargeCenterPage: true,
+        enlargeStrategy: CenterPageEnlargeStrategy.scale,
+        scrollDirection: Axis.horizontal,
+      ),
+      items: carouselItems.isEmpty
+          ? _buildShimmerItems()
+          : carouselItems.map((item) {
+              return Builder(
+                builder: (BuildContext context) {
+                  return GestureDetector(
+                    onTap: () {
+                      if (item.type == 'custom') {
+                        // For custom content, keep using Navigator for now
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => CustomContentPage(
+                              content: item.content,
+                            ),
+                          ),
+                        );
+                      } else {
+                        context.push('/webview', extra: item.link);
+                      }
+                    },
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(20.0),
+                      child: Stack(
+                        children: [
+                          CachedNetworkImage(
+                            imageUrl: item.type == 'video'
+                                ? item.thumbnailUrl
+                                : item.imageUrl,
+                            imageBuilder: (context, imageProvider) => Container(
+                              decoration: BoxDecoration(
+                                image: DecorationImage(
+                                  image: imageProvider,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            ),
+                            placeholder: (context, url) => const Center(
+                              child: CircularProgressIndicator(),
+                            ),
+                            errorWidget: (context, url, error) =>
+                                const Icon(Icons.error),
+                          ),
+                          if (item.type == 'video')
+                            const Center(
+                              child: Icon(
+                                Icons.play_circle_outline,
+                                color: Colors.white,
+                                size: 50.0,
+                              ),
+                            ),
+                          Positioned(
+                            bottom: 5.0,
+                            right: 10.0,
+                            child: Text(
+                              "Source: childrenofindia.in",
+                              style: TextStyle(
+                                fontSize: 10.0,
+                                fontWeight: FontWeight.normal,
+                                color: Colors.white.withOpacity(0.9),
+                                shadows: [
+                                  Shadow(
+                                    offset: const Offset(1.0, 1.0),
+                                    blurRadius: 3.0,
+                                    color: Colors.black.withOpacity(0.7),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              );
+            }).toList(),
+    );
+  }
+
+  Widget _buildShimmerItem() {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 8.0),
+      decoration: BoxDecoration(
+        color: Colors.grey[300],
+        borderRadius: BorderRadius.circular(12.0),
+      ),
+      child: Shimmer.fromColors(
+        baseColor: Colors.grey[300]!,
+        highlightColor: Colors.grey[100]!,
+        child: SizedBox(
+          width: double.infinity,
+          height: carouselHeight,
+        ),
+      ),
+    );
+  }
+
+  List<Widget> _buildShimmerItems() {
+    return List.generate(5, (index) => _buildShimmerItem());
+  }
+}

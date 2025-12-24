@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:guardiancare/core/core.dart';
 
-class ContentCard extends StatelessWidget {
+class ContentCard extends StatelessWidget{
   final String imageUrl;
   final String title;
   final String description;
@@ -18,10 +19,10 @@ class ContentCard extends StatelessWidget {
     return InkWell(
       onTap: () => context.push('/video-player', extra: description),
       child: Card(
-        margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-        elevation: 2,
+        margin: EdgeInsets.symmetric(horizontal: AppDimensions.spaceM, vertical: AppDimensions.spaceS),
+        elevation: AppDimensions.elevationS,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: AppDimensions.borderRadiusM,
         ),
         clipBehavior: Clip.antiAlias,
         child: Column(
@@ -37,7 +38,7 @@ class ContentCard extends StatelessWidget {
                       if (loadingProgress == null) return child;
                       return Container(
                         height: 200,
-                        color: Colors.grey[200],
+                        color: AppColors.shimmerBase,
                         child: const Center(
                           child: CircularProgressIndicator(),
                         ),
@@ -46,33 +47,30 @@ class ContentCard extends StatelessWidget {
                     errorBuilder: (context, error, stackTrace) {
                       return Container(
                         height: 200,
-                        color: Colors.grey[200],
-                        child: const Icon(
+                        color: AppColors.shimmerBase,
+                        child: Icon(
                           Icons.broken_image,
-                          size: 60,
-                          color: Colors.grey,
+                          size: AppDimensions.iconXXL,
+                          color: AppColors.textSecondary,
                         ),
                       );
                     },
                   )
                 : Container(
                     height: 200,
-                    color: Colors.grey[200],
-                    child: const Icon(
+                    color: AppColors.shimmerBase,
+                    child: Icon(
                       Icons.video_library,
-                      size: 60,
-                      color: Colors.grey,
+                      size: AppDimensions.iconXXL,
+                      color: AppColors.textSecondary,
                     ),
                   ),
             // Title
             Padding(
-              padding: const EdgeInsets.all(12.0),
+              padding: AppDimensions.paddingAllM,
               child: Text(
                 title,
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16.0,
-                ),
+                style: AppTextStyles.bodyLarge.copyWith(fontWeight: FontWeight.bold),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
               ),

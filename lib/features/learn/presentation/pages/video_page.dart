@@ -1,8 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:guardiancare/core/constants/app_colors.dart';
-import 'package:guardiancare/core/l10n/generated/app_localizations.dart';
+import 'package:guardiancare/core/core.dart';
 
 class VideoPage extends StatefulWidget {
   const VideoPage({Key? key}) : super(key: key);
@@ -56,8 +55,8 @@ class _VideoPageState extends State<VideoPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(selectedCategory ?? l10n.learn),
-        backgroundColor: tPrimaryColor,
-        foregroundColor: Colors.white,
+        backgroundColor: AppColors.primary,
+        foregroundColor: AppColors.white,
         leading: selectedCategory != null
             ? IconButton(
                 icon: const Icon(Icons.arrow_back),
@@ -69,11 +68,13 @@ class _VideoPageState extends State<VideoPage> {
               )
             : null,
       ),
-      body: categories == null
+      body: SafeArea(
+        child: categories == null
           ? const Center(child: CircularProgressIndicator())
           : selectedCategory != null
               ? buildVideoList(selectedCategory!)
               : buildCategoryList(),
+      ),
     );
   }
 
@@ -87,12 +88,12 @@ class _VideoPageState extends State<VideoPage> {
     }
 
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: AppDimensions.paddingAllS,
       child: GridView.builder(
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
-          crossAxisSpacing: 8.0,
-          mainAxisSpacing: 16.0,
+          crossAxisSpacing: AppDimensions.spaceS,
+          mainAxisSpacing: AppDimensions.spaceM,
         ),
         itemCount: categories!.length,
         itemBuilder: (context, index) {
@@ -105,9 +106,9 @@ class _VideoPageState extends State<VideoPage> {
               });
             },
             child: Card(
-              elevation: 4.0,
+              elevation: AppDimensions.elevationM,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12.0),
+                borderRadius: AppDimensions.borderRadiusM,
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -127,14 +128,10 @@ class _VideoPageState extends State<VideoPage> {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.all(8.0),
+                    padding: AppDimensions.paddingAllS,
                     child: Text(
                       category,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                        color: tPrimaryColor,
-                      ),
+                      style: AppTextStyles.h3.copyWith(color: AppColors.primary),
                       textAlign: TextAlign.center,
                     ),
                   ),
@@ -168,12 +165,12 @@ class _VideoPageState extends State<VideoPage> {
 
         List<QueryDocumentSnapshot> videos = snapshot.data!.docs;
         return Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: AppDimensions.paddingAllS,
           child: GridView.builder(
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
-              crossAxisSpacing: 16.0,
-              mainAxisSpacing: 16.0,
+              crossAxisSpacing: AppDimensions.spaceM,
+              mainAxisSpacing: AppDimensions.spaceM,
             ),
             itemCount: videos.length,
             itemBuilder: (context, index) {
@@ -184,9 +181,9 @@ class _VideoPageState extends State<VideoPage> {
                   context.push('/video-player', extra: videoUrl);
                 },
                 child: Card(
-                  elevation: 4.0,
+                  elevation: AppDimensions.elevationM,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12.0),
+                    borderRadius: AppDimensions.borderRadiusM,
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -206,15 +203,14 @@ class _VideoPageState extends State<VideoPage> {
                         ),
                       ),
                       Padding(
-                        padding: const EdgeInsets.all(8.0),
+                        padding: AppDimensions.paddingAllS,
                         child: Text(
                           video['title'] ?? 'Untitled',
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
+                          style: AppTextStyles.bodyLarge.copyWith(
                             fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                            color: tPrimaryColor,
+                            color: AppColors.primary,
                           ),
                         ),
                       )

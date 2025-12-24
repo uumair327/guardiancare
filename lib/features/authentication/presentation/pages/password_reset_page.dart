@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:guardiancare/core/di/injection_container.dart' as di;
-import 'package:guardiancare/features/authentication/presentation/bloc/auth_bloc.dart';
-import 'package:guardiancare/features/authentication/presentation/bloc/auth_event.dart';
-import 'package:guardiancare/features/authentication/presentation/bloc/auth_state.dart';
-import 'package:guardiancare/core/constants/app_colors.dart';
+import 'package:guardiancare/core/core.dart';
+import 'package:guardiancare/features/features.dart';
 
 class PasswordResetPage extends StatefulWidget {
   const PasswordResetPage({Key? key}) : super(key: key);
@@ -34,14 +31,14 @@ class _PasswordResetPageState extends State<PasswordResetPage> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => di.sl<AuthBloc>(),
+      create: (context) => sl<AuthBloc>(),
       child: Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.white,
         appBar: AppBar(
-          backgroundColor: Colors.white,
+          backgroundColor: AppColors.white,
           elevation: 0,
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back, color: tPrimaryColor),
+            icon: Icon(Icons.arrow_back, color: AppColors.primary),
             onPressed: () => Navigator.pop(context),
           ),
         ),
@@ -51,22 +48,22 @@ class _PasswordResetPageState extends State<PasswordResetPage> {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text(state.message),
-                  backgroundColor: Colors.red,
-                  duration: const Duration(seconds: 3),
+                  backgroundColor: AppColors.error,
+                  duration: AppDurations.snackbarMedium,
                 ),
               );
             } else if (state is PasswordResetEmailSent) {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text(
+                SnackBar(
+                  content: const Text(
                     'Password reset email sent! Check your inbox.',
                   ),
-                  backgroundColor: Colors.green,
-                  duration: Duration(seconds: 3),
+                  backgroundColor: AppColors.success,
+                  duration: AppDurations.snackbarMedium,
                 ),
               );
               // Navigate back after showing success message
-              Future.delayed(const Duration(seconds: 2), () {
+              Future.delayed(AppDurations.navigationDelay, () {
                 if (mounted) {
                   Navigator.pop(context);
                 }
@@ -75,37 +72,30 @@ class _PasswordResetPageState extends State<PasswordResetPage> {
           },
           builder: (context, state) {
             if (state is AuthLoading) {
-              return const Center(
+              return Center(
                 child: CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(tPrimaryColor),
+                  valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
                 ),
               );
             }
 
             return SingleChildScrollView(
-              padding: const EdgeInsets.all(24.0),
+              padding: AppDimensions.paddingAllL,
               child: Form(
                 key: _formKey,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
+                    Text(
                       'Reset Password',
-                      style: TextStyle(
-                        color: tPrimaryColor,
-                        fontSize: 32,
-                        fontWeight: FontWeight.bold,
-                      ),
+                      style: AppTextStyles.h1.copyWith(color: AppColors.primary),
                     ),
-                    const SizedBox(height: 8),
-                    const Text(
+                    SizedBox(height: AppDimensions.spaceS),
+                    Text(
                       'Enter your email address and we\'ll send you a link to reset your password.',
-                      style: TextStyle(
-                        color: Colors.grey,
-                        fontSize: 16,
-                      ),
+                      style: AppTextStyles.bodyLarge.copyWith(color: AppColors.textSecondary),
                     ),
-                    const SizedBox(height: 32),
+                    SizedBox(height: AppDimensions.spaceXL),
                     
                     // Email Field
                     TextFormField(
@@ -115,10 +105,10 @@ class _PasswordResetPageState extends State<PasswordResetPage> {
                         labelText: 'Email',
                         prefixIcon: const Icon(Icons.email_outlined),
                         border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: AppDimensions.borderRadiusM,
                         ),
                         filled: true,
-                        fillColor: Colors.grey[50],
+                        fillColor: AppColors.inputBackground,
                       ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
@@ -131,44 +121,41 @@ class _PasswordResetPageState extends State<PasswordResetPage> {
                         return null;
                       },
                     ),
-                    const SizedBox(height: 24),
+                    SizedBox(height: AppDimensions.spaceL),
                     
                     // Reset Password Button
                     SizedBox(
                       width: double.infinity,
-                      height: 50,
+                      height: AppDimensions.buttonHeight,
                       child: ElevatedButton(
                         onPressed: () => _handlePasswordReset(context),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: tPrimaryColor,
+                          backgroundColor: AppColors.primary,
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: AppDimensions.borderRadiusM,
                           ),
                         ),
-                        child: const Text(
+                        child: Text(
                           'Send Reset Link',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style: AppTextStyles.button,
                         ),
                       ),
                     ),
-                    const SizedBox(height: 16),
+                    SizedBox(height: AppDimensions.spaceM),
                     
                     // Back to Login Link
                     Center(
                       child: TextButton(
                         onPressed: () => Navigator.pop(context),
-                        child: const Text.rich(
+                        child: Text.rich(
                           TextSpan(
                             text: 'Remember your password? ',
-                            style: TextStyle(color: Colors.grey),
+                            style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSecondary),
                             children: [
                               TextSpan(
                                 text: 'Login',
                                 style: TextStyle(
-                                  color: tPrimaryColor,
+                                  color: AppColors.primary,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),

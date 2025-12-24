@@ -1,22 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:guardiancare/core/di/injection_container.dart' as di;
-import 'package:guardiancare/features/forum/domain/entities/forum_entity.dart';
-import 'package:guardiancare/features/forum/presentation/bloc/forum_bloc.dart';
-import 'package:guardiancare/features/forum/presentation/bloc/forum_event.dart';
-import 'package:guardiancare/features/forum/presentation/bloc/forum_state.dart';
-import 'package:guardiancare/features/forum/presentation/widgets/forum_list_item.dart';
-import 'package:guardiancare/core/l10n/generated/app_localizations.dart';
+import 'package:guardiancare/core/core.dart';
+import 'package:guardiancare/features/forum/forum.dart';
 
 class ForumPage extends StatelessWidget {
-  const ForumPage({Key? key}) : super(key: key);
+  const ForumPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     
     return BlocProvider(
-      create: (context) => di.sl<ForumBloc>()..add(const LoadForums(ForumCategory.parent)),
+      create: (context) => sl<ForumBloc>()..add(const LoadForums(ForumCategory.parent)),
       child: DefaultTabController(
         length: 2,
         child: Builder(
@@ -35,11 +30,13 @@ class ForumPage extends StatelessWidget {
                   ],
                 ),
               ),
-              body: const TabBarView(
+              body: SafeArea(
+                child: const TabBarView(
                 children: [
                   _ForumListView(category: ForumCategory.parent),
                   _ForumListView(category: ForumCategory.children),
                 ],
+                ),
               ),
             );
           }
@@ -64,8 +61,8 @@ class _ForumListView extends StatelessWidget {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(state.message),
-              backgroundColor: Colors.red,
-              duration: const Duration(seconds: 3),
+              backgroundColor: AppColors.error,
+              duration: AppDurations.snackbarMedium,
             ),
           );
         }
@@ -100,24 +97,18 @@ class _ForumListView extends StatelessWidget {
                 children: [
                   Icon(
                     Icons.forum_outlined,
-                    size: 64,
-                    color: Colors.grey[400],
+                    size: AppDimensions.iconXXL,
+                    color: AppColors.textSecondary,
                   ),
-                  const SizedBox(height: 16),
+                  SizedBox(height: AppDimensions.spaceM),
                   Text(
                     l10n.noForumsAvailable,
-                    style: TextStyle(
-                      fontSize: 18,
-                      color: Colors.grey[600],
-                    ),
+                    style: AppTextStyles.h3.copyWith(color: AppColors.textSecondary),
                   ),
-                  const SizedBox(height: 8),
+                  SizedBox(height: AppDimensions.spaceS),
                   Text(
                     l10n.noCommentsYet,
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey[500],
-                    ),
+                    style: AppTextStyles.bodySmall.copyWith(color: AppColors.textSecondary),
                   ),
                 ],
               ),
@@ -127,11 +118,11 @@ class _ForumListView extends StatelessWidget {
           return RefreshIndicator(
             onRefresh: () async {
               context.read<ForumBloc>().add(RefreshForums(category));
-              await Future.delayed(const Duration(milliseconds: 500));
+              await Future.delayed(AppDurations.animationMedium);
             },
             child: ListView.builder(
               itemCount: state.forums.length,
-              padding: const EdgeInsets.symmetric(vertical: 8),
+              padding: EdgeInsets.symmetric(vertical: AppDimensions.spaceS),
               itemBuilder: (context, index) {
                 return ForumListItem(forum: state.forums[index]);
               },
@@ -144,14 +135,14 @@ class _ForumListView extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(Icons.error_outline, size: 64, color: Colors.red),
-                const SizedBox(height: 16),
+                Icon(Icons.error_outline, size: AppDimensions.iconXXL, color: AppColors.error),
+                SizedBox(height: AppDimensions.spaceM),
                 Text(
                   l10n.errorPrefix(state.message),
                   textAlign: TextAlign.center,
-                  style: const TextStyle(color: Colors.red),
+                  style: AppTextStyles.bodyMedium.copyWith(color: AppColors.error),
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: AppDimensions.spaceM),
                 ElevatedButton(
                   onPressed: () {
                     context.read<ForumBloc>().add(LoadForums(category));

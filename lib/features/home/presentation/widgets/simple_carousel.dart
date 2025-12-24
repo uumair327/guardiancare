@@ -2,7 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:guardiancare/core/widgets/sufasec_content.dart';
+import 'package:guardiancare/core/core.dart';
 import 'package:shimmer/shimmer.dart';
 
 class SimpleCarousel extends StatelessWidget {
@@ -10,10 +10,10 @@ class SimpleCarousel extends StatelessWidget {
   final double carouselHeight;
 
   const SimpleCarousel({
-    Key? key,
+    super.key,
     required this.carouselData,
     required this.carouselHeight,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -25,8 +25,8 @@ class SimpleCarousel extends StatelessWidget {
         initialPage: 0,
         enableInfiniteScroll: true,
         autoPlay: true,
-        autoPlayInterval: const Duration(seconds: 3),
-        autoPlayAnimationDuration: const Duration(milliseconds: 800),
+        autoPlayInterval: AppDurations.carouselAutoPlay,
+        autoPlayAnimationDuration: AppDurations.animationSlow,
         enlargeCenterPage: true,
         enlargeStrategy: CenterPageEnlargeStrategy.scale,
         scrollDirection: Axis.horizontal,
@@ -62,7 +62,7 @@ class SimpleCarousel extends StatelessWidget {
                       }
                     },
                     child: ClipRRect(
-                      borderRadius: BorderRadius.circular(20.0),
+                      borderRadius: AppDimensions.borderRadiusL,
                       child: Stack(
                         children: [
                           CachedNetworkImage(
@@ -82,19 +82,17 @@ class SimpleCarousel extends StatelessWidget {
                                 const Icon(Icons.error),
                           ),
                           Positioned(
-                            bottom: 5.0,
-                            right: 10.0,
+                            bottom: AppDimensions.spaceXS,
+                            right: AppDimensions.spaceS,
                             child: Text(
                               "Source: childrenofindia.in",
-                              style: TextStyle(
-                                fontSize: 10.0,
-                                fontWeight: FontWeight.normal,
-                                color: Colors.white.withOpacity(0.9),
+                              style: AppTextStyles.caption.copyWith(
+                                color: AppColors.white.withValues(alpha: 0.9),
                                 shadows: [
                                   Shadow(
                                     offset: const Offset(1.0, 1.0),
                                     blurRadius: 3.0,
-                                    color: Colors.black.withOpacity(0.7),
+                                    color: AppColors.black.withValues(alpha: 0.7),
                                   ),
                                 ],
                               ),
@@ -112,14 +110,14 @@ class SimpleCarousel extends StatelessWidget {
 
   Widget _buildShimmerItem() {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 8.0),
+      margin: EdgeInsets.symmetric(horizontal: AppDimensions.spaceS),
       decoration: BoxDecoration(
-        color: Colors.grey[300],
-        borderRadius: BorderRadius.circular(12.0),
+        color: AppColors.shimmerBase,
+        borderRadius: AppDimensions.borderRadiusM,
       ),
       child: Shimmer.fromColors(
-        baseColor: Colors.grey[300]!,
-        highlightColor: Colors.grey[100]!,
+        baseColor: AppColors.shimmerBase,
+        highlightColor: AppColors.shimmerHighlight,
         child: SizedBox(
           width: double.infinity,
           height: carouselHeight,

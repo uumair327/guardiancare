@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -17,8 +18,14 @@ class HiveService {
 
   /// Initialize Hive
   Future<void> init() async {
-    final appDocDir = await getApplicationDocumentsDirectory();
-    await Hive.initFlutter(appDocDir.path);
+    if (kIsWeb) {
+      // On web, Hive uses IndexedDB - no path needed
+      await Hive.initFlutter();
+    } else {
+      // On mobile/desktop, use app documents directory
+      final appDocDir = await getApplicationDocumentsDirectory();
+      await Hive.initFlutter(appDocDir.path);
+    }
     
     // Open boxes
     await _openBoxes();

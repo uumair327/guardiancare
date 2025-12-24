@@ -1,6 +1,5 @@
 import 'package:dartz/dartz.dart';
-import 'package:guardiancare/core/error/exceptions.dart';
-import 'package:guardiancare/core/error/failures.dart';
+import 'package:guardiancare/core/error/error.dart';
 import 'package:guardiancare/features/learn/data/datasources/learn_remote_datasource.dart';
 import 'package:guardiancare/features/learn/domain/entities/category_entity.dart';
 import 'package:guardiancare/features/learn/domain/entities/video_entity.dart';

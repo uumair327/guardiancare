@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:guardiancare/core/di/injection_container.dart' as di;
-import 'package:guardiancare/features/forum/domain/entities/forum_entity.dart';
-import 'package:guardiancare/features/forum/presentation/bloc/forum_bloc.dart';
-import 'package:guardiancare/features/forum/presentation/bloc/forum_event.dart';
-import 'package:guardiancare/features/forum/presentation/bloc/forum_state.dart';
+import 'package:guardiancare/core/core.dart';
+import 'package:guardiancare/features/forum/forum.dart';
 
 /// Example implementation of Forum Page using Clean Architecture
 /// 
@@ -13,14 +10,14 @@ class ForumPageExample extends StatelessWidget {
   final ForumCategory category;
 
   const ForumPageExample({
-    Key? key,
+    super.key,
     required this.category,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => di.sl<ForumBloc>()..add(LoadForums(category)),
+      create: (context) => sl<ForumBloc>()..add(LoadForums(category)),
       child: Scaffold(
         appBar: AppBar(
           title: Text(
@@ -43,7 +40,7 @@ class ForumPageExample extends StatelessWidget {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text(state.message),
-                  backgroundColor: Colors.red,
+                  backgroundColor: AppColors.error,
                 ),
               );
             }
@@ -96,39 +93,51 @@ class ForumCard extends StatelessWidget {
   final ForumEntity forum;
 
   const ForumCard({
-    Key? key,
+    super.key,
     required this.forum,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      margin: EdgeInsets.symmetric(
+        horizontal: AppDimensions.spaceM,
+        vertical: AppDimensions.spaceS,
+      ),
+      elevation: AppDimensions.elevation2,
+      shape: RoundedRectangleBorder(
+        borderRadius: AppDimensions.borderRadiusM,
+      ),
       child: ListTile(
+        contentPadding: AppDimensions.listItemPadding,
         title: Text(
           forum.title,
-          style: const TextStyle(fontWeight: FontWeight.bold),
+          style: AppTextStyles.h6,
         ),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(height: 4),
+            SizedBox(height: AppDimensions.spaceXS),
             Text(
               forum.description,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
+              style: AppTextStyles.bodyMedium,
             ),
-            const SizedBox(height: 4),
+            SizedBox(height: AppDimensions.spaceXS),
             Text(
               _formatDate(forum.createdAt),
-              style: TextStyle(
-                fontSize: 12,
-                color: Colors.grey[600],
+              style: AppTextStyles.caption.copyWith(
+                color: AppColors.textSecondary,
               ),
             ),
           ],
         ),
-        trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+        trailing: Icon(
+          Icons.arrow_forward_ios,
+          size: AppDimensions.iconS,
+          color: AppColors.iconSecondary,
+        ),
         onTap: () {
           // Navigate to forum detail page
           Navigator.push(
@@ -163,14 +172,14 @@ class ForumDetailPageExample extends StatelessWidget {
   final ForumEntity forum;
 
   const ForumDetailPageExample({
-    Key? key,
+    super.key,
     required this.forum,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => di.sl<ForumBloc>()..add(LoadComments(forum.id)),
+      create: (context) => sl<ForumBloc>()..add(LoadComments(forum.id)),
       child: Scaffold(
         appBar: AppBar(
           title: const Text('Forum Discussion'),
@@ -179,24 +188,27 @@ class ForumDetailPageExample extends StatelessWidget {
           children: [
             // Forum Header
             Container(
-              padding: const EdgeInsets.all(16),
-              color: Colors.grey[100],
+              padding: AppDimensions.paddingAllM,
+              color: AppColors.surfaceVariant,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     forum.title,
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: AppTextStyles.h4,
                   ),
-                  const SizedBox(height: 8),
-                  Text(forum.description),
+                  SizedBox(height: AppDimensions.spaceS),
+                  Text(
+                    forum.description,
+                    style: AppTextStyles.bodyMedium,
+                  ),
                 ],
               ),
             ),
-            const Divider(height: 1),
+            Divider(
+              height: AppDimensions.dividerThickness,
+              color: AppColors.divider,
+            ),
 
             // Comments List
             Expanded(
@@ -214,16 +226,30 @@ class ForumDetailPageExample extends StatelessWidget {
                     }
 
                     return ListView.builder(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: AppDimensions.spaceM,
+                        vertical: AppDimensions.spaceS,
+                      ),
                       itemCount: state.comments.length,
                       itemBuilder: (context, index) {
                         final comment = state.comments[index];
-                        return ListTile(
-                          title: Text(comment.text),
-                          subtitle: Text(
-                            _formatDate(comment.createdAt),
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.grey[600],
+                        return Card(
+                          margin: EdgeInsets.only(bottom: AppDimensions.spaceM),
+                          elevation: AppDimensions.elevation1,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: AppDimensions.borderRadiusS,
+                          ),
+                          child: ListTile(
+                            contentPadding: AppDimensions.listItemPadding,
+                            title: Text(
+                              comment.text,
+                              style: AppTextStyles.bodyMedium,
+                            ),
+                            subtitle: Text(
+                              _formatDate(comment.createdAt),
+                              style: AppTextStyles.caption.copyWith(
+                                color: AppColors.textSecondary,
+                              ),
                             ),
                           ),
                         );
@@ -237,7 +263,7 @@ class ForumDetailPageExample extends StatelessWidget {
             ),
 
             // Comment Input
-            const CommentInputWidget(),
+            const CommentInputWidgetExample(),
           ],
         ),
       ),
@@ -261,14 +287,14 @@ class ForumDetailPageExample extends StatelessWidget {
 }
 
 /// Example Comment Input Widget
-class CommentInputWidget extends StatefulWidget {
-  const CommentInputWidget({Key? key}) : super(key: key);
+class CommentInputWidgetExample extends StatefulWidget {
+  const CommentInputWidgetExample({super.key});
 
   @override
-  State<CommentInputWidget> createState() => _CommentInputWidgetState();
+  State<CommentInputWidgetExample> createState() => _CommentInputWidgetExampleState();
 }
 
-class _CommentInputWidgetState extends State<CommentInputWidget> {
+class _CommentInputWidgetExampleState extends State<CommentInputWidgetExample> {
   final TextEditingController _controller = TextEditingController();
 
   @override
@@ -294,20 +320,20 @@ class _CommentInputWidgetState extends State<CommentInputWidget> {
       listener: (context, state) {
         if (state is CommentSubmitted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
+            SnackBar(
               content: Text('Comment submitted successfully!'),
-              backgroundColor: Colors.green,
+              backgroundColor: AppColors.success,
             ),
           );
         }
       },
       child: Container(
-        padding: const EdgeInsets.all(8),
+        padding: AppDimensions.paddingAllS,
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppColors.surface,
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.withOpacity(0.2),
+              color: AppColors.shadowMedium,
               spreadRadius: 1,
               blurRadius: 4,
               offset: const Offset(0, -2),
@@ -319,26 +345,44 @@ class _CommentInputWidgetState extends State<CommentInputWidget> {
             Expanded(
               child: TextField(
                 controller: _controller,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   hintText: 'Add a comment...',
-                  border: OutlineInputBorder(),
+                  hintStyle: AppTextStyles.bodyMedium.copyWith(
+                    color: AppColors.textHint,
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius: AppDimensions.borderRadiusM,
+                    borderSide: BorderSide(
+                      color: AppColors.border,
+                      width: AppDimensions.borderThin,
+                    ),
+                  ),
+                  contentPadding: AppDimensions.inputPadding,
                 ),
+                style: AppTextStyles.bodyMedium,
                 maxLines: null,
               ),
             ),
-            const SizedBox(width: 8),
+            SizedBox(width: AppDimensions.spaceS),
             BlocBuilder<ForumBloc, ForumState>(
               builder: (context, state) {
                 final isSubmitting = state is CommentSubmitting;
 
                 return IconButton(
                   icon: isSubmitting
-                      ? const SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(strokeWidth: 2),
+                      ? SizedBox(
+                          width: AppDimensions.iconS,
+                          height: AppDimensions.iconS,
+                          child: CircularProgressIndicator(
+                            strokeWidth: AppDimensions.borderMedium,
+                            color: AppColors.primary,
+                          ),
                         )
-                      : const Icon(Icons.send),
+                      : Icon(
+                          Icons.send,
+                          color: AppColors.primary,
+                          size: AppDimensions.iconM,
+                        ),
                   onPressed: isSubmitting
                       ? null
                       : () {

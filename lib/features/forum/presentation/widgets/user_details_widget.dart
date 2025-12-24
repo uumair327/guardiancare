@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:guardiancare/core/di/injection_container.dart' as di;
-import 'package:guardiancare/features/forum/domain/usecases/get_user_details.dart';
+import 'package:guardiancare/core/core.dart';
+import 'package:guardiancare/features/forum/forum.dart';
 
 class UserDetailsWidget extends StatelessWidget {
   final String userId;
 
-  const UserDetailsWidget({Key? key, required this.userId}) : super(key: key);
+  const UserDetailsWidget({super.key, required this.userId});
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: di.sl<GetUserDetails>()(GetUserDetailsParams(userId: userId)),
+      future: sl<GetUserDetails>()(GetUserDetailsParams(userId: userId)),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
           return Row(

@@ -191,6 +191,21 @@
     "description": "Mail us button label"
   },
   
+  "guest": "Guest",
+  "@guest": {
+    "description": "Guest user label"
+  },
+  
+  "quickActions": "Quick Actions",
+  "@quickActions": {
+    "description": "Quick actions section title"
+  },
+  
+  "homeWelcomeMessage": "Empowering children and families with safety knowledge",
+  "@homeWelcomeMessage": {
+    "description": "Welcome message on home page"
+  },
+  
   "yes": "Yes",
   "@yes": {
     "description": "Yes button text"

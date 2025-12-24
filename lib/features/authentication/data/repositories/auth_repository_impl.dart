@@ -1,7 +1,6 @@
 import 'package:dartz/dartz.dart';
-import 'package:guardiancare/core/error/exceptions.dart';
-import 'package:guardiancare/core/error/failures.dart';
-import 'package:guardiancare/core/network/network_info.dart';
+import 'package:guardiancare/core/error/error.dart';
+import 'package:guardiancare/core/network/network.dart';
 import 'package:guardiancare/features/authentication/data/datasources/auth_remote_datasource.dart';
 import 'package:guardiancare/features/authentication/domain/entities/user_entity.dart';
 import 'package:guardiancare/features/authentication/domain/repositories/auth_repository.dart';

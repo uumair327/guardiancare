@@ -128,6 +128,16 @@ class AppLocalizationsHi extends AppLocalizations {
   String get mailUs => 'हमें मेल करें';
 
   @override
+  String get guest => 'अतिथि';
+
+  @override
+  String get quickActions => 'त्वरित कार्य';
+
+  @override
+  String get homeWelcomeMessage =>
+      'बच्चों और परिवारों को सुरक्षा ज्ञान के साथ सशक्त बनाना';
+
+  @override
   String get retry => 'पुनः प्रयास करें';
 
   @override

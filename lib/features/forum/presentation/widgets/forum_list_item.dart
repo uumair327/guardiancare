@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:guardiancare/features/forum/domain/entities/forum_entity.dart';
+import 'package:guardiancare/core/core.dart';
+import 'package:guardiancare/features/forum/forum.dart';
 import 'package:intl/intl.dart';
 
 class ForumListItem extends StatelessWidget {
@@ -20,13 +21,13 @@ class ForumListItem extends StatelessWidget {
         context.push('/forum/${forum.id}', extra: forumData);
       },
       child: Card(
-        elevation: 2,
-        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        elevation: AppDimensions.elevationS,
+        margin: EdgeInsets.symmetric(horizontal: AppDimensions.spaceM, vertical: AppDimensions.spaceS),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: AppDimensions.borderRadiusM,
         ),
         child: Container(
-          padding: const EdgeInsets.all(16),
+          padding: AppDimensions.paddingAllM,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -35,34 +36,24 @@ class ForumListItem extends StatelessWidget {
                   Expanded(
                     child: Text(
                       forum.title,
-                      style: const TextStyle(
-                        fontSize: 18.0,
-                        fontWeight: FontWeight.bold,
-                        color: Color.fromRGBO(239, 72, 53, 1),
-                      ),
+                      style: AppTextStyles.h3.copyWith(color: AppColors.primary),
                     ),
                   ),
                   Icon(
                     Icons.chevron_right,
-                    color: Colors.grey[400],
+                    color: AppColors.textSecondary,
                   ),
                 ],
               ),
-              const SizedBox(height: 8),
+              SizedBox(height: AppDimensions.spaceS),
               Text(
                 DateFormat('dd MMM yyyy - hh:mm a').format(forum.createdAt),
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey[600],
-                ),
+                style: AppTextStyles.caption.copyWith(color: AppColors.textSecondary),
               ),
-              const SizedBox(height: 12),
+              SizedBox(height: AppDimensions.spaceM),
               Text(
                 forum.description,
-                style: const TextStyle(
-                  fontSize: 14,
-                  height: 1.4,
-                ),
+                style: AppTextStyles.bodySmall.copyWith(height: 1.4),
                 maxLines: 3,
                 overflow: TextOverflow.ellipsis,
               ),

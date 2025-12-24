@@ -128,6 +128,16 @@ class AppLocalizationsGu extends AppLocalizations {
   String get mailUs => 'અમને મેઇલ કરો';
 
   @override
+  String get guest => 'મહેમાન';
+
+  @override
+  String get quickActions => 'ઝડપી ક્રિયાઓ';
+
+  @override
+  String get homeWelcomeMessage =>
+      'બાળકો અને પરિવારોને સુરક્ષા જ્ઞાન સાથે સશક્ત બનાવવું';
+
+  @override
   String get retry => 'ફરી પ્રયાસ કરો';
 
   @override

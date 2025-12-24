@@ -1,6 +1,5 @@
 import 'package:dartz/dartz.dart';
-import 'package:guardiancare/core/error/exceptions.dart';
-import 'package:guardiancare/core/error/failures.dart';
+import 'package:guardiancare/core/error/error.dart';
 import 'package:guardiancare/features/profile/data/datasources/profile_remote_datasource.dart';
 import 'package:guardiancare/features/profile/data/models/profile_model.dart';
 import 'package:guardiancare/features/profile/domain/entities/profile_entity.dart';
