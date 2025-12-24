@@ -7,11 +7,11 @@ import 'package:guardiancare/core/core.dart';
 import 'package:guardiancare/features/explore/explore.dart';
 
 class ExplorePage extends StatelessWidget {
-  const ExplorePage({Key? key}) : super(key: key);
+  const ExplorePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     
     return BlocProvider(
       create: (context) {
@@ -32,10 +32,10 @@ class ExplorePage extends StatelessWidget {
           appBar: AppBar(
             title: Text(l10n.explore),
             backgroundColor: AppColors.primary,
-            foregroundColor: AppColors.white,
+            foregroundColor: AppColors.onPrimary,
             bottom: TabBar(
-              indicatorColor: AppColors.white,
-              labelColor: AppColors.white,
+              indicatorColor: AppColors.onPrimary,
+              labelColor: AppColors.onPrimary,
               unselectedLabelColor: AppColors.white70,
               tabs: [
                 Tab(
@@ -64,7 +64,7 @@ class ExplorePage extends StatelessWidget {
 }
 
 class RecommendedVideos extends StatefulWidget {
-  const RecommendedVideos({Key? key}) : super(key: key);
+  const RecommendedVideos({super.key});
 
   @override
   State<RecommendedVideos> createState() => _RecommendedVideosState();
@@ -82,7 +82,7 @@ class _RecommendedVideosState extends State<RecommendedVideos> {
   @override
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     if (user == null) {
       return Center(
@@ -103,7 +103,7 @@ class _RecommendedVideosState extends State<RecommendedVideos> {
         Container(
           padding: AppDimensions.paddingAllM,
           decoration: BoxDecoration(
-            color: AppColors.white,
+            color: AppColors.surface,
             boxShadow: [
               BoxShadow(
                 color: AppColors.shadowLight,
@@ -174,7 +174,7 @@ class _RecommendedVideosState extends State<RecommendedVideos> {
                           label: Text(l10n.retry),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.primary,
-                            foregroundColor: AppColors.white,
+                            foregroundColor: AppColors.onPrimary,
                           ),
                         ),
                       ),
@@ -217,7 +217,7 @@ class _RecommendedVideosState extends State<RecommendedVideos> {
                               vertical: AppDimensions.spaceM,
                             ),
                             backgroundColor: AppColors.primary,
-                            foregroundColor: AppColors.white,
+                            foregroundColor: AppColors.onPrimary,
                             shape: RoundedRectangleBorder(
                               borderRadius: AppDimensions.borderRadiusM,
                             ),
@@ -294,11 +294,11 @@ class _RecommendedVideosState extends State<RecommendedVideos> {
 
 // Resources Tab Widget - Using StreamBuilder for simplicity
 class ResourcesTab extends StatelessWidget {
-  const ResourcesTab({Key? key}) : super(key: key);
+  const ResourcesTab({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     
     return StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance

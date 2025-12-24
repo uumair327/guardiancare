@@ -36,7 +36,7 @@ class EmergencyContactPage extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(l10n.errorPrefix(state.message)),
-                      const SizedBox(height: 16),
+                      SizedBox(height: AppDimensions.spaceM),
                       ElevatedButton(
                         onPressed: () {
                           context
@@ -57,7 +57,7 @@ class EmergencyContactPage extends StatelessWidget {
 
                 return SingleChildScrollView(
                   child: Padding(
-                    padding: const EdgeInsets.all(16.0),
+                    padding: AppDimensions.paddingAllM,
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -70,7 +70,7 @@ class EmergencyContactPage extends StatelessWidget {
                                 .map((c) => {'name': c.name, 'number': c.number})
                                 .toList(),
                           ),
-                        const SizedBox(height: 20),
+                        SizedBox(height: AppDimensions.spaceL),
                         if (childSafety.isNotEmpty)
                           _buildCard(
                             context: context,
@@ -101,9 +101,9 @@ class EmergencyContactPage extends StatelessWidget {
     required List<Map<String, String>> contacts,
   }) {
     return Card(
-      elevation: 4,
+      elevation: AppDimensions.cardElevation,
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: AppDimensions.paddingAllM,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -114,28 +114,28 @@ class EmergencyContactPage extends StatelessWidget {
                   size: AppDimensions.iconXL,
                   color: AppColors.primary,
                 ),
-                const SizedBox(width: 10),
+                SizedBox(width: AppDimensions.spaceM),
                 Text(
                   title,
                   style: AppTextStyles.h3.copyWith(fontWeight: FontWeight.bold),
                 ),
               ],
             ),
-            const SizedBox(height: 10),
+            SizedBox(height: AppDimensions.spaceM),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: contacts
                   .map((contact) => Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 4.0),
+                        padding: EdgeInsets.symmetric(vertical: AppDimensions.spaceXS),
                         child: ElevatedButton.icon(
                           onPressed: () {
                             context.read<EmergencyBloc>().add(
                                   MakeCallRequested(contact['number']!),
                                 );
                           },
-                          icon: const Icon(
+                          icon: Icon(
                             Icons.phone,
-                            size: 20,
+                            size: AppDimensions.iconS,
                             color: AppColors.primary,
                           ),
                           label: Text(
@@ -144,11 +144,11 @@ class EmergencyContactPage extends StatelessWidget {
                           ),
                           style: ButtonStyle(
                             backgroundColor: WidgetStateProperty.all<Color>(
-                                AppColors.white),
+                                AppColors.surface),
                             padding:
                                 WidgetStateProperty.all<EdgeInsetsGeometry>(
-                                    const EdgeInsets.symmetric(
-                                        vertical: 10, horizontal: 15)),
+                                    EdgeInsets.symmetric(
+                                        vertical: AppDimensions.spaceM, horizontal: AppDimensions.spaceM)),
                           ),
                         ),
                       ))

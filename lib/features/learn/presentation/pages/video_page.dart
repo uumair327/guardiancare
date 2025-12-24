@@ -1,10 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart' show debugPrint;
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:guardiancare/core/core.dart';
 
 class VideoPage extends StatefulWidget {
-  const VideoPage({Key? key}) : super(key: key);
+  const VideoPage({super.key});
 
   @override
   State<VideoPage> createState() => _VideoPageState();
@@ -39,7 +40,7 @@ class _VideoPageState extends State<VideoPage> {
         });
       }
     } catch (e) {
-      print('Error fetching categories: $e');
+      debugPrint('Error fetching categories: $e');
       if (mounted) {
         setState(() {
           categories = [];
@@ -50,13 +51,13 @@ class _VideoPageState extends State<VideoPage> {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     
     return Scaffold(
       appBar: AppBar(
         title: Text(selectedCategory ?? l10n.learn),
         backgroundColor: AppColors.primary,
-        foregroundColor: AppColors.white,
+        foregroundColor: AppColors.onPrimary,
         leading: selectedCategory != null
             ? IconButton(
                 icon: const Icon(Icons.arrow_back),
@@ -79,7 +80,7 @@ class _VideoPageState extends State<VideoPage> {
   }
 
   Widget buildCategoryList() {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     
     if (categories!.isEmpty) {
       return Center(
@@ -121,8 +122,8 @@ class _VideoPageState extends State<VideoPage> {
                       height: 100,
                       errorBuilder: (context, error, stackTrace) {
                         return Container(
-                          color: Colors.grey[300],
-                          child: const Icon(Icons.video_library, size: 48),
+                          color: AppColors.gray300,
+                          child: Icon(Icons.video_library, size: AppDimensions.iconXL),
                         );
                       },
                     ),
@@ -145,7 +146,7 @@ class _VideoPageState extends State<VideoPage> {
   }
 
   Widget buildVideoList(String category) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     
     return StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance
@@ -195,9 +196,9 @@ class _VideoPageState extends State<VideoPage> {
                           width: double.infinity,
                           errorBuilder: (context, error, stackTrace) {
                             return Container(
-                              color: Colors.grey[300],
-                              child: const Icon(Icons.play_circle_outline,
-                                  size: 48),
+                              color: AppColors.gray300,
+                              child: Icon(Icons.play_circle_outline,
+                                  size: AppDimensions.iconXL),
                             );
                           },
                         ),

@@ -4,7 +4,7 @@ import 'package:guardiancare/core/core.dart';
 import 'package:guardiancare/features/features.dart';
 
 class PasswordResetPage extends StatefulWidget {
-  const PasswordResetPage({Key? key}) : super(key: key);
+  const PasswordResetPage({super.key});
 
   @override
   State<PasswordResetPage> createState() => _PasswordResetPageState();
@@ -33,10 +33,10 @@ class _PasswordResetPageState extends State<PasswordResetPage> {
     return BlocProvider(
       create: (context) => sl<AuthBloc>(),
       child: Scaffold(
-        backgroundColor: AppColors.white,
+        backgroundColor: AppColors.background,
         appBar: AppBar(
-          backgroundColor: AppColors.white,
-          elevation: 0,
+          backgroundColor: AppColors.background,
+          elevation: AppDimensions.elevation0,
           leading: IconButton(
             icon: Icon(Icons.arrow_back, color: AppColors.primary),
             onPressed: () => Navigator.pop(context),
