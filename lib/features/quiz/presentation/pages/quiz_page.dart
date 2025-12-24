@@ -1,11 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:guardiancare/core/constants/app_colors.dart';
-import 'package:guardiancare/core/l10n/generated/app_localizations.dart';
+import 'package:guardiancare/core/core.dart';
 
 class QuizPage extends StatefulWidget {
-  const QuizPage({Key? key}) : super(key: key);
+  const QuizPage({super.key});
 
   @override
   State<QuizPage> createState() => _QuizPageState();
@@ -38,11 +37,11 @@ class _QuizPageState extends State<QuizPage> {
     try {
       QuerySnapshot querySnapshot =
           await FirebaseFirestore.instance.collection('quizes').get();
-      List<Map<String, dynamic>> _quizes = [];
+      List<Map<String, dynamic>> loadedQuizes = [];
       for (var doc in querySnapshot.docs) {
         final data = doc.data() as Map<String, dynamic>;
         if (data["name"] != null && (data["use"] ?? false)) {
-          _quizes.add({
+          loadedQuizes.add({
             "name": data["name"],
             "thumbnail": data["thumbnail"] ?? '',
           });
@@ -50,11 +49,11 @@ class _QuizPageState extends State<QuizPage> {
       }
       if (mounted) {
         setState(() {
-          quizes = _quizes;
+          quizes = loadedQuizes;
         });
       }
     } catch (e) {
-      print('Error loading quizes: $e');
+      debugPrint('Error loading quizes: $e');
     }
   }
 
@@ -82,32 +81,43 @@ class _QuizPageState extends State<QuizPage> {
         });
       }
     } catch (e) {
-      print('Error loading questions: $e');
+      debugPrint('Error loading questions: $e');
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n.quiz),
-        backgroundColor: tPrimaryColor,
-        foregroundColor: Colors.white,
+        backgroundColor: AppColors.primary,
+        foregroundColor: AppColors.onPrimary,
       ),
-      body: isLoading
-          ? const Center(child: CircularProgressIndicator())
+      body: SafeArea(
+        child: isLoading
+          ? Center(
+              child: CircularProgressIndicator(
+                color: AppColors.primary,
+              ),
+            )
           : quizes.isEmpty
               ? Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Icon(Icons.quiz, size: 100, color: Colors.grey),
-                      const SizedBox(height: 20),
+                      Icon(
+                        Icons.quiz,
+                        size: AppDimensions.iconXXL * 1.5,
+                        color: AppColors.textSecondary,
+                      ),
+                      SizedBox(height: AppDimensions.spaceL),
                       Text(
                         l10n.noQuizzesAvailable,
-                        style: const TextStyle(fontSize: 18, color: Colors.grey),
+                        style: AppTextStyles.h5.copyWith(
+                          color: AppColors.textSecondary,
+                        ),
                       ),
                     ],
                   ),
@@ -116,7 +126,7 @@ class _QuizPageState extends State<QuizPage> {
                   itemCount: quizes.length,
                   itemBuilder: (BuildContext context, int index) {
                     return Padding(
-                      padding: const EdgeInsets.all(8.0),
+                      padding: EdgeInsets.all(AppDimensions.spaceS),
                       child: InkWell(
                         onTap: () {
                           final quizQuestions = questions
@@ -130,6 +140,7 @@ class _QuizPageState extends State<QuizPage> {
                     );
                   },
                 ),
+      ),
     );
   }
 }
@@ -137,12 +148,12 @@ class _QuizPageState extends State<QuizPage> {
 class QuizTile extends StatelessWidget {
   final Map<String, dynamic> quiz;
 
-  const QuizTile({Key? key, required this.quiz}) : super(key: key);
+  const QuizTile({super.key, required this.quiz});
 
   @override
   Widget build(BuildContext context) {
     return Card(
-      elevation: 4,
+      elevation: AppDimensions.cardElevation,
       child: Column(
         mainAxisSize: MainAxisSize.max,
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -155,19 +166,21 @@ class QuizTile extends StatelessWidget {
               errorBuilder: (context, error, stackTrace) {
                 return Container(
                   height: 200,
-                  color: Colors.grey[300],
-                  child: const Icon(Icons.quiz, size: 64, color: tPrimaryColor),
+                  color: AppColors.divider,
+                  child: Icon(
+                    Icons.quiz,
+                    size: AppDimensions.iconXXL,
+                    color: AppColors.primary,
+                  ),
                 );
               },
             ),
           Container(
-            padding: const EdgeInsets.all(8),
+            padding: EdgeInsets.all(AppDimensions.spaceS),
             child: Text(
               capitalizeEach(quiz["name"]),
-              style: const TextStyle(
-                fontSize: 25,
-                color: tPrimaryColor,
-                fontWeight: FontWeight.w600,
+              style: AppTextStyles.h3.copyWith(
+                color: AppColors.primary,
               ),
             ),
           )

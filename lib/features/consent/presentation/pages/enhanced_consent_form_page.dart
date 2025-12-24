@@ -1,9 +1,10 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:crypto/crypto.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:guardiancare/core/constants/app_colors.dart';
-import 'package:crypto/crypto.dart';
-import 'dart:convert';
+import 'package:guardiancare/core/core.dart';
 
 class EnhancedConsentFormPage extends StatefulWidget {
   final VoidCallback onSubmit;
@@ -107,7 +108,7 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage> {
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
-            color: tPrimaryColor,
+            color: AppColors.primary,
           ),
         ),
         const SizedBox(height: 20),
@@ -117,7 +118,7 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage> {
             labelText: 'Parent Email',
             hintText: 'parent@example.com',
             border: OutlineInputBorder(),
-            prefixIcon: Icon(Icons.email, color: tPrimaryColor),
+            prefixIcon: Icon(Icons.email, color: AppColors.primary),
           ),
           keyboardType: TextInputType.emailAddress,
           validator: (value) {
@@ -137,7 +138,7 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage> {
             labelText: 'Child Name',
             hintText: 'Enter child\'s name',
             border: OutlineInputBorder(),
-            prefixIcon: Icon(Icons.child_care, color: tPrimaryColor),
+            prefixIcon: Icon(Icons.child_care, color: AppColors.primary),
           ),
           validator: (value) {
             if (value == null || value.isEmpty) {
@@ -155,7 +156,7 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage> {
               _isChildAbove12 = value;
             });
           },
-          activeColor: tPrimaryColor,
+          activeColor: AppColors.primary,
         ),
       ],
     );
@@ -170,7 +171,7 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage> {
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
-            color: tPrimaryColor,
+            color: AppColors.primary,
           ),
         ),
         const SizedBox(height: 10),
@@ -185,7 +186,7 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage> {
             labelText: 'Parental Key',
             hintText: 'Min 4 characters',
             border: const OutlineInputBorder(),
-            prefixIcon: const Icon(Icons.lock, color: tPrimaryColor),
+            prefixIcon: const Icon(Icons.lock, color: AppColors.primary),
             suffixIcon: IconButton(
               icon: Icon(_obscureKey ? Icons.visibility : Icons.visibility_off),
               onPressed: () {
@@ -213,7 +214,7 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage> {
             labelText: 'Confirm Parental Key',
             hintText: 'Re-enter your key',
             border: const OutlineInputBorder(),
-            prefixIcon: const Icon(Icons.lock_outline, color: tPrimaryColor),
+            prefixIcon: const Icon(Icons.lock_outline, color: AppColors.primary),
             suffixIcon: IconButton(
               icon: Icon(_obscureConfirmKey ? Icons.visibility : Icons.visibility_off),
               onPressed: () {
@@ -247,7 +248,7 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage> {
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
-            color: tPrimaryColor,
+            color: AppColors.primary,
           ),
         ),
         const SizedBox(height: 10),
@@ -261,7 +262,7 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage> {
           decoration: const InputDecoration(
             labelText: 'Select Security Question',
             border: OutlineInputBorder(),
-            prefixIcon: Icon(Icons.help_outline, color: tPrimaryColor),
+            prefixIcon: Icon(Icons.help_outline, color: AppColors.primary),
           ),
           items: _securityQuestions.map((question) {
             return DropdownMenuItem(
@@ -288,7 +289,7 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage> {
             labelText: 'Your Answer',
             hintText: 'Enter your answer',
             border: const OutlineInputBorder(),
-            prefixIcon: const Icon(Icons.question_answer, color: tPrimaryColor),
+            prefixIcon: const Icon(Icons.question_answer, color: AppColors.primary),
             suffixIcon: IconButton(
               icon: Icon(_obscureAnswer ? Icons.visibility : Icons.visibility_off),
               onPressed: () {
@@ -318,7 +319,7 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage> {
               _agreedToTerms = value ?? false;
             });
           },
-          activeColor: tPrimaryColor,
+          activeColor: AppColors.primary,
           controlAffinity: ListTileControlAffinity.leading,
         ),
       ],
@@ -347,7 +348,7 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage> {
                     const Icon(
                       Icons.family_restroom,
                       size: 60,
-                      color: tPrimaryColor,
+                      color: AppColors.primary,
                     ),
                     const SizedBox(height: 16),
                     const Text(
@@ -355,7 +356,7 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage> {
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
-                        color: tPrimaryColor,
+                        color: AppColors.primary,
                       ),
                     ),
                     const SizedBox(height: 8),
@@ -375,7 +376,7 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage> {
                             CircleAvatar(
                               radius: 16,
                               backgroundColor: index <= _currentStep
-                                  ? tPrimaryColor
+                                  ? AppColors.primary
                                   : Colors.grey[300],
                               child: Text(
                                 '${index + 1}',
@@ -392,7 +393,7 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage> {
                                 width: 40,
                                 height: 2,
                                 color: index < _currentStep
-                                    ? tPrimaryColor
+                                    ? AppColors.primary
                                     : Colors.grey[300],
                               ),
                           ],
@@ -441,7 +442,7 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage> {
                             }
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: tPrimaryColor,
+                            backgroundColor: AppColors.primary,
                             padding: const EdgeInsets.symmetric(
                               horizontal: 32,
                               vertical: 12,
@@ -470,3 +471,4 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage> {
     );
   }
 }
+

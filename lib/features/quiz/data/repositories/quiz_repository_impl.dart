@@ -1,6 +1,5 @@
 import 'package:dartz/dartz.dart';
-import 'package:guardiancare/core/error/exceptions.dart';
-import 'package:guardiancare/core/error/failures.dart';
+import 'package:guardiancare/core/error/error.dart';
 import 'package:guardiancare/features/quiz/data/datasources/quiz_local_datasource.dart';
 import 'package:guardiancare/features/quiz/data/models/question_model.dart';
 import 'package:guardiancare/features/quiz/domain/entities/question_entity.dart';

@@ -128,6 +128,16 @@ class AppLocalizationsTe extends AppLocalizations {
   String get mailUs => 'మాకు మెయిల్ చేయండి';
 
   @override
+  String get guest => 'అతిథి';
+
+  @override
+  String get quickActions => 'త్వరిత చర్యలు';
+
+  @override
+  String get homeWelcomeMessage =>
+      'పిల్లలు మరియు కుటుంబాలకు భద్రతా జ్ఞానంతో శక్తినిస్తోంది';
+
+  @override
   String get retry => 'మళ్లీ ప్రయత్నించండి';
 
   @override

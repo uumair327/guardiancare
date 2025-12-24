@@ -1,18 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:guardiancare/core/di/injection_container.dart';
-import 'package:guardiancare/features/emergency/presentation/bloc/emergency_bloc.dart';
-import 'package:guardiancare/features/emergency/presentation/bloc/emergency_event.dart';
-import 'package:guardiancare/features/emergency/presentation/bloc/emergency_state.dart';
-import 'package:guardiancare/core/constants/app_colors.dart';
-import 'package:guardiancare/core/l10n/generated/app_localizations.dart';
+import 'package:guardiancare/core/core.dart';
+import 'package:guardiancare/features/features.dart';
 
 class EmergencyContactPage extends StatelessWidget {
   const EmergencyContactPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     
     return BlocProvider(
       create: (context) => sl<EmergencyBloc>()..add(LoadEmergencyContacts()),
@@ -115,16 +111,13 @@ class EmergencyContactPage extends StatelessWidget {
               children: [
                 Icon(
                   icon,
-                  size: 48,
-                  color: tPrimaryColor,
+                  size: AppDimensions.iconXL,
+                  color: AppColors.primary,
                 ),
                 const SizedBox(width: 10),
                 Text(
                   title,
-                  style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: AppTextStyles.h3.copyWith(fontWeight: FontWeight.bold),
                 ),
               ],
             ),
@@ -143,16 +136,15 @@ class EmergencyContactPage extends StatelessWidget {
                           icon: const Icon(
                             Icons.phone,
                             size: 20,
-                            color: tPrimaryColor,
+                            color: AppColors.primary,
                           ),
                           label: Text(
                             '${contact['name']}: ${contact['number']}',
-                            style: const TextStyle(
-                                fontSize: 16, color: tTextPrimary),
+                            style: AppTextStyles.bodyLarge.copyWith(color: AppColors.textPrimary),
                           ),
                           style: ButtonStyle(
                             backgroundColor: WidgetStateProperty.all<Color>(
-                                Colors.white),
+                                AppColors.white),
                             padding:
                                 WidgetStateProperty.all<EdgeInsetsGeometry>(
                                     const EdgeInsets.symmetric(

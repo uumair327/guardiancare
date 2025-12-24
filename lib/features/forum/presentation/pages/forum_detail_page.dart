@@ -1,32 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:guardiancare/core/di/injection_container.dart' as di;
-import 'package:guardiancare/features/forum/presentation/bloc/forum_bloc.dart';
-import 'package:guardiancare/features/forum/presentation/bloc/forum_event.dart';
-import 'package:guardiancare/features/forum/presentation/bloc/forum_state.dart';
-import 'package:guardiancare/features/forum/presentation/widgets/comment_item.dart';
-import 'package:guardiancare/features/forum/presentation/widgets/comment_input_widget.dart';
-import 'package:intl/intl.dart';
+import 'package:guardiancare/core/core.dart';
+import 'package:guardiancare/features/forum/forum.dart';
 
 class ForumDetailPage extends StatelessWidget {
   final String forumId;
   final String forumTitle;
 
   const ForumDetailPage({
-    Key? key,
+    super.key,
     required this.forumId,
     required this.forumTitle,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => di.sl<ForumBloc>()..add(LoadComments(forumId)),
+      create: (context) => sl<ForumBloc>()..add(LoadComments(forumId)),
       child: Scaffold(
         appBar: AppBar(
           title: Text(forumTitle),
         ),
-        body: Column(
+        body: SafeArea(
+          child: Column(
           children: [
             Expanded(
               child: BlocConsumer<ForumBloc, ForumState>(
@@ -35,16 +31,16 @@ class ForumDetailPage extends StatelessWidget {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content: Text(state.message),
-                        backgroundColor: Colors.red,
-                        duration: const Duration(seconds: 3),
+                        backgroundColor: AppColors.error,
+                        duration: AppDurations.snackbarMedium,
                       ),
                     );
                   } else if (state is CommentSubmitted) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Comment posted successfully!'),
-                        backgroundColor: Colors.green,
-                        duration: Duration(seconds: 2),
+                      SnackBar(
+                        content: const Text('Comment posted successfully!'),
+                        backgroundColor: AppColors.success,
+                        duration: AppDurations.snackbarShort,
                       ),
                     );
                   }
@@ -70,24 +66,18 @@ class ForumDetailPage extends StatelessWidget {
                           children: [
                             Icon(
                               Icons.comment_outlined,
-                              size: 64,
-                              color: Colors.grey[400],
+                              size: AppDimensions.iconXXL,
+                              color: AppColors.textSecondary,
                             ),
-                            const SizedBox(height: 16),
+                            SizedBox(height: AppDimensions.spaceM),
                             Text(
                               'No comments yet',
-                              style: TextStyle(
-                                fontSize: 18,
-                                color: Colors.grey[600],
-                              ),
+                              style: AppTextStyles.h3.copyWith(color: AppColors.textSecondary),
                             ),
-                            const SizedBox(height: 8),
+                            SizedBox(height: AppDimensions.spaceS),
                             Text(
                               'Be the first to comment!',
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Colors.grey[500],
-                              ),
+                              style: AppTextStyles.bodySmall.copyWith(color: AppColors.textSecondary),
                             ),
                           ],
                         ),
@@ -97,12 +87,12 @@ class ForumDetailPage extends StatelessWidget {
                     return RefreshIndicator(
                       onRefresh: () async {
                         context.read<ForumBloc>().add(LoadComments(forumId));
-                        await Future.delayed(const Duration(milliseconds: 500));
+                        await Future.delayed(AppDurations.animationMedium);
                       },
                       child: ListView.builder(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 8,
+                        padding: EdgeInsets.symmetric(
+                          horizontal: AppDimensions.spaceM,
+                          vertical: AppDimensions.spaceS,
                         ),
                         itemCount: state.comments.length,
                         itemBuilder: (context, index) {
@@ -122,6 +112,7 @@ class ForumDetailPage extends StatelessWidget {
             ),
             CommentInputWidget(forumId: forumId),
           ],
+          ),
         ),
       ),
     );

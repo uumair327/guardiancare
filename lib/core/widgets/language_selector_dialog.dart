@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:guardiancare/core/services/locale_service.dart';
-import 'package:guardiancare/core/constants/app_colors.dart';
+import 'package:guardiancare/core/core.dart';
 
 /// Dialog for selecting app language
 /// Clean, user-friendly UI following Material Design
@@ -20,43 +19,39 @@ class LanguageSelectorDialog extends StatelessWidget {
 
     return Dialog(
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: AppDimensions.borderRadiusL,
       ),
       child: Container(
-        constraints: const BoxConstraints(maxHeight: 600),
+        constraints: BoxConstraints(maxHeight: AppDimensions.dialogMaxHeight),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             // Header
             Container(
-              padding: const EdgeInsets.all(20),
-              decoration: const BoxDecoration(
-                color: tPrimaryColor,
+              padding: AppDimensions.paddingAllL,
+              decoration: BoxDecoration(
+                color: AppColors.primary,
                 borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(16),
-                  topRight: Radius.circular(16),
+                  topLeft: Radius.circular(AppDimensions.radiusL),
+                  topRight: Radius.circular(AppDimensions.radiusL),
                 ),
               ),
               child: Row(
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.language,
-                    color: Colors.white,
-                    size: 28,
+                    color: AppColors.white,
+                    size: AppDimensions.iconL,
                   ),
-                  const SizedBox(width: 12),
-                  const Expanded(
+                  SizedBox(width: AppDimensions.spaceM),
+                  Expanded(
                     child: Text(
                       'Select Language',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
+                      style: AppTextStyles.h3.copyWith(color: AppColors.white),
                     ),
                   ),
                   IconButton(
-                    icon: const Icon(Icons.close, color: Colors.white),
+                    icon: Icon(Icons.close, color: AppColors.white),
                     onPressed: () => Navigator.of(context).pop(),
                   ),
                 ],
@@ -76,29 +71,27 @@ class LanguageSelectorDialog extends StatelessWidget {
                   return ListTile(
                     leading: Text(
                       localeInfo.flag,
-                      style: const TextStyle(fontSize: 32),
+                      style: TextStyle(fontSize: AppDimensions.iconXL),
                     ),
                     title: Text(
                       localeInfo.nativeName,
-                      style: TextStyle(
-                        fontSize: 18,
+                      style: AppTextStyles.h3.copyWith(
                         fontWeight:
                             isSelected ? FontWeight.bold : FontWeight.normal,
-                        color: isSelected ? tPrimaryColor : Colors.black87,
+                        color: isSelected ? AppColors.primary : AppColors.textPrimary,
                       ),
                     ),
                     subtitle: Text(
                       localeInfo.name,
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: isSelected ? tPrimaryColor : Colors.black54,
+                      style: AppTextStyles.bodySmall.copyWith(
+                        color: isSelected ? AppColors.primary : AppColors.textSecondary,
                       ),
                     ),
                     trailing: isSelected
-                        ? const Icon(
+                        ? Icon(
                             Icons.check_circle,
-                            color: tPrimaryColor,
-                            size: 28,
+                            color: AppColors.primary,
+                            size: AppDimensions.iconL,
                           )
                         : null,
                     onTap: () {

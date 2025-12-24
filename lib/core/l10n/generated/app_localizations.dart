@@ -328,6 +328,24 @@ abstract class AppLocalizations {
   /// **'Mail Us'**
   String get mailUs;
 
+  /// Guest user label
+  ///
+  /// In en, this message translates to:
+  /// **'Guest'**
+  String get guest;
+
+  /// Quick actions section title
+  ///
+  /// In en, this message translates to:
+  /// **'Quick Actions'**
+  String get quickActions;
+
+  /// Welcome message on home page
+  ///
+  /// In en, this message translates to:
+  /// **'Empowering children and families with safety knowledge'**
+  String get homeWelcomeMessage;
+
   /// Retry button text
   ///
   /// In en, this message translates to:

@@ -128,6 +128,16 @@ class AppLocalizationsTa extends AppLocalizations {
   String get mailUs => 'எங்களுக்கு மின்னஞ்சல் அனுப்பவும்';
 
   @override
+  String get guest => 'விருந்தினர்';
+
+  @override
+  String get quickActions => 'விரைவு செயல்கள்';
+
+  @override
+  String get homeWelcomeMessage =>
+      'குழந்தைகள் மற்றும் குடும்பங்களுக்கு பாதுகாப்பு அறிவை வழங்குதல்';
+
+  @override
   String get retry => 'மீண்டும் முயற்சிக்கவும்';
 
   @override

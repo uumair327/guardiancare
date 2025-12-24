@@ -128,6 +128,16 @@ class AppLocalizationsBn extends AppLocalizations {
   String get mailUs => 'আমাদের মেইল করুন';
 
   @override
+  String get guest => 'অতিথি';
+
+  @override
+  String get quickActions => 'দ্রুত কর্ম';
+
+  @override
+  String get homeWelcomeMessage =>
+      'শিশু এবং পরিবারকে নিরাপত্তা জ্ঞান দিয়ে ক্ষমতায়ন করা';
+
+  @override
   String get retry => 'পুনরায় চেষ্টা করুন';
 
   @override

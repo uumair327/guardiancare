@@ -4,22 +4,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:guardiancare/core/di/injection_container.dart';
-import 'package:guardiancare/core/constants/app_colors.dart';
-import 'package:guardiancare/features/consent/presentation/bloc/consent_bloc.dart';
-import 'package:guardiancare/features/consent/presentation/pages/enhanced_consent_form_page.dart';
-import 'package:guardiancare/features/consent/presentation/widgets/forgot_parental_key_dialog.dart';
-import 'package:guardiancare/core/widgets/parental_verification_dialog.dart';
-import 'package:guardiancare/core/services/parental_verification_service.dart';
-import 'package:guardiancare/features/explore/presentation/pages/explore_page.dart';
-import 'package:guardiancare/features/forum/presentation/bloc/forum_bloc.dart';
-import 'package:guardiancare/features/forum/presentation/pages/forum_page.dart';
-import 'package:guardiancare/features/home/presentation/bloc/home_bloc.dart';
-import 'package:guardiancare/features/home/presentation/pages/home_page.dart';
+import 'package:guardiancare/core/core.dart';
+import 'package:guardiancare/features/features.dart';
 import 'dart:ui';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:crypto/crypto.dart';
-import 'dart:convert';
 
 class Pages extends StatefulWidget {
   const Pages({super.key});
@@ -103,11 +91,22 @@ class _PagesState extends State<Pages> {
         });
         _checkAndShowGuidelines();
       },
+      onForgotKey: () async {
+        final result = await showDialog<bool>(
+          context: context,
+          builder: (context) => const ForgotParentalKeyDialog(),
+        );
+
+        if (result == true && mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('You can now use your new parental key'),
+              backgroundColor: Colors.green,
+            ),
+          );
+        }
+      },
     );
-  }
-  
-  String _hashKey(String key) {
-    return sha256.convert(utf8.encode(key)).toString();
   }
   
   void _checkAndShowGuidelines() async {
@@ -130,12 +129,9 @@ class _PagesState extends State<Pages> {
       barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text(
+          title: Text(
             'Forum Guidelines',
-            style: TextStyle(
-              color: tPrimaryColor,
-              fontWeight: FontWeight.bold,
-            ),
+            style: AppTextStyles.dialogTitle,
           ),
           content: const SingleChildScrollView(
             child: ListBody(
@@ -155,9 +151,9 @@ class _PagesState extends State<Pages> {
           ),
           actions: <Widget>[
             TextButton(
-              child: const Text(
+              child: Text(
                 'I Agree',
-                style: TextStyle(color: tPrimaryColor),
+                style: AppTextStyles.button.copyWith(color: AppColors.primary),
               ),
               onPressed: () {
                 Navigator.of(context).pop();
@@ -172,14 +168,14 @@ class _PagesState extends State<Pages> {
   @override
   Widget build(BuildContext context) {
     final items = <Widget>[
-      const Icon(Icons.home, size: 25, color: tNavBarColorButton),
-      const Icon(Icons.explore, size: 25, color: tNavBarColorButton),
-      const Icon(Icons.forum, size: 25, color: tNavBarColorButton),
+      const Icon(Icons.home, size: 25, color: AppColors.navBarButton),
+      const Icon(Icons.explore, size: 25, color: AppColors.navBarButton),
+      const Icon(Icons.forum, size: 25, color: AppColors.navBarButton),
     ];
 
     final screens = <Widget>[
       BlocProvider(
-        create: (_) => sl<HomeBloc>(),
+        create: (_) => sl<HomeBloc>()..add(const LoadCarouselItems()),
         child: const HomePage(),
       ),
       const ExplorePage(),
@@ -192,14 +188,12 @@ class _PagesState extends State<Pages> {
     return Stack(
       children: [
         Scaffold(
-          extendBody: true,
+          extendBody: false,
           appBar: AppBar(
-            title: const Text(
-              "Guardian Care",
-              style: TextStyle(
-                color: tPrimaryColor,
-                fontWeight: FontWeight.bold,
-                fontSize: 25,
+            title: Text(
+              AppStrings.appName,
+              style: AppTextStyles.h2.copyWith(
+                color: AppColors.primary,
                 fontStyle: FontStyle.italic,
               ),
             ),
@@ -212,7 +206,7 @@ class _PagesState extends State<Pages> {
                   if (user == null) {
                     // User not signed in - show sign in button
                     return IconButton(
-                      icon: const Icon(Icons.login, color: tPrimaryColor),
+                      icon: const Icon(Icons.login, color: AppColors.primary),
                       tooltip: 'Sign In',
                       onPressed: () {
                         context.go('/login');
@@ -226,12 +220,15 @@ class _PagesState extends State<Pages> {
             ],
           ),
           backgroundColor: Colors.white,
-          body: screens[index],
+          body: SafeArea(
+            bottom: false,
+            child: screens[index],
+          ),
           bottomNavigationBar: CurvedNavigationBar(
             key: _bottomNavigationKey,
             items: items,
             backgroundColor: Colors.transparent,
-            color: tNavBarColor,
+            color: AppColors.navBarBackground,
             height: 55,
             index: index,
             onTap: (newIndex) {
@@ -252,7 +249,7 @@ class _PagesState extends State<Pages> {
               color: Colors.white,
               child: const Center(
                 child: CircularProgressIndicator(
-                  color: tPrimaryColor,
+                  color: AppColors.primary,
                 ),
               ),
             ),

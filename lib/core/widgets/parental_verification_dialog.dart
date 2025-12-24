@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:guardiancare/core/constants/app_colors.dart';
-import 'package:guardiancare/core/services/parental_verification_service.dart';
-import 'package:guardiancare/features/consent/presentation/widgets/forgot_parental_key_dialog.dart';
+import 'package:guardiancare/core/core.dart';
 
 class ParentalVerificationDialog extends StatefulWidget {
   final String featureName;
   final VoidCallback onVerified;
+  final VoidCallback? onForgotKey;
 
   const ParentalVerificationDialog({
     Key? key,
     required this.featureName,
     required this.onVerified,
+    this.onForgotKey,
   }) : super(key: key);
 
   @override
@@ -34,7 +34,7 @@ class _ParentalVerificationDialogState extends State<ParentalVerificationDialog>
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Key must be at least 4 characters'),
-          backgroundColor: Colors.red,
+          backgroundColor: AppColors.error,
         ),
       );
       return;
@@ -56,14 +56,14 @@ class _ParentalVerificationDialogState extends State<ParentalVerificationDialog>
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Access granted to ${widget.featureName}'),
-          backgroundColor: Colors.green,
+          backgroundColor: AppColors.success,
         ),
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Invalid parental key'),
-          backgroundColor: Colors.red,
+          backgroundColor: AppColors.error,
         ),
       );
     }
@@ -76,10 +76,12 @@ class _ParentalVerificationDialogState extends State<ParentalVerificationDialog>
         borderRadius: BorderRadius.circular(16),
       ),
       title: Row(
-        children: const [
-          Icon(Icons.lock, color: tPrimaryColor),
-          SizedBox(width: 12),
-          Expanded(child: Text('Parental Verification')),
+        children: [
+          const Icon(Icons.lock, color: AppColors.primary),
+          SizedBox(width: AppDimensions.spaceM),
+          Expanded(
+            child: Text('Parental Verification', style: AppTextStyles.dialogTitle),
+          ),
         ],
       ),
       content: Column(
@@ -88,7 +90,7 @@ class _ParentalVerificationDialogState extends State<ParentalVerificationDialog>
         children: [
           Text(
             'Enter your parental key to access ${widget.featureName}',
-            style: const TextStyle(color: Colors.grey),
+            style: const TextStyle(color: AppColors.textSecondary),
           ),
           const SizedBox(height: 16),
           TextField(
@@ -97,7 +99,7 @@ class _ParentalVerificationDialogState extends State<ParentalVerificationDialog>
               labelText: 'Parental Key',
               hintText: 'Enter your key',
               border: const OutlineInputBorder(),
-              prefixIcon: const Icon(Icons.vpn_key, color: tPrimaryColor),
+              prefixIcon: const Icon(Icons.vpn_key, color: AppColors.primary),
               suffixIcon: IconButton(
                 icon: Icon(_obscureKey ? Icons.visibility : Icons.visibility_off),
                 onPressed: () {
@@ -115,24 +117,22 @@ class _ParentalVerificationDialogState extends State<ParentalVerificationDialog>
           Align(
             alignment: Alignment.centerRight,
             child: TextButton(
-              onPressed: () async {
-                Navigator.of(context).pop();
-                final result = await showDialog<bool>(
-                  context: context,
-                  builder: (context) => const ForgotParentalKeyDialog(),
-                );
-                if (result == true) {
+              onPressed: () {
+                if (widget.onForgotKey != null) {
+                  Navigator.of(context).pop();
+                  widget.onForgotKey!();
+                } else {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
-                      content: Text('You can now use your new parental key'),
-                      backgroundColor: Colors.green,
+                      content: Text('Forgot key feature not available'),
+                      backgroundColor: AppColors.gray500,
                     ),
                   );
                 }
               },
-              child: const Text(
+              child: Text(
                 'Forgot Key?',
-                style: TextStyle(color: tPrimaryColor),
+                style: AppTextStyles.link,
               ),
             ),
           ),
@@ -146,7 +146,7 @@ class _ParentalVerificationDialogState extends State<ParentalVerificationDialog>
         ElevatedButton(
           onPressed: _isLoading ? null : _verify,
           style: ElevatedButton.styleFrom(
-            backgroundColor: tPrimaryColor,
+            backgroundColor: AppColors.primary,
           ),
           child: _isLoading
               ? const SizedBox(
@@ -154,7 +154,7 @@ class _ParentalVerificationDialogState extends State<ParentalVerificationDialog>
                   height: 20,
                   child: CircularProgressIndicator(
                     strokeWidth: 2,
-                    color: Colors.white,
+                    color: AppColors.white,
                   ),
                 )
               : const Text('Verify'),
@@ -168,8 +168,9 @@ class _ParentalVerificationDialogState extends State<ParentalVerificationDialog>
 Future<void> showParentalVerification(
   BuildContext context,
   String featureName,
-  VoidCallback onVerified,
-) async {
+  VoidCallback onVerified, {
+  VoidCallback? onForgotKey,
+}) async {
   final verificationService = ParentalVerificationService();
 
   // Check if already verified in this session
@@ -185,6 +186,7 @@ Future<void> showParentalVerification(
     builder: (context) => ParentalVerificationDialog(
       featureName: featureName,
       onVerified: onVerified,
+      onForgotKey: onForgotKey,
     ),
   );
 }

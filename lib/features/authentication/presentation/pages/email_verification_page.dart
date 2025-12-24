@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:go_router/go_router.dart';
-import 'package:guardiancare/core/constants/app_colors.dart';
+import 'package:guardiancare/core/core.dart';
 
 class EmailVerificationPage extends StatefulWidget {
   const EmailVerificationPage({Key? key}) : super(key: key);
@@ -109,11 +109,12 @@ class _EmailVerificationPageState extends State<EmailVerificationPage> {
         backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: tPrimaryColor),
+          icon: Icon(Icons.arrow_back, color: AppColors.primary),
           onPressed: () => context.go('/login'),
         ),
       ),
-      body: Center(
+      body: SafeArea(
+        child: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24.0),
           child: Column(
@@ -123,24 +124,22 @@ class _EmailVerificationPageState extends State<EmailVerificationPage> {
               Container(
                 padding: const EdgeInsets.all(24),
                 decoration: BoxDecoration(
-                  color: tPrimaryColor.withOpacity(0.1),
+                  color: AppColors.primary.withOpacity(0.1),
                   shape: BoxShape.circle,
                 ),
                 child: const Icon(
                   Icons.email_outlined,
                   size: 80,
-                  color: tPrimaryColor,
+                  color: AppColors.primary,
                 ),
               ),
               const SizedBox(height: 32),
 
               // Title
-              const Text(
+              Text(
                 'Verify Your Email',
-                style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                  color: tPrimaryColor,
+                style: AppTextStyles.h1.copyWith(
+                  color: AppColors.primary,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -182,8 +181,8 @@ class _EmailVerificationPageState extends State<EmailVerificationPage> {
                     ),
                   ),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: tPrimaryColor,
-                    foregroundColor: Colors.white,
+                    backgroundColor: AppColors.primary,
+                    foregroundColor: AppColors.white,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -204,7 +203,7 @@ class _EmailVerificationPageState extends State<EmailVerificationPage> {
                           height: 20,
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
-                            valueColor: AlwaysStoppedAnimation<Color>(tPrimaryColor),
+                            valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
                           ),
                         )
                       : const Icon(Icons.refresh),
@@ -216,8 +215,8 @@ class _EmailVerificationPageState extends State<EmailVerificationPage> {
                     ),
                   ),
                   style: OutlinedButton.styleFrom(
-                    foregroundColor: tPrimaryColor,
-                    side: const BorderSide(color: tPrimaryColor, width: 2),
+                    foregroundColor: AppColors.primary,
+                    side: BorderSide(color: AppColors.primary, width: 2),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -264,16 +263,16 @@ class _EmailVerificationPageState extends State<EmailVerificationPage> {
               // Back to Login
               TextButton(
                 onPressed: () => context.go('/login'),
-                child: const Text(
+                child: Text(
                   'Back to Login',
-                  style: TextStyle(
-                    color: tPrimaryColor,
-                    fontSize: 16,
+                  style: AppTextStyles.bodyLarge.copyWith(
+                    color: AppColors.primary,
                   ),
                 ),
               ),
             ],
           ),
+        ),
         ),
       ),
     );

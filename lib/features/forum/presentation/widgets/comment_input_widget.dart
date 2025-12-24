@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:guardiancare/features/forum/presentation/bloc/forum_bloc.dart';
-import 'package:guardiancare/features/forum/presentation/bloc/forum_event.dart';
-import 'package:guardiancare/features/forum/presentation/bloc/forum_state.dart';
-import 'package:guardiancare/core/constants/app_colors.dart';
+import 'package:guardiancare/core/core.dart';
+import 'package:guardiancare/features/forum/forum.dart';
 
 class CommentInputWidget extends StatefulWidget {
   final String forumId;
@@ -142,9 +140,9 @@ class _CommentInputWidgetState extends State<CommentInputWidget> {
                             borderRadius: BorderRadius.circular(12.0),
                             borderSide: BorderSide(color: Colors.grey[300]!),
                           ),
-                          focusedBorder: const OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(12.0)),
-                            borderSide: BorderSide(color: tPrimaryColor, width: 2),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: AppDimensions.borderRadiusM,
+                            borderSide: BorderSide(color: AppColors.primary, width: 2),
                           ),
                           contentPadding: const EdgeInsets.symmetric(
                             horizontal: 16.0,
@@ -158,8 +156,8 @@ class _CommentInputWidgetState extends State<CommentInputWidget> {
                     Container(
                       decoration: BoxDecoration(
                         color: _controller.text.trim().isNotEmpty && !isSubmitting
-                            ? tPrimaryColor
-                            : Colors.grey[300],
+                            ? AppColors.primary
+                            : AppColors.inputBorder,
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: isSubmitting

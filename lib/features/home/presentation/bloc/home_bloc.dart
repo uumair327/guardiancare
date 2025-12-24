@@ -15,6 +15,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   }) : super(const HomeInitial()) {
     on<LoadCarouselItems>(_onLoadCarouselItems);
     on<RefreshCarouselItems>(_onRefreshCarouselItems);
+    on<CarouselItemsReceived>(_onCarouselItemsReceived);
+    on<CarouselItemsError>(_onCarouselItemsError);
   }
 
   Future<void> _onLoadCarouselItems(
@@ -28,14 +30,28 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     _carouselSubscription = getCarouselItems(NoParams()).listen(
       (result) {
         result.fold(
-          (failure) => emit(HomeError(failure.message, code: failure.code)),
-          (items) => emit(CarouselItemsLoaded(items)),
+          (failure) => add(CarouselItemsError(failure.message, code: failure.code)),
+          (items) => add(CarouselItemsReceived(items)),
         );
       },
       onError: (error) {
-        emit(HomeError('Stream error: ${error.toString()}'));
+        add(CarouselItemsError('Stream error: ${error.toString()}'));
       },
     );
+  }
+
+  void _onCarouselItemsReceived(
+    CarouselItemsReceived event,
+    Emitter<HomeState> emit,
+  ) {
+    emit(CarouselItemsLoaded(event.items));
+  }
+
+  void _onCarouselItemsError(
+    CarouselItemsError event,
+    Emitter<HomeState> emit,
+  ) {
+    emit(HomeError(event.message, code: event.code));
   }
 
   Future<void> _onRefreshCarouselItems(

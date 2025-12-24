@@ -3,14 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:guardiancare/core/constants/app_colors.dart';
-import 'package:guardiancare/core/widgets/content_card.dart';
-import 'package:guardiancare/core/l10n/generated/app_localizations.dart';
-import 'package:guardiancare/features/explore/data/datasources/explore_remote_datasource.dart';
-import 'package:guardiancare/features/explore/data/repositories/explore_repository_impl.dart';
-import 'package:guardiancare/features/explore/domain/usecases/get_recommendations.dart';
-import 'package:guardiancare/features/explore/domain/usecases/get_resources.dart';
-import 'package:guardiancare/features/explore/presentation/bloc/explore_cubit.dart';
+import 'package:guardiancare/core/core.dart';
+import 'package:guardiancare/features/explore/explore.dart';
 
 class ExplorePage extends StatelessWidget {
   const ExplorePage({Key? key}) : super(key: key);
@@ -37,12 +31,12 @@ class ExplorePage extends StatelessWidget {
         child: Scaffold(
           appBar: AppBar(
             title: Text(l10n.explore),
-            backgroundColor: tPrimaryColor,
-            foregroundColor: Colors.white,
+            backgroundColor: AppColors.primary,
+            foregroundColor: AppColors.white,
             bottom: TabBar(
-              indicatorColor: Colors.white,
-              labelColor: Colors.white,
-              unselectedLabelColor: Colors.white70,
+              indicatorColor: AppColors.white,
+              labelColor: AppColors.white,
+              unselectedLabelColor: AppColors.white70,
               tabs: [
                 Tab(
                   icon: const Icon(Icons.recommend),
@@ -93,10 +87,10 @@ class _RecommendedVideosState extends State<RecommendedVideos> {
     if (user == null) {
       return Center(
         child: Padding(
-          padding: const EdgeInsets.all(24.0),
+          padding: AppDimensions.paddingAllL,
           child: Text(
             l10n.loginToViewRecommendations,
-            style: const TextStyle(fontSize: 16),
+            style: AppTextStyles.bodyMedium,
             textAlign: TextAlign.center,
           ),
         ),
@@ -107,12 +101,12 @@ class _RecommendedVideosState extends State<RecommendedVideos> {
       children: [
         // Header
         Container(
-          padding: const EdgeInsets.all(16.0),
+          padding: AppDimensions.paddingAllM,
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: AppColors.white,
             boxShadow: [
               BoxShadow(
-                color: Colors.grey.withOpacity(0.1),
+                color: AppColors.shadowLight,
                 spreadRadius: 1,
                 blurRadius: 3,
                 offset: const Offset(0, 2),
@@ -121,19 +115,15 @@ class _RecommendedVideosState extends State<RecommendedVideos> {
           ),
           child: Row(
             children: [
-              const Icon(Icons.explore, color: tPrimaryColor, size: 28),
-              const SizedBox(width: 12),
+              Icon(Icons.explore, color: AppColors.primary, size: AppDimensions.iconL),
+              SizedBox(width: AppDimensions.spaceM),
               Text(
                 l10n.recommendedForYou,
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: tPrimaryColor,
-                ),
+                style: AppTextStyles.h3.copyWith(color: AppColors.primary),
               ),
               const Spacer(),
               IconButton(
-                icon: const Icon(Icons.refresh, color: tPrimaryColor),
+                icon: Icon(Icons.refresh, color: AppColors.primary),
                 onPressed: _refreshRecommendations,
                 tooltip: l10n.retry,
               ),
@@ -145,7 +135,7 @@ class _RecommendedVideosState extends State<RecommendedVideos> {
           child: RefreshIndicator(
             key: _refreshIndicatorKey,
             onRefresh: _refreshRecommendations,
-            color: tPrimaryColor,
+            color: AppColors.primary,
             child: StreamBuilder<QuerySnapshot>(
               stream: FirebaseFirestore.instance
                   .collection('recommendations')
@@ -154,10 +144,10 @@ class _RecommendedVideosState extends State<RecommendedVideos> {
                   .snapshots(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(
+                  return Center(
                     child: Padding(
-                      padding: EdgeInsets.all(24.0),
-                      child: CircularProgressIndicator(color: tPrimaryColor),
+                      padding: AppDimensions.paddingAllL,
+                      child: CircularProgressIndicator(color: AppColors.primary),
                     ),
                   );
                 }
@@ -165,26 +155,26 @@ class _RecommendedVideosState extends State<RecommendedVideos> {
                 if (snapshot.hasError) {
                   return ListView(
                     physics: const AlwaysScrollableScrollPhysics(),
-                    padding: const EdgeInsets.all(24.0),
+                    padding: AppDimensions.paddingAllL,
                     children: [
-                      const SizedBox(height: 60),
-                      const Icon(Icons.error_outline,
-                          size: 60, color: Colors.red),
-                      const SizedBox(height: 16),
+                      SizedBox(height: AppDimensions.spaceXXL),
+                      Icon(Icons.error_outline,
+                          size: AppDimensions.iconXXL, color: AppColors.error),
+                      SizedBox(height: AppDimensions.spaceM),
                       Text(
                         l10n.errorPrefix(snapshot.error.toString()),
-                        style: const TextStyle(fontSize: 16),
+                        style: AppTextStyles.bodyMedium,
                         textAlign: TextAlign.center,
                       ),
-                      const SizedBox(height: 16),
+                      SizedBox(height: AppDimensions.spaceM),
                       Center(
                         child: ElevatedButton.icon(
                           onPressed: _refreshRecommendations,
                           icon: const Icon(Icons.refresh),
                           label: Text(l10n.retry),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: tPrimaryColor,
-                            foregroundColor: Colors.white,
+                            backgroundColor: AppColors.primary,
+                            foregroundColor: AppColors.white,
                           ),
                         ),
                       ),
@@ -195,58 +185,50 @@ class _RecommendedVideosState extends State<RecommendedVideos> {
                 if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
                   return ListView(
                     physics: const AlwaysScrollableScrollPhysics(),
-                    padding: const EdgeInsets.all(24.0),
+                    padding: AppDimensions.paddingAllL,
                     children: [
-                      const SizedBox(height: 60),
-                      const Icon(
+                      SizedBox(height: AppDimensions.spaceXXL),
+                      Icon(
                         Icons.video_library_outlined,
-                        size: 80,
-                        color: Colors.grey,
+                        size: AppDimensions.iconXXL * 1.3,
+                        color: AppColors.textSecondary,
                       ),
-                      const SizedBox(height: 24),
+                      SizedBox(height: AppDimensions.spaceL),
                       Text(
                         l10n.noRecommendationsYet,
-                        style: const TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black87,
-                        ),
+                        style: AppTextStyles.h2,
                         textAlign: TextAlign.center,
                       ),
-                      const SizedBox(height: 16),
+                      SizedBox(height: AppDimensions.spaceM),
                       Text(
                         l10n.takeQuizForRecommendations,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          color: Colors.black54,
-                        ),
+                        style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSecondary),
                         textAlign: TextAlign.center,
                       ),
-                      const SizedBox(height: 32),
+                      SizedBox(height: AppDimensions.spaceXL),
                       Center(
                         child: ElevatedButton.icon(
                           onPressed: () => context.push('/quiz'),
                           icon: const Icon(Icons.quiz),
                           label: Text(l10n.takeAQuiz),
                           style: ElevatedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 32,
-                              vertical: 16,
+                            padding: EdgeInsets.symmetric(
+                              horizontal: AppDimensions.spaceXL,
+                              vertical: AppDimensions.spaceM,
                             ),
-                            backgroundColor: tPrimaryColor,
-                            foregroundColor: Colors.white,
+                            backgroundColor: AppColors.primary,
+                            foregroundColor: AppColors.white,
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
+                              borderRadius: AppDimensions.borderRadiusM,
                             ),
                           ),
                         ),
                       ),
-                      const SizedBox(height: 24),
+                      SizedBox(height: AppDimensions.spaceL),
                       Text(
                         l10n.pullDownToRefresh,
-                        style: const TextStyle(
-                          fontSize: 14,
-                          color: Colors.black38,
+                        style: AppTextStyles.caption.copyWith(
+                          color: AppColors.textDisabled,
                           fontStyle: FontStyle.italic,
                         ),
                         textAlign: TextAlign.center,
@@ -273,13 +255,13 @@ class _RecommendedVideosState extends State<RecommendedVideos> {
                 if (videos.isEmpty) {
                   return ListView(
                     physics: const AlwaysScrollableScrollPhysics(),
-                    padding: const EdgeInsets.all(24.0),
+                    padding: AppDimensions.paddingAllL,
                     children: [
-                      const SizedBox(height: 60),
+                      SizedBox(height: AppDimensions.spaceXXL),
                       Center(
                         child: Text(
                           l10n.noVideosAvailable,
-                          style: const TextStyle(fontSize: 16, color: Colors.black54),
+                          style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSecondary),
                         ),
                       ),
                     ],
@@ -288,7 +270,7 @@ class _RecommendedVideosState extends State<RecommendedVideos> {
 
                 return ListView.builder(
                   physics: const AlwaysScrollableScrollPhysics(),
-                  padding: const EdgeInsets.only(top: 8.0, bottom: 16.0),
+                  padding: EdgeInsets.only(top: AppDimensions.spaceS, bottom: AppDimensions.spaceM),
                   itemCount: videos.length,
                   itemBuilder: (context, index) {
                     final video = videos[index];
@@ -324,23 +306,23 @@ class ResourcesTab extends StatelessWidget {
           .snapshots(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(
-            child: CircularProgressIndicator(color: tPrimaryColor),
+          return Center(
+            child: CircularProgressIndicator(color: AppColors.primary),
           );
         }
 
         if (snapshot.hasError) {
           return Center(
             child: Padding(
-              padding: const EdgeInsets.all(24.0),
+              padding: AppDimensions.paddingAllL,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(Icons.error_outline, size: 60, color: Colors.red),
-                  const SizedBox(height: 16),
+                  Icon(Icons.error_outline, size: AppDimensions.iconXXL, color: AppColors.error),
+                  SizedBox(height: AppDimensions.spaceM),
                   Text(
                     l10n.errorPrefix(snapshot.error.toString()),
-                    style: const TextStyle(fontSize: 16),
+                    style: AppTextStyles.bodyMedium,
                     textAlign: TextAlign.center,
                   ),
                 ],
@@ -352,22 +334,19 @@ class ResourcesTab extends StatelessWidget {
         if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
           return Center(
             child: Padding(
-              padding: const EdgeInsets.all(24.0),
+              padding: AppDimensions.paddingAllL,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(
                     Icons.library_books_outlined,
-                    size: 80,
-                    color: Colors.grey[400],
+                    size: AppDimensions.iconXXL * 1.3,
+                    color: AppColors.textSecondary,
                   ),
-                  const SizedBox(height: 24),
+                  SizedBox(height: AppDimensions.spaceL),
                   Text(
                     l10n.noResourcesAvailable,
-                    style: TextStyle(
-                      fontSize: 18,
-                      color: Colors.grey[600],
-                    ),
+                    style: AppTextStyles.h3.copyWith(color: AppColors.textSecondary),
                     textAlign: TextAlign.center,
                   ),
                 ],
@@ -381,22 +360,22 @@ class ResourcesTab extends StatelessWidget {
         return RefreshIndicator(
           onRefresh: () async {
             // Trigger rebuild
-            await Future.delayed(const Duration(milliseconds: 500));
+            await Future.delayed(AppDurations.animationMedium);
           },
-          color: tPrimaryColor,
+          color: AppColors.primary,
           child: ListView.builder(
             physics: const AlwaysScrollableScrollPhysics(),
-            padding: const EdgeInsets.all(16.0),
+            padding: AppDimensions.paddingAllM,
             itemCount: resources.length,
             itemBuilder: (context, index) {
               final resource = resources[index];
               final data = resource.data() as Map<String, dynamic>;
               
               return Card(
-                margin: const EdgeInsets.only(bottom: 16),
-                elevation: 2,
+                margin: EdgeInsets.only(bottom: AppDimensions.spaceM),
+                elevation: AppDimensions.elevationS,
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: AppDimensions.borderRadiusM,
                 ),
                 child: InkWell(
                   onTap: () {
@@ -418,9 +397,9 @@ class ResourcesTab extends StatelessWidget {
                       }
                     }
                   },
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: AppDimensions.borderRadiusM,
                   child: Padding(
-                    padding: const EdgeInsets.all(16.0),
+                    padding: AppDimensions.paddingAllM,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -428,45 +407,38 @@ class ResourcesTab extends StatelessWidget {
                         Row(
                           children: [
                             Container(
-                              padding: const EdgeInsets.all(12),
+                              padding: AppDimensions.paddingAllM,
                               decoration: BoxDecoration(
-                                color: tPrimaryColor.withOpacity(0.1),
-                                borderRadius: BorderRadius.circular(8),
+                                color: AppColors.primaryLight,
+                                borderRadius: AppDimensions.borderRadiusS,
                               ),
                               child: Icon(
                                 _getResourceIcon(data['type'] as String?),
-                                color: tPrimaryColor,
-                                size: 24,
+                                color: AppColors.primary,
+                                size: AppDimensions.iconL,
                               ),
                             ),
-                            const SizedBox(width: 12),
+                            SizedBox(width: AppDimensions.spaceM),
                             Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
                                     data['title'] ?? 'Untitled',
-                                    style: const TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                      color: tPrimaryColor,
-                                    ),
+                                    style: AppTextStyles.h3.copyWith(color: AppColors.primary),
                                   ),
                                   if (data['category'] != null)
                                     Text(
                                       data['category'],
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        color: Colors.grey[600],
-                                      ),
+                                      style: AppTextStyles.caption.copyWith(color: AppColors.textSecondary),
                                     ),
                                 ],
                               ),
                             ),
-                            const Icon(
+                            Icon(
                               Icons.arrow_forward_ios,
-                              size: 16,
-                              color: Colors.grey,
+                              size: AppDimensions.iconS,
+                              color: AppColors.textSecondary,
                             ),
                           ],
                         ),
@@ -475,12 +447,11 @@ class ResourcesTab extends StatelessWidget {
                         if (data['description'] != null && 
                             (data['description'] as String).isNotEmpty)
                           Padding(
-                            padding: const EdgeInsets.only(top: 12),
+                            padding: EdgeInsets.only(top: AppDimensions.spaceM),
                             child: Text(
                               data['description'],
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Colors.grey[700],
+                              style: AppTextStyles.bodySmall.copyWith(
+                                color: AppColors.textPrimary,
                                 height: 1.4,
                               ),
                               maxLines: 3,

@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:guardiancare/core/constants/app_colors.dart';
+import 'package:guardiancare/core/core.dart';
 import 'package:crypto/crypto.dart';
 import 'dart:convert';
 
@@ -178,7 +178,7 @@ class _ForgotParentalKeyDialogState extends State<ForgotParentalKeyDialog> {
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
-            color: tPrimaryColor,
+            color: AppColors.primary,
           ),
         ),
         const SizedBox(height: 16),
@@ -186,13 +186,13 @@ class _ForgotParentalKeyDialogState extends State<ForgotParentalKeyDialog> {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: Colors.grey[100],
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: tPrimaryColor.withOpacity(0.3)),
+              color: AppColors.inputBackground,
+              borderRadius: AppDimensions.borderRadiusS,
+              border: Border.all(color: AppColors.primaryLight),
             ),
             child: Row(
               children: [
-                const Icon(Icons.help_outline, color: tPrimaryColor),
+                Icon(Icons.help_outline, color: AppColors.primary),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
@@ -213,7 +213,7 @@ class _ForgotParentalKeyDialogState extends State<ForgotParentalKeyDialog> {
               labelText: 'Your Answer',
               hintText: 'Enter your answer',
               border: const OutlineInputBorder(),
-              prefixIcon: const Icon(Icons.question_answer, color: tPrimaryColor),
+              prefixIcon: Icon(Icons.question_answer, color: AppColors.primary),
               suffixIcon: IconButton(
                 icon: Icon(_obscureAnswer ? Icons.visibility : Icons.visibility_off),
                 onPressed: () {
@@ -250,7 +250,7 @@ class _ForgotParentalKeyDialogState extends State<ForgotParentalKeyDialog> {
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
-            color: tPrimaryColor,
+            color: AppColors.primary,
           ),
         ),
         const SizedBox(height: 16),
@@ -260,7 +260,7 @@ class _ForgotParentalKeyDialogState extends State<ForgotParentalKeyDialog> {
             labelText: 'New Parental Key',
             hintText: 'Min 4 characters',
             border: const OutlineInputBorder(),
-            prefixIcon: const Icon(Icons.lock, color: tPrimaryColor),
+            prefixIcon: Icon(Icons.lock, color: AppColors.primary),
             suffixIcon: IconButton(
               icon: Icon(_obscureNewKey ? Icons.visibility : Icons.visibility_off),
               onPressed: () {
@@ -288,7 +288,7 @@ class _ForgotParentalKeyDialogState extends State<ForgotParentalKeyDialog> {
             labelText: 'Confirm New Key',
             hintText: 'Re-enter your key',
             border: const OutlineInputBorder(),
-            prefixIcon: const Icon(Icons.lock_outline, color: tPrimaryColor),
+            prefixIcon: Icon(Icons.lock_outline, color: AppColors.primary),
             suffixIcon: IconButton(
               icon: Icon(_obscureConfirmKey ? Icons.visibility : Icons.visibility_off),
               onPressed: () {
@@ -321,7 +321,7 @@ class _ForgotParentalKeyDialogState extends State<ForgotParentalKeyDialog> {
       ),
       title: Row(
         children: [
-          const Icon(Icons.lock_reset, color: tPrimaryColor),
+          Icon(Icons.lock_reset, color: AppColors.primary),
           const SizedBox(width: 12),
           const Text('Forgot Parental Key'),
         ],
@@ -348,7 +348,7 @@ class _ForgotParentalKeyDialogState extends State<ForgotParentalKeyDialog> {
                   }
                 },
           style: ElevatedButton.styleFrom(
-            backgroundColor: tPrimaryColor,
+            backgroundColor: AppColors.primary,
           ),
           child: _isLoading
               ? const SizedBox(

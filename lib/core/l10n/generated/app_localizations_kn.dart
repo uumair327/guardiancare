@@ -128,6 +128,16 @@ class AppLocalizationsKn extends AppLocalizations {
   String get mailUs => 'ನಮಗೆ ಮೇಲ್ ಮಾಡಿ';
 
   @override
+  String get guest => 'ಅತಿಥಿ';
+
+  @override
+  String get quickActions => 'ತ್ವರಿತ ಕ್ರಿಯೆಗಳು';
+
+  @override
+  String get homeWelcomeMessage =>
+      'ಮಕ್ಕಳು ಮತ್ತು ಕುಟುಂಬಗಳಿಗೆ ಸುರಕ್ಷತಾ ಜ್ಞಾನವನ್ನು ನೀಡುವುದು';
+
+  @override
   String get retry => 'ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ';
 
   @override

@@ -128,6 +128,16 @@ class AppLocalizationsMl extends AppLocalizations {
   String get mailUs => 'ഞങ്ങൾക്ക് മെയിൽ ചെയ്യുക';
 
   @override
+  String get guest => 'അതിഥി';
+
+  @override
+  String get quickActions => 'പെട്ടെന്നുള്ള പ്രവർത്തനങ്ങൾ';
+
+  @override
+  String get homeWelcomeMessage =>
+      'കുട്ടികൾക്കും കുടുംബങ്ങൾക്കും സുരക്ഷാ അറിവ് നൽകുന്നു';
+
+  @override
   String get retry => 'വീണ്ടും ശ്രമിക്കുക';
 
   @override

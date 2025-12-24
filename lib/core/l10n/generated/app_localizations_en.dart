@@ -128,6 +128,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get mailUs => 'Mail Us';
 
   @override
+  String get guest => 'Guest';
+
+  @override
+  String get quickActions => 'Quick Actions';
+
+  @override
+  String get homeWelcomeMessage =>
+      'Empowering children and families with safety knowledge';
+
+  @override
   String get retry => 'Retry';
 
   @override

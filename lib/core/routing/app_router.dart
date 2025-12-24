@@ -1,24 +1,9 @@
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:guardiancare/core/di/injection_container.dart';
-import 'package:guardiancare/core/routing/pages.dart';
-import 'package:guardiancare/features/authentication/presentation/bloc/auth_bloc.dart';
-import 'package:guardiancare/features/authentication/presentation/pages/login_page.dart';
-import 'package:guardiancare/features/authentication/presentation/pages/password_reset_page.dart';
-import 'package:guardiancare/features/authentication/presentation/pages/signup_page.dart';
-import 'package:guardiancare/features/authentication/presentation/pages/email_verification_page.dart';
-import 'package:guardiancare/features/quiz/presentation/pages/quiz_page.dart';
-import 'package:guardiancare/features/quiz/presentation/pages/quiz_questions_page.dart';
-import 'package:guardiancare/features/learn/presentation/pages/video_page.dart';
-import 'package:guardiancare/features/emergency/presentation/pages/emergency_contact_page.dart';
-import 'package:guardiancare/features/profile/presentation/pages/account_page.dart';
-import 'package:guardiancare/features/forum/presentation/pages/forum_detail_page.dart';
-import 'package:guardiancare/core/widgets/web_view_page.dart';
-import 'package:guardiancare/core/widgets/pdf_viewer_page.dart';
-import 'package:guardiancare/core/widgets/video_player_page.dart';
+import 'package:guardiancare/core/core.dart';
+import 'package:guardiancare/features/features.dart';
 
 class AppRouter {
   static final _rootNavigatorKey = GlobalKey<NavigatorState>();

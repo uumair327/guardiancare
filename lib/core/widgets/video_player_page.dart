@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
-import 'package:guardiancare/core/constants/app_colors.dart';
+import 'package:guardiancare/core/core.dart';
 
 class VideoPlayerPage extends StatefulWidget {
   final String videoUrl;
@@ -72,12 +72,12 @@ class _VideoPlayerPageState extends State<VideoPlayerPage> {
       player: YoutubePlayer(
         controller: _controller,
         showVideoProgressIndicator: true,
-        progressIndicatorColor: tPrimaryColor,
-        progressColors: const ProgressBarColors(
-          playedColor: tPrimaryColor,
-          handleColor: tPrimaryColor,
-          bufferedColor: Colors.grey,
-          backgroundColor: Colors.white24,
+        progressIndicatorColor: AppColors.primary,
+        progressColors: ProgressBarColors(
+          playedColor: AppColors.primary,
+          handleColor: AppColors.primary,
+          bufferedColor: AppColors.textSecondary,
+          backgroundColor: AppColors.white.withValues(alpha: 0.24),
         ),
         onReady: () {
           setState(() {
@@ -92,9 +92,8 @@ class _VideoPlayerPageState extends State<VideoPlayerPage> {
           Expanded(
             child: Text(
               _controller.metadata.title,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 16.0,
+              style: AppTextStyles.bodyLarge.copyWith(
+                color: AppColors.white,
                 fontWeight: FontWeight.w500,
               ),
               overflow: TextOverflow.ellipsis,
@@ -103,7 +102,7 @@ class _VideoPlayerPageState extends State<VideoPlayerPage> {
           ),
           if (_isFullScreen)
             IconButton(
-              icon: const Icon(Icons.fullscreen_exit, color: Colors.white),
+              icon: Icon(Icons.fullscreen_exit, color: AppColors.white),
               onPressed: () {
                 _controller.toggleFullScreenMode();
               },
@@ -114,18 +113,18 @@ class _VideoPlayerPageState extends State<VideoPlayerPage> {
           const SizedBox(width: 10),
           ProgressBar(
             isExpanded: true,
-            colors: const ProgressBarColors(
-              playedColor: tPrimaryColor,
-              handleColor: tPrimaryColor,
-              bufferedColor: Colors.grey,
-              backgroundColor: Colors.white24,
+            colors: ProgressBarColors(
+              playedColor: AppColors.primary,
+              handleColor: AppColors.primary,
+              bufferedColor: AppColors.textSecondary,
+              backgroundColor: AppColors.white.withValues(alpha: 0.24),
             ),
           ),
           const SizedBox(width: 10),
           RemainingDuration(),
           if (!_isFullScreen)
             IconButton(
-              icon: const Icon(Icons.fullscreen, color: Colors.white),
+              icon: Icon(Icons.fullscreen, color: AppColors.white),
               onPressed: () {
                 _controller.toggleFullScreenMode();
               },
@@ -134,19 +133,19 @@ class _VideoPlayerPageState extends State<VideoPlayerPage> {
       ),
       builder: (context, player) {
         return Scaffold(
-          backgroundColor: Colors.black,
+          backgroundColor: AppColors.black,
           appBar: _isFullScreen
               ? null
               : AppBar(
-                  backgroundColor: tSecondaryColor,
+                  backgroundColor: AppColors.secondary,
                   elevation: 0,
                   leading: IconButton(
-                    icon: const Icon(Icons.arrow_back, color: Colors.white),
+                    icon: Icon(Icons.arrow_back, color: AppColors.white),
                     onPressed: () => Navigator.of(context).pop(),
                   ),
-                  title: const Text(
+                  title: Text(
                     'Video Player',
-                    style: TextStyle(color: Colors.white),
+                    style: AppTextStyles.appBarTitle,
                   ),
                   actions: [
                     if (_isPlayerReady)
@@ -155,7 +154,7 @@ class _VideoPlayerPageState extends State<VideoPlayerPage> {
                           _controller.value.isPlaying
                               ? Icons.pause
                               : Icons.play_arrow,
-                          color: Colors.white,
+                          color: AppColors.white,
                         ),
                         onPressed: () {
                           setState(() {
@@ -166,7 +165,7 @@ class _VideoPlayerPageState extends State<VideoPlayerPage> {
                         },
                       ),
                     IconButton(
-                      icon: const Icon(Icons.fullscreen, color: Colors.white),
+                      icon: Icon(Icons.fullscreen, color: AppColors.white),
                       onPressed: () {
                         _controller.toggleFullScreenMode();
                       },
@@ -189,26 +188,24 @@ class _VideoPlayerPageState extends State<VideoPlayerPage> {
                         // Video Info Section (only in portrait mode)
                         Expanded(
                           child: Container(
-                            color: Colors.black,
+                            color: AppColors.black,
                             child: SingleChildScrollView(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   // Video Title and Stats
                                   Padding(
-                                    padding: const EdgeInsets.all(16.0),
+                                    padding: AppDimensions.paddingAllM,
                                     child: Column(
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
                                         Text(
                                           _controller.metadata.title,
-                                          style: const TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold,
+                                          style: AppTextStyles.h3.copyWith(
+                                            color: AppColors.white,
                                           ),
                                         ),
-                                        const SizedBox(height: 12),
+                                        SizedBox(height: AppDimensions.spaceM),
                                         
                                         // Video Controls Row
                                         Row(
@@ -250,28 +247,26 @@ class _VideoPlayerPageState extends State<VideoPlayerPage> {
                                           ],
                                         ),
                                         
-                                        const SizedBox(height: 16),
-                                        const Divider(color: Colors.grey),
+                                        SizedBox(height: AppDimensions.spaceM),
+                                        Divider(color: AppColors.textSecondary),
                                         
                                         // Video Duration Info
                                         if (_isPlayerReady)
                                           Padding(
-                                            padding: const EdgeInsets.symmetric(vertical: 8.0),
+                                            padding: EdgeInsets.symmetric(vertical: AppDimensions.spaceS),
                                             child: Row(
                                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                               children: [
                                                 Text(
                                                   'Duration: ${_formatDuration(_controller.metadata.duration)}',
-                                                  style: const TextStyle(
-                                                    color: Colors.white70,
-                                                    fontSize: 14,
+                                                  style: AppTextStyles.bodySmall.copyWith(
+                                                    color: AppColors.white70,
                                                   ),
                                                 ),
                                                 Text(
                                                   'Position: ${_formatDuration(_controller.value.position)}',
-                                                  style: const TextStyle(
-                                                    color: Colors.white70,
-                                                    fontSize: 14,
+                                                  style: AppTextStyles.bodySmall.copyWith(
+                                                    color: AppColors.white70,
                                                   ),
                                                 ),
                                               ],
@@ -291,36 +286,29 @@ class _VideoPlayerPageState extends State<VideoPlayerPage> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Icon(
+                      Icon(
                         Icons.error_outline,
-                        color: tPrimaryColor,
-                        size: 64,
+                        color: AppColors.primary,
+                        size: AppDimensions.iconXXL,
                       ),
-                      const SizedBox(height: 16),
-                      const Text(
+                      SizedBox(height: AppDimensions.spaceM),
+                      Text(
                         'Invalid YouTube URL',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
+                        style: AppTextStyles.h3.copyWith(color: AppColors.white),
                       ),
-                      const SizedBox(height: 8),
-                      const Text(
+                      SizedBox(height: AppDimensions.spaceS),
+                      Text(
                         'Please check the video link and try again',
-                        style: TextStyle(
-                          color: Colors.white70,
-                          fontSize: 14,
-                        ),
+                        style: AppTextStyles.bodySmall.copyWith(color: AppColors.white70),
                       ),
-                      const SizedBox(height: 24),
+                      SizedBox(height: AppDimensions.spaceL),
                       ElevatedButton(
                         onPressed: () => Navigator.of(context).pop(),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: tPrimaryColor,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 32,
-                            vertical: 12,
+                          backgroundColor: AppColors.primary,
+                          padding: EdgeInsets.symmetric(
+                            horizontal: AppDimensions.spaceXL,
+                            vertical: AppDimensions.spaceM,
                           ),
                         ),
                         child: const Text('Go Back'),
@@ -352,19 +340,19 @@ class _VideoPlayerPageState extends State<VideoPlayerPage> {
   }) {
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(8),
+      borderRadius: AppDimensions.borderRadiusS,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        padding: EdgeInsets.symmetric(
+          horizontal: AppDimensions.spaceM,
+          vertical: AppDimensions.spaceM,
+        ),
         child: Column(
           children: [
-            Icon(icon, color: tPrimaryColor, size: 32),
-            const SizedBox(height: 4),
+            Icon(icon, color: AppColors.primary, size: AppDimensions.iconL),
+            SizedBox(height: AppDimensions.spaceXS),
             Text(
               label,
-              style: const TextStyle(
-                color: Colors.white70,
-                fontSize: 12,
-              ),
+              style: AppTextStyles.caption.copyWith(color: AppColors.white70),
             ),
           ],
         ),
@@ -390,14 +378,14 @@ class _VideoPlayerPageState extends State<VideoPlayerPage> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: tSecondaryColor,
-        title: const Text(
+        backgroundColor: AppColors.secondary,
+        title: Text(
           'Video Ended',
-          style: TextStyle(color: Colors.white),
+          style: AppTextStyles.dialogTitle.copyWith(color: AppColors.white),
         ),
-        content: const Text(
+        content: Text(
           'Would you like to replay the video?',
-          style: TextStyle(color: Colors.white70),
+          style: AppTextStyles.bodyMedium.copyWith(color: AppColors.white70),
         ),
         actions: [
           TextButton(
@@ -405,7 +393,7 @@ class _VideoPlayerPageState extends State<VideoPlayerPage> {
               Navigator.of(context).pop();
               Navigator.of(context).pop();
             },
-            child: const Text('Close', style: TextStyle(color: Colors.white70)),
+            child: Text('Close', style: AppTextStyles.bodyMedium.copyWith(color: AppColors.white70)),
           ),
           ElevatedButton(
             onPressed: () {
@@ -414,7 +402,7 @@ class _VideoPlayerPageState extends State<VideoPlayerPage> {
               _controller.play();
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: tPrimaryColor,
+              backgroundColor: AppColors.primary,
             ),
             child: const Text('Replay'),
           ),

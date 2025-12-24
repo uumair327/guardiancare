@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:guardiancare/features/forum/domain/entities/comment_entity.dart';
-import 'package:guardiancare/features/forum/presentation/widgets/user_details_widget.dart';
+import 'package:guardiancare/features/forum/forum.dart';
 import 'package:intl/intl.dart';
 
 class CommentItem extends StatelessWidget {

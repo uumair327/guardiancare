@@ -1,4 +1,6 @@
+import 'dart:async';
 import 'package:dartz/dartz.dart';
+import 'package:flutter/foundation.dart';
 import 'package:guardiancare/core/error/failures.dart';
 import 'package:guardiancare/features/home/data/datasources/home_remote_datasource.dart';
 import 'package:guardiancare/features/home/domain/entities/carousel_item_entity.dart';
@@ -12,22 +14,21 @@ class HomeRepositoryImpl implements HomeRepository {
 
   @override
   Stream<Either<Failure, List<CarouselItemEntity>>> getCarouselItems() {
-    try {
-      return remoteDataSource.getCarouselItems().map(
-        (items) {
-          return Right<Failure, List<CarouselItemEntity>>(items);
+    debugPrint('HomeRepositoryImpl: getCarouselItems called');
+    
+    return remoteDataSource.getCarouselItems()
+      .map<Either<Failure, List<CarouselItemEntity>>>((items) {
+        debugPrint('HomeRepositoryImpl: Received ${items.length} items from data source');
+        return Right<Failure, List<CarouselItemEntity>>(items);
+      })
+      .transform(StreamTransformer<Either<Failure, List<CarouselItemEntity>>, Either<Failure, List<CarouselItemEntity>>>.fromHandlers(
+        handleData: (data, sink) => sink.add(data),
+        handleError: (error, stackTrace, sink) {
+          debugPrint('HomeRepositoryImpl: Error occurred: $error');
+          sink.add(Left<Failure, List<CarouselItemEntity>>(
+            ServerFailure('Failed to load carousel items: ${error.toString()}'),
+          ));
         },
-      ).handleError((error) {
-        return Left<Failure, List<CarouselItemEntity>>(
-          ServerFailure('Failed to load carousel items: ${error.toString()}'),
-        );
-      });
-    } catch (e) {
-      return Stream.value(
-        Left<Failure, List<CarouselItemEntity>>(
-          ServerFailure('Failed to load carousel items: ${e.toString()}'),
-        ),
-      );
-    }
+      ));
   }
 }

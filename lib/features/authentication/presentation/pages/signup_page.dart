@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:guardiancare/core/di/injection_container.dart' as di;
-import 'package:guardiancare/features/authentication/presentation/bloc/auth_bloc.dart';
-import 'package:guardiancare/features/authentication/presentation/bloc/auth_event.dart';
-import 'package:guardiancare/features/authentication/presentation/bloc/auth_state.dart';
-import 'package:guardiancare/core/constants/app_colors.dart';
+import 'package:guardiancare/core/core.dart';
+import 'package:guardiancare/features/features.dart';
 
 class SignupPage extends StatefulWidget {
   const SignupPage({Key? key}) : super(key: key);
@@ -50,42 +47,43 @@ class _SignupPageState extends State<SignupPage> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => di.sl<AuthBloc>(),
+      create: (context) => sl<AuthBloc>(),
       child: Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.white,
         appBar: AppBar(
-          backgroundColor: Colors.white,
+          backgroundColor: AppColors.white,
           elevation: 0,
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back, color: tPrimaryColor),
+            icon: Icon(Icons.arrow_back, color: AppColors.primary),
             onPressed: () => Navigator.pop(context),
           ),
         ),
-        body: BlocConsumer<AuthBloc, AuthState>(
+        body: SafeArea(
+          child: BlocConsumer<AuthBloc, AuthState>(
           listener: (context, state) {
             if (state is AuthError) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text(state.message),
-                  backgroundColor: Colors.red,
-                  duration: const Duration(seconds: 3),
+                  backgroundColor: AppColors.error,
+                  duration: AppDurations.snackbarMedium,
                 ),
               );
             } else if (state is AuthAuthenticated) {
               // Show email verification message
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text(
+                SnackBar(
+                  content: const Text(
                     'Account created! Please check your email to verify your account before signing in.',
                   ),
-                  backgroundColor: Colors.green,
-                  duration: Duration(seconds: 5),
+                  backgroundColor: AppColors.success,
+                  duration: AppDurations.snackbarLong,
                 ),
               );
               // Sign out the user so they must verify email first
               context.read<AuthBloc>().add(SignOutRequested());
               // Navigate to login
-              Future.delayed(const Duration(seconds: 2), () {
+              Future.delayed(AppDurations.navigationDelay, () {
                 if (context.mounted) {
                   context.go('/login');
                 }
@@ -94,37 +92,30 @@ class _SignupPageState extends State<SignupPage> {
           },
           builder: (context, state) {
             if (state is AuthLoading) {
-              return const Center(
+              return Center(
                 child: CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(tPrimaryColor),
+                  valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
                 ),
               );
             }
 
             return SingleChildScrollView(
-              padding: const EdgeInsets.all(24.0),
+              padding: AppDimensions.paddingAllL,
               child: Form(
                 key: _formKey,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
+                    Text(
                       'Create Account',
-                      style: TextStyle(
-                        color: tPrimaryColor,
-                        fontSize: 32,
-                        fontWeight: FontWeight.bold,
-                      ),
+                      style: AppTextStyles.h1.copyWith(color: AppColors.primary),
                     ),
-                    const SizedBox(height: 8),
-                    const Text(
+                    SizedBox(height: AppDimensions.spaceS),
+                    Text(
                       'Sign up to get started',
-                      style: TextStyle(
-                        color: Colors.grey,
-                        fontSize: 16,
-                      ),
+                      style: AppTextStyles.bodyLarge.copyWith(color: AppColors.textSecondary),
                     ),
-                    const SizedBox(height: 32),
+                    SizedBox(height: AppDimensions.spaceXL),
                     
                     // Full Name Field
                     TextFormField(
@@ -133,10 +124,10 @@ class _SignupPageState extends State<SignupPage> {
                         labelText: 'Full Name',
                         prefixIcon: const Icon(Icons.person_outline),
                         border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: AppDimensions.borderRadiusM,
                         ),
                         filled: true,
-                        fillColor: Colors.grey[50],
+                        fillColor: AppColors.inputBackground,
                       ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
@@ -148,7 +139,7 @@ class _SignupPageState extends State<SignupPage> {
                         return null;
                       },
                     ),
-                    const SizedBox(height: 16),
+                    SizedBox(height: AppDimensions.spaceM),
                     
                     // Email Field
                     TextFormField(
@@ -158,10 +149,10 @@ class _SignupPageState extends State<SignupPage> {
                         labelText: 'Email',
                         prefixIcon: const Icon(Icons.email_outlined),
                         border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: AppDimensions.borderRadiusM,
                         ),
                         filled: true,
-                        fillColor: Colors.grey[50],
+                        fillColor: AppColors.inputBackground,
                       ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
@@ -174,26 +165,23 @@ class _SignupPageState extends State<SignupPage> {
                         return null;
                       },
                     ),
-                    const SizedBox(height: 16),
+                    SizedBox(height: AppDimensions.spaceM),
                     
                     // Role Selection
                     Container(
                       decoration: BoxDecoration(
-                        color: Colors.grey[50],
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: Colors.grey[300]!),
+                        color: AppColors.inputBackground,
+                        borderRadius: AppDimensions.borderRadiusM,
+                        border: Border.all(color: AppColors.inputBorder),
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Padding(
-                            padding: EdgeInsets.all(16),
+                          Padding(
+                            padding: AppDimensions.paddingAllM,
                             child: Text(
                               'I am a:',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
-                              ),
+                              style: AppTextStyles.bodyLarge.copyWith(fontWeight: FontWeight.w500),
                             ),
                           ),
                           RadioListTile<String>(
@@ -205,7 +193,7 @@ class _SignupPageState extends State<SignupPage> {
                                 _selectedRole = value!;
                               });
                             },
-                            activeColor: tPrimaryColor,
+                            activeColor: AppColors.primary,
                           ),
                           RadioListTile<String>(
                             title: const Text('Child'),
@@ -216,12 +204,12 @@ class _SignupPageState extends State<SignupPage> {
                                 _selectedRole = value!;
                               });
                             },
-                            activeColor: tPrimaryColor,
+                            activeColor: AppColors.primary,
                           ),
                         ],
                       ),
                     ),
-                    const SizedBox(height: 16),
+                    SizedBox(height: AppDimensions.spaceM),
                     
                     // Password Field
                     TextFormField(
@@ -243,10 +231,10 @@ class _SignupPageState extends State<SignupPage> {
                           },
                         ),
                         border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: AppDimensions.borderRadiusM,
                         ),
                         filled: true,
-                        fillColor: Colors.grey[50],
+                        fillColor: AppColors.inputBackground,
                       ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
@@ -258,7 +246,7 @@ class _SignupPageState extends State<SignupPage> {
                         return null;
                       },
                     ),
-                    const SizedBox(height: 16),
+                    SizedBox(height: AppDimensions.spaceM),
                     
                     // Confirm Password Field
                     TextFormField(
@@ -280,10 +268,10 @@ class _SignupPageState extends State<SignupPage> {
                           },
                         ),
                         border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: AppDimensions.borderRadiusM,
                         ),
                         filled: true,
-                        fillColor: Colors.grey[50],
+                        fillColor: AppColors.inputBackground,
                       ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
@@ -295,44 +283,41 @@ class _SignupPageState extends State<SignupPage> {
                         return null;
                       },
                     ),
-                    const SizedBox(height: 24),
+                    SizedBox(height: AppDimensions.spaceL),
                     
                     // Sign Up Button
                     SizedBox(
                       width: double.infinity,
-                      height: 50,
+                      height: AppDimensions.buttonHeight,
                       child: ElevatedButton(
                         onPressed: () => _handleSignup(context),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: tPrimaryColor,
+                          backgroundColor: AppColors.primary,
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: AppDimensions.borderRadiusM,
                           ),
                         ),
-                        child: const Text(
+                        child: Text(
                           'Sign Up',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style: AppTextStyles.button,
                         ),
                       ),
                     ),
-                    const SizedBox(height: 16),
+                    SizedBox(height: AppDimensions.spaceM),
                     
                     // Login Link
                     Center(
                       child: TextButton(
                         onPressed: () => context.go('/login'),
-                        child: const Text.rich(
+                        child: Text.rich(
                           TextSpan(
                             text: 'Already have an account? ',
-                            style: TextStyle(color: Colors.grey),
+                            style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSecondary),
                             children: [
                               TextSpan(
                                 text: 'Login',
                                 style: TextStyle(
-                                  color: tPrimaryColor,
+                                  color: AppColors.primary,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -346,6 +331,7 @@ class _SignupPageState extends State<SignupPage> {
               ),
             );
           },
+          ),
         ),
       ),
     );

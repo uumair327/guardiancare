@@ -1,6 +1,5 @@
 import 'package:dartz/dartz.dart';
-import 'package:guardiancare/core/error/exceptions.dart';
-import 'package:guardiancare/core/error/failures.dart';
+import 'package:guardiancare/core/error/error.dart';
 import 'package:guardiancare/features/emergency/data/datasources/emergency_local_datasource.dart';
 import 'package:guardiancare/features/emergency/domain/entities/emergency_contact_entity.dart';
 import 'package:guardiancare/features/emergency/domain/repositories/emergency_repository.dart';

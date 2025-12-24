@@ -1,5 +1,5 @@
 import 'package:dartz/dartz.dart';
-import 'package:guardiancare/core/error/failures.dart';
+import 'package:guardiancare/core/error/error.dart';
 import 'package:guardiancare/features/explore/data/datasources/explore_remote_datasource.dart';
 import 'package:guardiancare/features/explore/domain/entities/recommendation.dart';
 import 'package:guardiancare/features/explore/domain/entities/resource.dart';

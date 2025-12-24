@@ -1,14 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:guardiancare/core/constants/app_colors.dart';
-import 'package:guardiancare/features/quiz/services/recommendation_service.dart';
-import 'package:guardiancare/core/l10n/generated/app_localizations.dart';
+import 'package:guardiancare/core/core.dart';
+import 'package:guardiancare/features/quiz/quiz.dart';
 
 class QuizQuestionsPage extends StatefulWidget {
   final List<Map<String, dynamic>> questions;
 
-  const QuizQuestionsPage({Key? key, required this.questions}) : super(key: key);
+  const QuizQuestionsPage({super.key, required this.questions});
 
   @override
   State<QuizQuestionsPage> createState() => _QuizQuestionsPageState();
@@ -27,55 +26,52 @@ class _QuizQuestionsPageState extends State<QuizQuestionsPage> {
         ? widget.questions[currentQuestionIndex]
         : null;
 
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n.quizQuestions),
-        backgroundColor: tPrimaryColor,
-        foregroundColor: Colors.white,
+        backgroundColor: AppColors.primary,
+        foregroundColor: AppColors.onPrimary,
       ),
-      body: question == null
+      body: SafeArea(
+        child: question == null
           ? _buildCompletionScreen()
           : Padding(
-              padding: const EdgeInsets.all(16.0),
+              padding: EdgeInsets.all(AppDimensions.cardPadding),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   // Progress indicator
                   LinearProgressIndicator(
                     value: (currentQuestionIndex + 1) / widget.questions.length,
-                    backgroundColor: Colors.grey[300],
-                    valueColor: const AlwaysStoppedAnimation<Color>(tPrimaryColor),
+                    backgroundColor: AppColors.divider,
+                    valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
                   ),
-                  const SizedBox(height: 16),
+                  SizedBox(height: AppDimensions.spaceM),
                   
                   // Question number
                   Text(
                     l10n.questionOf(currentQuestionIndex + 1, widget.questions.length),
-                    style: const TextStyle(
-                      fontSize: 16,
+                    style: AppTextStyles.body1.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: tPrimaryColor,
+                      color: AppColors.primary,
                     ),
                   ),
-                  const SizedBox(height: 16),
+                  SizedBox(height: AppDimensions.spaceM),
                   
                   // Question text
                   Card(
-                    elevation: 2,
+                    elevation: AppDimensions.cardElevationLow,
                     child: Padding(
-                      padding: const EdgeInsets.all(16.0),
+                      padding: EdgeInsets.all(AppDimensions.cardPadding),
                       child: Text(
                         question['question'] ?? '',
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w500,
-                        ),
+                        style: AppTextStyles.h5,
                       ),
                     ),
                   ),
-                  const SizedBox(height: 24),
+                  SizedBox(height: AppDimensions.spaceL),
                   
                   // Options
                   Expanded(
@@ -90,19 +86,19 @@ class _QuizQuestionsPageState extends State<QuizQuestionsPage> {
                         Color? cardColor;
                         if (showFeedback) {
                           if (isCorrect) {
-                            cardColor = Colors.green[100];
+                            cardColor = AppColors.success.withOpacity(0.2);
                           } else if (isSelected) {
-                            cardColor = Colors.red[100];
+                            cardColor = AppColors.error.withOpacity(0.2);
                           }
                         } else if (isSelected) {
-                          cardColor = tPrimaryColor.withOpacity(0.1);
+                          cardColor = AppColors.primary.withOpacity(0.1);
                         }
                         
                         return Card(
-                          margin: const EdgeInsets.only(bottom: 12),
+                          margin: EdgeInsets.only(bottom: AppDimensions.spaceM),
                           color: cardColor,
                           child: ListTile(
-                            title: Text(option),
+                            title: Text(option, style: AppTextStyles.body1),
                             leading: Radio<int>(
                               value: index,
                               groupValue: selectedOption,
@@ -117,7 +113,7 @@ class _QuizQuestionsPageState extends State<QuizQuestionsPage> {
                             trailing: showFeedback
                                 ? Icon(
                                     isCorrect ? Icons.check_circle : (isSelected ? Icons.cancel : null),
-                                    color: isCorrect ? Colors.green : Colors.red,
+                                    color: isCorrect ? AppColors.success : AppColors.error,
                                   )
                                 : null,
                           ),
@@ -145,13 +141,13 @@ class _QuizQuestionsPageState extends State<QuizQuestionsPage> {
                                 ? _goToNextQuestion
                                 : _submitAnswer,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: tPrimaryColor,
+                          backgroundColor: AppColors.primary,
                         ),
                         child: Text(
                           showFeedback
                               ? (isLastQuestion ? l10n.finish : l10n.next)
                               : l10n.submit,
-                          style: const TextStyle(color: Colors.white),
+                          style: AppTextStyles.button,
                         ),
                       ),
                     ],
@@ -159,6 +155,7 @@ class _QuizQuestionsPageState extends State<QuizQuestionsPage> {
                 ],
               ),
             ),
+      ),
     );
   }
 
@@ -195,10 +192,7 @@ class _QuizQuestionsPageState extends State<QuizQuestionsPage> {
         showFeedback = false;
       });
     } else {
-      // Process quiz completion and generate recommendations
       _processQuizCompletion();
-      
-      // Show completion
       setState(() {
         currentQuestionIndex = widget.questions.length;
       });
@@ -206,59 +200,28 @@ class _QuizQuestionsPageState extends State<QuizQuestionsPage> {
   }
 
   Future<void> _processQuizCompletion() async {
-    print('\n╔════════════════════════════════════════╗');
-    print('║   QUIZ COMPLETION PROCESS STARTED      ║');
-    print('╚════════════════════════════════════════╝\n');
-    
-    print('📊 Quiz Stats:');
-    print('   Total questions: ${widget.questions.length}');
-    print('   Correct answers: $correctAnswers');
-    print('   Score: ${(correctAnswers / widget.questions.length * 100).round()}%');
-    
-    // Collect all categories from questions
     final categories = <String>{};
-    print('\n📂 Collecting categories from questions:');
-    for (int i = 0; i < widget.questions.length; i++) {
-      final question = widget.questions[i];
+    for (final question in widget.questions) {
       final category = question['category'];
-      print('   Question ${i + 1}: category = "$category"');
       if (category != null && category.toString().isNotEmpty) {
         categories.add(category.toString());
-        print('      ✅ Added to set');
-      } else {
-        print('      ⏭️ Skipped (null or empty)');
       }
     }
 
-    print('\n📋 Collected ${categories.length} unique categories: $categories');
-
-    // If no categories found, use quiz name as category
     if (categories.isEmpty && widget.questions.isNotEmpty) {
       final quizName = widget.questions[0]['quiz'];
-      print('\n⚠️ No categories found, checking quiz name...');
-      print('   Quiz name: "$quizName"');
       if (quizName != null && quizName.toString().isNotEmpty) {
         categories.add(quizName.toString());
-        print('   ✅ Using quiz name as category: $quizName');
       }
     }
 
-    // If still no categories, use default
     if (categories.isEmpty) {
-      print('\n⚠️ Still no categories, using defaults...');
       categories.addAll(['child safety', 'parenting tips']);
-      print('   ✅ Using default categories: $categories');
     }
 
     try {
       final user = FirebaseAuth.instance.currentUser;
       if (user != null) {
-        print('\n👤 User Info:');
-        print('   UID: ${user.uid}');
-        print('   Email: ${user.email}');
-        
-        // Save quiz completion to Firestore
-        print('\n💾 Saving quiz result to Firestore...');
         final quizResultData = {
           'uid': user.uid,
           'quizName': widget.questions.isNotEmpty ? widget.questions[0]['quiz'] : 'Unknown',
@@ -267,125 +230,110 @@ class _QuizQuestionsPageState extends State<QuizQuestionsPage> {
           'categories': categories.toList(),
           'timestamp': FieldValue.serverTimestamp(),
         };
-        print('   Data: $quizResultData');
         
-        final docRef = await FirebaseFirestore.instance.collection('quiz_results').add(quizResultData);
-        print('   ✅ Quiz result saved with ID: ${docRef.id}');
-        
-        // Generate recommendations based on quiz categories
-        print('\n🎯 Calling RecommendationService.generateRecommendations');
-        print('   Categories: ${categories.toList()}');
-        print('   Starting recommendation generation...\n');
-        
+        await FirebaseFirestore.instance.collection('quiz_results').add(quizResultData);
         await RecommendationService.generateRecommendations(categories.toList());
-        
-        print('\n╔════════════════════════════════════════╗');
-        print('║   QUIZ COMPLETION PROCESS FINISHED     ║');
-        print('╚════════════════════════════════════════╝\n');
-      } else {
-        print('\n❌ ERROR: No user logged in!');
       }
-    } catch (e, stackTrace) {
-      print('\n❌ ERROR in _processQuizCompletion: $e');
-      print('   Stack trace: $stackTrace');
+    } catch (e) {
+      // Handle error silently or show user-friendly message
+      debugPrint('Error in quiz completion: $e');
     }
   }
 
   Widget _buildCompletionScreen() {
     final percentage = (correctAnswers / widget.questions.length * 100).round();
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(24.0),
+        padding: EdgeInsets.all(AppDimensions.screenPaddingH),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(
+            Icon(
               Icons.check_circle,
-              size: 100,
-              color: tPrimaryColor,
+              size: AppDimensions.iconXXL * 1.5,
+              color: AppColors.primary,
             ),
-            const SizedBox(height: 24),
+            SizedBox(height: AppDimensions.spaceL),
             Text(
               l10n.quizCompleted,
-              style: const TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.bold,
-                color: tPrimaryColor,
-              ),
+              style: AppTextStyles.h2.copyWith(color: AppColors.primary),
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: AppDimensions.spaceM),
             Text(
               l10n.youScored(correctAnswers, widget.questions.length),
-              style: const TextStyle(fontSize: 20),
+              style: AppTextStyles.h4,
             ),
-            const SizedBox(height: 8),
+            SizedBox(height: AppDimensions.spaceS),
             Text(
               '$percentage%',
-              style: const TextStyle(
+              style: AppTextStyles.h1.copyWith(
                 fontSize: 48,
-                fontWeight: FontWeight.bold,
-                color: tPrimaryColor,
+                color: AppColors.primary,
               ),
             ),
-            const SizedBox(height: 24),
+            SizedBox(height: AppDimensions.spaceL),
             Container(
-              padding: const EdgeInsets.all(16),
+              padding: EdgeInsets.all(AppDimensions.cardPadding),
               decoration: BoxDecoration(
-                color: tPrimaryColor.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(12),
+                color: AppColors.primary.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(AppDimensions.radiusM),
               ),
               child: Column(
                 children: [
-                  const Icon(Icons.auto_awesome, color: tPrimaryColor, size: 32),
-                  const SizedBox(height: 8),
+                  Icon(Icons.auto_awesome, color: AppColors.primary, size: AppDimensions.iconL),
+                  SizedBox(height: AppDimensions.spaceS),
                   Text(
                     l10n.generatingRecommendations,
-                    style: const TextStyle(
-                      fontSize: 16,
+                    style: AppTextStyles.body1.copyWith(
                       fontWeight: FontWeight.w600,
-                      color: tPrimaryColor,
+                      color: AppColors.primary,
                     ),
                     textAlign: TextAlign.center,
                   ),
-                  const SizedBox(height: 4),
+                  SizedBox(height: AppDimensions.spaceXS),
                   Text(
                     l10n.checkExploreTab,
-                    style: const TextStyle(fontSize: 14, color: Colors.black54),
+                    style: AppTextStyles.body2.copyWith(color: AppColors.textSecondary),
                     textAlign: TextAlign.center,
                   ),
                 ],
               ),
             ),
-            const SizedBox(height: 32),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: tPrimaryColor,
-                padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-              ),
-              child: Text(
-                l10n.backToQuizzes,
-                style: const TextStyle(fontSize: 18, color: Colors.white),
+            SizedBox(height: AppDimensions.spaceXL),
+            SizedBox(
+              width: double.infinity,
+              height: AppDimensions.buttonHeight,
+              child: ElevatedButton(
+                onPressed: () => Navigator.pop(context),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primary,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: AppDimensions.buttonPaddingH,
+                    vertical: AppDimensions.buttonPaddingV,
+                  ),
+                ),
+                child: Text(l10n.backToQuizzes, style: AppTextStyles.button),
               ),
             ),
-            const SizedBox(height: 16),
-            OutlinedButton(
-              onPressed: () {
-                // Navigate to explore page to see recommendations
-                Navigator.pop(context); // Go back to quiz page
-                // The user can then navigate to Explore tab
-              },
-              style: OutlinedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-                side: const BorderSide(color: tPrimaryColor, width: 2),
-              ),
-              child: Text(
-                l10n.viewRecommendations,
-                style: const TextStyle(fontSize: 18, color: tPrimaryColor),
+            SizedBox(height: AppDimensions.spaceM),
+            SizedBox(
+              width: double.infinity,
+              height: AppDimensions.buttonHeight,
+              child: OutlinedButton(
+                onPressed: () => Navigator.pop(context),
+                style: OutlinedButton.styleFrom(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: AppDimensions.buttonPaddingH,
+                    vertical: AppDimensions.buttonPaddingV,
+                  ),
+                  side: BorderSide(color: AppColors.primary, width: AppDimensions.borderMedium),
+                ),
+                child: Text(
+                  l10n.viewRecommendations,
+                  style: AppTextStyles.button.copyWith(color: AppColors.primary),
+                ),
               ),
             ),
           ],
