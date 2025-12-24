@@ -43,3 +43,12 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Release builds (APK/AAB files are too large for GitHub)
+release_builds/
+apk/
+*.apk
+*.aab
+
+# Old lib backup
+old_lib/
