@@ -6,7 +6,7 @@ import 'package:guardiancare/features/forum/forum.dart';
 class CommentInputWidget extends StatefulWidget {
   final String forumId;
 
-  const CommentInputWidget({Key? key, required this.forumId}) : super(key: key);
+  const CommentInputWidget({super.key, required this.forumId});
 
   @override
   State<CommentInputWidget> createState() => _CommentInputWidgetState();
@@ -44,10 +44,10 @@ class _CommentInputWidgetState extends State<CommentInputWidget> {
     
     if (text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please enter a comment'),
-          backgroundColor: Colors.orange,
-          duration: Duration(seconds: 2),
+        SnackBar(
+          content: const Text('Please enter a comment'),
+          backgroundColor: AppColors.warning,
+          duration: AppDurations.snackbarShort,
         ),
       );
       return;
@@ -55,10 +55,10 @@ class _CommentInputWidgetState extends State<CommentInputWidget> {
 
     if (text.length < 2) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Comment must be at least 2 characters'),
-          backgroundColor: Colors.orange,
-          duration: Duration(seconds: 2),
+        SnackBar(
+          content: const Text('Comment must be at least 2 characters'),
+          backgroundColor: AppColors.warning,
+          duration: AppDurations.snackbarShort,
         ),
       );
       return;
@@ -75,9 +75,9 @@ class _CommentInputWidgetState extends State<CommentInputWidget> {
 
   Color _getCharacterCountColor() {
     final percentage = _characterCount / _maxCharacters;
-    if (percentage >= 0.9) return Colors.red;
-    if (percentage >= 0.7) return Colors.orange;
-    return Colors.grey;
+    if (percentage >= 0.9) return AppColors.error;
+    if (percentage >= 0.7) return AppColors.warning;
+    return AppColors.textSecondary;
   }
 
   @override
@@ -101,12 +101,12 @@ class _CommentInputWidgetState extends State<CommentInputWidget> {
           final isSubmitting = state is CommentSubmitting;
           
           return Container(
-            padding: const EdgeInsets.all(12.0),
+            padding: AppDimensions.paddingAllM,
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: AppColors.surface,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.grey.withOpacity(0.1),
+                  color: AppColors.shadowLight,
                   spreadRadius: 1,
                   blurRadius: 4,
                   offset: const Offset(0, -2),
@@ -130,45 +130,42 @@ class _CommentInputWidgetState extends State<CommentInputWidget> {
                         textCapitalization: TextCapitalization.sentences,
                         decoration: InputDecoration(
                           filled: true,
-                          fillColor: Colors.grey[50],
+                          fillColor: AppColors.inputBackground,
                           hintText: 'Add a comment...',
                           border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12.0),
-                            borderSide: BorderSide(color: Colors.grey[300]!),
+                            borderRadius: AppDimensions.borderRadiusM,
+                            borderSide: BorderSide(color: AppColors.inputBorder),
                           ),
                           enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12.0),
-                            borderSide: BorderSide(color: Colors.grey[300]!),
+                            borderRadius: AppDimensions.borderRadiusM,
+                            borderSide: BorderSide(color: AppColors.inputBorder),
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: AppDimensions.borderRadiusM,
-                            borderSide: BorderSide(color: AppColors.primary, width: 2),
+                            borderSide: BorderSide(color: AppColors.primary, width: AppDimensions.borderThick),
                           ),
-                          contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 16.0,
-                            vertical: 12.0,
-                          ),
+                          contentPadding: AppDimensions.inputPadding,
                           counterText: '',
                         ),
                       ),
                     ),
-                    const SizedBox(width: 8),
+                    SizedBox(width: AppDimensions.spaceS),
                     Container(
                       decoration: BoxDecoration(
                         color: _controller.text.trim().isNotEmpty && !isSubmitting
                             ? AppColors.primary
                             : AppColors.inputBorder,
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: AppDimensions.borderRadiusM,
                       ),
                       child: isSubmitting
-                          ? const Padding(
-                              padding: EdgeInsets.all(12.0),
+                          ? Padding(
+                              padding: AppDimensions.paddingAllM,
                               child: SizedBox(
-                                width: 20,
-                                height: 20,
+                                width: AppDimensions.iconS,
+                                height: AppDimensions.iconS,
                                 child: CircularProgressIndicator(
                                   strokeWidth: 2,
-                                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                  valueColor: AlwaysStoppedAnimation<Color>(AppColors.white),
                                 ),
                               ),
                             )
@@ -178,21 +175,20 @@ class _CommentInputWidgetState extends State<CommentInputWidget> {
                                   ? () => _submitComment(context)
                                   : null,
                               color: _controller.text.trim().isNotEmpty && !isSubmitting
-                                  ? Colors.white
-                                  : Colors.grey[500],
+                                  ? AppColors.white
+                                  : AppColors.textDisabled,
                             ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 4),
+                SizedBox(height: AppDimensions.spaceXS),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     Text(
                       '$_characterCount/$_maxCharacters',
-                      style: TextStyle(
+                      style: AppTextStyles.caption.copyWith(
                         color: _getCharacterCountColor(),
-                        fontSize: 12,
                         fontWeight: _characterCount > _maxCharacters * 0.8
                             ? FontWeight.bold
                             : FontWeight.normal,

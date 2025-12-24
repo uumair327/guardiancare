@@ -5,7 +5,7 @@ import 'package:guardiancare/core/core.dart';
 import 'package:guardiancare/features/features.dart';
 
 class SignupPage extends StatefulWidget {
-  const SignupPage({Key? key}) : super(key: key);
+  const SignupPage({super.key});
 
   @override
   State<SignupPage> createState() => _SignupPageState();
@@ -49,10 +49,10 @@ class _SignupPageState extends State<SignupPage> {
     return BlocProvider(
       create: (context) => sl<AuthBloc>(),
       child: Scaffold(
-        backgroundColor: AppColors.white,
+        backgroundColor: AppColors.background,
         appBar: AppBar(
-          backgroundColor: AppColors.white,
-          elevation: 0,
+          backgroundColor: AppColors.background,
+          elevation: AppDimensions.elevation0,
           leading: IconButton(
             icon: Icon(Icons.arrow_back, color: AppColors.primary),
             onPressed: () => Navigator.pop(context),

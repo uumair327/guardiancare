@@ -16,16 +16,15 @@ class UserDetailsWidget extends StatelessWidget {
           return Row(
             children: [
               CircleAvatar(
-                radius: 16,
-                backgroundColor: Colors.grey[300],
-                child: const Icon(Icons.person, size: 16),
+                radius: AppDimensions.iconXS,
+                backgroundColor: AppColors.gray300,
+                child: Icon(Icons.person, size: AppDimensions.iconXS),
               ),
-              const SizedBox(width: 8),
-              const Text(
+              SizedBox(width: AppDimensions.spaceS),
+              Text(
                 'Loading...',
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey,
+                style: AppTextStyles.caption.copyWith(
+                  color: AppColors.textSecondary,
                 ),
               ),
             ],
@@ -36,16 +35,15 @@ class UserDetailsWidget extends StatelessWidget {
           (failure) => Row(
             children: [
               CircleAvatar(
-                radius: 16,
-                backgroundColor: Colors.grey[300],
-                child: const Icon(Icons.person, size: 16),
+                radius: AppDimensions.iconXS,
+                backgroundColor: AppColors.gray300,
+                child: Icon(Icons.person, size: AppDimensions.iconXS),
               ),
-              const SizedBox(width: 8),
-              const Text(
+              SizedBox(width: AppDimensions.spaceS),
+              Text(
                 'Unknown User',
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey,
+                style: AppTextStyles.caption.copyWith(
+                  color: AppColors.textSecondary,
                 ),
               ),
             ],
@@ -53,33 +51,29 @@ class UserDetailsWidget extends StatelessWidget {
           (userDetails) => Row(
             children: [
               CircleAvatar(
-                radius: 16,
+                radius: AppDimensions.iconXS,
                 backgroundImage: userDetails.userImage.isNotEmpty
                     ? NetworkImage(userDetails.userImage)
                     : null,
-                backgroundColor: Colors.grey[300],
+                backgroundColor: AppColors.gray300,
                 child: userDetails.userImage.isEmpty
-                    ? const Icon(Icons.person, size: 16)
+                    ? Icon(Icons.person, size: AppDimensions.iconXS)
                     : null,
               ),
-              const SizedBox(width: 8),
+              SizedBox(width: AppDimensions.spaceS),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       userDetails.userName,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14,
-                      ),
+                      style: AppTextStyles.labelLarge,
                       overflow: TextOverflow.ellipsis,
                     ),
                     Text(
                       userDetails.userEmail,
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.grey[600],
+                      style: AppTextStyles.caption.copyWith(
+                        color: AppColors.textSecondary,
                       ),
                       overflow: TextOverflow.ellipsis,
                     ),

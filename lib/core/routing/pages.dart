@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart' show debugPrint;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -64,7 +65,7 @@ class _PagesState extends State<Pages> {
         });
       }
     } catch (e) {
-      print("Error fetching consent data: $e");
+      debugPrint("Error fetching consent data: $e");
 
       if (mounted) {
         setState(() {
@@ -97,11 +98,11 @@ class _PagesState extends State<Pages> {
           builder: (context) => const ForgotParentalKeyDialog(),
         );
 
-        if (result == true && mounted) {
+        if (result == true && context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('You can now use your new parental key'),
-              backgroundColor: Colors.green,
+            SnackBar(
+              content: const Text('You can now use your new parental key'),
+              backgroundColor: AppColors.success,
             ),
           );
         }
@@ -219,7 +220,7 @@ class _PagesState extends State<Pages> {
               ),
             ],
           ),
-          backgroundColor: Colors.white,
+          backgroundColor: AppColors.surface,
           body: SafeArea(
             bottom: false,
             child: screens[index],
@@ -246,7 +247,7 @@ class _PagesState extends State<Pages> {
         if (isCheckingConsent)
           Positioned.fill(
             child: Container(
-              color: Colors.white,
+              color: AppColors.surface,
               child: const Center(
                 child: CircularProgressIndicator(
                   color: AppColors.primary,
@@ -262,7 +263,7 @@ class _PagesState extends State<Pages> {
                 BackdropFilter(
                   filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
                   child: Container(
-                    color: Colors.black.withOpacity(0.5),
+                    color: AppColors.overlayDark,
                   ),
                 ),
                 BlocProvider(
