@@ -17,6 +17,7 @@ class LearnInitial extends LearnState {}
 class LearnLoading extends LearnState {}
 
 /// Categories loaded successfully
+/// Requirements: 3.1 - Categories fetched through LearnBloc/LearnRepository
 class CategoriesLoaded extends LearnState {
   final List<CategoryEntity> categories;
 
@@ -37,6 +38,7 @@ class VideosLoading extends LearnState {
 }
 
 /// Videos loaded successfully
+/// Requirements: 3.2 - Videos fetched through LearnBloc/LearnRepository
 class VideosLoaded extends LearnState {
   final String categoryName;
   final List<VideoEntity> videos;

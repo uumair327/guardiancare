@@ -45,3 +45,23 @@ class PermissionFailure extends Failure {
 class NotFoundFailure extends Failure {
   const NotFoundFailure(super.message, {super.code});
 }
+
+/// Gemini API-related failures
+class GeminiApiFailure extends Failure {
+  const GeminiApiFailure(super.message, {super.code});
+}
+
+/// YouTube API-related failures
+class YoutubeApiFailure extends Failure {
+  const YoutubeApiFailure(super.message, {super.code});
+}
+
+/// Storage-related failures (SharedPreferences, Hive, SQLite)
+class StorageFailure extends Failure {
+  const StorageFailure(super.message, {super.code});
+}
+
+/// Authentication-related failures (more specific than AuthFailure)
+class AuthenticationFailure extends Failure {
+  const AuthenticationFailure(super.message, {super.code});
+}

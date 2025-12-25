@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:ui';
 
 import 'package:firebase_auth/firebase_auth.dart';
@@ -61,70 +62,104 @@ class Guardiancare extends StatefulWidget {
   }
 }
 
+/// Main application state
+/// Follows Single Responsibility Principle by delegating to managers:
+/// - AuthStateManager: handles authentication state
+/// - LocaleManager: handles locale/language changes
+/// - AppLifecycleManager: handles app lifecycle events
 class GuardiancareState extends State<Guardiancare> with WidgetsBindingObserver {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  final _verificationService = ParentalVerificationService();
+  // Managers injected via dependency injection
+  late final AuthStateManager _authManager;
+  late final LocaleManager _localeManager;
+  late final AppLifecycleManager _lifecycleManager;
+
+  // Subscriptions for cleanup
+  StreamSubscription<User?>? _authSubscription;
+  StreamSubscription<AuthStateEvent>? _authEventSubscription;
+  StreamSubscription<Locale>? _localeSubscription;
+
+  // Local state for UI updates
   User? _user;
-  Locale _locale = const Locale('en'); // Default to English
+  Locale _locale = const Locale('en');
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     
-    // Load saved locale
-    _loadSavedLocale();
+    // Get managers from dependency injection
+    _authManager = di.sl<AuthStateManager>();
+    _localeManager = di.sl<LocaleManager>();
+    _lifecycleManager = di.sl<AppLifecycleManager>();
     
-    _auth.authStateChanges().listen((User? user) {
+    // Initialize managers and set up subscriptions
+    _initializeManagers();
+    
+    debugPrint("GuardiancareState initialized with managers");
+  }
+
+  void _initializeManagers() {
+    // Load saved locale through LocaleManager
+    _localeManager.loadSavedLocale().then((_) {
+      setState(() {
+        _locale = _localeManager.currentLocale;
+      });
+    });
+
+    // Subscribe to locale changes from LocaleManager
+    _localeSubscription = _localeManager.localeChanges.listen((locale) {
+      setState(() {
+        _locale = locale;
+      });
+    });
+
+    // Subscribe to auth state changes through AuthStateManager
+    _authSubscription = _authManager.authStateChanges.listen((User? user) {
       setState(() {
         _user = user;
       });
-      // Reset verification when user logs out
-      if (user == null) {
-        _verificationService.resetVerification();
+      debugPrint("User state updated: ${_user?.uid}");
+    });
+
+    // Subscribe to auth events for logout notifications
+    _authEventSubscription = _authManager.authEvents.listen((event) {
+      if (event.type == AuthStateEventType.logout) {
+        // Delegate logout handling to lifecycle manager
+        _lifecycleManager.onPaused();
       }
     });
-    debugPrint("User state: $_user");
   }
 
-  Future<void> _loadSavedLocale() async {
-    final localeService = di.sl<LocaleService>();
-    final savedLocale = localeService.getSavedLocale();
-    debugPrint('Loading saved locale: ${savedLocale?.languageCode ?? "none (using default)"}');
-    if (savedLocale != null) {
-      setState(() {
-        _locale = savedLocale;
-      });
-      debugPrint('Loaded locale: ${_locale.languageCode}');
-    }
-  }
-
+  /// Change locale - delegates to LocaleManager
   void changeLocale(Locale newLocale) {
-    debugPrint('Changing locale to: ${newLocale.languageCode}');
-    
-    // Update state FIRST
-    setState(() {
-      _locale = newLocale;
-    });
-    
-    // Then save to storage
-    final localeService = di.sl<LocaleService>();
-    localeService.saveLocale(newLocale);
-    
-    debugPrint('Locale changed to: ${_locale.languageCode}');
+    debugPrint('GuardiancareState: Requesting locale change to ${newLocale.languageCode}');
+    _localeManager.changeLocale(newLocale);
   }
 
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    _authSubscription?.cancel();
+    _authEventSubscription?.cancel();
+    _localeSubscription?.cancel();
     super.dispose();
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    // Reset verification when app is paused/closed
-    if (state == AppLifecycleState.paused || state == AppLifecycleState.detached) {
-      _verificationService.resetVerification();
+    // Delegate lifecycle events to AppLifecycleManager
+    switch (state) {
+      case AppLifecycleState.paused:
+        _lifecycleManager.onPaused();
+        break;
+      case AppLifecycleState.detached:
+        _lifecycleManager.onDetached();
+        break;
+      case AppLifecycleState.resumed:
+        _lifecycleManager.onResumed();
+        break;
+      default:
+        break;
     }
   }
 

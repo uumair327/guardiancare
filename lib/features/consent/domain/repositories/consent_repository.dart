@@ -19,4 +19,11 @@ abstract class ConsentRepository {
 
   /// Check if consent exists
   Future<Either<Failure, bool>> hasConsent(String uid);
+
+  /// Save parental key locally (to SharedPreferences)
+  /// Requirements: 5.2
+  Future<Either<Failure, void>> saveParentalKeyLocally(String key);
+
+  /// Get locally saved parental key
+  Future<Either<Failure, String?>> getLocalParentalKey();
 }

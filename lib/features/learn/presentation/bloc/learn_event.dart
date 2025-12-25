@@ -9,7 +9,12 @@ abstract class LearnEvent extends Equatable {
 }
 
 /// Event to request categories
+/// Alias: LoadCategories (for SRP compliance)
 class CategoriesRequested extends LearnEvent {}
+
+/// Alias for CategoriesRequested - used for SRP compliance
+/// Requirements: 3.1
+typedef LoadCategories = CategoriesRequested;
 
 /// Event when a category is selected
 class CategorySelected extends LearnEvent {
@@ -22,6 +27,7 @@ class CategorySelected extends LearnEvent {
 }
 
 /// Event to request videos for a category
+/// Alias: LoadVideosByCategory (for SRP compliance)
 class VideosRequested extends LearnEvent {
   final String category;
 
@@ -30,6 +36,10 @@ class VideosRequested extends LearnEvent {
   @override
   List<Object> get props => [category];
 }
+
+/// Alias for VideosRequested - used for SRP compliance
+/// Requirements: 3.2
+typedef LoadVideosByCategory = VideosRequested;
 
 /// Event to go back to categories
 class BackToCategories extends LearnEvent {}

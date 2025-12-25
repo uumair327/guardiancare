@@ -1,50 +1,61 @@
-import 'package:flutter/foundation.dart' show kIsWeb, debugPrint;
-import 'package:guardiancare/core/database/database_service.dart';
-import 'package:guardiancare/core/database/hive_service.dart';
+import 'package:flutter/foundation.dart' show debugPrint;
+import 'package:guardiancare/core/database/preferences_storage_service.dart';
+import 'package:guardiancare/core/database/hive_storage_service.dart';
+import 'package:guardiancare/core/database/sqlite_storage_service.dart';
 import 'package:guardiancare/core/database/daos/quiz_dao.dart';
 import 'package:guardiancare/core/database/daos/video_dao.dart';
 import 'package:guardiancare/core/database/daos/cache_dao.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 /// Unified Storage Manager
-/// Intelligently routes data to the appropriate storage solution:
-/// - SharedPreferences: Simple key-value pairs, app settings
-/// - Hive: Fast access data, user sessions, temporary data
-/// - SQLite: Complex queries, relational data, large datasets (not available on web)
+/// 
+/// Coordinates between different storage services without containing
+/// implementation details. Each storage backend is handled by its
+/// dedicated service:
+/// 
+/// - PreferencesStorageService: Simple key-value pairs, app settings
+/// - HiveStorageService: Fast access data, user sessions, temporary data
+/// - SQLiteStorageService: Complex queries, relational data, large datasets
+/// 
+/// Follows Single Responsibility Principle by only orchestrating
+/// storage services without implementing storage logic directly.
 class StorageManager {
   static final StorageManager instance = StorageManager._internal();
   
   StorageManager._internal();
 
-  // Services
-  final DatabaseService _dbService = DatabaseService.instance;
-  final HiveService _hiveService = HiveService.instance;
-  late SharedPreferences _prefs;
-
-  // DAOs (only available on non-web platforms)
-  QuizDao? quizDao;
-  VideoDao? videoDao;
-  CacheDao? cacheDao;
+  // Storage Services
+  final PreferencesStorageServiceImpl _prefsService = PreferencesStorageServiceImpl();
+  final HiveStorageServiceImpl _hiveService = HiveStorageServiceImpl();
+  final SQLiteStorageServiceImpl _sqliteService = SQLiteStorageServiceImpl();
 
   bool _initialized = false;
+
+  /// Get the preferences storage service
+  PreferencesStorageService get preferencesService => _prefsService;
+
+  /// Get the Hive storage service
+  HiveStorageService get hiveService => _hiveService;
+
+  /// Get the SQLite storage service
+  SQLiteStorageService get sqliteService => _sqliteService;
+
+  // DAOs (delegated to SQLiteStorageService)
+  QuizDao? get quizDao => _sqliteService.quizDao;
+  VideoDao? get videoDao => _sqliteService.videoDao;
+  CacheDao? get cacheDao => _sqliteService.cacheDao;
 
   /// Initialize all storage services
   Future<void> init() async {
     if (_initialized) return;
 
     try {
-      // Initialize in parallel for faster startup
-      final futures = <Future>[
-        _initSharedPreferences(),
-        _initHive(),
-      ];
-      
-      // SQLite is not supported on web
-      if (!kIsWeb) {
-        futures.add(_initSQLite());
-      }
-      
-      await Future.wait(futures);
+      // Initialize all services in parallel for faster startup
+      await Future.wait([
+        _prefsService.init(),
+        _hiveService.init(),
+        _sqliteService.init(),
+      ]);
 
       _initialized = true;
       debugPrint('✅ Storage Manager initialized successfully');
@@ -54,53 +65,27 @@ class StorageManager {
     }
   }
 
-  Future<void> _initSharedPreferences() async {
-    _prefs = await SharedPreferences.getInstance();
-  }
-
-  Future<void> _initHive() async {
-    await _hiveService.init();
-  }
-
-  Future<void> _initSQLite() async {
-    await _dbService.database; // Initialize database
-    quizDao = QuizDao();
-    videoDao = VideoDao();
-    cacheDao = CacheDao();
-  }
-
   // ============================================================================
-  // SharedPreferences Methods (Simple Settings)
+  // SharedPreferences Methods (delegated to PreferencesStorageService)
   // ============================================================================
 
   /// Save simple setting
   Future<bool> saveSetting(String key, dynamic value) async {
-    if (value is String) {
-      return await _prefs.setString(key, value);
-    } else if (value is int) {
-      return await _prefs.setInt(key, value);
-    } else if (value is double) {
-      return await _prefs.setDouble(key, value);
-    } else if (value is bool) {
-      return await _prefs.setBool(key, value);
-    } else if (value is List<String>) {
-      return await _prefs.setStringList(key, value);
-    }
-    throw ArgumentError('Unsupported type for SharedPreferences');
+    return await _prefsService.saveSetting(key, value);
   }
 
   /// Get simple setting
   T? getSetting<T>(String key, {T? defaultValue}) {
-    return _prefs.get(key) as T? ?? defaultValue;
+    return _prefsService.getSetting<T>(key, defaultValue: defaultValue);
   }
 
   /// Remove setting
   Future<bool> removeSetting(String key) async {
-    return await _prefs.remove(key);
+    return await _prefsService.removeSetting(key);
   }
 
   // ============================================================================
-  // Hive Methods (Fast Access Data)
+  // Hive Methods (delegated to HiveStorageService)
   // ============================================================================
 
   /// Save to Hive (for frequently accessed data)
@@ -124,12 +109,12 @@ class StorageManager {
   }
 
   // ============================================================================
-  // User Session Management (Hive)
+  // User Session Management (delegated to HiveStorageService)
   // ============================================================================
 
   Future<void> saveUserSession(Map<String, dynamic> sessionData) async {
     await _hiveService.put(
-      HiveService.userSessionBox,
+      HiveStorageService.userSessionBox,
       'current_session',
       sessionData,
     );
@@ -137,62 +122,38 @@ class StorageManager {
 
   Map<String, dynamic>? getUserSession() {
     return _hiveService.get<Map<String, dynamic>>(
-      HiveService.userSessionBox,
+      HiveStorageService.userSessionBox,
       'current_session',
     );
   }
 
   Future<void> clearUserSession() async {
-    await _hiveService.clearBox(HiveService.userSessionBox);
+    await _hiveService.clearBox(HiveStorageService.userSessionBox);
   }
 
   // ============================================================================
-  // Cleanup Methods
+  // Cleanup Methods (coordinating all services)
   // ============================================================================
 
   /// Clear all user data (on logout)
   Future<void> clearAllUserData() async {
-    final futures = <Future>[
+    await Future.wait([
       _hiveService.clearAll(),
+      _sqliteService.clearAllData(),
       // Keep some SharedPreferences (like app settings)
-    ];
-    
-    // SQLite cleanup only on non-web platforms
-    if (!kIsWeb) {
-      futures.add(_dbService.clearAllData());
-    }
-    
-    await Future.wait(futures);
+    ]);
   }
 
   /// Perform maintenance (clear expired cache, old data)
   Future<void> performMaintenance() async {
-    final futures = <Future>[];
-    
-    if (!kIsWeb && cacheDao != null) {
-      futures.add(cacheDao!.clearExpiredCache());
-      futures.add(_dbService.clearExpiredCache());
-    }
-    
-    if (futures.isNotEmpty) {
-      await Future.wait(futures);
-    }
+    await _sqliteService.clearExpiredCache();
   }
 
   /// Get storage statistics
   Future<Map<String, dynamic>> getStorageStatistics(String userId) async {
-    if (kIsWeb) {
-      // Return empty stats on web since SQLite is not available
-      return {
-        'quiz': {},
-        'video': {},
-        'cache': {},
-      };
-    }
-    
-    final quizStats = await quizDao!.getQuizStatistics(userId);
-    final videoStats = await videoDao!.getWatchStatistics(userId);
-    final cacheStats = await cacheDao!.getCacheStatistics();
+    final quizStats = await _sqliteService.getQuizStatistics(userId);
+    final videoStats = await _sqliteService.getVideoWatchStatistics(userId);
+    final cacheStats = await _sqliteService.getCacheStatistics();
 
     return {
       'quiz': quizStats,
@@ -203,23 +164,20 @@ class StorageManager {
   
   /// Get video watch statistics (helper method)
   Future<Map<String, dynamic>> getVideoWatchStatistics(String userId) async {
-    if (kIsWeb || videoDao == null) {
-      return {};
-    }
-    return await videoDao!.getWatchStatistics(userId);
+    return await _sqliteService.getVideoWatchStatistics(userId);
+  }
+
+  /// Watch for changes in a Hive box
+  Stream<BoxEvent> watchHiveBox(String boxName, {String? key}) {
+    return _hiveService.watch(boxName, key: key);
   }
 
   /// Close all storage services
   Future<void> close() async {
-    final futures = <Future>[
+    await Future.wait([
       _hiveService.close(),
-    ];
-    
-    if (!kIsWeb) {
-      futures.add(_dbService.close());
-    }
-    
-    await Future.wait(futures);
+      _sqliteService.close(),
+    ]);
     _initialized = false;
   }
 }

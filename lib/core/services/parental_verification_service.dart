@@ -1,58 +1,88 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:crypto/crypto.dart';
-import 'dart:convert';
+import 'package:guardiancare/core/services/parental_session_manager.dart';
+import 'package:guardiancare/core/services/parental_key_verifier.dart';
 
 /// Service to manage parental verification state for the current session
+/// Orchestrates ParentalSessionManager, ParentalKeyVerifier, and CryptoService
+/// without containing implementation details
+/// Requirements: 9.1, 9.2, 9.3, 9.4
 class ParentalVerificationService {
-  static final ParentalVerificationService _instance = ParentalVerificationService._internal();
-  factory ParentalVerificationService() => _instance;
-  ParentalVerificationService._internal();
+  final ParentalSessionManager _sessionManager;
+  final ParentalKeyVerifier _keyVerifier;
+  final FirebaseAuth _auth;
 
-  // Session state - resets when app closes
-  bool _isVerifiedForSession = false;
+  // Singleton pattern for backward compatibility
+  static ParentalVerificationService? _instance;
+
+  /// Factory constructor for singleton access (backward compatibility)
+  factory ParentalVerificationService() {
+    if (_instance == null) {
+      throw StateError(
+        'ParentalVerificationService not initialized. '
+        'Call ParentalVerificationService.initialize() first.',
+      );
+    }
+    return _instance!;
+  }
+
+  /// Initialize the singleton instance with dependencies
+  static void initialize({
+    required ParentalSessionManager sessionManager,
+    required ParentalKeyVerifier keyVerifier,
+    FirebaseAuth? auth,
+  }) {
+    _instance = ParentalVerificationService._internal(
+      sessionManager: sessionManager,
+      keyVerifier: keyVerifier,
+      auth: auth ?? FirebaseAuth.instance,
+    );
+  }
+
+  /// Internal constructor
+  ParentalVerificationService._internal({
+    required ParentalSessionManager sessionManager,
+    required ParentalKeyVerifier keyVerifier,
+    required FirebaseAuth auth,
+  })  : _sessionManager = sessionManager,
+        _keyVerifier = keyVerifier,
+        _auth = auth;
+
+  /// Named constructor for direct instantiation (for testing and DI)
+  ParentalVerificationService.withDependencies({
+    required ParentalSessionManager sessionManager,
+    required ParentalKeyVerifier keyVerifier,
+    FirebaseAuth? auth,
+  })  : _sessionManager = sessionManager,
+        _keyVerifier = keyVerifier,
+        _auth = auth ?? FirebaseAuth.instance;
 
   /// Check if parental key has been verified in this session
-  bool get isVerifiedForSession => _isVerifiedForSession;
+  /// Delegates to ParentalSessionManager
+  bool get isVerifiedForSession => _sessionManager.isVerified;
 
   /// Verify parental key against Firestore
+  /// Delegates to ParentalKeyVerifier for verification logic
   Future<bool> verifyParentalKey(String enteredKey) async {
-    try {
-      final user = FirebaseAuth.instance.currentUser;
-      if (user == null) return false;
+    final user = _auth.currentUser;
+    if (user == null) return false;
 
-      final doc = await FirebaseFirestore.instance
-          .collection('consents')
-          .doc(user.uid)
-          .get();
+    final result = await _keyVerifier.verify(user.uid, enteredKey);
 
-      if (!doc.exists) return false;
-
-      final storedHash = doc.data()?['parentalKey'] as String?;
-      if (storedHash == null) return false;
-
-      final enteredHash = _hashString(enteredKey);
-
-      if (storedHash == enteredHash) {
-        // Mark as verified for this session
-        _isVerifiedForSession = true;
-        return true;
-      }
-
-      return false;
-    } catch (e) {
-      print('Error verifying parental key: $e');
-      return false;
-    }
+    return result.fold(
+      (failure) => false,
+      (isValid) {
+        if (isValid) {
+          // Delegate session state management to ParentalSessionManager
+          _sessionManager.setVerified(true);
+        }
+        return isValid;
+      },
+    );
   }
 
   /// Reset verification state (called when app closes or user logs out)
+  /// Delegates to ParentalSessionManager
   void resetVerification() {
-    _isVerifiedForSession = false;
-  }
-
-  /// Hash string using SHA-256
-  String _hashString(String input) {
-    return sha256.convert(utf8.encode(input)).toString();
+    _sessionManager.reset();
   }
 }

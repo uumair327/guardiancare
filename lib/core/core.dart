@@ -3,6 +3,8 @@ export 'database/database.dart';
 export 'di/di.dart';
 export 'error/error.dart';
 export 'l10n/l10n.dart';
+export 'managers/managers.dart';
+export 'models/models.dart';
 export 'network/network.dart';
 export 'routing/routing.dart';
 export 'services/services.dart';

@@ -1,7 +1,7 @@
 name: guardiancare
 description: "An educational app for child safety and family empowerment."
 publish_to: 'none'
-version: 1.0.0+18
+version: 1.0.0+19
 
 environment:
   sdk: '>=3.4.0 <4.0.0'
@@ -91,6 +91,7 @@ dev_dependencies:
   bloc_test: ^9.1.7
   fake_cloud_firestore: ^3.0.3
   mockito: ^5.4.4
+  glados: ^1.1.1
 
   # Code Generation
   build_runner: ^2.4.13

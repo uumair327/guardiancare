@@ -31,7 +31,19 @@ Future<void> init() async {
   sl.registerLazySingleton(() => storageManager);
   
   // Register storage services for dependency injection
+  // Legacy HiveService for backward compatibility
   sl.registerLazySingleton(() => HiveService.instance);
+  
+  // New SRP-compliant storage services (Requirements: 8.1, 8.2, 8.3, 8.4)
+  sl.registerLazySingleton<PreferencesStorageService>(
+    () => storageManager.preferencesService,
+  );
+  sl.registerLazySingleton<HiveStorageService>(
+    () => storageManager.hiveService,
+  );
+  sl.registerLazySingleton<SQLiteStorageService>(
+    () => storageManager.sqliteService,
+  );
   
   // DatabaseService is only available on non-web platforms
   if (!kIsWeb) {
@@ -40,6 +52,11 @@ Future<void> init() async {
   
   // Register LocaleService
   sl.registerLazySingleton(() => LocaleService(sharedPreferences));
+
+  // ============================================================================
+  // Managers (SRP - Single Responsibility Principle)
+  // ============================================================================
+  _initManagers();
 
   // ============================================================================
   // Features
@@ -54,6 +71,69 @@ Future<void> init() async {
   _initReportFeature();
   _initExploreFeature();
   _initConsentFeature();
+}
+
+/// Initialize manager dependencies for SRP compliance
+void _initManagers() {
+  // ============================================================================
+  // Parental Verification Services (SRP - Requirements: 9.1, 9.2, 9.3, 9.4)
+  // Must be initialized first as other managers depend on them
+  // ============================================================================
+  
+  // CryptoService - handles cryptographic operations exclusively
+  sl.registerLazySingleton<CryptoService>(
+    () => const CryptoServiceImpl(),
+  );
+
+  // ParentalSessionManager - handles session state management exclusively
+  sl.registerLazySingleton<ParentalSessionManager>(
+    () => ParentalSessionManagerImpl(),
+  );
+
+  // ParentalKeyVerifier - handles verification logic exclusively
+  sl.registerLazySingleton<ParentalKeyVerifier>(
+    () => ParentalKeyVerifierImpl(
+      cryptoService: sl(),
+      firestore: sl(),
+    ),
+  );
+
+  // Initialize ParentalVerificationService with dependencies
+  ParentalVerificationService.initialize(
+    sessionManager: sl(),
+    keyVerifier: sl(),
+    auth: sl(),
+  );
+
+  // Register ParentalVerificationService for DI access
+  // Note: The service uses singleton pattern internally, but we register it
+  // for consistency and to allow injection via GetIt
+  sl.registerLazySingleton<ParentalVerificationService>(
+    () => ParentalVerificationService(),
+  );
+
+  // ============================================================================
+  // App Managers (SRP - Single Responsibility Principle)
+  // Requirements: 1.1, 1.2, 1.3
+  // ============================================================================
+
+  // AuthStateManager - manages authentication state
+  sl.registerLazySingleton<AuthStateManager>(
+    () => AuthStateManagerImpl(auth: sl()),
+  );
+
+  // LocaleManager - manages application locale
+  sl.registerLazySingleton<LocaleManager>(
+    () => LocaleManagerImpl(localeService: sl()),
+  );
+
+  // AppLifecycleManager - manages app lifecycle events
+  // Inject ParentalVerificationService for proper DI
+  sl.registerLazySingleton<AppLifecycleManager>(
+    () => AppLifecycleManagerImpl(
+      verificationService: sl<ParentalVerificationService>(),
+    ),
+  );
 }
 
 /// Initialize Authentication feature dependencies
@@ -171,13 +251,16 @@ void _initProfileFeature() {
   sl.registerLazySingleton(() => DeleteAccount(sl()));
   sl.registerLazySingleton(() => ClearUserPreferences(sl()));
 
-  // BLoC
+  // BLoC - delegates to LocaleService and AuthRepository per SRP
+  // Requirements: 6.1, 6.2, 6.3
   sl.registerFactory(
     () => ProfileBloc(
       getProfile: sl(),
       updateProfile: sl(),
       deleteAccount: sl(),
       clearUserPreferences: sl(),
+      localeService: sl(),
+      authRepository: sl(),
     ),
   );
 }
@@ -216,9 +299,22 @@ void _initQuizFeature() {
     () => QuizLocalDataSourceImpl(),
   );
 
+  // Services (SRP - Single Responsibility Principle)
+  sl.registerLazySingleton<GeminiAIService>(
+    () => GeminiAIServiceImpl(),
+  );
+  
+  sl.registerLazySingleton<YoutubeSearchService>(
+    () => YoutubeSearchServiceImpl(),
+  );
+
   // Repositories
   sl.registerLazySingleton<QuizRepository>(
     () => QuizRepositoryImpl(localDataSource: sl()),
+  );
+  
+  sl.registerLazySingleton<RecommendationRepository>(
+    () => RecommendationRepositoryImpl(firestore: sl()),
   );
 
   // Use cases
@@ -226,12 +322,19 @@ void _initQuizFeature() {
   sl.registerLazySingleton(() => GetQuestions(sl()));
   sl.registerLazySingleton(() => SubmitQuiz(sl()));
   sl.registerLazySingleton(() => ValidateQuiz(sl()));
+  sl.registerLazySingleton(() => RecommendationUseCase(
+    geminiService: sl(),
+    youtubeService: sl(),
+    repository: sl<RecommendationRepository>(),
+  ));
+  sl.registerLazySingleton(() => GenerateRecommendations(sl<RecommendationUseCase>()));
 
   // BLoC
   sl.registerFactory(
     () => QuizBloc(
       submitQuiz: sl(),
       validateQuiz: sl(),
+      generateRecommendations: sl(),
     ),
   );
 }
@@ -326,20 +429,29 @@ void _initConsentFeature() {
     () => ConsentRemoteDataSourceImpl(firestore: sl()),
   );
 
+  sl.registerLazySingleton<ConsentLocalDataSource>(
+    () => ConsentLocalDataSourceImpl(sharedPreferences: sl()),
+  );
+
   // Repositories
   sl.registerLazySingleton<ConsentRepository>(
-    () => ConsentRepositoryImpl(remoteDataSource: sl()),
+    () => ConsentRepositoryImpl(
+      remoteDataSource: sl(),
+      localDataSource: sl(),
+    ),
   );
 
   // Use cases
   sl.registerLazySingleton(() => SubmitConsent(sl()));
   sl.registerLazySingleton(() => VerifyParentalKey(sl()));
+  sl.registerLazySingleton(() => SaveParentalKey(sl()));
 
   // BLoC
   sl.registerFactory(
     () => ConsentBloc(
       submitConsent: sl(),
       verifyParentalKey: sl(),
+      saveParentalKey: sl(),
     ),
   );
 }

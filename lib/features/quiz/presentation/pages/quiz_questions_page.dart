@@ -1,9 +1,17 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:guardiancare/core/core.dart';
-import 'package:guardiancare/features/quiz/quiz.dart';
+import 'package:guardiancare/features/quiz/presentation/bloc/quiz_bloc.dart';
+import 'package:guardiancare/features/quiz/presentation/bloc/quiz_event.dart';
+import 'package:guardiancare/features/quiz/presentation/bloc/quiz_state.dart';
 
+/// Quiz questions page that displays questions and handles user interactions
+/// 
+/// This page follows SRP by:
+/// - Only rendering UI and dispatching events to QuizBloc
+/// - Not containing business logic (scoring, Firestore access, recommendation calls)
+/// 
+/// Requirements: 2.1, 2.2, 2.3, 2.4, 2.5
 class QuizQuestionsPage extends StatefulWidget {
   final List<Map<String, dynamic>> questions;
 
@@ -86,12 +94,12 @@ class _QuizQuestionsPageState extends State<QuizQuestionsPage> {
                         Color? cardColor;
                         if (showFeedback) {
                           if (isCorrect) {
-                            cardColor = AppColors.success.withOpacity(0.2);
+                            cardColor = AppColors.success.withValues(alpha: 0.2);
                           } else if (isSelected) {
-                            cardColor = AppColors.error.withOpacity(0.2);
+                            cardColor = AppColors.error.withValues(alpha: 0.2);
                           }
                         } else if (isSelected) {
-                          cardColor = AppColors.primary.withOpacity(0.1);
+                          cardColor = AppColors.primary.withValues(alpha: 0.1);
                         }
                         
                         return Card(
@@ -159,10 +167,22 @@ class _QuizQuestionsPageState extends State<QuizQuestionsPage> {
     );
   }
 
+  /// Submits the answer by dispatching event to QuizBloc
+  /// Requirements: 2.1 - QuizBloc handles validation and scoring logic
   void _submitAnswer() {
     if (selectedOption == null) return;
     
     final correctIndex = widget.questions[currentQuestionIndex]['correctAnswerIndex'];
+    
+    // Dispatch event to QuizBloc for validation
+    // Requirements: 2.1 - QuizBloc handles validation logic
+    context.read<QuizBloc>().add(SubmitAnswerRequested(
+      questionIndex: currentQuestionIndex,
+      selectedOption: selectedOption!,
+      correctAnswerIndex: correctIndex,
+    ));
+    
+    // Update local state for UI feedback
     if (selectedOption == correctIndex) {
       setState(() {
         correctAnswers++;
@@ -199,145 +219,162 @@ class _QuizQuestionsPageState extends State<QuizQuestionsPage> {
     }
   }
 
-  Future<void> _processQuizCompletion() async {
-    final categories = <String>{};
-    for (final question in widget.questions) {
-      final category = question['category'];
-      if (category != null && category.toString().isNotEmpty) {
-        categories.add(category.toString());
-      }
-    }
-
-    if (categories.isEmpty && widget.questions.isNotEmpty) {
-      final quizName = widget.questions[0]['quiz'];
-      if (quizName != null && quizName.toString().isNotEmpty) {
-        categories.add(quizName.toString());
-      }
-    }
-
-    if (categories.isEmpty) {
-      categories.addAll(['child safety', 'parenting tips']);
-    }
-
-    try {
-      final user = FirebaseAuth.instance.currentUser;
-      if (user != null) {
-        final quizResultData = {
-          'uid': user.uid,
-          'quizName': widget.questions.isNotEmpty ? widget.questions[0]['quiz'] : 'Unknown',
-          'score': correctAnswers,
-          'totalQuestions': widget.questions.length,
-          'categories': categories.toList(),
-          'timestamp': FieldValue.serverTimestamp(),
-        };
-        
-        await FirebaseFirestore.instance.collection('quiz_results').add(quizResultData);
-        await RecommendationService.generateRecommendations(categories.toList());
-      }
-    } catch (e) {
-      // Handle error silently or show user-friendly message
-      debugPrint('Error in quiz completion: $e');
-    }
+  /// Processes quiz completion by dispatching event to QuizBloc
+  /// Requirements: 2.2, 2.3 - QuizBloc handles repository coordination and recommendation generation
+  void _processQuizCompletion() {
+    // Dispatch event to QuizBloc for completion processing
+    // Requirements: 2.2 - QuizBloc coordinates with Repository to persist results
+    // Requirements: 2.3 - QuizBloc delegates to RecommendationUseCase
+    context.read<QuizBloc>().add(CompleteQuizRequested(
+      questions: widget.questions,
+      correctAnswers: correctAnswers,
+      totalQuestions: widget.questions.length,
+    ));
   }
 
   Widget _buildCompletionScreen() {
     final percentage = (correctAnswers / widget.questions.length * 100).round();
     final l10n = AppLocalizations.of(context);
     
-    return Center(
-      child: Padding(
-        padding: EdgeInsets.all(AppDimensions.screenPaddingH),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.check_circle,
-              size: AppDimensions.iconXXL * 1.5,
+    return BlocBuilder<QuizBloc, QuizState>(
+      builder: (context, state) {
+        return Center(
+          child: Padding(
+            padding: EdgeInsets.all(AppDimensions.screenPaddingH),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.check_circle,
+                  size: AppDimensions.iconXXL * 1.5,
+                  color: AppColors.primary,
+                ),
+                SizedBox(height: AppDimensions.spaceL),
+                Text(
+                  l10n.quizCompleted,
+                  style: AppTextStyles.h2.copyWith(color: AppColors.primary),
+                ),
+                SizedBox(height: AppDimensions.spaceM),
+                Text(
+                  l10n.youScored(correctAnswers, widget.questions.length),
+                  style: AppTextStyles.h4,
+                ),
+                SizedBox(height: AppDimensions.spaceS),
+                Text(
+                  '$percentage%',
+                  style: AppTextStyles.h1.copyWith(
+                    fontSize: 48,
+                    color: AppColors.primary,
+                  ),
+                ),
+                SizedBox(height: AppDimensions.spaceL),
+                _buildRecommendationsStatus(state),
+                SizedBox(height: AppDimensions.spaceXL),
+                SizedBox(
+                  width: double.infinity,
+                  height: AppDimensions.buttonHeight,
+                  child: ElevatedButton(
+                    onPressed: () => Navigator.pop(context),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primary,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: AppDimensions.buttonPaddingH,
+                        vertical: AppDimensions.buttonPaddingV,
+                      ),
+                    ),
+                    child: Text(l10n.backToQuizzes, style: AppTextStyles.button),
+                  ),
+                ),
+                SizedBox(height: AppDimensions.spaceM),
+                SizedBox(
+                  width: double.infinity,
+                  height: AppDimensions.buttonHeight,
+                  child: OutlinedButton(
+                    onPressed: () => Navigator.pop(context),
+                    style: OutlinedButton.styleFrom(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: AppDimensions.buttonPaddingH,
+                        vertical: AppDimensions.buttonPaddingV,
+                      ),
+                      side: BorderSide(color: AppColors.primary, width: AppDimensions.borderMedium),
+                    ),
+                    child: Text(
+                      l10n.viewRecommendations,
+                      style: AppTextStyles.button.copyWith(color: AppColors.primary),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  /// Builds the recommendations status widget based on BLoC state
+  Widget _buildRecommendationsStatus(QuizState state) {
+    final l10n = AppLocalizations.of(context);
+    
+    IconData icon;
+    String title;
+    String subtitle;
+    Color iconColor;
+    
+    switch (state.recommendationsStatus) {
+      case RecommendationsStatus.generating:
+        icon = Icons.auto_awesome;
+        title = l10n.generatingRecommendations;
+        subtitle = l10n.checkExploreTab;
+        iconColor = AppColors.primary;
+        break;
+      case RecommendationsStatus.generated:
+        icon = Icons.check_circle;
+        title = l10n.generatingRecommendations;
+        subtitle = l10n.checkExploreTab;
+        iconColor = AppColors.success;
+        break;
+      case RecommendationsStatus.failed:
+        icon = Icons.error_outline;
+        title = l10n.generatingRecommendations;
+        subtitle = state.error ?? l10n.checkExploreTab;
+        iconColor = AppColors.error;
+        break;
+      case RecommendationsStatus.idle:
+        icon = Icons.auto_awesome;
+        title = l10n.generatingRecommendations;
+        subtitle = l10n.checkExploreTab;
+        iconColor = AppColors.primary;
+    }
+    
+    return Container(
+      padding: EdgeInsets.all(AppDimensions.cardPadding),
+      decoration: BoxDecoration(
+        color: AppColors.primary.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(AppDimensions.radiusM),
+      ),
+      child: Column(
+        children: [
+          if (state.recommendationsStatus == RecommendationsStatus.generating)
+            const CircularProgressIndicator()
+          else
+            Icon(icon, color: iconColor, size: AppDimensions.iconL),
+          SizedBox(height: AppDimensions.spaceS),
+          Text(
+            title,
+            style: AppTextStyles.body1.copyWith(
+              fontWeight: FontWeight.w600,
               color: AppColors.primary,
             ),
-            SizedBox(height: AppDimensions.spaceL),
-            Text(
-              l10n.quizCompleted,
-              style: AppTextStyles.h2.copyWith(color: AppColors.primary),
-            ),
-            SizedBox(height: AppDimensions.spaceM),
-            Text(
-              l10n.youScored(correctAnswers, widget.questions.length),
-              style: AppTextStyles.h4,
-            ),
-            SizedBox(height: AppDimensions.spaceS),
-            Text(
-              '$percentage%',
-              style: AppTextStyles.h1.copyWith(
-                fontSize: 48,
-                color: AppColors.primary,
-              ),
-            ),
-            SizedBox(height: AppDimensions.spaceL),
-            Container(
-              padding: EdgeInsets.all(AppDimensions.cardPadding),
-              decoration: BoxDecoration(
-                color: AppColors.primary.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(AppDimensions.radiusM),
-              ),
-              child: Column(
-                children: [
-                  Icon(Icons.auto_awesome, color: AppColors.primary, size: AppDimensions.iconL),
-                  SizedBox(height: AppDimensions.spaceS),
-                  Text(
-                    l10n.generatingRecommendations,
-                    style: AppTextStyles.body1.copyWith(
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.primary,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  SizedBox(height: AppDimensions.spaceXS),
-                  Text(
-                    l10n.checkExploreTab,
-                    style: AppTextStyles.body2.copyWith(color: AppColors.textSecondary),
-                    textAlign: TextAlign.center,
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(height: AppDimensions.spaceXL),
-            SizedBox(
-              width: double.infinity,
-              height: AppDimensions.buttonHeight,
-              child: ElevatedButton(
-                onPressed: () => Navigator.pop(context),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primary,
-                  padding: EdgeInsets.symmetric(
-                    horizontal: AppDimensions.buttonPaddingH,
-                    vertical: AppDimensions.buttonPaddingV,
-                  ),
-                ),
-                child: Text(l10n.backToQuizzes, style: AppTextStyles.button),
-              ),
-            ),
-            SizedBox(height: AppDimensions.spaceM),
-            SizedBox(
-              width: double.infinity,
-              height: AppDimensions.buttonHeight,
-              child: OutlinedButton(
-                onPressed: () => Navigator.pop(context),
-                style: OutlinedButton.styleFrom(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: AppDimensions.buttonPaddingH,
-                    vertical: AppDimensions.buttonPaddingV,
-                  ),
-                  side: BorderSide(color: AppColors.primary, width: AppDimensions.borderMedium),
-                ),
-                child: Text(
-                  l10n.viewRecommendations,
-                  style: AppTextStyles.button.copyWith(color: AppColors.primary),
-                ),
-              ),
-            ),
-          ],
-        ),
+            textAlign: TextAlign.center,
+          ),
+          SizedBox(height: AppDimensions.spaceXS),
+          Text(
+            subtitle,
+            style: AppTextStyles.body2.copyWith(color: AppColors.textSecondary),
+            textAlign: TextAlign.center,
+          ),
+        ],
       ),
     );
   }

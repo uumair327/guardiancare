@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
 import 'package:guardiancare/features/profile/domain/entities/profile_entity.dart';
 
 /// Base class for profile states
@@ -46,3 +47,28 @@ class ProfileError extends ProfileState {
 
 /// Account deletion in progress
 class AccountDeleting extends ProfileState {}
+
+/// Language changed successfully
+/// Requirements: 6.1
+class LanguageChanged extends ProfileState {
+  final Locale newLocale;
+  final String localeName;
+
+  const LanguageChanged({
+    required this.newLocale,
+    required this.localeName,
+  });
+
+  @override
+  List<Object?> get props => [newLocale, localeName];
+}
+
+/// Language change in progress
+class LanguageChanging extends ProfileState {}
+
+/// Logged out successfully
+/// Requirements: 6.3
+class LoggedOut extends ProfileState {}
+
+/// Logout in progress
+class LoggingOut extends ProfileState {}
