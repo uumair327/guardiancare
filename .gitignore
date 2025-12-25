@@ -1,54 +1,160 @@
-# Miscellaneous
-*.class
-*.log
-*.pyc
-*.swp
-.DS_Store
-.atom/
-.buildlog/
-.history
-.svn/
-migrate_working_dir/
-
-# IntelliJ related
-*.iml
-*.ipr
-*.iws
-.idea/
-
-**/keys.dart
-
-# The .vscode folder contains launch configuration and tasks you configure in
-# VS Code which you may wish to be included in version control, so this line
-# is commented out by default.
-#.vscode/
-
-# Flutter/Dart/Pub related
-**/doc/api/
-**/ios/Flutter/.last_build_id
+# =============================================================================
+# Flutter/Dart (Auto-generated - DO NOT TRACK)
+# =============================================================================
 .dart_tool/
 .flutter-plugins
 .flutter-plugins-dependencies
+.packages
 .pub-cache/
 .pub/
-/build/
+build/
+**/doc/api/
 
-# Symbolication related
-app.*.symbols
+# Generated code files
+*.g.dart
+*.freezed.dart
+*.mocks.dart
 
-# Obfuscation related
-app.*.map.json
+# =============================================================================
+# IDE & Editors (Local settings - DO NOT TRACK)
+# =============================================================================
+# IntelliJ/Android Studio
+.idea/
+*.iml
+*.ipr
+*.iws
 
-# Android Studio will place build artifacts here
-/android/app/debug
-/android/app/profile
-/android/app/release
+# VS Code
+.vscode/
 
-# Release builds (APK/AAB files are too large for GitHub)
+# IDX
+.idx/
+
+# =============================================================================
+# Flutter Metadata (Auto-generated - DO NOT TRACK)
+# =============================================================================
+.metadata
+devtools_options.yaml
+
+# =============================================================================
+# OS Generated (DO NOT TRACK)
+# =============================================================================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# =============================================================================
+# Android (DO NOT TRACK)
+# =============================================================================
+**/android/**/gradle-wrapper.jar
+**/android/.gradle
+**/android/captures/
+**/android/gradlew
+**/android/gradlew.bat
+**/android/local.properties
+**/android/**/GeneratedPluginRegistrant.java
+**/android/key.properties
+
+# =============================================================================
+# iOS/macOS (DO NOT TRACK)
+# =============================================================================
+**/ios/**/*.mode1v3
+**/ios/**/*.mode2v3
+**/ios/**/*.moved-aside
+**/ios/**/*.pbxuser
+**/ios/**/*.perspectivev3
+**/ios/**/project.xcworkspace/
+**/ios/**/xcuserdata/
+**/ios/.generated/
+**/ios/Flutter/.last_build_id
+**/ios/Flutter/App.framework
+**/ios/Flutter/Flutter.framework
+**/ios/Flutter/Flutter.podspec
+**/ios/Flutter/Generated.xcconfig
+**/ios/Flutter/ephemeral
+**/ios/Flutter/app.flx
+**/ios/Flutter/app.zip
+**/ios/Flutter/flutter_assets/
+**/ios/Pods/
+**/ios/ServiceDefinitions.json
+**/ios/Runner/GeneratedPluginRegistrant.*
+**/macos/Flutter/ephemeral
+**/macos/Pods/
+
+# =============================================================================
+# Web/Windows/Linux (DO NOT TRACK)
+# =============================================================================
+lib/generated_plugin_registrant.dart
+**/windows/flutter/ephemeral/
+**/linux/flutter/ephemeral/
+
+# =============================================================================
+# Secrets & Sensitive Files (NEVER TRACK)
+# =============================================================================
+**/keys.dart
+*.env
+.env.*
+secrets.dart
+firebase_options.dart
+*.jks
+*.keystore
+
+# =============================================================================
+# Build Outputs & Releases (DO NOT TRACK)
+# =============================================================================
 release_builds/
 apk/
 *.apk
 *.aab
+*.ipa
+app.*.symbols
+app.*.map.json
 
-# Old lib backup
+# =============================================================================
+# Logs & Debug (DO NOT TRACK)
+# =============================================================================
+*.log
+flutter_log.txt
+analysis_output.txt
+
+# =============================================================================
+# Project Specific (DO NOT TRACK)
+# =============================================================================
 old_lib/
+
+# =============================================================================
+# Coverage & Testing (DO NOT TRACK)
+# =============================================================================
+coverage/
+.test_coverage.dart
+lcov.info
+
+# =============================================================================
+# Miscellaneous (DO NOT TRACK)
+# =============================================================================
+*.class
+*.pyc
+.buildlog/
+.history
+.svn/
+migrate_working_dir/
+.atom/
+
+# =============================================================================
+# FILES TO KEEP IN GITHUB (Important for project)
+# =============================================================================
+# .gitignore - This file (version control config)
+# .github/ - GitHub workflows, issue templates
+# .kiro/ - Project specs and steering files
+# analysis_options.yaml - Dart linting rules
+# firebase.json - Firebase hosting config
+# l10n.yaml - Localization config
+# pubspec.yaml - Project dependencies
+# pubspec.lock - Locked dependencies for reproducible builds

@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:guardiancare/core/error/error.dart';
+import 'package:guardiancare/features/consent/data/datasources/consent_local_datasource.dart';
 import 'package:guardiancare/features/consent/data/datasources/consent_remote_datasource.dart';
 import 'package:guardiancare/features/consent/data/models/consent_model.dart';
 import 'package:guardiancare/features/consent/domain/entities/consent_entity.dart';
@@ -7,8 +8,12 @@ import 'package:guardiancare/features/consent/domain/repositories/consent_reposi
 
 class ConsentRepositoryImpl implements ConsentRepository {
   final ConsentRemoteDataSource remoteDataSource;
+  final ConsentLocalDataSource localDataSource;
 
-  ConsentRepositoryImpl({required this.remoteDataSource});
+  ConsentRepositoryImpl({
+    required this.remoteDataSource,
+    required this.localDataSource,
+  });
 
   @override
   Future<Either<Failure, void>> submitConsent(ConsentEntity consent, String uid) async {
@@ -69,6 +74,26 @@ class ConsentRepositoryImpl implements ConsentRepository {
       return Left(ServerFailure(e.message));
     } catch (e) {
       return Left(ServerFailure('Failed to check consent: ${e.toString()}'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> saveParentalKeyLocally(String key) async {
+    try {
+      await localDataSource.saveParentalKey(key);
+      return const Right(null);
+    } catch (e) {
+      return Left(CacheFailure('Failed to save parental key locally: ${e.toString()}'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, String?>> getLocalParentalKey() async {
+    try {
+      final key = await localDataSource.getParentalKey();
+      return Right(key);
+    } catch (e) {
+      return Left(CacheFailure('Failed to get local parental key: ${e.toString()}'));
     }
   }
 }

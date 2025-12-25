@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
 import 'package:guardiancare/features/profile/domain/entities/profile_entity.dart';
 
 /// Base class for profile events
@@ -42,4 +43,21 @@ class DeleteAccountRequested extends ProfileEvent {
 /// Event to clear user preferences
 class ClearPreferencesRequested extends ProfileEvent {
   const ClearPreferencesRequested();
+}
+
+/// Event to request language change
+/// Requirements: 6.1
+class ChangeLanguageRequested extends ProfileEvent {
+  final Locale newLocale;
+
+  const ChangeLanguageRequested(this.newLocale);
+
+  @override
+  List<Object?> get props => [newLocale];
+}
+
+/// Event to request logout
+/// Requirements: 6.3
+class LogoutRequested extends ProfileEvent {
+  const LogoutRequested();
 }

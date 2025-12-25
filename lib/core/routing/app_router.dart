@@ -3,36 +3,35 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:guardiancare/core/core.dart';
+import 'package:guardiancare/core/routing/auth_guard.dart';
 import 'package:guardiancare/features/features.dart';
 
+/// Application router that defines route configurations.
+/// 
+/// Authentication redirect logic is delegated to [AuthGuard] following
+/// the Single Responsibility Principle.
 class AppRouter {
   static final _rootNavigatorKey = GlobalKey<NavigatorState>();
+  
+  /// The AuthGuard instance used for authentication checks.
+  /// Can be overridden for testing purposes.
+  static AuthGuard _authGuard = FirebaseAuthGuard();
+  
+  /// Sets the AuthGuard instance. Useful for testing.
+  static void setAuthGuard(AuthGuard guard) {
+    _authGuard = guard;
+  }
+  
+  /// Resets the AuthGuard to the default FirebaseAuthGuard.
+  static void resetAuthGuard() {
+    _authGuard = FirebaseAuthGuard();
+  }
   
   static GoRouter router = GoRouter(
     navigatorKey: _rootNavigatorKey,
     initialLocation: '/',
     refreshListenable: GoRouterRefreshStream(FirebaseAuth.instance.authStateChanges()),
-    redirect: (context, state) {
-      final user = FirebaseAuth.instance.currentUser;
-      // Only login route is public now (Google Sign-In only)
-      final isLoginRoute = state.matchedLocation == '/login';
-      // Email/Password routes commented out
-      // || state.matchedLocation == '/signup'
-      // || state.matchedLocation == '/password-reset'
-      // || state.matchedLocation == '/email-verification';
-
-      // If user is not logged in and trying to access protected route
-      if (user == null && !isLoginRoute) {
-        return '/login';
-      }
-
-      // If user is logged in and trying to access login routes
-      if (user != null && isLoginRoute) {
-        return '/';
-      }
-
-      return null; // No redirect needed
-    },
+    redirect: (context, state) => _authGuard.redirect(context, state),
     routes: [
       // Auth routes
       GoRoute(

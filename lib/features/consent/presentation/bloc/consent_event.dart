@@ -27,3 +27,26 @@ class VerifyParentalKeyRequested extends ConsentEvent {
   @override
   List<Object?> get props => [uid, key];
 }
+
+/// Event to validate parental key format locally (before submission)
+/// Requirements: 5.1
+class ValidateParentalKey extends ConsentEvent {
+  final String key;
+
+  const ValidateParentalKey({required this.key});
+
+  @override
+  List<Object?> get props => [key];
+}
+
+/// Event to submit and persist parental key
+/// Requirements: 5.2
+class SubmitParentalKey extends ConsentEvent {
+  final String key;
+  final String uid;
+
+  const SubmitParentalKey({required this.key, required this.uid});
+
+  @override
+  List<Object?> get props => [key, uid];
+}

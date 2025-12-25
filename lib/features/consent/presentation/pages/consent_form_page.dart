@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:guardiancare/core/core.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:guardiancare/features/consent/presentation/bloc/consent_bloc.dart';
+import 'package:guardiancare/features/consent/presentation/bloc/consent_event.dart';
+import 'package:guardiancare/features/consent/presentation/bloc/consent_state.dart';
 
 class ConsentFormPage extends StatefulWidget {
   final VoidCallback onSubmit;
 
   const ConsentFormPage({
-    Key? key,
+    super.key,
     required this.onSubmit,
-  }) : super(key: key);
+  });
 
   @override
   State<ConsentFormPage> createState() => _ConsentFormPageState();
@@ -17,6 +20,7 @@ class ConsentFormPage extends StatefulWidget {
 class _ConsentFormPageState extends State<ConsentFormPage> {
   final TextEditingController _keyController = TextEditingController();
   bool _agreedToTerms = false;
+  bool _isKeyValid = false;
 
   @override
   void dispose() {
@@ -24,26 +28,53 @@ class _ConsentFormPageState extends State<ConsentFormPage> {
     super.dispose();
   }
 
-  Future<void> _submitConsent() async {
-    // Validate parental key
-    if (_keyController.text.length < 4) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Parental key must be at least 4 characters'),
-          backgroundColor: AppColors.error,
-        ),
-      );
-      return;
-    }
+  void _validateKey(String key) {
+    // Dispatch validation event to bloc
+    context.read<ConsentBloc>().add(ValidateParentalKey(key: key));
+  }
 
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('parental_key', _keyController.text);
-    widget.onSubmit();
+  void _submitConsent() {
+    // Dispatch submit event to bloc
+    context.read<ConsentBloc>().add(
+      SubmitParentalKey(
+        key: _keyController.text,
+        uid: '', // UID is not needed for local storage
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Center(
+    return BlocListener<ConsentBloc, ConsentState>(
+      listener: (context, state) {
+        if (state is ParentalKeyValidated) {
+          setState(() {
+            _isKeyValid = state.isValid;
+          });
+          if (!state.isValid && state.errorMessage != null) {
+            // Only show error if user has typed something
+            if (_keyController.text.isNotEmpty) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(state.errorMessage!),
+                  backgroundColor: AppColors.error,
+                ),
+              );
+            }
+          }
+        } else if (state is ParentalKeySubmitted) {
+          // Key saved successfully, call the onSubmit callback
+          widget.onSubmit();
+        } else if (state is ConsentError) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.message),
+              backgroundColor: AppColors.error,
+            ),
+          );
+        }
+      },
+      child: Center(
         child: Card(
           margin: AppDimensions.paddingAllL,
           elevation: AppDimensions.cardElevation,
@@ -99,6 +130,7 @@ class _ConsentFormPageState extends State<ConsentFormPage> {
                     style: AppTextStyles.bodyMedium,
                     keyboardType: TextInputType.text,
                     obscureText: true,
+                    onChanged: _validateKey,
                   ),
                   SizedBox(height: AppDimensions.spaceM),
                   CheckboxListTile(
@@ -115,33 +147,50 @@ class _ConsentFormPageState extends State<ConsentFormPage> {
                     },
                   ),
                   SizedBox(height: AppDimensions.spaceL),
-                  SizedBox(
-                    width: double.infinity,
-                    height: AppDimensions.buttonHeight,
-                    child: ElevatedButton(
-                      onPressed: _agreedToTerms && _keyController.text.length >= 4
-                          ? _submitConsent
-                          : null,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primary,
-                        foregroundColor: AppColors.onPrimary,
-                        disabledBackgroundColor: AppColors.buttonDisabled,
-                        padding: AppDimensions.buttonPadding,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: AppDimensions.borderRadiusM,
+                  BlocBuilder<ConsentBloc, ConsentState>(
+                    builder: (context, state) {
+                      final isSubmitting = state is ParentalKeySubmitting;
+                      return SizedBox(
+                        width: double.infinity,
+                        height: AppDimensions.buttonHeight,
+                        child: ElevatedButton(
+                          onPressed: _agreedToTerms && _isKeyValid && !isSubmitting
+                              ? _submitConsent
+                              : null,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.primary,
+                            foregroundColor: AppColors.onPrimary,
+                            disabledBackgroundColor: AppColors.buttonDisabled,
+                            padding: AppDimensions.buttonPadding,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: AppDimensions.borderRadiusM,
+                            ),
+                          ),
+                          child: isSubmitting
+                              ? const SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                      Colors.white,
+                                    ),
+                                  ),
+                                )
+                              : Text(
+                                  'Submit',
+                                  style: AppTextStyles.button,
+                                ),
                         ),
-                      ),
-                      child: Text(
-                        'Submit',
-                        style: AppTextStyles.button,
-                      ),
-                    ),
+                      );
+                    },
                   ),
                 ],
               ),
             ),
           ),
         ),
-      );
+      ),
+    );
   }
 }

@@ -7,6 +7,15 @@ import 'package:guardiancare/features/learn/presentation/bloc/learn_event.dart';
 import 'package:guardiancare/features/learn/presentation/bloc/learn_state.dart';
 
 /// BLoC for managing learn state
+/// 
+/// This BLoC handles all business logic for the Learn feature, ensuring
+/// that presentation layer (VideoPage) only dispatches events and renders UI.
+/// 
+/// Requirements: 3.1, 3.2, 3.3, 3.4
+/// - Categories are fetched through LearnRepository (3.1)
+/// - Videos are fetched through LearnRepository (3.2)
+/// - VideoPage only renders UI and dispatches events (3.3)
+/// - No direct Firestore queries in VideoPage (3.4)
 class LearnBloc extends Bloc<LearnEvent, LearnState> {
   final GetCategories getCategories;
   final GetVideosByCategory getVideosByCategory;
@@ -24,6 +33,9 @@ class LearnBloc extends Bloc<LearnEvent, LearnState> {
     on<RetryRequested>(_onRetryRequested);
   }
 
+  /// Handles CategoriesRequested (LoadCategories) event
+  /// Fetches categories through GetCategories use case
+  /// Requirements: 3.1
   Future<void> _onCategoriesRequested(
     CategoriesRequested event,
     Emitter<LearnState> emit,
@@ -38,14 +50,19 @@ class LearnBloc extends Bloc<LearnEvent, LearnState> {
     );
   }
 
+  /// Handles CategorySelected event
+  /// Triggers video loading for the selected category
   Future<void> _onCategorySelected(
     CategorySelected event,
     Emitter<LearnState> emit,
   ) async {
-    // Emit VideosLoaded immediately - UI will use stream for real-time updates
-    emit(VideosLoaded(event.categoryName, const []));
+    // Dispatch VideosRequested to load videos for the category
+    add(VideosRequested(event.categoryName));
   }
 
+  /// Handles VideosRequested (LoadVideosByCategory) event
+  /// Fetches videos through GetVideosByCategory use case
+  /// Requirements: 3.2
   Future<void> _onVideosRequested(
     VideosRequested event,
     Emitter<LearnState> emit,
@@ -60,6 +77,8 @@ class LearnBloc extends Bloc<LearnEvent, LearnState> {
     );
   }
 
+  /// Handles BackToCategories event
+  /// Returns to category list view
   Future<void> _onBackToCategories(
     BackToCategories event,
     Emitter<LearnState> emit,
@@ -67,6 +86,8 @@ class LearnBloc extends Bloc<LearnEvent, LearnState> {
     add(CategoriesRequested());
   }
 
+  /// Handles RetryRequested event
+  /// Retries the last failed operation
   Future<void> _onRetryRequested(
     RetryRequested event,
     Emitter<LearnState> emit,

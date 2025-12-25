@@ -19,6 +19,32 @@ class ParentalKeyVerified extends ConsentState {}
 
 class ParentalKeyInvalid extends ConsentState {}
 
+/// State indicating parental key format validation result
+/// Requirements: 5.1
+class ParentalKeyValidated extends ConsentState {
+  final bool isValid;
+  final String? errorMessage;
+
+  const ParentalKeyValidated({
+    required this.isValid,
+    this.errorMessage,
+  });
+
+  @override
+  List<Object?> get props => [isValid, errorMessage];
+}
+
+/// State indicating parental key has been submitted and persisted
+/// Requirements: 5.2
+class ParentalKeySubmitted extends ConsentState {
+  const ParentalKeySubmitted();
+}
+
+/// State indicating parental key submission is in progress
+class ParentalKeySubmitting extends ConsentState {
+  const ParentalKeySubmitting();
+}
+
 class ConsentError extends ConsentState {
   final String message;
 

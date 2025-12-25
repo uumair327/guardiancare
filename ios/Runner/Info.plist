@@ -5,7 +5,7 @@
 		<key>CFBundleDevelopmentRegion</key>
 		<string>$(DEVELOPMENT_LANGUAGE)</string>
 		<key>CFBundleDisplayName</key>
-		<string>guardiancare</string>
+		<string>Guardian Care</string>
 		<key>CFBundleExecutable</key>
 		<string>$(EXECUTABLE_NAME)</string>
 		<key>CFBundleIdentifier</key>
@@ -13,7 +13,7 @@
 		<key>CFBundleInfoDictionaryVersion</key>
 		<string>6.0</string>
 		<key>CFBundleName</key>
-		<string>guardiancare</string>
+		<string>Guardian Care</string>
 		<key>CFBundlePackageType</key>
 		<string>APPL</string>
 		<key>CFBundleShortVersionString</key>
@@ -46,8 +46,40 @@
 		<key>UIApplicationSupportsIndirectInputEvents</key>
 		<true/>
 		<key>UIStatusBarHidden</key>
-		<true/>
-		<key>UIViewControllerBasedStatusBarAppearance</key>
 		<false/>
+		<key>UIViewControllerBasedStatusBarAppearance</key>
+		<true/>
+		
+		<!-- App Transport Security - HTTPS only -->
+		<key>NSAppTransportSecurity</key>
+		<dict>
+			<key>NSAllowsArbitraryLoads</key>
+			<false/>
+			<key>NSAllowsArbitraryLoadsInWebContent</key>
+			<true/>
+		</dict>
+		
+		<!-- Privacy Usage Descriptions (Required for App Store) -->
+		<key>NSCameraUsageDescription</key>
+		<string>Guardian Care needs camera access to capture photos for your profile.</string>
+		<key>NSPhotoLibraryUsageDescription</key>
+		<string>Guardian Care needs photo library access to select profile pictures.</string>
+		<key>NSMicrophoneUsageDescription</key>
+		<string>Guardian Care needs microphone access for video recording features.</string>
+		<key>NSContactsUsageDescription</key>
+		<string>Guardian Care needs contacts access to add emergency contacts.</string>
+		
+		<!-- iTunes File Sharing -->
+		<key>UIFileSharingEnabled</key>
+		<false/>
+		<key>LSSupportsOpeningDocumentsInPlace</key>
+		<false/>
+		
+		<!-- Background Modes (if needed) -->
+		<!-- <key>UIBackgroundModes</key>
+		<array>
+			<string>fetch</string>
+			<string>remote-notification</string>
+		</array> -->
 	</dict>
 </plist>

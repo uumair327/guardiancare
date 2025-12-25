@@ -3,6 +3,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:guardiancare/core/core.dart';
 import 'package:guardiancare/features/features.dart';
 
+/// Page that displays emergency contacts organized by category.
+/// 
+/// This page composes EmergencyContactCard widgets without containing
+/// complex build logic, following the Single Responsibility Principle.
 class EmergencyContactPage extends StatelessWidget {
   const EmergencyContactPage({super.key});
 
@@ -31,59 +35,11 @@ class EmergencyContactPage extends StatelessWidget {
               }
 
               if (state is EmergencyError && state is! EmergencyContactsLoaded) {
-                return Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(l10n.errorPrefix(state.message)),
-                      SizedBox(height: AppDimensions.spaceM),
-                      ElevatedButton(
-                        onPressed: () {
-                          context
-                              .read<EmergencyBloc>()
-                              .add(LoadEmergencyContacts());
-                        },
-                        child: Text(l10n.retry),
-                      ),
-                    ],
-                  ),
-                );
+                return _buildErrorState(context, l10n, state.message);
               }
 
               if (state is EmergencyContactsLoaded) {
-                final emergencyServices =
-                    state.getContactsByCategory('Emergency Services');
-                final childSafety = state.getContactsByCategory('Child Safety');
-
-                return SingleChildScrollView(
-                  child: Padding(
-                    padding: AppDimensions.paddingAllM,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        if (emergencyServices.isNotEmpty)
-                          _buildCard(
-                            context: context,
-                            icon: Icons.medical_services,
-                            title: l10n.emergencyServices,
-                            contacts: emergencyServices
-                                .map((c) => {'name': c.name, 'number': c.number})
-                                .toList(),
-                          ),
-                        SizedBox(height: AppDimensions.spaceL),
-                        if (childSafety.isNotEmpty)
-                          _buildCard(
-                            context: context,
-                            icon: Icons.child_care,
-                            title: l10n.childSafety,
-                            contacts: childSafety
-                                .map((c) => {'name': c.name, 'number': c.number})
-                                .toList(),
-                          ),
-                      ],
-                    ),
-                  ),
-                );
+                return _buildContactsList(context, l10n, state);
               }
 
               return Center(child: Text(l10n.loadingEmergencyContacts));
@@ -94,69 +50,60 @@ class EmergencyContactPage extends StatelessWidget {
     );
   }
 
-  Widget _buildCard({
-    required BuildContext context,
-    required IconData icon,
-    required String title,
-    required List<Map<String, String>> contacts,
-  }) {
-    return Card(
-      elevation: AppDimensions.cardElevation,
+  Widget _buildErrorState(BuildContext context, AppLocalizations l10n, String message) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(l10n.errorPrefix(message)),
+          SizedBox(height: AppDimensions.spaceM),
+          ElevatedButton(
+            onPressed: () {
+              context.read<EmergencyBloc>().add(LoadEmergencyContacts());
+            },
+            child: Text(l10n.retry),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildContactsList(
+    BuildContext context,
+    AppLocalizations l10n,
+    EmergencyContactsLoaded state,
+  ) {
+    final emergencyServices = state.getContactsByCategory('Emergency Services');
+    final childSafety = state.getContactsByCategory('Child Safety');
+
+    return SingleChildScrollView(
       child: Padding(
         padding: AppDimensions.paddingAllM,
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Row(
-              children: [
-                Icon(
-                  icon,
-                  size: AppDimensions.iconXL,
-                  color: AppColors.primary,
-                ),
-                SizedBox(width: AppDimensions.spaceM),
-                Text(
-                  title,
-                  style: AppTextStyles.h3.copyWith(fontWeight: FontWeight.bold),
-                ),
-              ],
-            ),
-            SizedBox(height: AppDimensions.spaceM),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: contacts
-                  .map((contact) => Padding(
-                        padding: EdgeInsets.symmetric(vertical: AppDimensions.spaceXS),
-                        child: ElevatedButton.icon(
-                          onPressed: () {
-                            context.read<EmergencyBloc>().add(
-                                  MakeCallRequested(contact['number']!),
-                                );
-                          },
-                          icon: Icon(
-                            Icons.phone,
-                            size: AppDimensions.iconS,
-                            color: AppColors.primary,
-                          ),
-                          label: Text(
-                            '${contact['name']}: ${contact['number']}',
-                            style: AppTextStyles.bodyLarge.copyWith(color: AppColors.textPrimary),
-                          ),
-                          style: ButtonStyle(
-                            backgroundColor: WidgetStateProperty.all<Color>(
-                                AppColors.surface),
-                            padding:
-                                WidgetStateProperty.all<EdgeInsetsGeometry>(
-                                    EdgeInsets.symmetric(
-                                        vertical: AppDimensions.spaceM, horizontal: AppDimensions.spaceM)),
-                          ),
-                        ),
-                      ))
-                  .toList(),
-            ),
+            if (emergencyServices.isNotEmpty)
+              EmergencyContactCard(
+                icon: Icons.medical_services,
+                title: l10n.emergencyServices,
+                contacts: emergencyServices,
+                onCall: (number) => _handleCall(context, number),
+              ),
+            SizedBox(height: AppDimensions.spaceL),
+            if (childSafety.isNotEmpty)
+              EmergencyContactCard(
+                icon: Icons.child_care,
+                title: l10n.childSafety,
+                contacts: childSafety,
+                onCall: (number) => _handleCall(context, number),
+              ),
           ],
         ),
       ),
     );
+  }
+
+  void _handleCall(BuildContext context, String number) {
+    context.read<EmergencyBloc>().add(MakeCallRequested(number));
   }
 }
