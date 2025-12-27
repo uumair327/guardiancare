@@ -8,3 +8,4 @@ export 'learn/learn.dart';
 export 'profile/profile.dart';
 export 'quiz/quiz.dart';
 export 'report/report.dart';
+export 'video_player/video_player.dart' hide VideoEntity;

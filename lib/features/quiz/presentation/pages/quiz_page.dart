@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:guardiancare/core/core.dart';
+import 'package:guardiancare/features/quiz/presentation/widgets/widgets.dart';
 
 class QuizPage extends StatefulWidget {
   const QuizPage({super.key});
@@ -85,121 +86,137 @@ class _QuizPageState extends State<QuizPage> {
     }
   }
 
+  int _getQuestionCount(String quizName) {
+    return questions.where((q) => q["quiz"] == quizName).length;
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    
+
     return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.quiz),
-        backgroundColor: AppColors.primary,
-        foregroundColor: AppColors.onPrimary,
-      ),
-      body: SafeArea(
-        child: isLoading
-          ? Center(
-              child: CircularProgressIndicator(
-                color: AppColors.primary,
-              ),
-            )
-          : quizes.isEmpty
-              ? Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.quiz,
-                        size: AppDimensions.iconXXL * 1.5,
-                        color: AppColors.textSecondary,
-                      ),
-                      SizedBox(height: AppDimensions.spaceL),
-                      Text(
-                        l10n.noQuizzesAvailable,
-                        style: AppTextStyles.h5.copyWith(
-                          color: AppColors.textSecondary,
-                        ),
-                      ),
-                    ],
-                  ),
-                )
-              : ListView.builder(
-                  itemCount: quizes.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return Padding(
-                      padding: EdgeInsets.all(AppDimensions.spaceS),
-                      child: InkWell(
-                        onTap: () {
-                          final quizQuestions = questions
-                              .where((question) =>
-                                  question["quiz"] == quizes[index]["name"])
-                              .toList();
-                          context.push('/quiz-questions', extra: quizQuestions);
-                        },
-                        child: QuizTile(quiz: quizes[index]),
-                      ),
-                    );
-                  },
-                ),
-      ),
-    );
-  }
-}
-
-class QuizTile extends StatelessWidget {
-  final Map<String, dynamic> quiz;
-
-  const QuizTile({super.key, required this.quiz});
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      elevation: AppDimensions.cardElevation,
-      child: Column(
-        mainAxisSize: MainAxisSize.max,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+      backgroundColor: AppColors.background,
+      body: Column(
         children: [
-          if (quiz["thumbnail"] != null && quiz["thumbnail"].isNotEmpty)
-            Image.network(
-              quiz["thumbnail"],
-              height: 200,
-              fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) {
-                return Container(
-                  height: 200,
-                  color: AppColors.divider,
-                  child: Icon(
-                    Icons.quiz,
-                    size: AppDimensions.iconXXL,
-                    color: AppColors.primary,
-                  ),
-                );
-              },
-            ),
-          Container(
-            padding: EdgeInsets.all(AppDimensions.spaceS),
-            child: Text(
-              capitalizeEach(quiz["name"]),
-              style: AppTextStyles.h3.copyWith(
-                color: AppColors.primary,
-              ),
-            ),
-          )
+          // Modern header
+          QuizHeader(),
+          // Content
+          Expanded(
+            child: isLoading
+                ? _buildLoadingState()
+                : quizes.isEmpty
+                    ? _buildEmptyState(l10n)
+                    : _buildQuizGrid(),
+          ),
         ],
       ),
     );
   }
 
-  String capitalize(String? text) {
-    if (text == null || text.isEmpty) return "";
-    final firstLetter = text[0].toUpperCase();
-    final restLetters = text.substring(1);
-    return '$firstLetter$restLetters';
+  Widget _buildLoadingState() {
+    return Padding(
+      padding: EdgeInsets.all(AppDimensions.screenPaddingH),
+      child: GridView.builder(
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          crossAxisSpacing: AppDimensions.spaceM,
+          mainAxisSpacing: AppDimensions.spaceM,
+          childAspectRatio: 0.8,
+        ),
+        itemCount: 4,
+        itemBuilder: (context, index) {
+          return FadeSlideWidget(
+            delay: Duration(milliseconds: index * 100),
+            child: ShimmerLoading(
+              child: Container(
+                decoration: BoxDecoration(
+                  color: AppColors.shimmerBase,
+                  borderRadius: AppDimensions.borderRadiusL,
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
   }
 
-  String capitalizeEach(String? text) {
-    if (text == null || text.isEmpty) return "";
-    final List<String> words = text.split(' ');
-    final formatted = words.map((e) => capitalize(e)).toList();
-    return formatted.join(' ');
+  Widget _buildEmptyState(AppLocalizations l10n) {
+    return FadeSlideWidget(
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              padding: EdgeInsets.all(AppDimensions.spaceXL),
+              decoration: BoxDecoration(
+                color: AppColors.primary.withValues(alpha: 0.1),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.quiz_rounded,
+                size: AppDimensions.iconXXL * 1.5,
+                color: AppColors.primary,
+              ),
+            ),
+            SizedBox(height: AppDimensions.spaceL),
+            Text(
+              l10n.noQuizzesAvailable,
+              style: AppTextStyles.h4.copyWith(
+                color: AppColors.textPrimary,
+              ),
+            ),
+            SizedBox(height: AppDimensions.spaceS),
+            Text(
+              'Check back later for new quizzes!',
+              style: AppTextStyles.body2.copyWith(
+                color: AppColors.textSecondary,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildQuizGrid() {
+    return RefreshIndicator(
+      onRefresh: _loadData,
+      color: AppColors.primary,
+      child: Padding(
+        padding: EdgeInsets.all(AppDimensions.screenPaddingH),
+        child: GridView.builder(
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            crossAxisSpacing: AppDimensions.spaceM,
+            mainAxisSpacing: AppDimensions.spaceM,
+            childAspectRatio: 0.8,
+          ),
+          itemCount: quizes.length,
+          itemBuilder: (context, index) {
+            final quiz = quizes[index];
+            final row = index ~/ 2;
+            final col = index % 2;
+            final delay = Duration(milliseconds: (row * 100) + (col * 50));
+
+            return FadeSlideWidget(
+              delay: delay,
+              child: QuizCard(
+                name: quiz["name"] ?? '',
+                thumbnail: quiz["thumbnail"],
+                index: index,
+                questionCount: _getQuestionCount(quiz["name"]),
+                onTap: () {
+                  final quizQuestions = questions
+                      .where((question) => question["quiz"] == quiz["name"])
+                      .toList();
+                  context.push('/quiz-questions', extra: quizQuestions);
+                },
+              ),
+            );
+          },
+        ),
+      ),
+    );
   }
 }

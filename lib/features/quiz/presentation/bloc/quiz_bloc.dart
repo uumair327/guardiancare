@@ -152,15 +152,20 @@ class QuizBloc extends Bloc<QuizEvent, QuizState> {
   /// Requirements: 2.2
   Future<void> _onCompleteQuizRequested(
       CompleteQuizRequested event, Emitter<QuizState> emit) async {
+    debugPrint('🎯 QuizBloc: Quiz completion requested');
+    debugPrint('   Correct answers: ${event.correctAnswers}/${event.totalQuestions}');
+    
     emit(state.copyWith(isSubmitting: true));
 
     try {
       // Extract categories from questions
       final categories = _extractCategories(event.questions);
+      debugPrint('📂 Extracted categories: $categories');
 
       // Persist quiz results to Firestore
       final user = FirebaseAuth.instance.currentUser;
       if (user != null) {
+        debugPrint('💾 Saving quiz results for user: ${user.uid}');
         final quizResultData = {
           'uid': user.uid,
           'quizName': event.questions.isNotEmpty 
@@ -175,6 +180,9 @@ class QuizBloc extends Bloc<QuizEvent, QuizState> {
         await FirebaseFirestore.instance
             .collection('quiz_results')
             .add(quizResultData);
+        debugPrint('✅ Quiz results saved to Firestore');
+      } else {
+        debugPrint('⚠️ No user logged in, skipping quiz result save');
       }
 
       final completionResult = QuizCompletionResult(
@@ -191,9 +199,10 @@ class QuizBloc extends Bloc<QuizEvent, QuizState> {
       ));
 
       // Trigger recommendation generation
+      debugPrint('🚀 Triggering recommendation generation...');
       add(GenerateRecommendationsRequested(categories: categories));
     } catch (e) {
-      debugPrint('Error completing quiz: $e');
+      debugPrint('❌ Error completing quiz: $e');
       emit(state.copyWith(
         isSubmitting: false,
         error: 'Failed to complete quiz: ${e.toString()}',
@@ -205,6 +214,9 @@ class QuizBloc extends Bloc<QuizEvent, QuizState> {
   /// Requirements: 2.3
   Future<void> _onGenerateRecommendationsRequested(
       GenerateRecommendationsRequested event, Emitter<QuizState> emit) async {
+    debugPrint('🎯 QuizBloc: Starting recommendation generation');
+    debugPrint('   Categories: ${event.categories}');
+    
     emit(state.copyWith(recommendationsStatus: RecommendationsStatus.generating));
 
     final result = await generateRecommendations(
@@ -213,13 +225,14 @@ class QuizBloc extends Bloc<QuizEvent, QuizState> {
 
     result.fold(
       (failure) {
-        debugPrint('Recommendation generation failed: ${failure.message}');
+        debugPrint('❌ QuizBloc: Recommendation generation failed: ${failure.message}');
         emit(state.copyWith(
           recommendationsStatus: RecommendationsStatus.failed,
           error: failure.message,
         ));
       },
       (_) {
+        debugPrint('✅ QuizBloc: Recommendations generated successfully');
         emit(state.copyWith(
           recommendationsStatus: RecommendationsStatus.generated,
         ));

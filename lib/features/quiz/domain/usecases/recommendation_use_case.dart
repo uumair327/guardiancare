@@ -67,20 +67,29 @@ class RecommendationUseCase implements UseCase<RecommendationResult, Recommendat
 
   @override
   Future<Either<Failure, RecommendationResult>> call(RecommendationUseCaseParams params) async {
+    debugPrint('========================================');
+    debugPrint('🎯 RECOMMENDATION USE CASE STARTED');
+    debugPrint('   Categories: ${params.categories}');
+    debugPrint('   User ID: ${params.userId}');
+    debugPrint('========================================');
+
     if (params.categories.isEmpty) {
+      debugPrint('❌ Error: Categories list is empty');
       return const Left(ValidationFailure('Categories list cannot be empty'));
     }
 
     if (params.userId.isEmpty) {
+      debugPrint('❌ Error: User ID is empty');
       return const Left(ValidationFailure('User ID cannot be empty'));
     }
 
     try {
       // Step 1: Clear existing recommendations for the user
+      debugPrint('🗑️ Step 1: Clearing old recommendations...');
       final clearResult = await _repository.clearUserRecommendations(params.userId);
       clearResult.fold(
-        (failure) => debugPrint('Warning: Failed to clear old recommendations: ${failure.message}'),
-        (count) => debugPrint('Cleared $count old recommendations'),
+        (failure) => debugPrint('⚠️ Warning: Failed to clear old recommendations: ${failure.message}'),
+        (count) => debugPrint('✅ Cleared $count old recommendations'),
       );
 
       int savedCount = 0;
@@ -88,33 +97,56 @@ class RecommendationUseCase implements UseCase<RecommendationResult, Recommendat
       final errors = <String>[];
 
       // Step 2: Process each category
-      for (final category in params.categories) {
+      debugPrint('🔄 Step 2: Processing ${params.categories.length} categories...');
+      
+      for (int i = 0; i < params.categories.length; i++) {
+        final category = params.categories[i];
+        debugPrint('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+        debugPrint('📂 Category ${i + 1}/${params.categories.length}: $category');
+        debugPrint('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+
         // Step 2a: Generate search terms using Gemini AI
+        debugPrint('🤖 Generating search terms with Gemini AI...');
         final searchTermsResult = await _geminiService.generateSearchTerms(category);
 
         final searchTerms = searchTermsResult.fold(
           (failure) {
-            errors.add('Gemini failed for $category: ${failure.message}');
+            final errorMsg = 'Gemini failed for $category: ${failure.message}';
+            debugPrint('❌ $errorMsg');
+            errors.add(errorMsg);
             return <String>[];
           },
-          (terms) => terms,
+          (terms) {
+            debugPrint('✅ Generated ${terms.length} search terms: $terms');
+            return terms;
+          },
         );
 
         if (searchTerms.isEmpty) {
+          debugPrint('⚠️ No search terms for category: $category');
           failedCount++;
           continue;
         }
 
         // Step 2b: Fetch videos for each search term
-        for (final term in searchTerms) {
+        debugPrint('🎥 Fetching YouTube videos for ${searchTerms.length} search terms...');
+        
+        for (int j = 0; j < searchTerms.length; j++) {
+          final term = searchTerms[j];
+          debugPrint('  🔍 Search term ${j + 1}/${searchTerms.length}: "$term"');
+          
           final videoResult = await _youtubeService.searchVideo(term);
 
           await videoResult.fold(
             (failure) async {
-              errors.add('YouTube failed for "$term": ${failure.message}');
+              final errorMsg = 'YouTube failed for "$term": ${failure.message}';
+              debugPrint('  ❌ $errorMsg');
+              errors.add(errorMsg);
               failedCount++;
             },
             (videoData) async {
+              debugPrint('  ✅ Found video: "${videoData.title}"');
+              
               // Step 2c: Save recommendation to repository
               final recommendation = QuizRecommendation(
                 title: videoData.title,
@@ -124,25 +156,45 @@ class RecommendationUseCase implements UseCase<RecommendationResult, Recommendat
                 userId: params.userId,
               );
 
+              debugPrint('  💾 Saving to Firestore...');
               final saveResult = await _repository.saveRecommendation(recommendation);
               saveResult.fold(
                 (failure) {
-                  errors.add('Save failed for "${videoData.title}": ${failure.message}');
+                  final errorMsg = 'Save failed for "${videoData.title}": ${failure.message}';
+                  debugPrint('  ❌ $errorMsg');
+                  errors.add(errorMsg);
                   failedCount++;
                 },
-                (_) => savedCount++,
+                (docId) {
+                  debugPrint('  ✅ Saved with ID: $docId');
+                  savedCount++;
+                },
               );
             },
           );
         }
       }
 
+      debugPrint('========================================');
+      debugPrint('✅ RECOMMENDATION GENERATION COMPLETE');
+      debugPrint('   Saved: $savedCount');
+      debugPrint('   Failed: $failedCount');
+      if (errors.isNotEmpty) {
+        debugPrint('   Errors: ${errors.length}');
+      }
+      debugPrint('========================================');
+
       return Right(RecommendationResult(
         savedCount: savedCount,
         failedCount: failedCount,
         errors: errors,
       ));
-    } catch (e) {
+    } catch (e, stackTrace) {
+      debugPrint('========================================');
+      debugPrint('❌ FATAL ERROR in RecommendationUseCase');
+      debugPrint('   Error: $e');
+      debugPrint('   Stack trace: $stackTrace');
+      debugPrint('========================================');
       return Left(ServerFailure('Recommendation generation failed: ${e.toString()}'));
     }
   }

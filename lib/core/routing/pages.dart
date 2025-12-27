@@ -1,14 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/foundation.dart' show debugPrint;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:guardiancare/core/core.dart';
 import 'package:guardiancare/features/features.dart';
 import 'dart:ui';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class Pages extends StatefulWidget {
   const Pages({super.key});
@@ -17,28 +14,68 @@ class Pages extends StatefulWidget {
   State<Pages> createState() => _PagesState();
 }
 
-class _PagesState extends State<Pages> {
+class _PagesState extends State<Pages> with SingleTickerProviderStateMixin {
   int index = 0;
   bool hasSeenConsent = false;
   bool isCheckingConsent = true;
-  bool hasSeenForumGuidelines = false;
-  final GlobalKey<CurvedNavigationBarState> _bottomNavigationKey = GlobalKey();
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  late AnimationController _fadeController;
+  late Animation<double> _fadeAnimation;
 
   final TextEditingController formController = TextEditingController();
   final TextEditingController otpController = TextEditingController();
 
+  // Navigation items with education-friendly colors
+  final List<ModernNavItem> _navItems = const [
+    ModernNavItem(
+      icon: Icons.home_outlined,
+      activeIcon: Icons.home_rounded,
+      label: 'Home',
+      activeColor: Color(0xFF6366F1), // Indigo
+    ),
+    ModernNavItem(
+      icon: Icons.explore_outlined,
+      activeIcon: Icons.explore_rounded,
+      label: 'Explore',
+      activeColor: Color(0xFF10B981), // Emerald
+    ),
+    ModernNavItem(
+      icon: Icons.forum_outlined,
+      activeIcon: Icons.forum_rounded,
+      label: 'Forum',
+      activeColor: Color(0xFF8B5CF6), // Purple
+    ),
+  ];
+
   @override
   void initState() {
     super.initState();
+    _fadeController = AnimationController(
+      vsync: this,
+      duration: AppDurations.animationMedium,
+    );
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _fadeController, curve: Curves.easeOut),
+    );
+    _fadeController.forward();
+
     _checkAndShowConsent();
-    
+
     _auth.authStateChanges().listen((User? user) {
       if (user != null) {
         _checkAndShowConsent();
       }
     });
+  }
+
+  @override
+  void dispose() {
+    _fadeController.dispose();
+    formController.dispose();
+    otpController.dispose();
+    super.dispose();
   }
 
   Future<void> _checkAndShowConsent() async {
@@ -82,98 +119,14 @@ class _PagesState extends State<Pages> {
     });
   }
 
-  void _verifyParentalKeyForForum(BuildContext context, int newIndex) async {
-    showParentalVerification(
-      context,
-      'Forum',
-      () {
-        setState(() {
-          index = newIndex;
-        });
-        _checkAndShowGuidelines();
-      },
-      onForgotKey: () async {
-        final result = await showDialog<bool>(
-          context: context,
-          builder: (context) => const ForgotParentalKeyDialog(),
-        );
-
-        if (result == true && context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: const Text('You can now use your new parental key'),
-              backgroundColor: AppColors.success,
-            ),
-          );
-        }
-      },
-    );
-  }
-  
-  void _checkAndShowGuidelines() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    hasSeenForumGuidelines =
-        prefs.getBool('has_seen_forum_guidelines') ?? false;
-
-    if (index == 2 && !hasSeenForumGuidelines) {
-      _showGuidelinesDialog();
-      await prefs.setBool('has_seen_forum_guidelines', true);
-      setState(() {
-        hasSeenForumGuidelines = true;
-      });
-    }
-  }
-
-  void _showGuidelinesDialog() async {
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(
-            'Forum Guidelines',
-            style: AppTextStyles.dialogTitle,
-          ),
-          content: const SingleChildScrollView(
-            child: ListBody(
-              children: <Widget>[
-                Text(
-                    'Welcome to the guardiancare Global Forum. Kindly follow these guidelines:'),
-                SizedBox(height: 10),
-                Text('• Be respectful and courteous to all members.'),
-                Text(
-                    '• Do not use any language that is abusive, harassing, or harmful.'),
-                Text(
-                    '• Avoid sharing content that is inappropriate or harmful, especially related to children.'),
-                Text(
-                    '• Remember that this is a space for constructive discussions on child safety.'),
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: Text(
-                'I Agree',
-                style: AppTextStyles.button.copyWith(color: AppColors.primary),
-              ),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
+  void _onNavTap(int newIndex) {
+    setState(() {
+      index = newIndex;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    final items = <Widget>[
-      const Icon(Icons.home, size: 25, color: AppColors.navBarButton),
-      const Icon(Icons.explore, size: 25, color: AppColors.navBarButton),
-      const Icon(Icons.forum, size: 25, color: AppColors.navBarButton),
-    ];
-
     final screens = <Widget>[
       BlocProvider(
         create: (_) => sl<HomeBloc>()..add(const LoadCarouselItems()),
@@ -189,73 +142,62 @@ class _PagesState extends State<Pages> {
     return Stack(
       children: [
         Scaffold(
-          extendBody: false,
-          appBar: AppBar(
-            title: Text(
-              AppStrings.appName,
-              style: AppTextStyles.h2.copyWith(
-                color: AppColors.primary,
-                fontStyle: FontStyle.italic,
+          extendBody: true,
+          appBar: _buildModernAppBar(),
+          backgroundColor: AppColors.background,
+          body: FadeTransition(
+            opacity: _fadeAnimation,
+            child: AnimatedSwitcher(
+              duration: AppDurations.animationMedium,
+              switchInCurve: Curves.easeOut,
+              switchOutCurve: Curves.easeIn,
+              child: KeyedSubtree(
+                key: ValueKey<int>(index),
+                child: screens[index],
               ),
             ),
-            centerTitle: true,
-            actions: [
-              StreamBuilder<User?>(
-                stream: _auth.authStateChanges(),
-                builder: (context, snapshot) {
-                  final user = snapshot.data;
-                  if (user == null) {
-                    // User not signed in - show sign in button
-                    return IconButton(
-                      icon: const Icon(Icons.login, color: AppColors.primary),
-                      tooltip: 'Sign In',
-                      onPressed: () {
-                        context.go('/login');
-                      },
-                    );
-                  }
-                  // User is signed in - no action needed
-                  return const SizedBox.shrink();
-                },
-              ),
-            ],
           ),
-          backgroundColor: AppColors.surface,
-          body: SafeArea(
-            bottom: false,
-            child: screens[index],
-          ),
-          bottomNavigationBar: CurvedNavigationBar(
-            key: _bottomNavigationKey,
-            items: items,
-            backgroundColor: Colors.transparent,
-            color: AppColors.navBarBackground,
-            height: 55,
-            index: index,
-            onTap: (newIndex) {
-              if (newIndex == 2) {
-                _verifyParentalKeyForForum(context, newIndex);
-              } else {
-                setState(() {
-                  index = newIndex;
-                });
-              }
-            },
+          bottomNavigationBar: ModernBottomNav(
+            currentIndex: index,
+            onTap: _onNavTap,
+            items: _navItems,
           ),
         ),
 
+        // Loading overlay
         if (isCheckingConsent)
           Positioned.fill(
             child: Container(
-              color: AppColors.surface,
-              child: const Center(
-                child: CircularProgressIndicator(
-                  color: AppColors.primary,
+              color: AppColors.background,
+              child: Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      padding: EdgeInsets.all(AppDimensions.spaceL),
+                      decoration: BoxDecoration(
+                        color: AppColors.primary.withValues(alpha: 0.1),
+                        shape: BoxShape.circle,
+                      ),
+                      child: CircularProgressIndicator(
+                        color: AppColors.primary,
+                        strokeWidth: 3,
+                      ),
+                    ),
+                    SizedBox(height: AppDimensions.spaceM),
+                    Text(
+                      'Loading...',
+                      style: AppTextStyles.body2.copyWith(
+                        color: AppColors.textSecondary,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
           ),
 
+        // Consent form overlay
         if (!hasSeenConsent && !isCheckingConsent)
           Positioned.fill(
             child: Stack(
@@ -275,6 +217,99 @@ class _PagesState extends State<Pages> {
               ],
             ),
           ),
+      ],
+    );
+  }
+
+  PreferredSizeWidget _buildModernAppBar() {
+    return AppBar(
+      elevation: 0,
+      scrolledUnderElevation: 0,
+      backgroundColor: AppColors.background,
+      title: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            padding: EdgeInsets.all(6),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  AppColors.primary,
+                  AppColors.primary.withValues(alpha: 0.8),
+                ],
+              ),
+              borderRadius: AppDimensions.borderRadiusS,
+              boxShadow: [
+                BoxShadow(
+                  color: AppColors.primary.withValues(alpha: 0.3),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Icon(
+              Icons.shield_rounded,
+              color: AppColors.white,
+              size: 18,
+            ),
+          ),
+          SizedBox(width: AppDimensions.spaceS),
+          Text(
+            AppStrings.appName,
+            style: AppTextStyles.h3.copyWith(
+              color: AppColors.primary,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
+      ),
+      centerTitle: true,
+      actions: [
+        StreamBuilder<User?>(
+          stream: _auth.authStateChanges(),
+          builder: (context, snapshot) {
+            final user = snapshot.data;
+            if (user == null) {
+              return Padding(
+                padding: EdgeInsets.only(right: AppDimensions.spaceS),
+                child: ScaleTapWidget(
+                  onTap: () => context.go('/login'),
+                  child: Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: AppDimensions.spaceM,
+                      vertical: AppDimensions.spaceS,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppColors.primary.withValues(alpha: 0.1),
+                      borderRadius: AppDimensions.borderRadiusM,
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.login_rounded,
+                          color: AppColors.primary,
+                          size: AppDimensions.iconS,
+                        ),
+                        SizedBox(width: AppDimensions.spaceXS),
+                        Text(
+                          'Sign In',
+                          style: AppTextStyles.bodySmall.copyWith(
+                            color: AppColors.primary,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            }
+            return const SizedBox.shrink();
+          },
+        ),
       ],
     );
   }

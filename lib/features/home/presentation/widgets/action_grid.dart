@@ -1,9 +1,16 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:guardiancare/core/core.dart';
-import 'package:guardiancare/features/home/home.dart';
+import 'package:guardiancare/features/home/presentation/widgets/action_card.dart';
 
-class ActionGrid extends StatelessWidget {
+/// Action Grid with staggered animations
+/// 
+/// Features:
+/// - Staggered entrance animations
+/// - 3D card effects
+/// - Responsive grid layout
+/// - Performance optimized
+class ActionGrid extends StatefulWidget {
   final VoidCallback onQuizTap;
   final VoidCallback onLearnTap;
   final VoidCallback onEmergencyTap;
@@ -22,57 +29,101 @@ class ActionGrid extends StatelessWidget {
   });
 
   @override
+  State<ActionGrid> createState() => _ActionGridState();
+}
+
+class _ActionGridState extends State<ActionGrid> {
+  @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
 
+    final actions = [
+      _ActionItem(
+        icon: Icons.quiz_rounded,
+        label: l10n.quiz,
+        color: AppColors.primary,
+        onTap: widget.onQuizTap,
+      ),
+      _ActionItem(
+        icon: Icons.video_library_rounded,
+        label: l10n.learn,
+        color: AppColors.secondary,
+        onTap: widget.onLearnTap,
+      ),
+      _ActionItem(
+        icon: Icons.emergency_rounded,
+        label: l10n.emergency,
+        color: AppColors.error,
+        onTap: widget.onEmergencyTap,
+      ),
+      _ActionItem(
+        icon: Icons.person_rounded,
+        label: l10n.profile,
+        color: AppColors.accent,
+        onTap: widget.onProfileTap,
+      ),
+      _ActionItem(
+        icon: CupertinoIcons.globe,
+        label: l10n.website,
+        color: AppColors.info,
+        onTap: widget.onWebsiteTap,
+      ),
+      _ActionItem(
+        icon: Icons.email_rounded,
+        label: l10n.mailUs,
+        color: AppColors.warning,
+        onTap: widget.onMailTap,
+      ),
+    ];
+
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: AppDimensions.screenPaddingH),
-      child: GridView.count(
-        crossAxisCount: 3,
+      child: GridView.builder(
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
-        mainAxisSpacing: AppDimensions.spaceM,
-        crossAxisSpacing: AppDimensions.spaceM,
-        childAspectRatio: 0.85,
-        children: [
-          ActionCard(
-            icon: Icons.quiz,
-            label: l10n.quiz,
-            color: AppColors.primary,
-            onTap: onQuizTap,
-          ),
-          ActionCard(
-            icon: Icons.video_library,
-            label: l10n.learn,
-            color: AppColors.secondary,
-            onTap: onLearnTap,
-          ),
-          ActionCard(
-            icon: Icons.emergency,
-            label: l10n.emergency,
-            color: AppColors.error,
-            onTap: onEmergencyTap,
-          ),
-          ActionCard(
-            icon: Icons.person,
-            label: l10n.profile,
-            color: AppColors.accent,
-            onTap: onProfileTap,
-          ),
-          ActionCard(
-            icon: CupertinoIcons.globe,
-            label: l10n.website,
-            color: AppColors.info,
-            onTap: onWebsiteTap,
-          ),
-          ActionCard(
-            icon: Icons.email,
-            label: l10n.mailUs,
-            color: AppColors.warning,
-            onTap: onMailTap,
-          ),
-        ],
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 3,
+          mainAxisSpacing: AppDimensions.spaceM,
+          crossAxisSpacing: AppDimensions.spaceM,
+          childAspectRatio: 0.85,
+        ),
+        itemCount: actions.length,
+        itemBuilder: (context, index) {
+          final action = actions[index];
+          // Calculate stagger delay based on grid position
+          final row = index ~/ 3;
+          final col = index % 3;
+          final staggerIndex = row + col;
+
+          return FadeSlideWidget(
+            duration: AppDurations.animationMedium,
+            delay: Duration(milliseconds: 80 * staggerIndex),
+            direction: SlideDirection.up,
+            slideOffset: 20,
+            child: ActionCard(
+              icon: action.icon,
+              label: action.label,
+              color: action.color,
+              onTap: action.onTap,
+              enable3DEffect: true,
+            ),
+          );
+        },
       ),
     );
   }
+}
+
+class _ActionItem {
+  final IconData icon;
+  final String label;
+  final Color color;
+  final VoidCallback onTap;
+
+  const _ActionItem({
+    required this.icon,
+    required this.label,
+    required this.color,
+    required this.onTap,
+  });
 }
