@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:guardiancare/core/constants/constants.dart';
 import 'package:guardiancare/core/error/failures.dart';
@@ -85,6 +86,8 @@ class YoutubeSearchServiceImpl implements YoutubeSearchService {
 
     try {
       final formattedTerm = term.trim();
+      debugPrint('🔍 YouTube API: Searching for "$formattedTerm"');
+      
       final url = Uri.parse(
         'https://www.googleapis.com/youtube/v3/search'
         '?part=snippet'
@@ -97,6 +100,8 @@ class YoutubeSearchServiceImpl implements YoutubeSearchService {
       final response = await _httpClient.get(url);
 
       if (response.statusCode != 200) {
+        debugPrint('❌ YouTube API error: Status ${response.statusCode}');
+        debugPrint('   Response: ${response.body}');
         return Left(YoutubeApiFailure(
           'YouTube API request failed with status ${response.statusCode}',
           code: response.statusCode.toString(),
@@ -107,6 +112,7 @@ class YoutubeSearchServiceImpl implements YoutubeSearchService {
       final items = jsonData['items'] as List<dynamic>?;
 
       if (items == null || items.isEmpty) {
+        debugPrint('⚠️ YouTube API: No videos found for "$formattedTerm"');
         return Left(YoutubeApiFailure('No videos found for term: $term'));
       }
 
@@ -114,8 +120,10 @@ class YoutubeSearchServiceImpl implements YoutubeSearchService {
         items.first as Map<String, dynamic>,
       );
 
+      debugPrint('✅ YouTube API: Found video "${videoData.title}"');
       return Right(videoData);
     } catch (e) {
+      debugPrint('❌ YouTube API exception: $e');
       return Left(YoutubeApiFailure('YouTube API error: ${e.toString()}'));
     }
   }

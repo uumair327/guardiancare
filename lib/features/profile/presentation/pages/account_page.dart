@@ -4,11 +4,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:guardiancare/core/core.dart';
 import 'package:guardiancare/features/profile/profile.dart';
+import 'package:guardiancare/features/profile/presentation/widgets/widgets.dart';
 import 'package:guardiancare/main.dart' show Guardiancare;
 
 /// Account page that displays user profile and settings
-/// Dispatches events to ProfileBloc for business logic
-/// Requirements: 6.1, 6.2, 6.3, 6.4
+/// Modern, education-friendly design with animations
 class AccountPage extends StatelessWidget {
   final User? user;
 
@@ -24,7 +24,13 @@ class AccountPage extends StatelessWidget {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(AppDimensions.dialogRadius),
           ),
-          title: Text(l10n.deleteAccount, style: AppTextStyles.dialogTitle),
+          title: Row(
+            children: [
+              Icon(Icons.warning_rounded, color: AppColors.error),
+              SizedBox(width: AppDimensions.spaceS),
+              Text(l10n.deleteAccount, style: AppTextStyles.dialogTitle),
+            ],
+          ),
           content: Text(l10n.deleteAccountConfirm, style: AppTextStyles.body2),
           actions: [
             TextButton(
@@ -34,9 +40,9 @@ class AccountPage extends StatelessWidget {
             ElevatedButton(
               onPressed: () => Navigator.of(context).pop(true),
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primary,
+                backgroundColor: AppColors.error,
               ),
-              child: Text(l10n.yes),
+              child: Text(l10n.yes, style: TextStyle(color: AppColors.white)),
             ),
           ],
         );
@@ -48,8 +54,6 @@ class AccountPage extends StatelessWidget {
     }
   }
 
-  /// Show logout confirmation dialog and dispatch LogoutRequested event
-  /// Requirements: 6.3
   Future<void> _confirmAndLogout(BuildContext context) async {
     final l10n = AppLocalizations.of(context);
     final shouldLogout = await showDialog<bool>(
@@ -60,7 +64,13 @@ class AccountPage extends StatelessWidget {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(AppDimensions.dialogRadius),
           ),
-          title: Text(l10n.logout, style: AppTextStyles.dialogTitle),
+          title: Row(
+            children: [
+              Icon(Icons.logout_rounded, color: AppColors.primary),
+              SizedBox(width: AppDimensions.spaceS),
+              Text(l10n.logout, style: AppTextStyles.dialogTitle),
+            ],
+          ),
           content: Text(l10n.logoutConfirm, style: AppTextStyles.body2),
           actions: [
             TextButton(
@@ -80,51 +90,94 @@ class AccountPage extends StatelessWidget {
     ) ?? false;
 
     if (shouldLogout && context.mounted) {
-      // Dispatch logout event to ProfileBloc - delegates to AuthRepository
       context.read<ProfileBloc>().add(const LogoutRequested());
     }
   }
 
-  /// Handle language selection by dispatching ChangeLanguageRequested event
-  /// Requirements: 6.1
   void _onLanguageSelected(BuildContext context, Locale newLocale) {
-    // Dispatch language change event to ProfileBloc - delegates to LocaleService
     context.read<ProfileBloc>().add(ChangeLanguageRequested(newLocale));
   }
 
   @override
   Widget build(BuildContext context) {
     if (user == null) {
-      final l10n = AppLocalizations.of(context);
-      return Scaffold(
-        appBar: AppBar(title: Text(l10n.account)),
-        body: SafeArea(
-          child: Center(child: Text(l10n.noUserSignedIn)),
-        ),
-      );
+      return _buildNoUserScreen(context);
     }
 
     return BlocProvider(
       create: (context) => sl<ProfileBloc>()..add(LoadProfile(user!.uid)),
       child: Scaffold(
-        appBar: AppBar(
-          title: Text(AppLocalizations.of(context).account),
+        backgroundColor: AppColors.background,
+        body: BlocConsumer<ProfileBloc, ProfileState>(
+          listener: (context, state) {
+            _handleStateChanges(context, state);
+          },
+          builder: (context, state) {
+            return _buildContent(context, state);
+          },
         ),
-        body: SafeArea(
-          child: BlocConsumer<ProfileBloc, ProfileState>(
-            listener: (context, state) {
-              _handleStateChanges(context, state);
-            },
-            builder: (context, state) {
-              return _buildContent(context, state);
-            },
+      ),
+    );
+  }
+
+  Widget _buildNoUserScreen(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return Scaffold(
+      backgroundColor: AppColors.background,
+      body: FadeSlideWidget(
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                padding: EdgeInsets.all(AppDimensions.spaceXL),
+                decoration: BoxDecoration(
+                  color: AppColors.primary.withValues(alpha: 0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  Icons.person_off_rounded,
+                  size: AppDimensions.iconXXL,
+                  color: AppColors.primary,
+                ),
+              ),
+              SizedBox(height: AppDimensions.spaceL),
+              Text(
+                l10n.noUserSignedIn,
+                style: AppTextStyles.h4.copyWith(
+                  color: AppColors.textPrimary,
+                ),
+              ),
+              SizedBox(height: AppDimensions.spaceM),
+              ScaleTapWidget(
+                onTap: () => context.go('/login'),
+                child: Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: AppDimensions.spaceXL,
+                    vertical: AppDimensions.spaceM,
+                  ),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        AppColors.primary,
+                        AppColors.primary.withValues(alpha: 0.8),
+                      ],
+                    ),
+                    borderRadius: AppDimensions.borderRadiusM,
+                  ),
+                  child: Text(
+                    'Sign In',
+                    style: AppTextStyles.button,
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ),
     );
   }
 
-  /// Handle state changes from ProfileBloc
   void _handleStateChanges(BuildContext context, ProfileState state) {
     if (state is AccountDeleted) {
       context.go('/login');
@@ -135,10 +188,8 @@ class AccountPage extends StatelessWidget {
         ),
       );
     } else if (state is LoggedOut) {
-      // Navigate to login after successful logout
       context.go('/login');
     } else if (state is LanguageChanged) {
-      // Update app locale and show confirmation
       _applyLanguageChange(context, state);
     } else if (state is ProfileError) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -150,13 +201,10 @@ class AccountPage extends StatelessWidget {
     }
   }
 
-  /// Apply language change to the app
   void _applyLanguageChange(BuildContext context, LanguageChanged state) {
-    // Update the root app state with new locale
     final rootState = Guardiancare.of(context);
     rootState?.changeLocale(state.newLocale);
 
-    // Show confirmation snackbar
     final l10n = AppLocalizations.of(context);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -169,7 +217,6 @@ class AccountPage extends StatelessWidget {
       ),
     );
 
-    // Restart app after delay
     Future.delayed(const Duration(milliseconds: 1500), () {
       if (context.mounted) {
         AppRestartWidget.restartApp(context);
@@ -177,172 +224,231 @@ class AccountPage extends StatelessWidget {
     });
   }
 
-  /// Build page content based on current state
   Widget _buildContent(BuildContext context, ProfileState state) {
-    if (state is ProfileLoading || state is AccountDeleting || 
+    if (state is ProfileLoading || state is AccountDeleting ||
         state is LoggingOut || state is LanguageChanging) {
-      return Center(
-        child: CircularProgressIndicator(color: AppColors.primary),
-      );
+      return _buildLoadingState();
     }
 
     if (state is ProfileError && state is! AccountDeleting) {
-      return Center(
-        child: Text(
-          "Error: ${state.message}",
-          style: AppTextStyles.error,
-        ),
-      );
+      return _buildErrorState(state.message);
     }
 
     if (state is ProfileLoaded) {
       return _buildProfileContent(context, state.profile);
     }
 
-    return Center(
-      child: Text(
-        AppLocalizations.of(context).loadingProfile,
-        style: AppTextStyles.body1,
-      ),
+    return _buildLoadingState();
+  }
+
+  Widget _buildLoadingState() {
+    return Column(
+      children: [
+        // Shimmer header
+        ShimmerLoading(
+          child: Container(
+            height: 280,
+            decoration: BoxDecoration(
+              color: AppColors.shimmerBase,
+              borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(AppDimensions.radiusXL),
+                bottomRight: Radius.circular(AppDimensions.radiusXL),
+              ),
+            ),
+          ),
+        ),
+        SizedBox(height: AppDimensions.spaceL),
+        // Shimmer content
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: AppDimensions.screenPaddingH),
+          child: Column(
+            children: List.generate(4, (index) {
+              return Padding(
+                padding: EdgeInsets.only(bottom: AppDimensions.spaceM),
+                child: ShimmerLoading(
+                  child: Container(
+                    height: 70,
+                    decoration: BoxDecoration(
+                      color: AppColors.shimmerBase,
+                      borderRadius: AppDimensions.borderRadiusM,
+                    ),
+                  ),
+                ),
+              );
+            }),
+          ),
+        ),
+      ],
     );
   }
 
-  /// Build profile content UI
-  Widget _buildProfileContent(BuildContext context, ProfileEntity profile) {
-    final l10n = AppLocalizations.of(context);
-
-    return SingleChildScrollView(
-      child: Padding(
-        padding: EdgeInsets.all(AppDimensions.spaceS),
+  Widget _buildErrorState(String message) {
+    return FadeSlideWidget(
+      child: Center(
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            _buildAvatar(profile),
+            Container(
+              padding: EdgeInsets.all(AppDimensions.spaceXL),
+              decoration: BoxDecoration(
+                color: AppColors.error.withValues(alpha: 0.1),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.error_outline_rounded,
+                size: AppDimensions.iconXXL,
+                color: AppColors.error,
+              ),
+            ),
             SizedBox(height: AppDimensions.spaceL),
-            _buildProfileSection(context, profile, l10n),
-            const Divider(),
+            Text(
+              'Oops! Something went wrong',
+              style: AppTextStyles.h4.copyWith(
+                color: AppColors.textPrimary,
+              ),
+            ),
             SizedBox(height: AppDimensions.spaceS),
-            _buildChildSafetySection(context, l10n),
-            const Divider(),
-            SizedBox(height: AppDimensions.spaceS),
-            _buildSettingsSection(context, l10n),
+            Text(
+              message,
+              style: AppTextStyles.body2.copyWith(
+                color: AppColors.textSecondary,
+              ),
+              textAlign: TextAlign.center,
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildAvatar(ProfileEntity profile) {
-    return CircleAvatar(
-      radius: AppDimensions.avatarXL / 2,
-      backgroundImage: profile.photoURL != null
-          ? NetworkImage(profile.photoURL!)
-          : null,
-      child: profile.displayName.isNotEmpty
-          ? Text(
-              profile.displayName[0].toUpperCase(),
-              style: AppTextStyles.h2,
-            )
-          : null,
-    );
-  }
+  Widget _buildProfileContent(BuildContext context, ProfileEntity profile) {
+    final l10n = AppLocalizations.of(context);
 
-  Widget _buildProfileSection(BuildContext context, ProfileEntity profile, AppLocalizations l10n) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(l10n.profile, style: AppTextStyles.h4.copyWith(color: AppColors.primary)),
-        ListTile(
-          leading: Icon(Icons.person, color: AppColors.primary),
-          title: Text('${l10n.nameLabel}: ${profile.displayName}'),
-        ),
-        ListTile(
-          minTileHeight: 5,
-          leading: Icon(Icons.email, color: AppColors.primary),
-          title: Text('${l10n.emailLabel}: ${profile.email}'),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildChildSafetySection(BuildContext context, AppLocalizations l10n) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          l10n.childSafetySettings,
-          style: AppTextStyles.h4.copyWith(color: AppColors.primary),
-        ),
-        ListTile(
-          leading: Icon(Icons.phone, color: AppColors.primary),
-          title: Text(l10n.emergencyContact),
-          onTap: () => context.push('/emergency'),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildSettingsSection(BuildContext context, AppLocalizations l10n) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(l10n.settings, style: AppTextStyles.h4.copyWith(color: AppColors.primary)),
-        _buildLanguageTile(context, l10n),
-        _buildLogoutTile(context, l10n),
-        _buildDeleteAccountTile(context, l10n),
-      ],
-    );
-  }
-
-  /// Build language selection tile - dispatches ChangeLanguageRequested
-  /// Requirements: 6.1
-  Widget _buildLanguageTile(BuildContext context, AppLocalizations l10n) {
-    return ListTile(
-      leading: Icon(Icons.language, color: AppColors.primary),
-      title: Text(l10n.language),
-      subtitle: Text(
-        _getCurrentLanguageName(context),
-        style: AppTextStyles.body2,
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Modern header
+          ProfileHeader(profile: profile),
+          SizedBox(height: AppDimensions.spaceL),
+          // Stats row
+          _buildStatsRow(context),
+          SizedBox(height: AppDimensions.spaceL),
+          // Child Safety Section
+          FadeSlideWidget(
+            delay: const Duration(milliseconds: 100),
+            child: ProfileSection(
+              title: l10n.childSafetySettings,
+              icon: Icons.shield_rounded,
+              children: [
+                ProfileMenuItem(
+                  icon: Icons.phone_rounded,
+                  title: l10n.emergencyContact,
+                  subtitle: 'Set up emergency contacts',
+                  iconColor: AppColors.error,
+                  onTap: () => context.push('/emergency'),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(height: AppDimensions.spaceL),
+          // Settings Section
+          FadeSlideWidget(
+            delay: const Duration(milliseconds: 200),
+            child: ProfileSection(
+              title: l10n.settings,
+              icon: Icons.settings_rounded,
+              children: [
+                ProfileMenuItem(
+                  icon: Icons.language_rounded,
+                  title: l10n.language,
+                  subtitle: _getCurrentLanguageName(context),
+                  onTap: () {
+                    final currentLocale = Localizations.localeOf(context);
+                    LanguageSelectorDialog.show(
+                      context,
+                      currentLocale: currentLocale,
+                      onLocaleSelected: (newLocale) =>
+                          _onLanguageSelected(context, newLocale),
+                    );
+                  },
+                ),
+                ProfileMenuItem(
+                  icon: Icons.logout_rounded,
+                  title: l10n.logout,
+                  subtitle: 'Sign out of your account',
+                  showArrow: false,
+                  onTap: () => _confirmAndLogout(context),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(height: AppDimensions.spaceL),
+          // Danger Zone
+          FadeSlideWidget(
+            delay: const Duration(milliseconds: 300),
+            child: ProfileSection(
+              title: 'Danger Zone',
+              icon: Icons.warning_rounded,
+              children: [
+                ProfileMenuItem(
+                  icon: Icons.delete_forever_rounded,
+                  title: l10n.deleteMyAccount,
+                  subtitle: 'Permanently delete your account',
+                  isDanger: true,
+                  showArrow: false,
+                  onTap: () async {
+                    await _confirmAndDeleteAccount(
+                      context,
+                      context.read<ProfileBloc>(),
+                    );
+                  },
+                ),
+              ],
+            ),
+          ),
+          SizedBox(height: AppDimensions.spaceXL),
+        ],
       ),
-      trailing: Icon(Icons.arrow_forward_ios, size: AppDimensions.iconS),
-      onTap: () {
-        final currentLocale = Localizations.localeOf(context);
-        LanguageSelectorDialog.show(
-          context,
-          currentLocale: currentLocale,
-          onLocaleSelected: (newLocale) => _onLanguageSelected(context, newLocale),
-        );
-      },
     );
   }
 
-  /// Build logout tile - dispatches LogoutRequested
-  /// Requirements: 6.3
-  Widget _buildLogoutTile(BuildContext context, AppLocalizations l10n) {
-    return ListTile(
-      leading: Icon(Icons.logout, color: AppColors.primary),
-      title: Text(l10n.logout),
-      onTap: () => _confirmAndLogout(context),
-    );
-  }
-
-  Widget _buildDeleteAccountTile(BuildContext context, AppLocalizations l10n) {
-    return ListTile(
-      minTileHeight: 5,
-      leading: Icon(Icons.delete, color: AppColors.primary),
-      title: Text(
-        l10n.deleteMyAccount,
-        style: AppTextStyles.body1.copyWith(
-          color: AppColors.primary,
-          fontWeight: FontWeight.bold,
+  Widget _buildStatsRow(BuildContext context) {
+    return FadeSlideWidget(
+      delay: const Duration(milliseconds: 50),
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: AppDimensions.screenPaddingH),
+        child: Row(
+          children: [
+            Expanded(
+              child: ProfileStatCard(
+                icon: Icons.quiz_rounded,
+                label: 'Quizzes',
+                value: '0',
+                index: 0,
+              ),
+            ),
+            SizedBox(width: AppDimensions.spaceM),
+            Expanded(
+              child: ProfileStatCard(
+                icon: Icons.play_circle_rounded,
+                label: 'Videos',
+                value: '0',
+                index: 1,
+              ),
+            ),
+            SizedBox(width: AppDimensions.spaceM),
+            Expanded(
+              child: ProfileStatCard(
+                icon: Icons.emoji_events_rounded,
+                label: 'Badges',
+                value: '0',
+                index: 2,
+              ),
+            ),
+          ],
         ),
       ),
-      onTap: () async {
-        await _confirmAndDeleteAccount(
-          context,
-          context.read<ProfileBloc>(),
-        );
-      },
     );
   }
 

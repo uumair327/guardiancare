@@ -1,3 +1,4 @@
+export 'animations/animations.dart';
 export 'constants/constants.dart';
 export 'database/database.dart';
 export 'di/di.dart';

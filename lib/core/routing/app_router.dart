@@ -1,10 +1,12 @@
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:guardiancare/core/core.dart';
-import 'package:guardiancare/core/routing/auth_guard.dart';
 import 'package:guardiancare/features/features.dart';
+import 'package:guardiancare/features/video_player/presentation/pages/video_player_page.dart'
+    as video_player;
 
 /// Application router that defines route configurations.
 /// 
@@ -77,7 +79,10 @@ class AppRouter {
         name: 'quiz-questions',
         builder: (context, state) {
           final questions = state.extra as List<Map<String, dynamic>>;
-          return QuizQuestionsPage(questions: questions);
+          return BlocProvider(
+            create: (_) => sl<QuizBloc>(),
+            child: QuizQuestionsPage(questions: questions),
+          );
         },
       ),
 
@@ -113,9 +118,23 @@ class AppRouter {
           final forumId = state.pathParameters['id']!;
           final forumData = state.extra as Map<String, dynamic>?;
           final forumTitle = forumData?['title'] ?? 'Forum';
+          final forumDescription = forumData?['description'] as String?;
+          final createdAtStr = forumData?['createdAt'] as String?;
+          final userId = forumData?['userId'] as String?;
+          
+          DateTime? createdAt;
+          if (createdAtStr != null) {
+            try {
+              createdAt = DateTime.parse(createdAtStr);
+            } catch (_) {}
+          }
+          
           return ForumDetailPage(
             forumId: forumId,
             forumTitle: forumTitle,
+            forumDescription: forumDescription,
+            createdAt: createdAt,
+            userId: userId,
           );
         },
       ),
@@ -149,7 +168,7 @@ class AppRouter {
         name: 'video-player',
         builder: (context, state) {
           final videoUrl = state.extra as String;
-          return VideoPlayerPage(videoUrl: videoUrl);
+          return video_player.VideoPlayerPage(videoUrl: videoUrl);
         },
       ),
     ],

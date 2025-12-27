@@ -6,6 +6,14 @@ import 'package:guardiancare/features/consent/consent.dart';
 import 'package:guardiancare/features/home/home.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+/// Home Page with animations and 3D effects
+/// 
+/// Features:
+/// - Animated welcome header
+/// - Staggered action grid animations
+/// - 3D card effects
+/// - Smooth page transitions
+/// - Performance optimized
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
@@ -23,6 +31,10 @@ class HomePage extends StatelessWidget {
                   content: Text(state.message),
                   backgroundColor: AppColors.error,
                   duration: AppDurations.snackbarMedium,
+                  behavior: SnackBarBehavior.floating,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: AppDimensions.borderRadiusS,
+                  ),
                   action: SnackBarAction(
                     label: l10n.retry,
                     textColor: AppColors.white,
@@ -41,18 +53,26 @@ class HomePage extends StatelessWidget {
                 await Future.delayed(AppDurations.animationMedium);
               },
               color: AppColors.primary,
+              backgroundColor: AppColors.white,
               child: CustomScrollView(
+                physics: const BouncingScrollPhysics(
+                  parent: AlwaysScrollableScrollPhysics(),
+                ),
                 slivers: [
-                  // Welcome Header
+                  // Welcome Header with animations
                   SliverToBoxAdapter(
-                    child: WelcomeHeader(),
+                    child: const WelcomeHeader(),
                   ),
                   
-                  // Carousel Section
+                  // Carousel Section with fade-in
                   SliverToBoxAdapter(
-                    child: Padding(
-                      padding: EdgeInsets.only(top: AppDimensions.spaceM),
-                      child: const HomeCarouselWidget(),
+                    child: FadeSlideWidget(
+                      delay: const Duration(milliseconds: 200),
+                      direction: SlideDirection.up,
+                      child: Padding(
+                        padding: EdgeInsets.only(top: AppDimensions.spaceM),
+                        child: const HomeCarousel(),
+                      ),
                     ),
                   ),
                   
@@ -60,17 +80,34 @@ class HomePage extends StatelessWidget {
                     child: SizedBox(height: AppDimensions.spaceL),
                   ),
                   
-                  // Quick Actions Section
+                  // Quick Actions Section Header
                   SliverToBoxAdapter(
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: AppDimensions.screenPaddingH,
-                      ),
-                      child: Text(
-                        l10n.quickActions,
-                        style: AppTextStyles.h3.copyWith(
-                          color: AppColors.primary,
-                          fontWeight: FontWeight.bold,
+                    child: FadeSlideWidget(
+                      delay: const Duration(milliseconds: 300),
+                      direction: SlideDirection.left,
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: AppDimensions.screenPaddingH,
+                        ),
+                        child: Row(
+                          children: [
+                            Container(
+                              width: 4,
+                              height: 24,
+                              decoration: BoxDecoration(
+                                color: AppColors.primary,
+                                borderRadius: BorderRadius.circular(2),
+                              ),
+                            ),
+                            SizedBox(width: AppDimensions.spaceS),
+                            Text(
+                              l10n.quickActions,
+                              style: AppTextStyles.h3.copyWith(
+                                color: AppColors.textPrimary,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ),
@@ -80,7 +117,7 @@ class HomePage extends StatelessWidget {
                     child: SizedBox(height: AppDimensions.spaceM),
                   ),
                   
-                  // Action Grid
+                  // Action Grid with staggered animations
                   SliverToBoxAdapter(
                     child: ActionGrid(
                       onQuizTap: () => context.push('/quiz'),
@@ -99,19 +136,19 @@ class HomePage extends StatelessWidget {
                         extra: AppStrings.websiteUrl,
                       ),
                       onMailTap: () {
-                          showParentalVerification(
-                            context,
-                            l10n.mailUs,
-                            () => _launchEmail(context),
-                            onForgotKey: () => _handleForgotKey(context),
-                          );
+                        showParentalVerification(
+                          context,
+                          l10n.mailUs,
+                          () => _launchEmail(context),
+                          onForgotKey: () => _handleForgotKey(context),
+                        );
                       },
                     ),
                   ),
                   
                   // Bottom spacing for navigation bar
                   SliverToBoxAdapter(
-                    child: SizedBox(height: AppDimensions.spaceXXL),
+                    child: SizedBox(height: AppDimensions.spaceXXL * 2),
                   ),
                 ],
               ),
@@ -130,9 +167,13 @@ class HomePage extends StatelessWidget {
 
     if (result == true && context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('You can now use your new parental key'),
+        SnackBar(
+          content: const Text('You can now use your new parental key'),
           backgroundColor: AppColors.success,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: AppDimensions.borderRadiusS,
+          ),
         ),
       );
     }
@@ -159,6 +200,10 @@ class HomePage extends StatelessWidget {
             content: Text(AppStrings.errorEmailClient),
             duration: AppDurations.snackbarMedium,
             backgroundColor: AppColors.error,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: AppDimensions.borderRadiusS,
+            ),
           ),
         );
       }
@@ -169,10 +214,13 @@ class HomePage extends StatelessWidget {
             content: Text('Error launching email: $e'),
             duration: AppDurations.snackbarMedium,
             backgroundColor: AppColors.error,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: AppDimensions.borderRadiusS,
+            ),
           ),
         );
       }
     }
   }
 }
-

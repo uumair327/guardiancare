@@ -1,4 +1,5 @@
 export 'app_restart_widget.dart';
+export 'bottom_nav.dart';
 export 'content_card.dart';
 export 'language_selector_dialog.dart';
 export 'parental_verification_dialog.dart';

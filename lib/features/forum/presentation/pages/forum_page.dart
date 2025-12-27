@@ -1,51 +1,525 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:guardiancare/core/core.dart';
+import 'package:guardiancare/features/consent/consent.dart';
 import 'package:guardiancare/features/forum/forum.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class ForumPage extends StatelessWidget {
+/// Forum page with inline parental lock protection
+/// Follows SRP - handles page structure and parental verification
+class ForumPage extends StatefulWidget {
   const ForumPage({super.key});
 
   @override
+  State<ForumPage> createState() => _ForumPageState();
+}
+
+class _ForumPageState extends State<ForumPage>
+    with SingleTickerProviderStateMixin {
+  bool _isUnlocked = false;
+  bool _hasSeenGuidelines = false;
+  
+  late AnimationController _fadeController;
+  late Animation<double> _fadeAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _fadeController = AnimationController(
+      vsync: this,
+      duration: AppDurations.animationMedium,
+    );
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _fadeController, curve: Curves.easeOut),
+    );
+  }
+
+  @override
+  void dispose() {
+    _fadeController.dispose();
+    super.dispose();
+  }
+
+  void _onUnlocked() {
+    setState(() => _isUnlocked = true);
+    _fadeController.forward();
+    _checkGuidelines();
+  }
+
+  Future<void> _checkGuidelines() async {
+    final prefs = await SharedPreferences.getInstance();
+    _hasSeenGuidelines = prefs.getBool('has_seen_forum_guidelines') ?? false;
+
+    if (!_hasSeenGuidelines && mounted) {
+      await Future.delayed(AppDurations.animationMedium);
+      if (mounted) {
+        _showGuidelinesDialog();
+        await prefs.setBool('has_seen_forum_guidelines', true);
+        setState(() => _hasSeenGuidelines = true);
+      }
+    }
+  }
+
+  Future<void> _handleForgotKey() async {
+    final result = await showDialog<bool>(
+      context: context,
+      builder: (context) => const ForgotParentalKeyDialog(),
+    );
+
+    if (result == true && mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('You can now use your new parental key'),
+          backgroundColor: AppColors.success,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: AppDimensions.borderRadiusS,
+          ),
+        ),
+      );
+    }
+  }
+
+  void _showGuidelinesDialog() {
+    showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: AppDimensions.borderRadiusL,
+          ),
+          title: Row(
+            children: [
+              Container(
+                padding: EdgeInsets.all(AppDimensions.spaceS),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF8B5CF6).withValues(alpha: 0.1),
+                  borderRadius: AppDimensions.borderRadiusS,
+                ),
+                child: Icon(
+                  Icons.gavel_rounded,
+                  color: const Color(0xFF8B5CF6),
+                  size: AppDimensions.iconM,
+                ),
+              ),
+              SizedBox(width: AppDimensions.spaceS),
+              Text('Forum Guidelines', style: AppTextStyles.dialogTitle),
+            ],
+          ),
+          content: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'Welcome to the GuardianCare Forum. Please follow these guidelines:',
+                  style: AppTextStyles.body2,
+                ),
+                SizedBox(height: AppDimensions.spaceM),
+                _buildGuidelineItem(
+                  Icons.favorite_rounded,
+                  'Be respectful and courteous to all members.',
+                  AppColors.error,
+                ),
+                _buildGuidelineItem(
+                  Icons.block_rounded,
+                  'Do not use abusive, harassing, or harmful language.',
+                  AppColors.warning,
+                ),
+                _buildGuidelineItem(
+                  Icons.shield_rounded,
+                  'Avoid sharing inappropriate or harmful content.',
+                  const Color(0xFF8B5CF6),
+                ),
+                _buildGuidelineItem(
+                  Icons.chat_rounded,
+                  'This is a space for constructive discussions on child safety.',
+                  AppColors.success,
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            ScaleTapWidget(
+              onTap: () => Navigator.of(context).pop(),
+              child: Container(
+                padding: EdgeInsets.symmetric(
+                  horizontal: AppDimensions.spaceL,
+                  vertical: AppDimensions.spaceS,
+                ),
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [Color(0xFF8B5CF6), Color(0xFF7C3AED)],
+                  ),
+                  borderRadius: AppDimensions.borderRadiusM,
+                ),
+                child: Text('I Agree', style: AppTextStyles.button),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildGuidelineItem(IconData icon, String text, Color color) {
+    return Padding(
+      padding: EdgeInsets.only(bottom: AppDimensions.spaceS),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(4),
+            decoration: BoxDecoration(
+              color: color.withValues(alpha: 0.1),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(icon, color: color, size: 16),
+          ),
+          SizedBox(width: AppDimensions.spaceS),
+          Expanded(
+            child: Text(
+              text,
+              style: AppTextStyles.bodySmall.copyWith(
+                color: AppColors.textSecondary,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-    
-    return BlocProvider(
-      create: (context) => sl<ForumBloc>()..add(const LoadForums(ForumCategory.parent)),
-      child: DefaultTabController(
-        length: 2,
-        child: Builder(
-          builder: (context) {
-            return Scaffold(
-              appBar: AppBar(
-                title: Text(l10n.forums),
-                bottom: TabBar(
-                  onTap: (index) {
-                    final category = index == 0 ? ForumCategory.parent : ForumCategory.children;
-                    context.read<ForumBloc>().add(LoadForums(category));
-                  },
-                  tabs: [
-                    Tab(text: l10n.parentGuardian),
-                    Tab(text: l10n.child),
-                  ],
+    return ParentalLockOverlay(
+      onUnlocked: _onUnlocked,
+      onForgotKey: _handleForgotKey,
+      child: _isUnlocked
+          ? FadeTransition(
+              opacity: _fadeAnimation,
+              child: const _ForumContent(),
+            )
+          : const _ForumPlaceholder(),
+    );
+  }
+}
+
+/// Placeholder content shown behind the blur when locked
+class _ForumPlaceholder extends StatelessWidget {
+  const _ForumPlaceholder();
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        // Header placeholder
+        Container(
+          height: 180,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                const Color(0xFF8B5CF6).withValues(alpha: 0.3),
+                const Color(0xFF7C3AED).withValues(alpha: 0.2),
+              ],
+            ),
+            borderRadius: BorderRadius.only(
+              bottomLeft: Radius.circular(AppDimensions.radiusXL),
+              bottomRight: Radius.circular(AppDimensions.radiusXL),
+            ),
+          ),
+        ),
+        // Content placeholder
+        Expanded(
+          child: ListView.builder(
+            padding: EdgeInsets.all(AppDimensions.screenPaddingH),
+            itemCount: 5,
+            itemBuilder: (context, index) {
+              return Padding(
+                padding: EdgeInsets.only(bottom: AppDimensions.spaceM),
+                child: Container(
+                  height: 100,
+                  decoration: BoxDecoration(
+                    color: AppColors.shimmerBase,
+                    borderRadius: AppDimensions.borderRadiusL,
+                  ),
                 ),
-              ),
-              body: SafeArea(
-                child: const TabBarView(
-                children: [
-                  _ForumListView(category: ForumCategory.parent),
-                  _ForumListView(category: ForumCategory.children),
-                ],
+              );
+            },
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// Forum content with modern header and tabs
+class _ForumContent extends StatefulWidget {
+  const _ForumContent();
+
+  @override
+  State<_ForumContent> createState() => _ForumContentState();
+}
+
+class _ForumContentState extends State<_ForumContent>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 2, vsync: this);
+    _tabController.addListener(_onTabChanged);
+  }
+
+  @override
+  void dispose() {
+    _tabController.removeListener(_onTabChanged);
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  void _onTabChanged() {
+    if (_tabController.indexIsChanging) {
+      HapticFeedback.selectionClick();
+      final category = _tabController.index == 0
+          ? ForumCategory.parent
+          : ForumCategory.children;
+      context.read<ForumBloc>().add(LoadForums(category));
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // Load initial forums
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (context.read<ForumBloc>().state is ForumInitial) {
+        context.read<ForumBloc>().add(LoadForums(ForumCategory.parent));
+      }
+    });
+
+    return Column(
+      children: [
+        _ForumHeader(tabController: _tabController),
+        Expanded(
+          child: TabBarView(
+            controller: _tabController,
+            children: const [
+              _ForumListView(category: ForumCategory.parent),
+              _ForumListView(category: ForumCategory.children),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// Modern forum header with gradient and tabs
+class _ForumHeader extends StatefulWidget {
+  final TabController tabController;
+
+  const _ForumHeader({required this.tabController});
+
+  @override
+  State<_ForumHeader> createState() => _ForumHeaderState();
+}
+
+class _ForumHeaderState extends State<_ForumHeader>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _fadeAnimation;
+  late Animation<Offset> _slideAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: AppDurations.animationLong,
+    );
+
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: const Interval(0.0, 0.6, curve: Curves.easeOut),
+      ),
+    );
+
+    _slideAnimation = Tween<Offset>(
+      begin: const Offset(0, 20),
+      end: Offset.zero,
+    ).animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: const Interval(0.2, 0.8, curve: Curves.easeOutCubic),
+      ),
+    );
+
+    _controller.forward();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+
+    return RepaintBoundary(
+      child: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              const Color(0xFF8B5CF6),
+              const Color(0xFF8B5CF6).withValues(alpha: 0.85),
+              const Color(0xFF7C3AED),
+            ],
+            stops: const [0.0, 0.5, 1.0],
+          ),
+          borderRadius: BorderRadius.only(
+            bottomLeft: Radius.circular(AppDimensions.radiusXL),
+            bottomRight: Radius.circular(AppDimensions.radiusXL),
+          ),
+        ),
+        child: SafeArea(
+          bottom: false,
+          child: AnimatedBuilder(
+            animation: _controller,
+            builder: (context, child) {
+              return Opacity(
+                opacity: _fadeAnimation.value,
+                child: Transform.translate(
+                  offset: _slideAnimation.value,
+                  child: child,
                 ),
-              ),
-            );
-          }
+              );
+            },
+            child: Column(
+              children: [
+                Padding(
+                  padding: EdgeInsets.fromLTRB(
+                    AppDimensions.screenPaddingH,
+                    AppDimensions.spaceM,
+                    AppDimensions.screenPaddingH,
+                    AppDimensions.spaceM,
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              l10n.forum,
+                              style: AppTextStyles.h2.copyWith(
+                                color: AppColors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            SizedBox(height: AppDimensions.spaceXS),
+                            Text(
+                              'Connect and share experiences',
+                              style: AppTextStyles.body2.copyWith(
+                                color: AppColors.white.withValues(alpha: 0.85),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        padding: EdgeInsets.all(AppDimensions.spaceM),
+                        decoration: BoxDecoration(
+                          color: AppColors.white.withValues(alpha: 0.15),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.forum_rounded,
+                          color: AppColors.white,
+                          size: AppDimensions.iconL,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                // Modern Tab Bar
+                Container(
+                  margin: EdgeInsets.fromLTRB(
+                    AppDimensions.screenPaddingH,
+                    0,
+                    AppDimensions.screenPaddingH,
+                    AppDimensions.spaceM,
+                  ),
+                  padding: const EdgeInsets.all(4),
+                  decoration: BoxDecoration(
+                    color: AppColors.white.withValues(alpha: 0.15),
+                    borderRadius: AppDimensions.borderRadiusL,
+                  ),
+                  child: TabBar(
+                    controller: widget.tabController,
+                    indicator: BoxDecoration(
+                      color: AppColors.white,
+                      borderRadius: AppDimensions.borderRadiusM,
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColors.black.withValues(alpha: 0.1),
+                          blurRadius: 4,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    indicatorSize: TabBarIndicatorSize.tab,
+                    dividerColor: Colors.transparent,
+                    labelColor: const Color(0xFF8B5CF6),
+                    unselectedLabelColor: AppColors.white.withValues(alpha: 0.8),
+                    labelStyle: AppTextStyles.bodySmall.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                    unselectedLabelStyle: AppTextStyles.bodySmall,
+                    tabs: [
+                      Tab(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.family_restroom_rounded, size: 18),
+                            SizedBox(width: 6),
+                            Text(l10n.parentForums),
+                          ],
+                        ),
+                      ),
+                      Tab(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.child_care_rounded, size: 18),
+                            SizedBox(width: 6),
+                            Text('For Children'),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );
   }
 }
 
+
+/// Forum list view for each category
 class _ForumListView extends StatelessWidget {
   final ForumCategory category;
 
@@ -53,8 +527,8 @@ class _ForumListView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-    
+    final l10n = AppLocalizations.of(context);
+
     return BlocConsumer<ForumBloc, ForumState>(
       listener: (context, state) {
         if (state is ForumError) {
@@ -63,102 +537,201 @@ class _ForumListView extends StatelessWidget {
               content: Text(state.message),
               backgroundColor: AppColors.error,
               duration: AppDurations.snackbarMedium,
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(
+                borderRadius: AppDimensions.borderRadiusS,
+              ),
             ),
           );
         }
       },
-      buildWhen: (previous, current) {
-        // Always rebuild to ensure UI updates
-        return true;
-      },
       builder: (context, state) {
-        print('ForumListView: Building with state: ${state.runtimeType} for category: $category');
-        
         if (state is ForumLoading) {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
+          return _buildLoadingState();
         }
 
         if (state is ForumsLoaded) {
-          print('ForumListView: Forums loaded - ${state.forums.length} forums for ${state.category}');
-          
-          // Only show forums for this category
           if (state.category != category) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
+            return _buildLoadingState();
           }
-          
+
           if (state.forums.isEmpty) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.forum_outlined,
-                    size: AppDimensions.iconXXL,
-                    color: AppColors.textSecondary,
-                  ),
-                  SizedBox(height: AppDimensions.spaceM),
-                  Text(
-                    l10n.noForumsAvailable,
-                    style: AppTextStyles.h3.copyWith(color: AppColors.textSecondary),
-                  ),
-                  SizedBox(height: AppDimensions.spaceS),
-                  Text(
-                    l10n.noCommentsYet,
-                    style: AppTextStyles.bodySmall.copyWith(color: AppColors.textSecondary),
-                  ),
-                ],
-              ),
-            );
+            return _buildEmptyState(l10n);
           }
 
           return RefreshIndicator(
             onRefresh: () async {
+              HapticFeedback.lightImpact();
               context.read<ForumBloc>().add(RefreshForums(category));
               await Future.delayed(AppDurations.animationMedium);
             },
+            color: const Color(0xFF8B5CF6),
             child: ListView.builder(
               itemCount: state.forums.length,
-              padding: EdgeInsets.symmetric(vertical: AppDimensions.spaceS),
+              padding: EdgeInsets.all(AppDimensions.screenPaddingH),
               itemBuilder: (context, index) {
-                return ForumListItem(forum: state.forums[index]);
+                return FadeSlideWidget(
+                  duration: AppDurations.animationMedium,
+                  delay: Duration(milliseconds: 50 * index),
+                  direction: SlideDirection.up,
+                  slideOffset: 20,
+                  child: ForumListItem(
+                    forum: state.forums[index],
+                    index: index,
+                  ),
+                );
               },
             ),
           );
         }
 
         if (state is ForumError) {
-          return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(Icons.error_outline, size: AppDimensions.iconXXL, color: AppColors.error),
-                SizedBox(height: AppDimensions.spaceM),
-                Text(
-                  l10n.errorPrefix(state.message),
-                  textAlign: TextAlign.center,
-                  style: AppTextStyles.bodyMedium.copyWith(color: AppColors.error),
-                ),
-                SizedBox(height: AppDimensions.spaceM),
-                ElevatedButton(
-                  onPressed: () {
-                    context.read<ForumBloc>().add(LoadForums(category));
-                  },
-                  child: Text(l10n.retry),
-                ),
-              ],
-            ),
-          );
+          return _buildErrorState(context, l10n, state.message);
         }
 
-        // Initial state
-        return const Center(
-          child: CircularProgressIndicator(),
+        return _buildLoadingState();
+      },
+    );
+  }
+
+  Widget _buildLoadingState() {
+    return ListView.builder(
+      itemCount: 5,
+      padding: EdgeInsets.all(AppDimensions.screenPaddingH),
+      itemBuilder: (context, index) {
+        return FadeSlideWidget(
+          duration: AppDurations.animationShort,
+          delay: Duration(milliseconds: 50 * index),
+          child: Padding(
+            padding: EdgeInsets.only(bottom: AppDimensions.spaceM),
+            child: ShimmerLoading(
+              child: Container(
+                height: 120,
+                decoration: BoxDecoration(
+                  color: AppColors.shimmerBase,
+                  borderRadius: AppDimensions.borderRadiusL,
+                ),
+              ),
+            ),
+          ),
         );
       },
+    );
+  }
+
+  Widget _buildEmptyState(AppLocalizations l10n) {
+    return FadeSlideWidget(
+      duration: AppDurations.animationMedium,
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              padding: EdgeInsets.all(AppDimensions.spaceXL),
+              decoration: BoxDecoration(
+                color: const Color(0xFF8B5CF6).withValues(alpha: 0.1),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.forum_outlined,
+                size: AppDimensions.iconXXL,
+                color: const Color(0xFF8B5CF6),
+              ),
+            ),
+            SizedBox(height: AppDimensions.spaceL),
+            Text(
+              l10n.noForumsAvailable,
+              style: AppTextStyles.h4.copyWith(color: AppColors.textPrimary),
+            ),
+            SizedBox(height: AppDimensions.spaceS),
+            Text(
+              'Be the first to start a discussion!',
+              style: AppTextStyles.body2.copyWith(color: AppColors.textSecondary),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildErrorState(
+    BuildContext context,
+    AppLocalizations l10n,
+    String message,
+  ) {
+    return FadeSlideWidget(
+      duration: AppDurations.animationMedium,
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              padding: EdgeInsets.all(AppDimensions.spaceL),
+              decoration: BoxDecoration(
+                color: AppColors.error.withValues(alpha: 0.1),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.error_outline_rounded,
+                size: AppDimensions.iconXXL,
+                color: AppColors.error,
+              ),
+            ),
+            SizedBox(height: AppDimensions.spaceL),
+            Text(
+              'Something went wrong',
+              style: AppTextStyles.h4.copyWith(color: AppColors.textPrimary),
+            ),
+            SizedBox(height: AppDimensions.spaceS),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: AppDimensions.spaceXL),
+              child: Text(
+                message,
+                textAlign: TextAlign.center,
+                style: AppTextStyles.body2.copyWith(color: AppColors.textSecondary),
+              ),
+            ),
+            SizedBox(height: AppDimensions.spaceL),
+            ScaleTapWidget(
+              onTap: () {
+                HapticFeedback.lightImpact();
+                context.read<ForumBloc>().add(LoadForums(category));
+              },
+              child: Container(
+                padding: EdgeInsets.symmetric(
+                  horizontal: AppDimensions.spaceL,
+                  vertical: AppDimensions.spaceM,
+                ),
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [Color(0xFF8B5CF6), Color(0xFF7C3AED)],
+                  ),
+                  borderRadius: AppDimensions.borderRadiusM,
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color(0xFF8B5CF6).withValues(alpha: 0.3),
+                      blurRadius: 8,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.refresh_rounded,
+                      color: AppColors.white,
+                      size: AppDimensions.iconS,
+                    ),
+                    SizedBox(width: AppDimensions.spaceS),
+                    Text(l10n.retry, style: AppTextStyles.button),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

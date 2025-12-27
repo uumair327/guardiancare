@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_gemini/flutter_gemini.dart';
 import 'package:guardiancare/core/constants/constants.dart';
 import 'package:guardiancare/core/error/failures.dart';
@@ -19,14 +20,25 @@ abstract class GeminiAIService {
 }
 
 /// Implementation of [GeminiAIService] using Flutter Gemini package
+/// 
+/// Includes fallback mechanism when Gemini API fails to ensure
+/// recommendations are always generated.
 class GeminiAIServiceImpl implements GeminiAIService {
   final Gemini _gemini;
+  final bool _useFallback;
 
   /// Creates a [GeminiAIServiceImpl] with the provided Gemini instance
   /// 
   /// If no instance is provided, initializes Gemini with the API key
   /// and uses the singleton instance.
-  GeminiAIServiceImpl({Gemini? gemini}) : _gemini = gemini ?? _initGemini();
+  /// 
+  /// [useFallback] - If true, generates fallback search terms when API fails.
+  /// Defaults to true for production use.
+  GeminiAIServiceImpl({
+    Gemini? gemini,
+    bool useFallback = true,
+  })  : _gemini = gemini ?? _initGemini(),
+        _useFallback = useFallback;
 
   static Gemini _initGemini() {
     try {
@@ -45,24 +57,48 @@ class GeminiAIServiceImpl implements GeminiAIService {
 
     try {
       final promptText = _buildPrompt(category);
-      // Using prompt instead of deprecated text method
+      debugPrint('🤖 Calling Gemini API for category: $category');
+      
+      // Using prompt method with Part.text for flutter_gemini 3.0.0
       final response = await _gemini.prompt(parts: [Part.text(promptText)]);
 
       if (response == null || response.output == null) {
-        return const Left(GeminiApiFailure('Gemini API returned null response'));
+        debugPrint('⚠️ Gemini API returned null response');
+        return _handleFallback(category, 'Gemini API returned null response');
       }
 
       final searchTerms = _parseSearchTerms(response.output!);
       
       if (searchTerms.isEmpty) {
-        return const Left(GeminiApiFailure('No valid search terms generated'));
+        debugPrint('⚠️ No valid search terms generated from Gemini');
+        return _handleFallback(category, 'No valid search terms generated');
       }
 
+      debugPrint('✅ Gemini generated ${searchTerms.length} search terms: $searchTerms');
       return Right(searchTerms);
     } catch (e) {
-      // No fallback logic - return failure on error as per Requirements 4.5
-      return Left(GeminiApiFailure('Gemini API error: ${e.toString()}'));
+      debugPrint('❌ Gemini API error: $e');
+      return _handleFallback(category, 'Gemini API error: ${e.toString()}');
     }
+  }
+
+  /// Handles fallback when Gemini API fails
+  Either<Failure, List<String>> _handleFallback(String category, String errorMessage) {
+    if (_useFallback) {
+      final fallbackTerms = _generateFallbackSearchTerms(category);
+      debugPrint('🔄 Using fallback search terms: $fallbackTerms');
+      return Right(fallbackTerms);
+    }
+    return Left(GeminiApiFailure(errorMessage));
+  }
+
+  /// Generates fallback search terms when Gemini API fails
+  List<String> _generateFallbackSearchTerms(String category) {
+    final sanitizedCategory = category.toLowerCase().trim();
+    return [
+      'child safety $sanitizedCategory parenting tips',
+      'parenting guide $sanitizedCategory children education',
+    ];
   }
 
   /// Builds the prompt for Gemini AI
@@ -82,6 +118,8 @@ class GeminiAIServiceImpl implements GeminiAIService {
         .where((term) => term.trim().isNotEmpty)
         .map((term) => term.trim())
         .where((term) => !term.startsWith('-')) // Filter out bullet points
+        .where((term) => !term.startsWith('*')) // Filter out asterisk bullets
+        .where((term) => term.length > 3) // Filter out very short terms
         .toList();
   }
 }
