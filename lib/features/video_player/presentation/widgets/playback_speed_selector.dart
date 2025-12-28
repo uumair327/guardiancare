@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:guardiancare/core/core.dart';
+import 'package:guardiancare/features/video_player/presentation/constants/strings.dart';
 
 /// Playback speed selector with education-friendly design
 class PlaybackSpeedSelector extends StatelessWidget {
@@ -36,7 +37,7 @@ class PlaybackSpeedSelector extends StatelessWidget {
               bottom: AppDimensions.spaceM,
             ),
             child: Text(
-              'Playback Speed',
+              VideoPlayerStrings.playbackSpeed,
               style: AppTextStyles.body1.copyWith(
                 color: AppColors.white,
                 fontWeight: FontWeight.w600,
@@ -99,7 +100,7 @@ class _SpeedChipState extends State<_SpeedChip>
   }
 
   String _formatSpeed(double speed) {
-    if (speed == 1.0) return 'Normal';
+    if (speed == 1.0) return VideoPlayerStrings.normal;
     return '${speed}x';
   }
 

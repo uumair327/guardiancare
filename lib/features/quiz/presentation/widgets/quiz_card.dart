@@ -1,10 +1,12 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:guardiancare/core/core.dart';
 
 /// Modern quiz card with 3D effect and animations
 /// Education-friendly design with vibrant colors
+///
+/// Uses centralized [ScaleTapWidget] for scale-tap animation,
+/// while maintaining the 3D tilt effect on pan gestures.
 class QuizCard extends StatefulWidget {
   final String name;
   final String? thumbnail;
@@ -25,12 +27,17 @@ class QuizCard extends StatefulWidget {
   State<QuizCard> createState() => _QuizCardState();
 }
 
-class _QuizCardState extends State<QuizCard>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _scaleAnimation;
+class _QuizCardState extends State<QuizCard> {
   bool _isPressed = false;
   Offset _tiltOffset = Offset.zero;
+
+  /// Custom animation config for quiz card (0.96 scale).
+  static const _quizCardConfig = AnimationConfig(
+    duration: AppDurations.animationShort,
+    curve: AppCurves.tap,
+    begin: 1.0,
+    end: 0.96,
+  );
 
   // Quiz colors for visual variety
   static const List<Color> _quizColors = [
@@ -45,35 +52,6 @@ class _QuizCardState extends State<QuizCard>
   ];
 
   Color get _cardColor => _quizColors[widget.index % _quizColors.length];
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: AppDurations.animationShort,
-    );
-
-    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.96).animate(
-      CurvedAnimation(parent: _controller, curve: AppCurves.tap),
-    );
-  }
-
-  void _onTapDown(TapDownDetails details) {
-    setState(() => _isPressed = true);
-    _controller.forward();
-    HapticFeedback.lightImpact();
-  }
-
-  void _onTapUp(TapUpDetails details) {
-    setState(() => _isPressed = false);
-    _controller.reverse();
-  }
-
-  void _onTapCancel() {
-    setState(() => _isPressed = false);
-    _controller.reverse();
-  }
 
   void _onPanUpdate(DragUpdateDetails details) {
     final RenderBox box = context.findRenderObject() as RenderBox;
@@ -95,53 +73,43 @@ class _QuizCardState extends State<QuizCard>
     setState(() => _tiltOffset = Offset.zero);
   }
 
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
+  void _onPressStateChanged(bool isPressed) {
+    setState(() => _isPressed = isPressed);
   }
 
   @override
   Widget build(BuildContext context) {
-    return RepaintBoundary(
-      child: GestureDetector(
-        onTapDown: _onTapDown,
-        onTapUp: _onTapUp,
-        onTapCancel: _onTapCancel,
+    // Use GestureDetector for pan gestures (3D tilt effect)
+    // ScaleTapWidget handles tap and scale animation
+    return GestureDetector(
+      onPanUpdate: _onPanUpdate,
+      onPanEnd: _onPanEnd,
+      child: _ScaleTapWithPressCallback(
+        config: _quizCardConfig,
         onTap: widget.onTap,
-        onPanUpdate: _onPanUpdate,
-        onPanEnd: _onPanEnd,
-        child: AnimatedBuilder(
-          animation: _controller,
-          builder: (context, child) {
-            return Transform.scale(
-              scale: _scaleAnimation.value,
-              child: AnimatedContainer(
-                duration: AppDurations.animationShort,
-                curve: AppCurves.standard,
-                transform: Matrix4.identity()
-                  ..setEntry(3, 2, 0.001)
-                  ..rotateX(_tiltOffset.dx)
-                  ..rotateY(_tiltOffset.dy),
-                transformAlignment: Alignment.center,
-                decoration: BoxDecoration(
-                  borderRadius: AppDimensions.borderRadiusL,
-                  boxShadow: [
-                    BoxShadow(
-                      color: _cardColor.withValues(alpha: _isPressed ? 0.2 : 0.3),
-                      blurRadius: _isPressed ? 8 : 16,
-                      offset: Offset(
-                        _tiltOffset.dy * 10,
-                        _tiltOffset.dx * 10 + (_isPressed ? 4 : 8),
-                      ),
-                      spreadRadius: _isPressed ? 0 : 2,
-                    ),
-                  ],
+        enableHaptic: true,
+        hapticType: HapticFeedbackType.light,
+        onPressStateChanged: _onPressStateChanged,
+        child: AppAnimatedContainer(
+          transform: Matrix4.identity()
+            ..setEntry(3, 2, 0.001)
+            ..rotateX(_tiltOffset.dx)
+            ..rotateY(_tiltOffset.dy),
+          transformAlignment: Alignment.center,
+          decoration: BoxDecoration(
+            borderRadius: AppDimensions.borderRadiusL,
+            boxShadow: [
+              BoxShadow(
+                color: _cardColor.withValues(alpha: _isPressed ? 0.2 : 0.3),
+                blurRadius: _isPressed ? 8 : 16,
+                offset: Offset(
+                  _tiltOffset.dy * 10,
+                  _tiltOffset.dx * 10 + (_isPressed ? 4 : 8),
                 ),
-                child: child,
+                spreadRadius: _isPressed ? 0 : 2,
               ),
-            );
-          },
+            ],
+          ),
           child: ClipRRect(
             borderRadius: AppDimensions.borderRadiusL,
             child: Stack(
@@ -230,7 +198,7 @@ class _QuizCardState extends State<QuizCard>
                           ),
                           SizedBox(width: AppDimensions.spaceXS),
                           Text(
-                            'Start Quiz',
+                            UIStrings.startQuiz,
                             style: AppTextStyles.caption.copyWith(
                               color: AppColors.white.withValues(alpha: 0.8),
                             ),
@@ -325,5 +293,97 @@ class _QuizCardState extends State<QuizCard>
       return '${e[0].toUpperCase()}${e.substring(1)}';
     }).toList();
     return formatted.join(' ');
+  }
+}
+
+/// A wrapper around ScaleTapWidget that provides press state callbacks.
+///
+/// This is used by QuizCard to track press state for visual effects
+/// (shadow changes, opacity changes) while using the centralized
+/// ScaleTapWidget for scale animation.
+class _ScaleTapWithPressCallback extends StatefulWidget {
+  final Widget child;
+  final VoidCallback? onTap;
+  final AnimationConfig? config;
+  final bool enableHaptic;
+  final HapticFeedbackType hapticType;
+  final ValueChanged<bool>? onPressStateChanged;
+
+  const _ScaleTapWithPressCallback({
+    required this.child,
+    this.onTap,
+    this.config,
+    this.enableHaptic = true,
+    this.hapticType = HapticFeedbackType.light,
+    this.onPressStateChanged,
+  });
+
+  @override
+  State<_ScaleTapWithPressCallback> createState() => _ScaleTapWithPressCallbackState();
+}
+
+class _ScaleTapWithPressCallbackState extends State<_ScaleTapWithPressCallback>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _scaleAnimation;
+
+  AnimationConfig get _effectiveConfig =>
+      widget.config ?? AnimationPresets.scaleButton;
+
+  @override
+  void initState() {
+    super.initState();
+    final config = _effectiveConfig;
+    _controller = AnimationController(
+      vsync: this,
+      duration: config.duration,
+    );
+    _scaleAnimation = config.createAnimation(_controller);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _onTapDown(TapDownDetails details) {
+    _controller.forward();
+    widget.onPressStateChanged?.call(true);
+    if (widget.enableHaptic) {
+      widget.hapticType.trigger();
+    }
+  }
+
+  void _onTapUp(TapUpDetails details) {
+    _controller.reverse();
+    widget.onPressStateChanged?.call(false);
+  }
+
+  void _onTapCancel() {
+    _controller.reverse();
+    widget.onPressStateChanged?.call(false);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return RepaintBoundary(
+      child: GestureDetector(
+        onTapDown: _onTapDown,
+        onTapUp: _onTapUp,
+        onTapCancel: _onTapCancel,
+        onTap: widget.onTap,
+        child: AnimatedBuilder(
+          animation: _scaleAnimation,
+          builder: (context, child) {
+            return Transform.scale(
+              scale: _scaleAnimation.value,
+              child: child,
+            );
+          },
+          child: widget.child,
+        ),
+      ),
+    );
   }
 }

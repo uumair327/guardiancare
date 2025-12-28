@@ -109,5 +109,25 @@
   "noCategoriesAvailable": "কোনো বিভাগ উপলব্ধ নেই",
   "noVideosAvailable": "কোনো ভিডিও উপলব্ধ নেই"
 ,
-  "noResourcesAvailable": "?? ???? ????? ??"
+  "noResourcesAvailable": "কোনো সম্পদ উপলব্ধ নেই",
+  "forChildren": "শিশুদের জন্য",
+  "connectAndShare": "সংযুক্ত হন এবং অভিজ্ঞতা শেয়ার করুন",
+  "beFirstToDiscuss": "আলোচনা শুরু করার প্রথম ব্যক্তি হন!",
+  "guidelinesTitle": "ফোরাম নির্দেশিকা",
+  "guidelinesWelcome": "গার্ডিয়ান কেয়ার ফোরামে স্বাগতম। অনুগ্রহ করে এই নির্দেশিকাগুলি অনুসরণ করুন:",
+  "guidelineRespect": "সকল সদস্যদের প্রতি সম্মানজনক এবং বিনয়ী হন।",
+  "guidelineNoAbuse": "অপমানজনক, হয়রানিমূলক বা ক্ষতিকর ভাষা ব্যবহার করবেন না।",
+  "guidelineNoHarmful": "অনুপযুক্ত বা ক্ষতিকর বিষয়বস্তু শেয়ার করা থেকে বিরত থাকুন।",
+  "guidelineConstructive": "এটি শিশু সুরক্ষা সম্পর্কে গঠনমূলক আলোচনার জন্য একটি স্থান।",
+  "discussionTitle": "আলোচনা",
+  "communityDiscussion": "সম্প্রদায় আলোচনা",
+  "beFirstToComment": "আপনার মতামত শেয়ার করার প্রথম ব্যক্তি হন!",
+  "startTypingBelow": "নিচে টাইপ করা শুরু করুন",
+  "commentsCount": "{count, plural, =0{কোনো মন্তব্য নেই} =1{1টি মন্তব্য} other{{count}টি মন্তব্য}}",
+  "parentalAccessRequired": "অভিভাবক অ্যাক্সেস প্রয়োজন",
+  "parentalAccessDescription": "এই বিভাগটি সুরক্ষিত। চালিয়ে যেতে আপনার অভিভাবক কী প্রবেশ করুন।",
+  "invalidKeyTryAgain": "অবৈধ কী। আবার চেষ্টা করুন।",
+  "forgotYourKey": "আপনার কী ভুলে গেছেন?",
+  "protectedForChildSafety": "শিশু সুরক্ষার জন্য সুরক্ষিত",
+  "unlock": "আনলক করুন"
 }

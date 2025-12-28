@@ -168,7 +168,6 @@ class GuardiancareState extends State<Guardiancare> with WidgetsBindingObserver 
     return BlocProvider(
       create: (context) => di.sl<AuthBloc>(),
       child: MaterialApp.router(
-        key: ValueKey(_locale.languageCode), // Force rebuild on locale change
         title: AppStrings.appName,
         routerConfig: AppRouter.router,
         debugShowCheckedModeBanner: false,

@@ -109,5 +109,25 @@
   "noCategoriesAvailable": "ಯಾವುದೇ ವರ್ಗಗಳು ಲಭ್ಯವಿಲ್ಲ",
   "noVideosAvailable": "ಯಾವುದೇ ವೀಡಿಯೊಗಳು ಲಭ್ಯವಿಲ್ಲ"
 ,
-  "noResourcesAvailable": "??? ??????? ??????"
+  "noResourcesAvailable": "ಯಾವುದೇ ಸಂಪನ್ಮೂಲಗಳು ಲಭ್ಯವಿಲ್ಲ",
+  "forChildren": "ಮಕ್ಕಳಿಗಾಗಿ",
+  "connectAndShare": "ಸಂಪರ್ಕಿಸಿ ಮತ್ತು ಅನುಭವಗಳನ್ನು ಹಂಚಿಕೊಳ್ಳಿ",
+  "beFirstToDiscuss": "ಚರ್ಚೆಯನ್ನು ಪ್ರಾರಂಭಿಸುವ ಮೊದಲಿಗರಾಗಿ!",
+  "guidelinesTitle": "ವೇದಿಕೆ ಮಾರ್ಗಸೂಚಿಗಳು",
+  "guidelinesWelcome": "ಗಾರ್ಡಿಯನ್ ಕೇರ್ ವೇದಿಕೆಗೆ ಸ್ವಾಗತ. ದಯವಿಟ್ಟು ಈ ಮಾರ್ಗಸೂಚಿಗಳನ್ನು ಅನುಸರಿಸಿ:",
+  "guidelineRespect": "ಎಲ್ಲಾ ಸದಸ್ಯರಿಗೆ ಗೌರವಯುತ ಮತ್ತು ಸೌಜನ್ಯಯುತವಾಗಿರಿ.",
+  "guidelineNoAbuse": "ಅವಮಾನಕರ, ಕಿರುಕುಳ ಅಥವಾ ಹಾನಿಕಾರಕ ಭಾಷೆಯನ್ನು ಬಳಸಬೇಡಿ.",
+  "guidelineNoHarmful": "ಅನುಚಿತ ಅಥವಾ ಹಾನಿಕಾರಕ ವಿಷಯವನ್ನು ಹಂಚಿಕೊಳ್ಳುವುದನ್ನು ತಪ್ಪಿಸಿ.",
+  "guidelineConstructive": "ಇದು ಮಕ್ಕಳ ಸುರಕ್ಷತೆಯ ಬಗ್ಗೆ ರಚನಾತ್ಮಕ ಚರ್ಚೆಗಳಿಗಾಗಿ ಒಂದು ಸ್ಥಳವಾಗಿದೆ.",
+  "discussionTitle": "ಚರ್ಚೆ",
+  "communityDiscussion": "ಸಮುದಾಯ ಚರ್ಚೆ",
+  "beFirstToComment": "ನಿಮ್ಮ ಆಲೋಚನೆಗಳನ್ನು ಹಂಚಿಕೊಳ್ಳುವ ಮೊದಲಿಗರಾಗಿ!",
+  "startTypingBelow": "ಕೆಳಗೆ ಟೈಪ್ ಮಾಡಲು ಪ್ರಾರಂಭಿಸಿ",
+  "commentsCount": "{count, plural, =0{ಯಾವುದೇ ಕಾಮೆಂಟ್‌ಗಳಿಲ್ಲ} =1{1 ಕಾಮೆಂಟ್} other{{count} ಕಾಮೆಂಟ್‌ಗಳು}}",
+  "parentalAccessRequired": "ಪೋಷಕರ ಪ್ರವೇಶ ಅಗತ್ಯ",
+  "parentalAccessDescription": "ಈ ವಿಭಾಗವು ರಕ್ಷಿತವಾಗಿದೆ. ಮುಂದುವರಿಸಲು ದಯವಿಟ್ಟು ನಿಮ್ಮ ಪೋಷಕರ ಕೀಯನ್ನು ನಮೂದಿಸಿ.",
+  "invalidKeyTryAgain": "ಅಮಾನ್ಯ ಕೀ. ದಯವಿಟ್ಟು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "forgotYourKey": "ನಿಮ್ಮ ಕೀ ಮರೆತಿರುವಿರಾ?",
+  "protectedForChildSafety": "ಮಕ್ಕಳ ಸುರಕ್ಷತೆಗಾಗಿ ರಕ್ಷಿತ",
+  "unlock": "ಅನ್‌ಲಾಕ್ ಮಾಡಿ"
 }

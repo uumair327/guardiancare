@@ -1,3 +1,4 @@
+import 'package:guardiancare/core/constants/constants.dart';
 import 'package:guardiancare/core/error/exceptions.dart';
 import 'package:guardiancare/features/emergency/data/models/emergency_contact_model.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -51,7 +52,7 @@ class EmergencyLocalDataSourceImpl implements EmergencyLocalDataSource {
           .map((contact) => EmergencyContactModel.fromJson(contact))
           .toList();
     } catch (e) {
-      throw CacheException('Failed to get emergency contacts: ${e.toString()}');
+      throw CacheException(ErrorStrings.withDetails(ErrorStrings.getEmergencyContactsError, e.toString()));
     }
   }
 
@@ -74,7 +75,7 @@ class EmergencyLocalDataSourceImpl implements EmergencyLocalDataSource {
           .toList();
     } catch (e) {
       throw CacheException(
-          'Failed to get contacts by category: ${e.toString()}');
+          ErrorStrings.withDetails(ErrorStrings.getContactsByCategoryError, e.toString()));
     }
   }
 
@@ -94,11 +95,11 @@ class EmergencyLocalDataSourceImpl implements EmergencyLocalDataSource {
       );
 
       if (!launched) {
-        throw CacheException('Could not launch phone dialer for $phoneNumber');
+        throw CacheException(ErrorStrings.withDetails(ErrorStrings.phoneDialerError, phoneNumber));
       }
     } catch (e) {
       print('Error making phone call: $e');
-      throw CacheException('Failed to make phone call: ${e.toString()}');
+      throw CacheException(ErrorStrings.withDetails(ErrorStrings.makePhoneCallError, e.toString()));
     }
   }
 }

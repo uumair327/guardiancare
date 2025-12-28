@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:guardiancare/core/constants/constants.dart';
 import 'package:guardiancare/core/error/error.dart';
 import 'package:guardiancare/features/consent/data/datasources/consent_local_datasource.dart';
 import 'package:guardiancare/features/consent/data/datasources/consent_remote_datasource.dart';
@@ -24,7 +25,7 @@ class ConsentRepositoryImpl implements ConsentRepository {
     } on ServerException catch (e) {
       return Left(ServerFailure(e.message));
     } catch (e) {
-      return Left(ServerFailure('Failed to submit consent: ${e.toString()}'));
+      return Left(ServerFailure(ErrorStrings.withDetails(ErrorStrings.submitConsentError, e.toString())));
     }
   }
 
@@ -36,7 +37,7 @@ class ConsentRepositoryImpl implements ConsentRepository {
     } on ServerException catch (e) {
       return Left(ServerFailure(e.message));
     } catch (e) {
-      return Left(ServerFailure('Failed to verify key: ${e.toString()}'));
+      return Left(ServerFailure(ErrorStrings.withDetails(ErrorStrings.verifyKeyError, e.toString())));
     }
   }
 
@@ -49,7 +50,7 @@ class ConsentRepositoryImpl implements ConsentRepository {
     } on ServerException catch (e) {
       return Left(ServerFailure(e.message));
     } catch (e) {
-      return Left(ServerFailure('Failed to reset key: ${e.toString()}'));
+      return Left(ServerFailure(ErrorStrings.withDetails(ErrorStrings.resetKeyError, e.toString())));
     }
   }
 
@@ -61,7 +62,7 @@ class ConsentRepositoryImpl implements ConsentRepository {
     } on ServerException catch (e) {
       return Left(ServerFailure(e.message));
     } catch (e) {
-      return Left(ServerFailure('Failed to get consent: ${e.toString()}'));
+      return Left(ServerFailure(ErrorStrings.withDetails(ErrorStrings.getConsentError, e.toString())));
     }
   }
 
@@ -73,7 +74,7 @@ class ConsentRepositoryImpl implements ConsentRepository {
     } on ServerException catch (e) {
       return Left(ServerFailure(e.message));
     } catch (e) {
-      return Left(ServerFailure('Failed to check consent: ${e.toString()}'));
+      return Left(ServerFailure(ErrorStrings.withDetails(ErrorStrings.checkConsentError, e.toString())));
     }
   }
 
@@ -83,7 +84,7 @@ class ConsentRepositoryImpl implements ConsentRepository {
       await localDataSource.saveParentalKey(key);
       return const Right(null);
     } catch (e) {
-      return Left(CacheFailure('Failed to save parental key locally: ${e.toString()}'));
+      return Left(CacheFailure(ErrorStrings.withDetails(ErrorStrings.saveParentalKeyLocallyError, e.toString())));
     }
   }
 
@@ -93,7 +94,7 @@ class ConsentRepositoryImpl implements ConsentRepository {
       final key = await localDataSource.getParentalKey();
       return Right(key);
     } catch (e) {
-      return Left(CacheFailure('Failed to get local parental key: ${e.toString()}'));
+      return Left(CacheFailure(ErrorStrings.withDetails(ErrorStrings.getLocalParentalKeyError, e.toString())));
     }
   }
 }

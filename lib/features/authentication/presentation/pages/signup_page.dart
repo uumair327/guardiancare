@@ -185,7 +185,7 @@ class _SignupPageState extends State<SignupPage> {
                             ),
                           ),
                           RadioListTile<String>(
-                            title: const Text('Parent/Guardian'),
+                            title: const Text(UIStrings.parentGuardian),
                             value: 'parent',
                             groupValue: _selectedRole,
                             onChanged: (value) {
@@ -196,7 +196,7 @@ class _SignupPageState extends State<SignupPage> {
                             activeColor: AppColors.primary,
                           ),
                           RadioListTile<String>(
-                            title: const Text('Child'),
+                            title: const Text(UIStrings.child),
                             value: 'child',
                             groupValue: _selectedRole,
                             onChanged: (value) {

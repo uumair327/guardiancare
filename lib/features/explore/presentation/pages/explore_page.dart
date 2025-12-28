@@ -177,7 +177,7 @@ class _ExploreHeaderState extends State<_ExploreHeader>
                             ),
                             SizedBox(height: AppDimensions.spaceXS),
                             Text(
-                              'Discover learning resources',
+                              UIStrings.discoverLearningResources,
                               style: AppTextStyles.body2.copyWith(
                                 color: AppColors.white.withValues(alpha: 0.85),
                               ),
@@ -423,7 +423,7 @@ class _RecommendedTabState extends State<_RecommendedTab> {
                     ],
                   ),
                   child: Text(
-                    'Sign In',
+                    UIStrings.signIn,
                     style: AppTextStyles.button,
                   ),
                 ),
@@ -478,7 +478,7 @@ class _RecommendedTabState extends State<_RecommendedTab> {
               ),
               SizedBox(height: AppDimensions.spaceL),
               Text(
-                'Something went wrong',
+                ErrorStrings.generic,
                 style: AppTextStyles.h4.copyWith(color: AppColors.textPrimary),
               ),
               SizedBox(height: AppDimensions.spaceS),
@@ -734,7 +734,7 @@ class _RecommendedVideoCardState extends State<_RecommendedVideoCard>
                             borderRadius: AppDimensions.borderRadiusXS,
                           ),
                           child: Text(
-                            'Recommended',
+                            UIStrings.recommended,
                             style: AppTextStyles.caption.copyWith(
                               color: _accentColor,
                               fontWeight: FontWeight.w600,
@@ -888,7 +888,7 @@ class _ResourcesTab extends StatelessWidget {
               ),
               SizedBox(height: AppDimensions.spaceL),
               Text(
-                'Failed to load resources',
+                ErrorStrings.failedTo('load resources'),
                 style: AppTextStyles.h4.copyWith(color: AppColors.textPrimary),
               ),
             ],

@@ -115,5 +115,25 @@
   "errorLaunchingEmail": "ईमेल लॉन्च करने में त्रुटि: {error}",
   "errorPrefix": "त्रुटि: {error}"
 ,
-  "noResourcesAvailable": "?? ???? ????? ??"
+  "noResourcesAvailable": "कोई संसाधन उपलब्ध नहीं",
+  "forChildren": "बच्चों के लिए",
+  "connectAndShare": "जुड़ें और अनुभव साझा करें",
+  "beFirstToDiscuss": "चर्चा शुरू करने वाले पहले व्यक्ति बनें!",
+  "guidelinesTitle": "फोरम दिशानिर्देश",
+  "guidelinesWelcome": "गार्जियन केयर फोरम में आपका स्वागत है। कृपया इन दिशानिर्देशों का पालन करें:",
+  "guidelineRespect": "सभी सदस्यों के प्रति सम्मानजनक और विनम्र रहें।",
+  "guidelineNoAbuse": "अपमानजनक, उत्पीड़न या हानिकारक भाषा का उपयोग न करें।",
+  "guidelineNoHarmful": "अनुचित या हानिकारक सामग्री साझा करने से बचें।",
+  "guidelineConstructive": "यह बाल सुरक्षा पर रचनात्मक चर्चाओं के लिए एक स्थान है।",
+  "discussionTitle": "चर्चा",
+  "communityDiscussion": "सामुदायिक चर्चा",
+  "beFirstToComment": "अपने विचार साझा करने वाले पहले व्यक्ति बनें!",
+  "startTypingBelow": "नीचे टाइप करना शुरू करें",
+  "commentsCount": "{count, plural, =0{कोई टिप्पणी नहीं} =1{1 टिप्पणी} other{{count} टिप्पणियां}}",
+  "parentalAccessRequired": "अभिभावक पहुंच आवश्यक",
+  "parentalAccessDescription": "यह अनुभाग सुरक्षित है। जारी रखने के लिए कृपया अपनी अभिभावक कुंजी दर्ज करें।",
+  "invalidKeyTryAgain": "अमान्य कुंजी। कृपया पुनः प्रयास करें।",
+  "forgotYourKey": "अपनी कुंजी भूल गए?",
+  "protectedForChildSafety": "बाल सुरक्षा के लिए संरक्षित",
+  "unlock": "अनलॉक करें"
 }

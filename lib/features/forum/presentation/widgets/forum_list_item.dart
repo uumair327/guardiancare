@@ -117,7 +117,7 @@ class _ForumListItemState extends State<ForumListItem>
     } else if (difference.inMinutes > 0) {
       return '${difference.inMinutes}m ago';
     } else {
-      return 'Just now';
+      return UIStrings.justNow;
     }
   }
 
@@ -322,18 +322,18 @@ class _ForumListItemState extends State<ForumListItem>
                         children: [
                           _buildBadge(
                             icon: Icons.chat_bubble_outline_rounded,
-                            label: 'Discussion',
+                            label: ForumStrings.discussion,
                             color: _primaryColor,
                           ),
                           SizedBox(width: AppDimensions.spaceS),
                           _buildBadge(
                             icon: Icons.family_restroom_rounded,
-                            label: 'Family',
+                            label: ForumStrings.family,
                             color: const Color(0xFF10B981),
                           ),
                           const Spacer(),
                           Text(
-                            'Tap to join',
+                            ForumStrings.tapToJoin,
                             style: AppTextStyles.caption.copyWith(
                               color: _primaryColor,
                               fontWeight: FontWeight.w500,

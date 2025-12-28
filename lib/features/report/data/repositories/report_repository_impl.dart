@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:guardiancare/core/constants/constants.dart';
 import 'package:guardiancare/core/error/error.dart';
 import 'package:guardiancare/features/report/data/datasources/report_local_datasource.dart';
 import 'package:guardiancare/features/report/data/models/report_model.dart';
@@ -32,7 +33,7 @@ class ReportRepositoryImpl implements ReportRepository {
 
       return Right(report);
     } catch (e) {
-      return Left(CacheFailure('Failed to create report: ${e.toString()}'));
+      return Left(CacheFailure(ErrorStrings.withDetails(ErrorStrings.createReportError, e.toString())));
     }
   }
 
@@ -47,7 +48,7 @@ class ReportRepositoryImpl implements ReportRepository {
     } on CacheException catch (e) {
       return Left(CacheFailure(e.message));
     } catch (e) {
-      return Left(CacheFailure('Failed to load report: ${e.toString()}'));
+      return Left(CacheFailure(ErrorStrings.withDetails(ErrorStrings.loadReportError, e.toString())));
     }
   }
 
@@ -60,7 +61,7 @@ class ReportRepositoryImpl implements ReportRepository {
     } on CacheException catch (e) {
       return Left(CacheFailure(e.message));
     } catch (e) {
-      return Left(CacheFailure('Failed to save report: ${e.toString()}'));
+      return Left(CacheFailure(ErrorStrings.withDetails(ErrorStrings.saveReportError, e.toString())));
     }
   }
 
@@ -72,7 +73,7 @@ class ReportRepositoryImpl implements ReportRepository {
     } on CacheException catch (e) {
       return Left(CacheFailure(e.message));
     } catch (e) {
-      return Left(CacheFailure('Failed to delete report: ${e.toString()}'));
+      return Left(CacheFailure(ErrorStrings.withDetails(ErrorStrings.deleteReportError, e.toString())));
     }
   }
 
@@ -84,7 +85,7 @@ class ReportRepositoryImpl implements ReportRepository {
     } on CacheException catch (e) {
       return Left(CacheFailure(e.message));
     } catch (e) {
-      return Left(CacheFailure('Failed to get saved reports: ${e.toString()}'));
+      return Left(CacheFailure(ErrorStrings.withDetails(ErrorStrings.getSavedReportsError, e.toString())));
     }
   }
 
@@ -97,7 +98,7 @@ class ReportRepositoryImpl implements ReportRepository {
       return Left(CacheFailure(e.message));
     } catch (e) {
       return Left(
-          CacheFailure('Failed to check report existence: ${e.toString()}'));
+          CacheFailure(ErrorStrings.withDetails(ErrorStrings.checkReportExistenceError, e.toString())));
     }
   }
 }

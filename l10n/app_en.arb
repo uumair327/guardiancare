@@ -615,5 +615,110 @@
   "noResourcesAvailable": "No resources available",
   "@noResourcesAvailable": {
     "description": "Message when no resources are available"
+  },
+  
+  "forChildren": "For Children",
+  "@forChildren": {
+    "description": "Tab label for children's forum"
+  },
+  
+  "connectAndShare": "Connect and share experiences",
+  "@connectAndShare": {
+    "description": "Forum header subtitle"
+  },
+  
+  "beFirstToDiscuss": "Be the first to start a discussion!",
+  "@beFirstToDiscuss": {
+    "description": "Empty forum state message"
+  },
+  
+  "guidelinesTitle": "Forum Guidelines",
+  "@guidelinesTitle": {
+    "description": "Forum guidelines dialog title"
+  },
+  
+  "guidelinesWelcome": "Welcome to the GuardianCare Forum. Please follow these guidelines:",
+  "@guidelinesWelcome": {
+    "description": "Forum guidelines welcome message"
+  },
+  
+  "guidelineRespect": "Be respectful and courteous to all members.",
+  "@guidelineRespect": {
+    "description": "Forum guideline about respect"
+  },
+  
+  "guidelineNoAbuse": "Do not use abusive, harassing, or harmful language.",
+  "@guidelineNoAbuse": {
+    "description": "Forum guideline about no abuse"
+  },
+  
+  "guidelineNoHarmful": "Avoid sharing inappropriate or harmful content.",
+  "@guidelineNoHarmful": {
+    "description": "Forum guideline about no harmful content"
+  },
+  
+  "guidelineConstructive": "This is a space for constructive discussions on child safety.",
+  "@guidelineConstructive": {
+    "description": "Forum guideline about constructive discussions"
+  },
+  
+  "discussionTitle": "Discussion",
+  "@discussionTitle": {
+    "description": "Forum discussion page title"
+  },
+  
+  "communityDiscussion": "Community Discussion",
+  "@communityDiscussion": {
+    "description": "Forum category label"
+  },
+  
+  "beFirstToComment": "Be the first to share your thoughts!",
+  "@beFirstToComment": {
+    "description": "Empty comments state message"
+  },
+  
+  "startTypingBelow": "Start typing below",
+  "@startTypingBelow": {
+    "description": "Hint to start typing a comment"
+  },
+  
+  "commentsCount": "{count, plural, =0{No Comments} =1{1 Comment} other{{count} Comments}}",
+  "@commentsCount": {
+    "description": "Number of comments with plural support",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  
+  "parentalAccessRequired": "Parental Access Required",
+  "@parentalAccessRequired": {
+    "description": "Title for parental lock overlay"
+  },
+  
+  "parentalAccessDescription": "This section is protected. Please enter your parental key to continue.",
+  "@parentalAccessDescription": {
+    "description": "Description for parental lock overlay"
+  },
+  
+  "invalidKeyTryAgain": "Invalid key. Please try again.",
+  "@invalidKeyTryAgain": {
+    "description": "Error message for invalid parental key"
+  },
+  
+  "forgotYourKey": "Forgot your key?",
+  "@forgotYourKey": {
+    "description": "Forgot key link text"
+  },
+  
+  "protectedForChildSafety": "Protected for child safety",
+  "@protectedForChildSafety": {
+    "description": "Info badge text on parental lock"
+  },
+  
+  "unlock": "Unlock",
+  "@unlock": {
+    "description": "Unlock button text"
   }
 }

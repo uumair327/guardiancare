@@ -3,9 +3,10 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
 import 'package:guardiancare/core/error/failures.dart';
 import 'package:guardiancare/core/usecases/usecase.dart';
-import 'package:guardiancare/features/quiz/data/repositories/recommendation_repository.dart';
-import 'package:guardiancare/features/quiz/services/gemini_ai_service.dart';
-import 'package:guardiancare/features/quiz/services/youtube_search_service.dart';
+import 'package:guardiancare/features/quiz/domain/entities/quiz_recommendation_entity.dart';
+import 'package:guardiancare/features/quiz/domain/repositories/recommendation_repository.dart';
+import 'package:guardiancare/features/quiz/domain/services/gemini_ai_service.dart';
+import 'package:guardiancare/features/quiz/domain/services/youtube_search_service.dart';
 
 /// Parameters for the RecommendationUseCase
 /// 

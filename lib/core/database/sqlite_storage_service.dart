@@ -1,8 +1,10 @@
 import 'package:flutter/foundation.dart' show kIsWeb, debugPrint;
-import 'package:guardiancare/core/database/database_service.dart';
-import 'package:guardiancare/core/database/daos/quiz_dao.dart';
-import 'package:guardiancare/core/database/daos/video_dao.dart';
-import 'package:guardiancare/core/database/daos/cache_dao.dart';
+import 'package:guardiancare/core/database/daos/daos.dart';
+
+// Conditional import for DatabaseService
+// ignore: uri_does_not_exist
+import 'package:guardiancare/core/database/database_service_stub.dart'
+    if (dart.library.io) 'package:guardiancare/core/database/database_service.dart';
 
 /// Service that handles SQLite operations exclusively.
 /// 

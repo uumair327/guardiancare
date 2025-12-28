@@ -3,35 +3,25 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_gemini/flutter_gemini.dart';
 import 'package:guardiancare/core/constants/constants.dart';
 import 'package:guardiancare/core/error/failures.dart';
-
-/// Service that handles Gemini AI API interactions exclusively
-/// 
-/// This service is responsible for generating YouTube search terms
-/// based on quiz categories using the Gemini AI API.
-/// 
-/// Requirements: 4.1, 4.5
-abstract class GeminiAIService {
-  /// Generates YouTube search terms for a given category
-  /// 
-  /// Returns [Either<Failure, List<String>>] containing:
-  /// - [Right] with list of search terms on success
-  /// - [Left] with [GeminiApiFailure] on error (no fallback logic)
-  Future<Either<Failure, List<String>>> generateSearchTerms(String category);
-}
+import 'package:guardiancare/features/quiz/domain/services/gemini_ai_service.dart';
 
 /// Implementation of [GeminiAIService] using Flutter Gemini package
-/// 
-/// Includes fallback mechanism when Gemini API fails to ensure
-/// recommendations are always generated.
+///
+/// This class provides the concrete implementation for generating
+/// YouTube search terms using the Gemini AI API. It includes a
+/// fallback mechanism when the API fails to ensure recommendations
+/// are always generated.
+///
+/// Requirements: 1.1, 5.1
 class GeminiAIServiceImpl implements GeminiAIService {
   final Gemini _gemini;
   final bool _useFallback;
 
   /// Creates a [GeminiAIServiceImpl] with the provided Gemini instance
-  /// 
+  ///
   /// If no instance is provided, initializes Gemini with the API key
   /// and uses the singleton instance.
-  /// 
+  ///
   /// [useFallback] - If true, generates fallback search terms when API fails.
   /// Defaults to true for production use.
   GeminiAIServiceImpl({
@@ -50,40 +40,43 @@ class GeminiAIServiceImpl implements GeminiAIService {
   }
 
   @override
-  Future<Either<Failure, List<String>>> generateSearchTerms(String category) async {
+  Future<Either<Failure, List<String>>> generateSearchTerms(
+      String category) async {
     if (category.isEmpty) {
-      return const Left(GeminiApiFailure('Category cannot be empty'));
+      return Left(GeminiApiFailure(ErrorStrings.geminiCategoryEmpty));
     }
 
     try {
       final promptText = _buildPrompt(category);
       debugPrint('🤖 Calling Gemini API for category: $category');
-      
+
       // Using prompt method with Part.text for flutter_gemini 3.0.0
       final response = await _gemini.prompt(parts: [Part.text(promptText)]);
 
       if (response == null || response.output == null) {
         debugPrint('⚠️ Gemini API returned null response');
-        return _handleFallback(category, 'Gemini API returned null response');
+        return _handleFallback(category, ErrorStrings.geminiNullResponse);
       }
 
       final searchTerms = _parseSearchTerms(response.output!);
-      
+
       if (searchTerms.isEmpty) {
         debugPrint('⚠️ No valid search terms generated from Gemini');
-        return _handleFallback(category, 'No valid search terms generated');
+        return _handleFallback(category, ErrorStrings.geminiNoSearchTerms);
       }
 
-      debugPrint('✅ Gemini generated ${searchTerms.length} search terms: $searchTerms');
+      debugPrint(
+          '✅ Gemini generated ${searchTerms.length} search terms: $searchTerms');
       return Right(searchTerms);
     } catch (e) {
       debugPrint('❌ Gemini API error: $e');
-      return _handleFallback(category, 'Gemini API error: ${e.toString()}');
+      return _handleFallback(category, ErrorStrings.withDetails(ErrorStrings.geminiApiError, e.toString()));
     }
   }
 
   /// Handles fallback when Gemini API fails
-  Either<Failure, List<String>> _handleFallback(String category, String errorMessage) {
+  Either<Failure, List<String>> _handleFallback(
+      String category, String errorMessage) {
     if (_useFallback) {
       final fallbackTerms = _generateFallbackSearchTerms(category);
       debugPrint('🔄 Using fallback search terms: $fallbackTerms');

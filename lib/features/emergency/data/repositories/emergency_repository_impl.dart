@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:guardiancare/core/constants/constants.dart';
 import 'package:guardiancare/core/error/error.dart';
 import 'package:guardiancare/features/emergency/data/datasources/emergency_local_datasource.dart';
 import 'package:guardiancare/features/emergency/domain/entities/emergency_contact_entity.dart';
@@ -20,7 +21,7 @@ class EmergencyRepositoryImpl implements EmergencyRepository {
       return Left(CacheFailure(e.message));
     } catch (e) {
       return Left(
-          CacheFailure('Failed to get emergency contacts: ${e.toString()}'));
+          CacheFailure(ErrorStrings.withDetails(ErrorStrings.getEmergencyContactsError, e.toString())));
     }
   }
 
@@ -34,7 +35,7 @@ class EmergencyRepositoryImpl implements EmergencyRepository {
       return Left(CacheFailure(e.message));
     } catch (e) {
       return Left(
-          CacheFailure('Failed to get contacts by category: ${e.toString()}'));
+          CacheFailure(ErrorStrings.withDetails(ErrorStrings.getContactsByCategoryError, e.toString())));
     }
   }
 
@@ -46,7 +47,7 @@ class EmergencyRepositoryImpl implements EmergencyRepository {
     } on CacheException catch (e) {
       return Left(CacheFailure(e.message));
     } catch (e) {
-      return Left(CacheFailure('Failed to make emergency call: ${e.toString()}'));
+      return Left(CacheFailure(ErrorStrings.withDetails(ErrorStrings.makeEmergencyCallError, e.toString())));
     }
   }
 }

@@ -65,11 +65,11 @@ class TermsAndConditionsDialog extends StatelessWidget {
       actions: [
         TextButton(
           onPressed: onAccept,
-          child: Text('I Agree', style: AppTextStyles.button),
+          child: Text(UIStrings.iAgree, style: AppTextStyles.button),
         ),
         TextButton(
           onPressed: onDecline,
-          child: Text('Cancel', style: AppTextStyles.button),
+          child: Text(UIStrings.cancel, style: AppTextStyles.button),
         ),
       ],
     );

@@ -134,12 +134,13 @@ class _ForumDetailHeaderState extends State<_ForumDetailHeader>
     } else if (difference.inMinutes > 0) {
       return '${difference.inMinutes} minutes ago';
     } else {
-      return 'Just now';
+      return UIStrings.justNow;
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return RepaintBoundary(
       child: Container(
         decoration: BoxDecoration(
@@ -205,7 +206,7 @@ class _ForumDetailHeaderState extends State<_ForumDetailHeader>
                     SizedBox(width: AppDimensions.spaceS),
                     Expanded(
                       child: Text(
-                        'Discussion',
+                        l10n.discussionTitle,
                         style: AppTextStyles.h4.copyWith(
                           color: AppColors.white,
                           fontWeight: FontWeight.w600,
@@ -265,7 +266,7 @@ class _ForumDetailHeaderState extends State<_ForumDetailHeader>
                           ),
                           SizedBox(width: 4),
                           Text(
-                            'Community Discussion',
+                            l10n.communityDiscussion,
                             style: AppTextStyles.caption.copyWith(
                               color: AppColors.white,
                               fontWeight: FontWeight.w500,
@@ -321,7 +322,7 @@ class _ForumDetailHeaderState extends State<_ForumDetailHeader>
                           child: Row(
                             children: [
                               Text(
-                                _isExpanded ? 'Show less' : 'Show more',
+                                _isExpanded ? UIStrings.showLess : UIStrings.showMore,
                                 style: AppTextStyles.caption.copyWith(
                                   color: AppColors.white.withValues(alpha: 0.8),
                                   fontWeight: FontWeight.w600,
@@ -409,6 +410,7 @@ class _CommentsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return BlocConsumer<ForumBloc, ForumState>(
       listener: (context, state) {
         if (state is ForumError) {
@@ -443,7 +445,7 @@ class _CommentsSection extends StatelessWidget {
 
         if (state is CommentsLoaded && state.forumId == forumId) {
           if (state.comments.isEmpty) {
-            return _buildEmptyState();
+            return _buildEmptyState(l10n);
           }
 
           return RefreshIndicator(
@@ -458,7 +460,7 @@ class _CommentsSection extends StatelessWidget {
               itemCount: state.comments.length + 1, // +1 for header
               itemBuilder: (context, index) {
                 if (index == 0) {
-                  return _buildCommentsHeader(state.comments.length);
+                  return _buildCommentsHeader(state.comments.length, l10n);
                 }
                 return CommentItem(
                   comment: state.comments[index - 1],
@@ -474,7 +476,7 @@ class _CommentsSection extends StatelessWidget {
     );
   }
 
-  Widget _buildCommentsHeader(int count) {
+  Widget _buildCommentsHeader(int count, AppLocalizations l10n) {
     return Padding(
       padding: EdgeInsets.only(bottom: AppDimensions.spaceM),
       child: Row(
@@ -493,7 +495,7 @@ class _CommentsSection extends StatelessWidget {
           ),
           SizedBox(width: AppDimensions.spaceS),
           Text(
-            '$count ${count == 1 ? 'Comment' : 'Comments'}',
+            l10n.commentsCount(count),
             style: AppTextStyles.h4.copyWith(
               color: AppColors.textPrimary,
               fontWeight: FontWeight.w600,
@@ -529,7 +531,7 @@ class _CommentsSection extends StatelessWidget {
     );
   }
 
-  Widget _buildEmptyState() {
+  Widget _buildEmptyState(AppLocalizations l10n) {
     return FadeSlideWidget(
       duration: AppDurations.animationMedium,
       child: Center(
@@ -550,7 +552,7 @@ class _CommentsSection extends StatelessWidget {
             ),
             SizedBox(height: AppDimensions.spaceL),
             Text(
-              'No comments yet',
+              l10n.noCommentsYet,
               style: AppTextStyles.h4.copyWith(
                 color: AppColors.textPrimary,
                 fontWeight: FontWeight.w600,
@@ -558,7 +560,7 @@ class _CommentsSection extends StatelessWidget {
             ),
             SizedBox(height: AppDimensions.spaceS),
             Text(
-              'Be the first to share your thoughts!',
+              l10n.beFirstToComment,
               style: AppTextStyles.body2.copyWith(
                 color: AppColors.textSecondary,
               ),
@@ -583,7 +585,7 @@ class _CommentsSection extends StatelessWidget {
                   ),
                   SizedBox(width: 4),
                   Text(
-                    'Start typing below',
+                    l10n.startTypingBelow,
                     style: AppTextStyles.bodySmall.copyWith(
                       color: _primaryColor,
                       fontWeight: FontWeight.w500,

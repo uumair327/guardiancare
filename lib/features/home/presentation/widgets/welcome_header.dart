@@ -185,11 +185,11 @@ class _WelcomeHeaderState extends State<WelcomeHeader>
   String _getGreeting() {
     final hour = DateTime.now().hour;
     if (hour < 12) {
-      return 'Good Morning';
+      return UIStrings.goodMorning;
     } else if (hour < 17) {
-      return 'Good Afternoon';
+      return UIStrings.goodAfternoon;
     } else {
-      return 'Good Evening';
+      return UIStrings.goodEvening;
     }
   }
 

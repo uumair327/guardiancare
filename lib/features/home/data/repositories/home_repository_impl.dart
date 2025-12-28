@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/foundation.dart';
+import 'package:guardiancare/core/constants/constants.dart';
 import 'package:guardiancare/core/error/failures.dart';
 import 'package:guardiancare/features/home/data/datasources/home_remote_datasource.dart';
 import 'package:guardiancare/features/home/domain/entities/carousel_item_entity.dart';
@@ -26,7 +27,7 @@ class HomeRepositoryImpl implements HomeRepository {
         handleError: (error, stackTrace, sink) {
           debugPrint('HomeRepositoryImpl: Error occurred: $error');
           sink.add(Left<Failure, List<CarouselItemEntity>>(
-            ServerFailure('Failed to load carousel items: ${error.toString()}'),
+            ServerFailure(ErrorStrings.withDetails(ErrorStrings.loadCarouselItemsError, error.toString())),
           ));
         },
       ));

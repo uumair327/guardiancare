@@ -2,10 +2,11 @@ import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart' hide test, group, setUp, tearDown, expect;
 import 'package:glados/glados.dart';
 import 'package:guardiancare/core/error/failures.dart';
-import 'package:guardiancare/features/quiz/data/repositories/recommendation_repository.dart';
+import 'package:guardiancare/features/quiz/domain/entities/quiz_recommendation_entity.dart';
+import 'package:guardiancare/features/quiz/domain/repositories/recommendation_repository.dart';
 import 'package:guardiancare/features/quiz/domain/usecases/recommendation_use_case.dart';
-import 'package:guardiancare/features/quiz/services/gemini_ai_service.dart';
-import 'package:guardiancare/features/quiz/services/youtube_search_service.dart';
+import 'package:guardiancare/features/quiz/domain/services/gemini_ai_service.dart';
+import 'package:guardiancare/features/quiz/domain/services/youtube_search_service.dart';
 
 /// **Feature: srp-clean-architecture-fix, Property 4: Recommendation Service Decomposition**
 /// **Validates: Requirements 4.1, 4.2, 4.3, 4.5**

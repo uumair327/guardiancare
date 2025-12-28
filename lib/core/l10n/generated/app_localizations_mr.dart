@@ -360,5 +360,79 @@ class AppLocalizationsMr extends AppLocalizations {
   }
 
   @override
-  String get noResourcesAvailable => '???? ???? ????? ???';
+  String get noResourcesAvailable => 'कोणतीही संसाधने उपलब्ध नाहीत';
+
+  @override
+  String get forChildren => 'मुलांसाठी';
+
+  @override
+  String get connectAndShare => 'जोडा आणि अनुभव शेअर करा';
+
+  @override
+  String get beFirstToDiscuss => 'चर्चा सुरू करणारे पहिले व्हा!';
+
+  @override
+  String get guidelinesTitle => 'फोरम मार्गदर्शक तत्त्वे';
+
+  @override
+  String get guidelinesWelcome =>
+      'गार्डियन केअर फोरममध्ये आपले स्वागत आहे. कृपया या मार्गदर्शक तत्त्वांचे पालन करा:';
+
+  @override
+  String get guidelineRespect => 'सर्व सदस्यांशी आदरपूर्ण आणि सौजन्यशील रहा.';
+
+  @override
+  String get guidelineNoAbuse =>
+      'अपमानास्पद, छळवणूक किंवा हानिकारक भाषा वापरू नका.';
+
+  @override
+  String get guidelineNoHarmful =>
+      'अयोग्य किंवा हानिकारक सामग्री शेअर करणे टाळा.';
+
+  @override
+  String get guidelineConstructive =>
+      'हे बाल सुरक्षिततेवर रचनात्मक चर्चांसाठी एक जागा आहे.';
+
+  @override
+  String get discussionTitle => 'चर्चा';
+
+  @override
+  String get communityDiscussion => 'समुदाय चर्चा';
+
+  @override
+  String get beFirstToComment => 'तुमचे विचार शेअर करणारे पहिले व्हा!';
+
+  @override
+  String get startTypingBelow => 'खाली टाइप करणे सुरू करा';
+
+  @override
+  String commentsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count टिप्पण्या',
+      one: '1 टिप्पणी',
+      zero: 'कोणत्याही टिप्पण्या नाहीत',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get parentalAccessRequired => 'पालक प्रवेश आवश्यक';
+
+  @override
+  String get parentalAccessDescription =>
+      'हा विभाग संरक्षित आहे. सुरू ठेवण्यासाठी कृपया तुमची पालक की प्रविष्ट करा.';
+
+  @override
+  String get invalidKeyTryAgain => 'अवैध की. कृपया पुन्हा प्रयत्न करा.';
+
+  @override
+  String get forgotYourKey => 'तुमची की विसरलात?';
+
+  @override
+  String get protectedForChildSafety => 'बाल सुरक्षिततेसाठी संरक्षित';
+
+  @override
+  String get unlock => 'अनलॉक करा';
 }

@@ -70,7 +70,7 @@ class _ForumPageState extends State<ForumPage>
     if (result == true && mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: const Text('You can now use your new parental key'),
+          content: const Text(FeedbackStrings.newParentalKeyReady),
           backgroundColor: AppColors.success,
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(
@@ -82,6 +82,7 @@ class _ForumPageState extends State<ForumPage>
   }
 
   void _showGuidelinesDialog() {
+    final l10n = AppLocalizations.of(context);
     showDialog<void>(
       context: context,
       barrierDismissible: false,
@@ -105,7 +106,7 @@ class _ForumPageState extends State<ForumPage>
                 ),
               ),
               SizedBox(width: AppDimensions.spaceS),
-              Text('Forum Guidelines', style: AppTextStyles.dialogTitle),
+              Text(l10n.guidelinesTitle, style: AppTextStyles.dialogTitle),
             ],
           ),
           content: SingleChildScrollView(
@@ -114,28 +115,28 @@ class _ForumPageState extends State<ForumPage>
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  'Welcome to the GuardianCare Forum. Please follow these guidelines:',
+                  l10n.guidelinesWelcome,
                   style: AppTextStyles.body2,
                 ),
                 SizedBox(height: AppDimensions.spaceM),
                 _buildGuidelineItem(
                   Icons.favorite_rounded,
-                  'Be respectful and courteous to all members.',
+                  l10n.guidelineRespect,
                   AppColors.error,
                 ),
                 _buildGuidelineItem(
                   Icons.block_rounded,
-                  'Do not use abusive, harassing, or harmful language.',
+                  l10n.guidelineNoAbuse,
                   AppColors.warning,
                 ),
                 _buildGuidelineItem(
                   Icons.shield_rounded,
-                  'Avoid sharing inappropriate or harmful content.',
+                  l10n.guidelineNoHarmful,
                   const Color(0xFF8B5CF6),
                 ),
                 _buildGuidelineItem(
                   Icons.chat_rounded,
-                  'This is a space for constructive discussions on child safety.',
+                  l10n.guidelineConstructive,
                   AppColors.success,
                 ),
               ],
@@ -155,7 +156,7 @@ class _ForumPageState extends State<ForumPage>
                   ),
                   borderRadius: AppDimensions.borderRadiusM,
                 ),
-                child: Text('I Agree', style: AppTextStyles.button),
+                child: Text(UIStrings.iAgree, style: AppTextStyles.button),
               ),
             ),
           ],
@@ -428,7 +429,7 @@ class _ForumHeaderState extends State<_ForumHeader>
                             ),
                             SizedBox(height: AppDimensions.spaceXS),
                             Text(
-                              'Connect and share experiences',
+                              l10n.connectAndShare,
                               style: AppTextStyles.body2.copyWith(
                                 color: AppColors.white.withValues(alpha: 0.85),
                               ),
@@ -502,7 +503,7 @@ class _ForumHeaderState extends State<_ForumHeader>
                           children: [
                             Icon(Icons.child_care_rounded, size: 18),
                             SizedBox(width: 6),
-                            Text('For Children'),
+                            Text(l10n.forChildren),
                           ],
                         ),
                       ),
@@ -645,7 +646,7 @@ class _ForumListView extends StatelessWidget {
             ),
             SizedBox(height: AppDimensions.spaceS),
             Text(
-              'Be the first to start a discussion!',
+              l10n.beFirstToDiscuss,
               style: AppTextStyles.body2.copyWith(color: AppColors.textSecondary),
             ),
           ],
@@ -679,7 +680,7 @@ class _ForumListView extends StatelessWidget {
             ),
             SizedBox(height: AppDimensions.spaceL),
             Text(
-              'Something went wrong',
+              l10n.somethingWentWrong,
               style: AppTextStyles.h4.copyWith(color: AppColors.textPrimary),
             ),
             SizedBox(height: AppDimensions.spaceS),

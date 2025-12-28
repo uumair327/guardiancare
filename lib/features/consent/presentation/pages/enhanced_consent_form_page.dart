@@ -5,14 +5,15 @@ import 'package:crypto/crypto.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:guardiancare/core/core.dart';
+import 'package:guardiancare/core/constants/constants.dart';
 
 class EnhancedConsentFormPage extends StatefulWidget {
   final VoidCallback onSubmit;
 
   const EnhancedConsentFormPage({
-    Key? key,
+    super.key,
     required this.onSubmit,
-  }) : super(key: key);
+  });
 
   @override
   State<EnhancedConsentFormPage> createState() => _EnhancedConsentFormPageState();
@@ -64,7 +65,7 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage> {
     if (!_agreedToTerms) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Please agree to the terms and conditions'),
+          content: Text(FeedbackStrings.agreementRequired),
           backgroundColor: Colors.red,
         ),
       );
@@ -90,9 +91,10 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage> {
 
       widget.onSubmit();
     } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Error: $e'),
+          content: Text(FeedbackStrings.errorWith(e.toString())),
           backgroundColor: Colors.red,
         ),
       );
@@ -104,7 +106,7 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
-          'Parent Information',
+          UIStrings.parentInformation,
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
@@ -115,18 +117,18 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage> {
         TextFormField(
           controller: _parentEmailController,
           decoration: const InputDecoration(
-            labelText: 'Parent Email',
-            hintText: 'parent@example.com',
+            labelText: UIStrings.parentEmail,
+            hintText: UIStrings.parentEmailHint,
             border: OutlineInputBorder(),
             prefixIcon: Icon(Icons.email, color: AppColors.primary),
           ),
           keyboardType: TextInputType.emailAddress,
           validator: (value) {
             if (value == null || value.isEmpty) {
-              return 'Please enter parent email';
+              return ValidationStrings.parentEmailRequired;
             }
             if (!value.contains('@')) {
-              return 'Please enter a valid email';
+              return ValidationStrings.emailInvalid;
             }
             return null;
           },
@@ -135,21 +137,21 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage> {
         TextFormField(
           controller: _childNameController,
           decoration: const InputDecoration(
-            labelText: 'Child Name',
-            hintText: 'Enter child\'s name',
+            labelText: UIStrings.childName,
+            hintText: UIStrings.childNameHint,
             border: OutlineInputBorder(),
             prefixIcon: Icon(Icons.child_care, color: AppColors.primary),
           ),
           validator: (value) {
             if (value == null || value.isEmpty) {
-              return 'Please enter child name';
+              return ValidationStrings.childNameRequired;
             }
             return null;
           },
         ),
         const SizedBox(height: 16),
         SwitchListTile(
-          title: const Text('Is child above 12 years old?'),
+          title: const Text(UIStrings.isChildAbove12),
           value: _isChildAbove12,
           onChanged: (value) {
             setState(() {
@@ -167,7 +169,7 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
-          'Set Parental Key',
+          UIStrings.setParentalKey,
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
@@ -176,15 +178,15 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage> {
         ),
         const SizedBox(height: 10),
         const Text(
-          'This key will be used to access restricted features like the forum.',
+          UIStrings.parentalKeyDescription,
           style: TextStyle(color: Colors.grey),
         ),
         const SizedBox(height: 20),
         TextFormField(
           controller: _keyController,
           decoration: InputDecoration(
-            labelText: 'Parental Key',
-            hintText: 'Min 4 characters',
+            labelText: UIStrings.parentalKey,
+            hintText: UIStrings.minCharactersHint,
             border: const OutlineInputBorder(),
             prefixIcon: const Icon(Icons.lock, color: AppColors.primary),
             suffixIcon: IconButton(
@@ -199,10 +201,10 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage> {
           obscureText: _obscureKey,
           validator: (value) {
             if (value == null || value.isEmpty) {
-              return 'Please enter a parental key';
+              return ValidationStrings.parentalKeyRequired;
             }
             if (value.length < 4) {
-              return 'Key must be at least 4 characters';
+              return ValidationStrings.parentalKeyMinLength;
             }
             return null;
           },
@@ -211,8 +213,8 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage> {
         TextFormField(
           controller: _confirmKeyController,
           decoration: InputDecoration(
-            labelText: 'Confirm Parental Key',
-            hintText: 'Re-enter your key',
+            labelText: UIStrings.confirmParentalKey,
+            hintText: UIStrings.reenterKeyHint,
             border: const OutlineInputBorder(),
             prefixIcon: const Icon(Icons.lock_outline, color: AppColors.primary),
             suffixIcon: IconButton(
@@ -227,10 +229,10 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage> {
           obscureText: _obscureConfirmKey,
           validator: (value) {
             if (value == null || value.isEmpty) {
-              return 'Please confirm your parental key';
+              return ValidationStrings.confirmParentalKeyRequired;
             }
             if (value != _keyController.text) {
-              return 'Keys do not match';
+              return ValidationStrings.keysDoNotMatch;
             }
             return null;
           },
@@ -244,7 +246,7 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
-          'Security Question',
+          UIStrings.securityQuestion,
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
@@ -253,14 +255,14 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage> {
         ),
         const SizedBox(height: 10),
         const Text(
-          'This will help you recover your parental key if you forget it.',
+          UIStrings.securityQuestionDescription,
           style: TextStyle(color: Colors.grey),
         ),
         const SizedBox(height: 20),
         DropdownButtonFormField<String>(
           value: _selectedSecurityQuestion,
           decoration: const InputDecoration(
-            labelText: 'Select Security Question',
+            labelText: UIStrings.selectSecurityQuestion,
             border: OutlineInputBorder(),
             prefixIcon: Icon(Icons.help_outline, color: AppColors.primary),
           ),
@@ -277,7 +279,7 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage> {
           },
           validator: (value) {
             if (value == null || value.isEmpty) {
-              return 'Please select a security question';
+              return ValidationStrings.securityQuestionRequired;
             }
             return null;
           },
@@ -286,8 +288,8 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage> {
         TextFormField(
           controller: _securityAnswerController,
           decoration: InputDecoration(
-            labelText: 'Your Answer',
-            hintText: 'Enter your answer',
+            labelText: UIStrings.yourAnswer,
+            hintText: UIStrings.enterAnswerHint,
             border: const OutlineInputBorder(),
             prefixIcon: const Icon(Icons.question_answer, color: AppColors.primary),
             suffixIcon: IconButton(
@@ -302,17 +304,17 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage> {
           obscureText: _obscureAnswer,
           validator: (value) {
             if (value == null || value.isEmpty) {
-              return 'Please enter an answer';
+              return ValidationStrings.answerRequired;
             }
             if (value.length < 2) {
-              return 'Answer must be at least 2 characters';
+              return ValidationStrings.answerMinLength;
             }
             return null;
           },
         ),
         const SizedBox(height: 20),
         CheckboxListTile(
-          title: const Text('I agree to the terms and conditions'),
+          title: const Text(UIStrings.agreeToTerms),
           value: _agreedToTerms,
           onChanged: (value) {
             setState(() {
@@ -352,7 +354,7 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage> {
                     ),
                     const SizedBox(height: 16),
                     const Text(
-                      'Parental Consent Setup',
+                      UIStrings.parentalConsentSetup,
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
@@ -361,7 +363,7 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage> {
                     ),
                     const SizedBox(height: 8),
                     const Text(
-                      'Protect your child with parental controls',
+                      UIStrings.protectYourChild,
                       style: TextStyle(color: Colors.grey),
                       textAlign: TextAlign.center,
                     ),
@@ -424,7 +426,7 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage> {
                                 _currentStep--;
                               });
                             },
-                            child: const Text('Back'),
+                            child: const Text(UIStrings.back),
                           )
                         else
                           const SizedBox.shrink(),
@@ -452,7 +454,7 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage> {
                             ),
                           ),
                           child: Text(
-                            _currentStep < 2 ? 'Next' : 'Submit',
+                            _currentStep < 2 ? UIStrings.next : UIStrings.submit,
                             style: const TextStyle(
                               fontSize: 16,
                               color: Colors.white,

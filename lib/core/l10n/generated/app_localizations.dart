@@ -759,6 +759,126 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No resources available'**
   String get noResourcesAvailable;
+
+  /// Tab label for children's forum
+  ///
+  /// In en, this message translates to:
+  /// **'For Children'**
+  String get forChildren;
+
+  /// Forum header subtitle
+  ///
+  /// In en, this message translates to:
+  /// **'Connect and share experiences'**
+  String get connectAndShare;
+
+  /// Empty forum state message
+  ///
+  /// In en, this message translates to:
+  /// **'Be the first to start a discussion!'**
+  String get beFirstToDiscuss;
+
+  /// Forum guidelines dialog title
+  ///
+  /// In en, this message translates to:
+  /// **'Forum Guidelines'**
+  String get guidelinesTitle;
+
+  /// Forum guidelines welcome message
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome to the GuardianCare Forum. Please follow these guidelines:'**
+  String get guidelinesWelcome;
+
+  /// Forum guideline about respect
+  ///
+  /// In en, this message translates to:
+  /// **'Be respectful and courteous to all members.'**
+  String get guidelineRespect;
+
+  /// Forum guideline about no abuse
+  ///
+  /// In en, this message translates to:
+  /// **'Do not use abusive, harassing, or harmful language.'**
+  String get guidelineNoAbuse;
+
+  /// Forum guideline about no harmful content
+  ///
+  /// In en, this message translates to:
+  /// **'Avoid sharing inappropriate or harmful content.'**
+  String get guidelineNoHarmful;
+
+  /// Forum guideline about constructive discussions
+  ///
+  /// In en, this message translates to:
+  /// **'This is a space for constructive discussions on child safety.'**
+  String get guidelineConstructive;
+
+  /// Forum discussion page title
+  ///
+  /// In en, this message translates to:
+  /// **'Discussion'**
+  String get discussionTitle;
+
+  /// Forum category label
+  ///
+  /// In en, this message translates to:
+  /// **'Community Discussion'**
+  String get communityDiscussion;
+
+  /// Empty comments state message
+  ///
+  /// In en, this message translates to:
+  /// **'Be the first to share your thoughts!'**
+  String get beFirstToComment;
+
+  /// Hint to start typing a comment
+  ///
+  /// In en, this message translates to:
+  /// **'Start typing below'**
+  String get startTypingBelow;
+
+  /// Number of comments with plural support
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{No Comments} =1{1 Comment} other{{count} Comments}}'**
+  String commentsCount(int count);
+
+  /// Title for parental lock overlay
+  ///
+  /// In en, this message translates to:
+  /// **'Parental Access Required'**
+  String get parentalAccessRequired;
+
+  /// Description for parental lock overlay
+  ///
+  /// In en, this message translates to:
+  /// **'This section is protected. Please enter your parental key to continue.'**
+  String get parentalAccessDescription;
+
+  /// Error message for invalid parental key
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid key. Please try again.'**
+  String get invalidKeyTryAgain;
+
+  /// Forgot key link text
+  ///
+  /// In en, this message translates to:
+  /// **'Forgot your key?'**
+  String get forgotYourKey;
+
+  /// Info badge text on parental lock
+  ///
+  /// In en, this message translates to:
+  /// **'Protected for child safety'**
+  String get protectedForChildSafety;
+
+  /// Unlock button text
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock'**
+  String get unlock;
 }
 
 class _AppLocalizationsDelegate

@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:guardiancare/core/constants/constants.dart';
 import 'package:guardiancare/core/error/exceptions.dart';
 import 'package:guardiancare/features/learn/data/models/category_model.dart';
 import 'package:guardiancare/features/learn/data/models/video_model.dart';
@@ -42,7 +43,7 @@ class LearnRemoteDataSourceImpl implements LearnRemoteDataSource {
 
       return categories;
     } catch (e) {
-      throw ServerException('Failed to load categories: ${e.toString()}');
+      throw ServerException(ErrorStrings.withDetails(ErrorStrings.getCategoriesError, e.toString()));
     }
   }
 
@@ -86,7 +87,7 @@ class LearnRemoteDataSourceImpl implements LearnRemoteDataSource {
 
       return videos;
     } catch (e) {
-      throw ServerException('Failed to load videos: ${e.toString()}');
+      throw ServerException(ErrorStrings.withDetails(ErrorStrings.getVideosByCategoryError, e.toString()));
     }
   }
 

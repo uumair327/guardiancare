@@ -234,6 +234,8 @@ class _ParentalLockOverlayState extends State<ParentalLockOverlay>
   }
 
   Widget _buildLockCard(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    
     return Container(
       constraints: const BoxConstraints(maxWidth: 400),
       padding: EdgeInsets.all(AppDimensions.spaceXL),
@@ -258,7 +260,7 @@ class _ParentalLockOverlayState extends State<ParentalLockOverlay>
           
           // Title
           Text(
-            'Parental Access Required',
+            l10n.parentalAccessRequired,
             style: AppTextStyles.h3.copyWith(
               color: AppColors.textPrimary,
               fontWeight: FontWeight.bold,
@@ -269,7 +271,7 @@ class _ParentalLockOverlayState extends State<ParentalLockOverlay>
           
           // Subtitle
           Text(
-            'This section is protected. Please enter your parental key to continue.',
+            l10n.parentalAccessDescription,
             style: AppTextStyles.body2.copyWith(
               color: AppColors.textSecondary,
             ),
@@ -278,7 +280,7 @@ class _ParentalLockOverlayState extends State<ParentalLockOverlay>
           SizedBox(height: AppDimensions.spaceXL),
           
           // Input field
-          _buildInputField(),
+          _buildInputField(context),
           
           // Error message
           if (_showError) ...[
@@ -295,7 +297,7 @@ class _ParentalLockOverlayState extends State<ParentalLockOverlay>
                   ),
                   SizedBox(width: AppDimensions.spaceXS),
                   Text(
-                    'Invalid key. Please try again.',
+                    l10n.invalidKeyTryAgain,
                     style: AppTextStyles.bodySmall.copyWith(
                       color: AppColors.error,
                     ),
@@ -308,7 +310,7 @@ class _ParentalLockOverlayState extends State<ParentalLockOverlay>
           SizedBox(height: AppDimensions.spaceL),
           
           // Unlock button
-          _buildUnlockButton(),
+          _buildUnlockButton(context),
           
           SizedBox(height: AppDimensions.spaceM),
           
@@ -319,7 +321,7 @@ class _ParentalLockOverlayState extends State<ParentalLockOverlay>
               child: Padding(
                 padding: EdgeInsets.all(AppDimensions.spaceS),
                 child: Text(
-                  'Forgot your key?',
+                  l10n.forgotYourKey,
                   style: AppTextStyles.bodySmall.copyWith(
                     color: const Color(0xFF8B5CF6),
                     fontWeight: FontWeight.w600,
@@ -331,7 +333,7 @@ class _ParentalLockOverlayState extends State<ParentalLockOverlay>
           SizedBox(height: AppDimensions.spaceM),
           
           // Info badge
-          _buildInfoBadge(),
+          _buildInfoBadge(context),
         ],
       ),
     );
@@ -380,7 +382,7 @@ class _ParentalLockOverlayState extends State<ParentalLockOverlay>
     );
   }
 
-  Widget _buildInputField() {
+  Widget _buildInputField(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
         color: AppColors.background,
@@ -437,7 +439,9 @@ class _ParentalLockOverlayState extends State<ParentalLockOverlay>
     );
   }
 
-  Widget _buildUnlockButton() {
+  Widget _buildUnlockButton(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    
     return SizedBox(
       width: double.infinity,
       child: ScaleTapWidget(
@@ -490,7 +494,7 @@ class _ParentalLockOverlayState extends State<ParentalLockOverlay>
                       ),
                       SizedBox(width: AppDimensions.spaceS),
                       Text(
-                        'Unlock',
+                        l10n.unlock,
                         style: AppTextStyles.button,
                       ),
                     ],
@@ -501,7 +505,9 @@ class _ParentalLockOverlayState extends State<ParentalLockOverlay>
     );
   }
 
-  Widget _buildInfoBadge() {
+  Widget _buildInfoBadge(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    
     return Container(
       padding: EdgeInsets.symmetric(
         horizontal: AppDimensions.spaceM,
@@ -525,7 +531,7 @@ class _ParentalLockOverlayState extends State<ParentalLockOverlay>
           SizedBox(width: AppDimensions.spaceS),
           Flexible(
             child: Text(
-              'Protected for child safety',
+              l10n.protectedForChildSafety,
               style: AppTextStyles.caption.copyWith(
                 color: AppColors.info,
               ),

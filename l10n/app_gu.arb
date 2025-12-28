@@ -109,5 +109,25 @@
   "noCategoriesAvailable": "કોઈ શ્રેણીઓ ઉપલબ્ધ નથી",
   "noVideosAvailable": "કોઈ વિડિઓઝ ઉપલબ્ધ નથી"
 ,
-  "noResourcesAvailable": "?? ???? ????? ??"
+  "noResourcesAvailable": "કોઈ સંસાધનો ઉપલબ્ધ નથી",
+  "forChildren": "બાળકો માટે",
+  "connectAndShare": "જોડાઓ અને અનુભવો શેર કરો",
+  "beFirstToDiscuss": "ચર્ચા શરૂ કરનાર પ્રથમ બનો!",
+  "guidelinesTitle": "ફોરમ માર્ગદર્શિકા",
+  "guidelinesWelcome": "ગાર્ડિયન કેર ફોરમમાં આપનું સ્વાગત છે. કૃપા કરીને આ માર્ગદર્શિકાઓનું પાલન કરો:",
+  "guidelineRespect": "બધા સભ્યો પ્રત્યે આદરપૂર્ણ અને નમ્ર રહો.",
+  "guidelineNoAbuse": "અપમાનજનક, હેરાન કરનારી અથવા હાનિકારક ભાષાનો ઉપયોગ ન કરો.",
+  "guidelineNoHarmful": "અયોગ્ય અથવા હાનિકારક સામગ્રી શેર કરવાનું ટાળો.",
+  "guidelineConstructive": "આ બાળ સુરક્ષા પર રચનાત્મક ચર્ચાઓ માટેની જગ્યા છે.",
+  "discussionTitle": "ચર્ચા",
+  "communityDiscussion": "સમુદાય ચર્ચા",
+  "beFirstToComment": "તમારા વિચારો શેર કરનાર પ્રથમ બનો!",
+  "startTypingBelow": "નીચે ટાઇપ કરવાનું શરૂ કરો",
+  "commentsCount": "{count, plural, =0{કોઈ ટિપ્પણી નથી} =1{1 ટિપ્પણી} other{{count} ટિપ્પણીઓ}}",
+  "parentalAccessRequired": "પેરેન્ટલ એક્સેસ જરૂરી",
+  "parentalAccessDescription": "આ વિભાગ સુરક્ષિત છે। ચાલુ રાખવા માટે કૃપા કરીને તમારી પેરેન્ટલ કી દાખલ કરો.",
+  "invalidKeyTryAgain": "અમાન્ય કી. કૃપા કરીને ફરી પ્રયાસ કરો.",
+  "forgotYourKey": "તમારી કી ભૂલી ગયા?",
+  "protectedForChildSafety": "બાળ સુરક્ષા માટે સુરક્ષિત",
+  "unlock": "અનલૉક કરો"
 }

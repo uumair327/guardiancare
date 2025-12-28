@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:guardiancare/core/core.dart';
 
-/// Modern video control button with education-friendly design
-class VideoControlButton extends StatefulWidget {
+/// Modern video control button with education-friendly design.
+///
+/// Uses centralized [AnimatedButton] for scale-tap animation,
+/// eliminating duplicate animation code.
+class VideoControlButton extends StatelessWidget {
   final IconData icon;
   final String? label;
   final VoidCallback onTap;
@@ -22,92 +24,54 @@ class VideoControlButton extends StatefulWidget {
   });
 
   @override
-  State<VideoControlButton> createState() => _VideoControlButtonState();
-}
-
-class _VideoControlButtonState extends State<VideoControlButton>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _scaleAnimation;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: AppDurations.animationShort,
-    );
-    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.9).animate(
-      CurvedAnimation(parent: _controller, curve: AppCurves.tap),
-    );
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    final buttonColor = widget.color ?? AppColors.white;
+    final buttonColor = color ?? AppColors.white;
 
-    return GestureDetector(
-      onTapDown: (_) => _controller.forward(),
-      onTapUp: (_) => _controller.reverse(),
-      onTapCancel: () => _controller.reverse(),
-      onTap: () {
-        HapticFeedback.lightImpact();
-        widget.onTap();
-      },
-      child: AnimatedBuilder(
-        animation: _controller,
-        builder: (context, child) {
-          return Transform.scale(
-            scale: _scaleAnimation.value,
-            child: child,
-          );
-        },
-        child: Container(
-          padding: EdgeInsets.symmetric(
-            horizontal: AppDimensions.spaceM,
-            vertical: AppDimensions.spaceS,
+    return AnimatedButton(
+      onTap: onTap,
+      config: AnimationPresets.scaleLarge, // 0.9 scale, same as original
+      enableHaptic: true,
+      hapticType: HapticFeedbackType.light,
+      padding: EdgeInsets.symmetric(
+        horizontal: AppDimensions.spaceM,
+        vertical: AppDimensions.spaceS,
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            padding: EdgeInsets.all(AppDimensions.spaceS),
+            decoration: BoxDecoration(
+              color: buttonColor.withValues(alpha: 0.15),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              icon,
+              color: buttonColor,
+              size: size,
+            ),
           ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                padding: EdgeInsets.all(AppDimensions.spaceS),
-                decoration: BoxDecoration(
-                  color: buttonColor.withValues(alpha: 0.15),
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(
-                  widget.icon,
-                  color: buttonColor,
-                  size: widget.size,
-                ),
+          if (showLabel && label != null) ...[
+            SizedBox(height: AppDimensions.spaceXS),
+            Text(
+              label!,
+              style: AppTextStyles.caption.copyWith(
+                color: buttonColor.withValues(alpha: 0.8),
+                fontSize: 10,
               ),
-              if (widget.showLabel && widget.label != null) ...[
-                SizedBox(height: AppDimensions.spaceXS),
-                Text(
-                  widget.label!,
-                  style: AppTextStyles.caption.copyWith(
-                    color: buttonColor.withValues(alpha: 0.8),
-                    fontSize: 10,
-                  ),
-                ),
-              ],
-            ],
-          ),
-        ),
+            ),
+          ],
+        ],
       ),
     );
   }
 }
 
-/// Main play/pause button with animated icon
-class PlayPauseButton extends StatefulWidget {
+/// Main play/pause button with animated icon.
+///
+/// Uses centralized [AnimatedButton.circular] for scale-tap animation,
+/// eliminating duplicate animation code.
+class PlayPauseButton extends StatelessWidget {
   final bool isPlaying;
   final VoidCallback onTap;
   final double size;
@@ -120,81 +84,44 @@ class PlayPauseButton extends StatefulWidget {
   });
 
   @override
-  State<PlayPauseButton> createState() => _PlayPauseButtonState();
-}
-
-class _PlayPauseButtonState extends State<PlayPauseButton>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _scaleAnimation;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: AppDurations.animationShort,
-    );
-    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.85).animate(
-      CurvedAnimation(parent: _controller, curve: AppCurves.tap),
-    );
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTapDown: (_) => _controller.forward(),
-      onTapUp: (_) => _controller.reverse(),
-      onTapCancel: () => _controller.reverse(),
-      onTap: () {
-        HapticFeedback.mediumImpact();
-        widget.onTap();
-      },
-      child: AnimatedBuilder(
-        animation: _controller,
-        builder: (context, child) {
-          return Transform.scale(
-            scale: _scaleAnimation.value,
-            child: child,
-          );
-        },
-        child: Container(
-          width: widget.size,
-          height: widget.size,
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                const Color(0xFF8B5CF6),
-                const Color(0xFF7C3AED),
-              ],
-            ),
-            shape: BoxShape.circle,
-            boxShadow: [
-              BoxShadow(
-                color: const Color(0xFF8B5CF6).withValues(alpha: 0.4),
-                blurRadius: 16,
-                offset: const Offset(0, 4),
-              ),
+    // Custom config for 0.85 scale (slightly more than scaleLarge's 0.9)
+    final playPauseConfig = AnimationPresets.scaleLarge.copyWith(end: 0.85);
+
+    return AnimatedButton.circular(
+      size: size,
+      onTap: onTap,
+      config: playPauseConfig,
+      enableHaptic: true,
+      hapticType: HapticFeedbackType.medium,
+      boxShadow: [
+        BoxShadow(
+          color: const Color(0xFF8B5CF6).withValues(alpha: 0.4),
+          blurRadius: 16,
+          offset: const Offset(0, 4),
+        ),
+      ],
+      child: Container(
+        width: size,
+        height: size,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              const Color(0xFF8B5CF6),
+              const Color(0xFF7C3AED),
             ],
           ),
-          child: AnimatedSwitcher(
-            duration: AppDurations.animationShort,
-            child: Icon(
-              widget.isPlaying
-                  ? Icons.pause_rounded
-                  : Icons.play_arrow_rounded,
-              key: ValueKey(widget.isPlaying),
-              color: AppColors.white,
-              size: widget.size * 0.5,
-            ),
+          shape: BoxShape.circle,
+        ),
+        child: AnimatedSwitcher(
+          duration: AppDurations.animationShort,
+          child: Icon(
+            isPlaying ? Icons.pause_rounded : Icons.play_arrow_rounded,
+            key: ValueKey(isPlaying),
+            color: AppColors.white,
+            size: size * 0.5,
           ),
         ),
       ),

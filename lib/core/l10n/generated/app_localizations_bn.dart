@@ -356,5 +356,79 @@ class AppLocalizationsBn extends AppLocalizations {
   }
 
   @override
-  String get noResourcesAvailable => '?? ???? ????? ??';
+  String get noResourcesAvailable => 'কোনো সম্পদ উপলব্ধ নেই';
+
+  @override
+  String get forChildren => 'শিশুদের জন্য';
+
+  @override
+  String get connectAndShare => 'সংযুক্ত হন এবং অভিজ্ঞতা শেয়ার করুন';
+
+  @override
+  String get beFirstToDiscuss => 'আলোচনা শুরু করার প্রথম ব্যক্তি হন!';
+
+  @override
+  String get guidelinesTitle => 'ফোরাম নির্দেশিকা';
+
+  @override
+  String get guidelinesWelcome =>
+      'গার্ডিয়ান কেয়ার ফোরামে স্বাগতম। অনুগ্রহ করে এই নির্দেশিকাগুলি অনুসরণ করুন:';
+
+  @override
+  String get guidelineRespect => 'সকল সদস্যদের প্রতি সম্মানজনক এবং বিনয়ী হন।';
+
+  @override
+  String get guidelineNoAbuse =>
+      'অপমানজনক, হয়রানিমূলক বা ক্ষতিকর ভাষা ব্যবহার করবেন না।';
+
+  @override
+  String get guidelineNoHarmful =>
+      'অনুপযুক্ত বা ক্ষতিকর বিষয়বস্তু শেয়ার করা থেকে বিরত থাকুন।';
+
+  @override
+  String get guidelineConstructive =>
+      'এটি শিশু সুরক্ষা সম্পর্কে গঠনমূলক আলোচনার জন্য একটি স্থান।';
+
+  @override
+  String get discussionTitle => 'আলোচনা';
+
+  @override
+  String get communityDiscussion => 'সম্প্রদায় আলোচনা';
+
+  @override
+  String get beFirstToComment => 'আপনার মতামত শেয়ার করার প্রথম ব্যক্তি হন!';
+
+  @override
+  String get startTypingBelow => 'নিচে টাইপ করা শুরু করুন';
+
+  @override
+  String commentsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countটি মন্তব্য',
+      one: '1টি মন্তব্য',
+      zero: 'কোনো মন্তব্য নেই',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get parentalAccessRequired => 'অভিভাবক অ্যাক্সেস প্রয়োজন';
+
+  @override
+  String get parentalAccessDescription =>
+      'এই বিভাগটি সুরক্ষিত। চালিয়ে যেতে আপনার অভিভাবক কী প্রবেশ করুন।';
+
+  @override
+  String get invalidKeyTryAgain => 'অবৈধ কী। আবার চেষ্টা করুন।';
+
+  @override
+  String get forgotYourKey => 'আপনার কী ভুলে গেছেন?';
+
+  @override
+  String get protectedForChildSafety => 'শিশু সুরক্ষার জন্য সুরক্ষিত';
+
+  @override
+  String get unlock => 'আনলক করুন';
 }

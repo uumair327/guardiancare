@@ -357,5 +357,79 @@ class AppLocalizationsGu extends AppLocalizations {
   }
 
   @override
-  String get noResourcesAvailable => '?? ???? ????? ??';
+  String get noResourcesAvailable => 'કોઈ સંસાધનો ઉપલબ્ધ નથી';
+
+  @override
+  String get forChildren => 'બાળકો માટે';
+
+  @override
+  String get connectAndShare => 'જોડાઓ અને અનુભવો શેર કરો';
+
+  @override
+  String get beFirstToDiscuss => 'ચર્ચા શરૂ કરનાર પ્રથમ બનો!';
+
+  @override
+  String get guidelinesTitle => 'ફોરમ માર્ગદર્શિકા';
+
+  @override
+  String get guidelinesWelcome =>
+      'ગાર્ડિયન કેર ફોરમમાં આપનું સ્વાગત છે. કૃપા કરીને આ માર્ગદર્શિકાઓનું પાલન કરો:';
+
+  @override
+  String get guidelineRespect => 'બધા સભ્યો પ્રત્યે આદરપૂર્ણ અને નમ્ર રહો.';
+
+  @override
+  String get guidelineNoAbuse =>
+      'અપમાનજનક, હેરાન કરનારી અથવા હાનિકારક ભાષાનો ઉપયોગ ન કરો.';
+
+  @override
+  String get guidelineNoHarmful =>
+      'અયોગ્ય અથવા હાનિકારક સામગ્રી શેર કરવાનું ટાળો.';
+
+  @override
+  String get guidelineConstructive =>
+      'આ બાળ સુરક્ષા પર રચનાત્મક ચર્ચાઓ માટેની જગ્યા છે.';
+
+  @override
+  String get discussionTitle => 'ચર્ચા';
+
+  @override
+  String get communityDiscussion => 'સમુદાય ચર્ચા';
+
+  @override
+  String get beFirstToComment => 'તમારા વિચારો શેર કરનાર પ્રથમ બનો!';
+
+  @override
+  String get startTypingBelow => 'નીચે ટાઇપ કરવાનું શરૂ કરો';
+
+  @override
+  String commentsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count ટિપ્પણીઓ',
+      one: '1 ટિપ્પણી',
+      zero: 'કોઈ ટિપ્પણી નથી',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get parentalAccessRequired => 'પેરેન્ટલ એક્સેસ જરૂરી';
+
+  @override
+  String get parentalAccessDescription =>
+      'આ વિભાગ સુરક્ષિત છે। ચાલુ રાખવા માટે કૃપા કરીને તમારી પેરેન્ટલ કી દાખલ કરો.';
+
+  @override
+  String get invalidKeyTryAgain => 'અમાન્ય કી. કૃપા કરીને ફરી પ્રયાસ કરો.';
+
+  @override
+  String get forgotYourKey => 'તમારી કી ભૂલી ગયા?';
+
+  @override
+  String get protectedForChildSafety => 'બાળ સુરક્ષા માટે સુરક્ષિત';
+
+  @override
+  String get unlock => 'અનલૉક કરો';
 }

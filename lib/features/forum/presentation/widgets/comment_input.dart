@@ -84,7 +84,7 @@ class _CommentInputState extends State<CommentInput>
             children: [
               Icon(Icons.warning_rounded, color: AppColors.white, size: 20),
               SizedBox(width: AppDimensions.spaceS),
-              Text('Please enter a comment'),
+              Text(FeedbackStrings.enterComment),
             ],
           ),
           backgroundColor: AppColors.warning,
@@ -106,7 +106,7 @@ class _CommentInputState extends State<CommentInput>
             children: [
               Icon(Icons.warning_rounded, color: AppColors.white, size: 20),
               SizedBox(width: AppDimensions.spaceS),
-              Text('Comment must be at least 2 characters'),
+              Text(FeedbackStrings.commentTooShort),
             ],
           ),
           backgroundColor: AppColors.warning,
@@ -154,7 +154,7 @@ class _CommentInputState extends State<CommentInput>
                 children: [
                   Icon(Icons.check_circle_rounded, color: AppColors.white, size: 20),
                   SizedBox(width: AppDimensions.spaceS),
-                  Text('Comment posted successfully!'),
+                  Text(FeedbackStrings.commentPosted),
                 ],
               ),
               backgroundColor: AppColors.success,
@@ -238,7 +238,7 @@ class _CommentInputState extends State<CommentInput>
                             color: AppColors.textPrimary,
                           ),
                           decoration: InputDecoration(
-                            hintText: 'Share your thoughts...',
+                            hintText: ForumStrings.shareYourThoughts,
                             hintStyle: AppTextStyles.body2.copyWith(
                               color: AppColors.textSecondary.withValues(alpha: 0.6),
                             ),
@@ -339,7 +339,7 @@ class _CommentInputState extends State<CommentInput>
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'Be respectful and constructive',
+                      ForumStrings.beRespectful,
                       style: AppTextStyles.caption.copyWith(
                         color: AppColors.textSecondary.withValues(alpha: 0.7),
                         fontSize: 11,
