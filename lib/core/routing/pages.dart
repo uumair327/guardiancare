@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 import 'package:guardiancare/core/core.dart';
 import 'package:guardiancare/features/features.dart';
 import 'dart:ui';
@@ -27,13 +26,17 @@ class _PagesState extends State<Pages> with SingleTickerProviderStateMixin {
   final TextEditingController formController = TextEditingController();
   final TextEditingController otpController = TextEditingController();
 
+  // Create blocs once and reuse them across rebuilds
+  late final HomeBloc _homeBloc;
+  late final ForumBloc _forumBloc;
+
   // Navigation items with education-friendly colors
   final List<ModernNavItem> _navItems = const [
     ModernNavItem(
       icon: Icons.home_outlined,
       activeIcon: Icons.home_rounded,
       label: 'Home',
-      activeColor: Color(0xFF6366F1), // Indigo
+      activeColor: Color(0xFFEF4934), // Primary red - matches home page
     ),
     ModernNavItem(
       icon: Icons.explore_outlined,
@@ -52,6 +55,11 @@ class _PagesState extends State<Pages> with SingleTickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
+    
+    // Initialize blocs once - they will persist across locale changes
+    _homeBloc = sl<HomeBloc>()..add(const LoadCarouselItems());
+    _forumBloc = sl<ForumBloc>();
+    
     _fadeController = AnimationController(
       vsync: this,
       duration: AppDurations.animationMedium,
@@ -75,6 +83,8 @@ class _PagesState extends State<Pages> with SingleTickerProviderStateMixin {
     _fadeController.dispose();
     formController.dispose();
     otpController.dispose();
+    _homeBloc.close();
+    _forumBloc.close();
     super.dispose();
   }
 
@@ -127,14 +137,15 @@ class _PagesState extends State<Pages> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    // Use existing blocs instead of creating new ones on each build
     final screens = <Widget>[
-      BlocProvider(
-        create: (_) => sl<HomeBloc>()..add(const LoadCarouselItems()),
+      BlocProvider.value(
+        value: _homeBloc,
         child: const HomePage(),
       ),
       const ExplorePage(),
-      BlocProvider(
-        create: (_) => sl<ForumBloc>(),
+      BlocProvider.value(
+        value: _forumBloc,
         child: const ForumPage(),
       ),
     ];
@@ -143,7 +154,6 @@ class _PagesState extends State<Pages> with SingleTickerProviderStateMixin {
       children: [
         Scaffold(
           extendBody: true,
-          appBar: _buildModernAppBar(),
           backgroundColor: AppColors.background,
           body: FadeTransition(
             opacity: _fadeAnimation,
@@ -217,99 +227,6 @@ class _PagesState extends State<Pages> with SingleTickerProviderStateMixin {
               ],
             ),
           ),
-      ],
-    );
-  }
-
-  PreferredSizeWidget _buildModernAppBar() {
-    return AppBar(
-      elevation: 0,
-      scrolledUnderElevation: 0,
-      backgroundColor: AppColors.background,
-      title: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            padding: EdgeInsets.all(6),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  AppColors.primary,
-                  AppColors.primary.withValues(alpha: 0.8),
-                ],
-              ),
-              borderRadius: AppDimensions.borderRadiusS,
-              boxShadow: [
-                BoxShadow(
-                  color: AppColors.primary.withValues(alpha: 0.3),
-                  blurRadius: 8,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-            ),
-            child: Icon(
-              Icons.shield_rounded,
-              color: AppColors.white,
-              size: 18,
-            ),
-          ),
-          SizedBox(width: AppDimensions.spaceS),
-          Text(
-            AppStrings.appName,
-            style: AppTextStyles.h3.copyWith(
-              color: AppColors.primary,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ],
-      ),
-      centerTitle: true,
-      actions: [
-        StreamBuilder<User?>(
-          stream: _auth.authStateChanges(),
-          builder: (context, snapshot) {
-            final user = snapshot.data;
-            if (user == null) {
-              return Padding(
-                padding: EdgeInsets.only(right: AppDimensions.spaceS),
-                child: ScaleTapWidget(
-                  onTap: () => context.go('/login'),
-                  child: Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: AppDimensions.spaceM,
-                      vertical: AppDimensions.spaceS,
-                    ),
-                    decoration: BoxDecoration(
-                      color: AppColors.primary.withValues(alpha: 0.1),
-                      borderRadius: AppDimensions.borderRadiusM,
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          Icons.login_rounded,
-                          color: AppColors.primary,
-                          size: AppDimensions.iconS,
-                        ),
-                        SizedBox(width: AppDimensions.spaceXS),
-                        Text(
-                          'Sign In',
-                          style: AppTextStyles.bodySmall.copyWith(
-                            color: AppColors.primary,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              );
-            }
-            return const SizedBox.shrink();
-          },
-        ),
       ],
     );
   }

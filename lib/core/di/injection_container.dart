@@ -7,6 +7,14 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:guardiancare/core/core.dart';
 import 'package:guardiancare/features/features.dart';
 
+// Quiz feature service imports - Clean Architecture compliant
+// Domain layer abstract interfaces (Requirements: 4.1, 4.2)
+import 'package:guardiancare/features/quiz/domain/services/gemini_ai_service.dart';
+import 'package:guardiancare/features/quiz/domain/services/youtube_search_service.dart';
+// Data layer concrete implementations (Requirements: 4.1, 4.2)
+import 'package:guardiancare/features/quiz/data/services/gemini_ai_service_impl.dart';
+import 'package:guardiancare/features/quiz/data/services/youtube_search_service_impl.dart';
+
 final sl = GetIt.instance;
 
 /// Initialize all dependencies
@@ -299,7 +307,9 @@ void _initQuizFeature() {
     () => QuizLocalDataSourceImpl(),
   );
 
-  // Services (SRP - Single Responsibility Principle)
+  // Services - Abstract interfaces bound to concrete implementations
+  // Clean Architecture: Domain interfaces registered with Data layer implementations
+  // Requirements: 4.3
   sl.registerLazySingleton<GeminiAIService>(
     () => GeminiAIServiceImpl(),
   );

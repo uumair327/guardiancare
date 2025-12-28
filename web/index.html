@@ -22,7 +22,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
   <!-- iOS meta tags & icons -->
-  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   <meta name="apple-mobile-web-app-title" content="GuardianCare">
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
@@ -74,9 +74,6 @@
       document.body.style.background = "transparent";
     }
   </script>
-
-  <!-- Flutter initialization -->
-  <script src="flutter.js" defer></script>
 </head>
 <body>
   <!-- Splash screen -->
@@ -104,15 +101,6 @@
     })();
   </script>
 
-  <script>
-    window.addEventListener("load", function(ev) {
-      _flutter.loader.load({
-        onEntrypointLoaded: async function(engineInitializer) {
-          let appRunner = await engineInitializer.initializeEngine();
-          await appRunner.runApp();
-        }
-      });
-    });
-  </script>
+  <script src="flutter_bootstrap.js" async></script>
 </body>
 </html>

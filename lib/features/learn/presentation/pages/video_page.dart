@@ -174,7 +174,7 @@ class _VideoPageContent extends StatelessWidget {
               ),
               SizedBox(height: AppDimensions.spaceL),
               Text(
-                'Oops! Something went wrong',
+                UIStrings.oopsSomethingWentWrong,
                 style: AppTextStyles.h3.copyWith(
                   color: AppColors.textPrimary,
                 ),
@@ -279,7 +279,7 @@ class _CategoryGridView extends StatelessWidget {
                   ),
                   SizedBox(width: AppDimensions.spaceS),
                   Text(
-                    'Learning Categories',
+                    UIStrings.learningCategories,
                     style: AppTextStyles.h4.copyWith(
                       color: AppColors.textPrimary,
                       fontWeight: FontWeight.bold,
@@ -296,7 +296,7 @@ class _CategoryGridView extends StatelessWidget {
                       borderRadius: AppDimensions.borderRadiusS,
                     ),
                     child: Text(
-                      '${categories.length} topics',
+                      '${categories.length} ${UIStrings.topics}',
                       style: AppTextStyles.caption.copyWith(
                         color: AppColors.secondary,
                         fontWeight: FontWeight.w600,
@@ -379,7 +379,7 @@ class _CategoryGridView extends StatelessWidget {
             ),
             SizedBox(height: AppDimensions.spaceS),
             Text(
-              'Check back later for new content',
+              UIStrings.checkBackLater,
               style: AppTextStyles.body2.copyWith(
                 color: AppColors.textSecondary,
               ),
@@ -437,7 +437,7 @@ class _VideoGridView extends StatelessWidget {
                   SizedBox(width: AppDimensions.spaceS),
                   Expanded(
                     child: Text(
-                      'Videos',
+                      UIStrings.videos,
                       style: AppTextStyles.h4.copyWith(
                         color: AppColors.textPrimary,
                         fontWeight: FontWeight.bold,
@@ -454,7 +454,7 @@ class _VideoGridView extends StatelessWidget {
                       borderRadius: AppDimensions.borderRadiusS,
                     ),
                     child: Text(
-                      '${videos.length} videos',
+                      '${videos.length} ${UIStrings.videos.toLowerCase()}',
                       style: AppTextStyles.caption.copyWith(
                         color: AppColors.primary,
                         fontWeight: FontWeight.w600,
@@ -537,7 +537,7 @@ class _VideoGridView extends StatelessWidget {
             ),
             SizedBox(height: AppDimensions.spaceS),
             Text(
-              'New videos coming soon!',
+              UIStrings.newVideosComingSoon,
               style: AppTextStyles.body2.copyWith(
                 color: AppColors.textSecondary,
               ),

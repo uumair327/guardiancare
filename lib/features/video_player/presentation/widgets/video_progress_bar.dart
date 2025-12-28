@@ -94,8 +94,7 @@ class _VideoProgressBarState extends State<VideoProgressBar> {
                   ),
                 ),
                 // Buffered track
-                AnimatedContainer(
-                  duration: AppDurations.animationShort,
+                AppAnimatedContainer(
                   height: _isDragging ? 8 : 4,
                   width: double.infinity,
                   child: FractionallySizedBox(
@@ -110,10 +109,10 @@ class _VideoProgressBarState extends State<VideoProgressBar> {
                   ),
                 ),
                 // Progress track
-                AnimatedContainer(
+                AppAnimatedContainer(
                   duration: _isDragging 
                       ? Duration.zero 
-                      : AppDurations.animationShort,
+                      : null, // Uses default AppDurations.animationShort when not dragging
                   height: _isDragging ? 8 : 4,
                   width: double.infinity,
                   child: FractionallySizedBox(
@@ -149,8 +148,8 @@ class _VideoProgressBarState extends State<VideoProgressBar> {
                       ? _dragValue 
                       : widget.progress.progressPercent) * 
                       (MediaQuery.of(context).size.width - 48) - 8,
-                  child: AnimatedContainer(
-                    duration: AppDurations.animationShort,
+                  child: AppAnimatedContainer(
+                    duration: _isDragging ? Duration.zero : null, // Uses default when not dragging
                     width: _isDragging ? 20 : 16,
                     height: _isDragging ? 20 : 16,
                     decoration: BoxDecoration(

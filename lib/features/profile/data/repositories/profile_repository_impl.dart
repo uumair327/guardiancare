@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:guardiancare/core/constants/constants.dart';
 import 'package:guardiancare/core/error/error.dart';
 import 'package:guardiancare/features/profile/data/datasources/profile_remote_datasource.dart';
 import 'package:guardiancare/features/profile/data/models/profile_model.dart';
@@ -19,7 +20,7 @@ class ProfileRepositoryImpl implements ProfileRepository {
     } on ServerException catch (e) {
       return Left(ServerFailure(e.message));
     } catch (e) {
-      return Left(ServerFailure('Failed to get profile: ${e.toString()}'));
+      return Left(ServerFailure(ErrorStrings.withDetails(ErrorStrings.getProfileError, e.toString())));
     }
   }
 
@@ -32,7 +33,7 @@ class ProfileRepositoryImpl implements ProfileRepository {
     } on ServerException catch (e) {
       return Left(ServerFailure(e.message));
     } catch (e) {
-      return Left(ServerFailure('Failed to update profile: ${e.toString()}'));
+      return Left(ServerFailure(ErrorStrings.withDetails(ErrorStrings.updateProfileError, e.toString())));
     }
   }
 
@@ -44,7 +45,7 @@ class ProfileRepositoryImpl implements ProfileRepository {
     } on ServerException catch (e) {
       return Left(ServerFailure(e.message));
     } catch (e) {
-      return Left(ServerFailure('Failed to delete account: ${e.toString()}'));
+      return Left(ServerFailure(ErrorStrings.withDetails(ErrorStrings.deleteAccountError, e.toString())));
     }
   }
 
@@ -56,7 +57,7 @@ class ProfileRepositoryImpl implements ProfileRepository {
     } on CacheException catch (e) {
       return Left(CacheFailure(e.message));
     } catch (e) {
-      return Left(CacheFailure('Failed to clear preferences: ${e.toString()}'));
+      return Left(CacheFailure(ErrorStrings.withDetails(ErrorStrings.clearPreferencesError, e.toString())));
     }
   }
 }

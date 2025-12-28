@@ -1,4 +1,4 @@
-import 'dart:convert';
+import 'package:guardiancare/core/constants/constants.dart';
 import 'package:guardiancare/core/error/exceptions.dart';
 import 'package:guardiancare/features/report/data/models/report_model.dart';
 import 'package:guardiancare/core/database/hive_service.dart';
@@ -40,7 +40,7 @@ class ReportLocalDataSourceImpl implements ReportLocalDataSource {
 
       await _hiveService.put(_boxName, key, json);
     } catch (e) {
-      throw CacheException('Failed to save report: ${e.toString()}');
+      throw CacheException(ErrorStrings.withDetails(ErrorStrings.saveReportError, e.toString()));
     }
   }
 
@@ -52,7 +52,7 @@ class ReportLocalDataSourceImpl implements ReportLocalDataSource {
       final json = _hiveService.get<Map<dynamic, dynamic>>(_boxName, key);
 
       if (json == null) {
-        throw CacheException('Report not found: $caseName');
+        throw CacheException(ErrorStrings.withDetails(ErrorStrings.dataNotFound, caseName));
       }
 
       final jsonMap = Map<String, dynamic>.from(json);
@@ -67,7 +67,7 @@ class ReportLocalDataSourceImpl implements ReportLocalDataSource {
         isDirty: model.isDirty,
       );
     } catch (e) {
-      throw CacheException('Failed to load report: ${e.toString()}');
+      throw CacheException(ErrorStrings.withDetails(ErrorStrings.loadReportError, e.toString()));
     }
   }
 
@@ -77,7 +77,7 @@ class ReportLocalDataSourceImpl implements ReportLocalDataSource {
       final key = '$_keyPrefix$caseName';
       await _hiveService.delete(_boxName, key);
     } catch (e) {
-      throw CacheException('Failed to delete report: ${e.toString()}');
+      throw CacheException(ErrorStrings.withDetails(ErrorStrings.deleteReportError, e.toString()));
     }
   }
 
@@ -91,7 +91,7 @@ class ReportLocalDataSourceImpl implements ReportLocalDataSource {
           .map((key) => key.toString().replaceFirst(_keyPrefix, ''))
           .toList();
     } catch (e) {
-      throw CacheException('Failed to get saved reports: ${e.toString()}');
+      throw CacheException(ErrorStrings.withDetails(ErrorStrings.getSavedReportsError, e.toString()));
     }
   }
 
@@ -102,7 +102,7 @@ class ReportLocalDataSourceImpl implements ReportLocalDataSource {
       return _hiveService.containsKey(_boxName, key);
     } catch (e) {
       throw CacheException(
-          'Failed to check report existence: ${e.toString()}');
+          ErrorStrings.withDetails(ErrorStrings.checkReportExistenceError, e.toString()));
     }
   }
 }

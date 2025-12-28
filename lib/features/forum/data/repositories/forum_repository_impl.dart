@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:guardiancare/core/constants/constants.dart';
 import 'package:guardiancare/core/error/error.dart';
 import 'package:guardiancare/core/network/network.dart';
 import 'package:guardiancare/features/forum/data/datasources/forum_remote_datasource.dart';
@@ -26,7 +27,7 @@ class ForumRepositoryImpl implements ForumRepository {
     } on ServerException catch (e) {
       yield Left(ServerFailure(e.message, code: e.code));
     } catch (e) {
-      yield Left(ServerFailure('Unexpected error: ${e.toString()}'));
+      yield Left(ServerFailure(ErrorStrings.withDetails(ErrorStrings.unexpectedError, e.toString())));
     }
   }
 
@@ -39,7 +40,7 @@ class ForumRepositoryImpl implements ForumRepository {
     } on ServerException catch (e) {
       yield Left(ServerFailure(e.message, code: e.code));
     } catch (e) {
-      yield Left(ServerFailure('Unexpected error: ${e.toString()}'));
+      yield Left(ServerFailure(ErrorStrings.withDetails(ErrorStrings.unexpectedError, e.toString())));
     }
   }
 
@@ -56,10 +57,10 @@ class ForumRepositoryImpl implements ForumRepository {
       } on ServerException catch (e) {
         return Left(ServerFailure(e.message, code: e.code));
       } catch (e) {
-        return Left(ServerFailure('Unexpected error: ${e.toString()}'));
+        return Left(ServerFailure(ErrorStrings.withDetails(ErrorStrings.unexpectedError, e.toString())));
       }
     } else {
-      return const Left(NetworkFailure('No internet connection'));
+      return Left(NetworkFailure(ErrorStrings.noInternet));
     }
   }
 
@@ -72,10 +73,10 @@ class ForumRepositoryImpl implements ForumRepository {
       } on ServerException catch (e) {
         return Left(ServerFailure(e.message, code: e.code));
       } catch (e) {
-        return Left(ServerFailure('Unexpected error: ${e.toString()}'));
+        return Left(ServerFailure(ErrorStrings.withDetails(ErrorStrings.unexpectedError, e.toString())));
       }
     } else {
-      return const Left(NetworkFailure('No internet connection'));
+      return Left(NetworkFailure(ErrorStrings.noInternet));
     }
   }
 
@@ -98,10 +99,10 @@ class ForumRepositoryImpl implements ForumRepository {
       } on ServerException catch (e) {
         return Left(ServerFailure(e.message, code: e.code));
       } catch (e) {
-        return Left(ServerFailure('Unexpected error: ${e.toString()}'));
+        return Left(ServerFailure(ErrorStrings.withDetails(ErrorStrings.unexpectedError, e.toString())));
       }
     } else {
-      return const Left(NetworkFailure('No internet connection'));
+      return Left(NetworkFailure(ErrorStrings.noInternet));
     }
   }
 
@@ -114,10 +115,10 @@ class ForumRepositoryImpl implements ForumRepository {
       } on ServerException catch (e) {
         return Left(ServerFailure(e.message, code: e.code));
       } catch (e) {
-        return Left(ServerFailure('Unexpected error: ${e.toString()}'));
+        return Left(ServerFailure(ErrorStrings.withDetails(ErrorStrings.unexpectedError, e.toString())));
       }
     } else {
-      return const Left(NetworkFailure('No internet connection'));
+      return Left(NetworkFailure(ErrorStrings.noInternet));
     }
   }
 
@@ -133,10 +134,10 @@ class ForumRepositoryImpl implements ForumRepository {
       } on ServerException catch (e) {
         return Left(ServerFailure(e.message, code: e.code));
       } catch (e) {
-        return Left(ServerFailure('Unexpected error: ${e.toString()}'));
+        return Left(ServerFailure(ErrorStrings.withDetails(ErrorStrings.unexpectedError, e.toString())));
       }
     } else {
-      return const Left(NetworkFailure('No internet connection'));
+      return Left(NetworkFailure(ErrorStrings.noInternet));
     }
   }
 }

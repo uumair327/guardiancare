@@ -43,7 +43,7 @@ class _CommentItemState extends State<CommentItem> {
     } else if (difference.inMinutes > 0) {
       return '${difference.inMinutes}m ago';
     } else {
-      return 'Just now';
+      return UIStrings.justNow;
     }
   }
 
@@ -184,7 +184,7 @@ class _CommentItemState extends State<CommentItem> {
                         ),
                         SizedBox(width: 4),
                         Text(
-                          'Member',
+                          ForumStrings.member,
                           style: AppTextStyles.caption.copyWith(
                             color: _primaryColor,
                             fontWeight: FontWeight.w500,
@@ -230,7 +230,7 @@ class _CommentItemState extends State<CommentItem> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        _isExpanded ? 'Show less' : 'Show more',
+                        _isExpanded ? UIStrings.showLess : UIStrings.showMore,
                         style: AppTextStyles.caption.copyWith(
                           color: _primaryColor,
                           fontWeight: FontWeight.w600,

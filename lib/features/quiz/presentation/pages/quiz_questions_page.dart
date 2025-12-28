@@ -63,7 +63,7 @@ class _QuizQuestionsPageState extends State<QuizQuestionsPage>
         children: [
           // Modern header
           QuizHeader(
-            quizName: isCompleted ? 'Quiz Complete' : null,
+            quizName: isCompleted ? UIStrings.quizComplete : null,
             currentQuestion: isCompleted ? null : currentQuestionIndex + 1,
             totalQuestions: isCompleted ? null : widget.questions.length,
             onBackPressed: () => Navigator.pop(context),

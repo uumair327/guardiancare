@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:crypto/crypto.dart';
+import 'package:guardiancare/core/constants/constants.dart';
 import 'package:guardiancare/core/error/exceptions.dart';
 import 'package:guardiancare/features/consent/data/models/consent_model.dart';
 
@@ -27,7 +28,7 @@ class ConsentRemoteDataSourceImpl implements ConsentRemoteDataSource {
     try {
       await firestore.collection('consents').doc(uid).set(consent.toJson());
     } catch (e) {
-      throw ServerException('Failed to submit consent: ${e.toString()}');
+      throw ServerException(ErrorStrings.withDetails(ErrorStrings.submitConsentError, e.toString()));
     }
   }
 
@@ -41,7 +42,7 @@ class ConsentRemoteDataSourceImpl implements ConsentRemoteDataSource {
       final enteredHash = _hashKey(key);
       return storedHash == enteredHash;
     } catch (e) {
-      throw ServerException('Failed to verify key: ${e.toString()}');
+      throw ServerException(ErrorStrings.withDetails(ErrorStrings.verifyKeyError, e.toString()));
     }
   }
 
@@ -50,14 +51,14 @@ class ConsentRemoteDataSourceImpl implements ConsentRemoteDataSource {
     try {
       final doc = await firestore.collection('consents').doc(uid).get();
       if (!doc.exists) {
-        throw ServerException('Consent not found');
+        throw ServerException(ErrorStrings.consentNotFound);
       }
 
       final storedAnswerHash = doc.data()?['securityAnswer'] as String?;
       final providedAnswerHash = _hashKey(securityAnswer.toLowerCase());
 
       if (storedAnswerHash != providedAnswerHash) {
-        throw ServerException('Incorrect security answer');
+        throw ServerException(ErrorStrings.incorrectSecurityAnswer);
       }
 
       await firestore.collection('consents').doc(uid).update({
@@ -65,7 +66,7 @@ class ConsentRemoteDataSourceImpl implements ConsentRemoteDataSource {
         'lastUpdated': FieldValue.serverTimestamp(),
       });
     } catch (e) {
-      throw ServerException('Failed to reset key: ${e.toString()}');
+      throw ServerException(ErrorStrings.withDetails(ErrorStrings.resetKeyError, e.toString()));
     }
   }
 
@@ -74,11 +75,11 @@ class ConsentRemoteDataSourceImpl implements ConsentRemoteDataSource {
     try {
       final doc = await firestore.collection('consents').doc(uid).get();
       if (!doc.exists || doc.data() == null) {
-        throw ServerException('Consent not found');
+        throw ServerException(ErrorStrings.consentNotFound);
       }
       return ConsentModel.fromFirestore(doc.data()!);
     } catch (e) {
-      throw ServerException('Failed to get consent: ${e.toString()}');
+      throw ServerException(ErrorStrings.withDetails(ErrorStrings.getConsentError, e.toString()));
     }
   }
 
@@ -88,7 +89,7 @@ class ConsentRemoteDataSourceImpl implements ConsentRemoteDataSource {
       final doc = await firestore.collection('consents').doc(uid).get();
       return doc.exists;
     } catch (e) {
-      throw ServerException('Failed to check consent: ${e.toString()}');
+      throw ServerException(ErrorStrings.withDetails(ErrorStrings.checkConsentError, e.toString()));
     }
   }
 }

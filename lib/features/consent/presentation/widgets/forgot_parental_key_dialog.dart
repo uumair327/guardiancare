@@ -2,11 +2,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:guardiancare/core/core.dart';
+import 'package:guardiancare/core/constants/constants.dart';
 import 'package:crypto/crypto.dart';
 import 'dart:convert';
 
 class ForgotParentalKeyDialog extends StatefulWidget {
-  const ForgotParentalKeyDialog({Key? key}) : super(key: key);
+  const ForgotParentalKeyDialog({super.key});
 
   @override
   State<ForgotParentalKeyDialog> createState() => _ForgotParentalKeyDialogState();
@@ -59,7 +60,7 @@ class _ForgotParentalKeyDialogState extends State<ForgotParentalKeyDialog> {
         });
       }
     } catch (e) {
-      print('Error loading security question: $e');
+      debugPrint('Error loading security question: $e');
     }
   }
 
@@ -99,9 +100,10 @@ class _ForgotParentalKeyDialogState extends State<ForgotParentalKeyDialog> {
         setState(() {
           _isLoading = false;
         });
+        if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Incorrect answer. Please try again.'),
+            content: Text(FeedbackStrings.incorrectAnswer),
             backgroundColor: Colors.red,
           ),
         );
@@ -110,9 +112,10 @@ class _ForgotParentalKeyDialogState extends State<ForgotParentalKeyDialog> {
       setState(() {
         _isLoading = false;
       });
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Error: $e'),
+          content: Text(FeedbackStrings.errorWith(e.toString())),
           backgroundColor: Colors.red,
         ),
       );
@@ -147,11 +150,12 @@ class _ForgotParentalKeyDialogState extends State<ForgotParentalKeyDialog> {
         _isLoading = false;
       });
 
+      if (!mounted) return;
       Navigator.of(context).pop(true); // Return true to indicate success
       
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Parental key reset successfully!'),
+          content: Text(FeedbackStrings.parentalKeyReset),
           backgroundColor: Colors.green,
         ),
       );
@@ -159,9 +163,10 @@ class _ForgotParentalKeyDialogState extends State<ForgotParentalKeyDialog> {
       setState(() {
         _isLoading = false;
       });
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Error: $e'),
+          content: Text(FeedbackStrings.errorWith(e.toString())),
           backgroundColor: Colors.red,
         ),
       );
@@ -174,7 +179,7 @@ class _ForgotParentalKeyDialogState extends State<ForgotParentalKeyDialog> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
-          'Answer Security Question',
+          UIStrings.answerSecurityQuestion,
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
@@ -210,8 +215,8 @@ class _ForgotParentalKeyDialogState extends State<ForgotParentalKeyDialog> {
           TextFormField(
             controller: _answerController,
             decoration: InputDecoration(
-              labelText: 'Your Answer',
-              hintText: 'Enter your answer',
+              labelText: UIStrings.yourAnswer,
+              hintText: UIStrings.enterAnswerHint,
               border: const OutlineInputBorder(),
               prefixIcon: Icon(Icons.question_answer, color: AppColors.primary),
               suffixIcon: IconButton(
@@ -226,7 +231,7 @@ class _ForgotParentalKeyDialogState extends State<ForgotParentalKeyDialog> {
             obscureText: _obscureAnswer,
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'Please enter your answer';
+                return ValidationStrings.answerRequired;
               }
               return null;
             },
@@ -246,7 +251,7 @@ class _ForgotParentalKeyDialogState extends State<ForgotParentalKeyDialog> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
-          'Set New Parental Key',
+          UIStrings.setNewParentalKey,
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
@@ -257,8 +262,8 @@ class _ForgotParentalKeyDialogState extends State<ForgotParentalKeyDialog> {
         TextFormField(
           controller: _newKeyController,
           decoration: InputDecoration(
-            labelText: 'New Parental Key',
-            hintText: 'Min 4 characters',
+            labelText: UIStrings.newParentalKey,
+            hintText: UIStrings.minCharactersHint,
             border: const OutlineInputBorder(),
             prefixIcon: Icon(Icons.lock, color: AppColors.primary),
             suffixIcon: IconButton(
@@ -273,10 +278,10 @@ class _ForgotParentalKeyDialogState extends State<ForgotParentalKeyDialog> {
           obscureText: _obscureNewKey,
           validator: (value) {
             if (value == null || value.isEmpty) {
-              return 'Please enter a new key';
+              return ValidationStrings.newKeyRequired;
             }
             if (value.length < 4) {
-              return 'Key must be at least 4 characters';
+              return ValidationStrings.parentalKeyMinLength;
             }
             return null;
           },
@@ -285,8 +290,8 @@ class _ForgotParentalKeyDialogState extends State<ForgotParentalKeyDialog> {
         TextFormField(
           controller: _confirmKeyController,
           decoration: InputDecoration(
-            labelText: 'Confirm New Key',
-            hintText: 'Re-enter your key',
+            labelText: UIStrings.confirmNewKey,
+            hintText: UIStrings.reenterKeyHint,
             border: const OutlineInputBorder(),
             prefixIcon: Icon(Icons.lock_outline, color: AppColors.primary),
             suffixIcon: IconButton(
@@ -301,10 +306,10 @@ class _ForgotParentalKeyDialogState extends State<ForgotParentalKeyDialog> {
           obscureText: _obscureConfirmKey,
           validator: (value) {
             if (value == null || value.isEmpty) {
-              return 'Please confirm your key';
+              return ValidationStrings.confirmKeyRequired;
             }
             if (value != _newKeyController.text) {
-              return 'Keys do not match';
+              return ValidationStrings.keysDoNotMatch;
             }
             return null;
           },
@@ -323,7 +328,7 @@ class _ForgotParentalKeyDialogState extends State<ForgotParentalKeyDialog> {
         children: [
           Icon(Icons.lock_reset, color: AppColors.primary),
           const SizedBox(width: 12),
-          const Text('Forgot Parental Key'),
+          const Text(UIStrings.forgotParentalKey),
         ],
       ),
       content: Form(
@@ -335,7 +340,7 @@ class _ForgotParentalKeyDialogState extends State<ForgotParentalKeyDialog> {
       actions: [
         TextButton(
           onPressed: _isLoading ? null : () => Navigator.of(context).pop(),
-          child: const Text('Cancel'),
+          child: const Text(UIStrings.cancel),
         ),
         ElevatedButton(
           onPressed: _isLoading
@@ -359,7 +364,7 @@ class _ForgotParentalKeyDialogState extends State<ForgotParentalKeyDialog> {
                     color: Colors.white,
                   ),
                 )
-              : Text(_step == 1 ? 'Verify' : 'Reset Key'),
+              : Text(_step == 1 ? UIStrings.verify : UIStrings.resetKey),
         ),
       ],
     );

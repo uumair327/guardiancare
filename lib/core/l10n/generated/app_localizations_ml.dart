@@ -362,5 +362,80 @@ class AppLocalizationsMl extends AppLocalizations {
   }
 
   @override
-  String get noResourcesAvailable => '???????????';
+  String get noResourcesAvailable => 'വിഭവങ്ങളൊന്നും ലഭ്യമല്ല';
+
+  @override
+  String get forChildren => 'കുട്ടികൾക്കായി';
+
+  @override
+  String get connectAndShare => 'ബന്ധപ്പെടുക, അനുഭവങ്ങൾ പങ്കിടുക';
+
+  @override
+  String get beFirstToDiscuss => 'ചർച്ച ആരംഭിക്കുന്ന ആദ്യത്തെയാളാകൂ!';
+
+  @override
+  String get guidelinesTitle => 'ഫോറം മാർഗ്ഗനിർദ്ദേശങ്ങൾ';
+
+  @override
+  String get guidelinesWelcome =>
+      'ഗാർഡിയൻ കെയർ ഫോറത്തിലേക്ക് സ്വാഗതം. ദയവായി ഈ മാർഗ്ഗനിർദ്ദേശങ്ങൾ പാലിക്കുക:';
+
+  @override
+  String get guidelineRespect =>
+      'എല്ലാ അംഗങ്ങളോടും ബഹുമാനവും മര്യാദയും കാണിക്കുക.';
+
+  @override
+  String get guidelineNoAbuse =>
+      'അപമാനകരമായ, ഉപദ്രവിക്കുന്ന അല്ലെങ്കിൽ ദോഷകരമായ ഭാഷ ഉപയോഗിക്കരുത്.';
+
+  @override
+  String get guidelineNoHarmful =>
+      'അനുചിതമായ അല്ലെങ്കിൽ ദോഷകരമായ ഉള്ളടക്കം പങ്കിടുന്നത് ഒഴിവാക്കുക.';
+
+  @override
+  String get guidelineConstructive =>
+      'ഇത് കുട്ടികളുടെ സുരക്ഷയെക്കുറിച്ചുള്ള ക്രിയാത്മക ചർച്ചകൾക്കുള്ള ഒരു ഇടമാണ്.';
+
+  @override
+  String get discussionTitle => 'ചർച്ച';
+
+  @override
+  String get communityDiscussion => 'കമ്മ്യൂണിറ്റി ചർച്ച';
+
+  @override
+  String get beFirstToComment => 'നിങ്ങളുടെ ചിന്തകൾ പങ്കിടുന്ന ആദ്യത്തെയാളാകൂ!';
+
+  @override
+  String get startTypingBelow => 'താഴെ ടൈപ്പ് ചെയ്യാൻ തുടങ്ങുക';
+
+  @override
+  String commentsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count അഭിപ്രായങ്ങൾ',
+      one: '1 അഭിപ്രായം',
+      zero: 'അഭിപ്രായങ്ങളൊന്നുമില്ല',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get parentalAccessRequired => 'രക്ഷിതാവ് ആക്സസ് ആവശ്യമാണ്';
+
+  @override
+  String get parentalAccessDescription =>
+      'ഈ വിഭാഗം സംരക്ഷിതമാണ്. തുടരാൻ ദയവായി നിങ്ങളുടെ രക്ഷിതാവ് കീ നൽകുക.';
+
+  @override
+  String get invalidKeyTryAgain => 'അസാധുവായ കീ. ദയവായി വീണ്ടും ശ്രമിക്കുക.';
+
+  @override
+  String get forgotYourKey => 'നിങ്ങളുടെ കീ മറന്നോ?';
+
+  @override
+  String get protectedForChildSafety => 'കുട്ടികളുടെ സുരക്ഷയ്ക്കായി സംരക്ഷിതം';
+
+  @override
+  String get unlock => 'അൺലോക്ക് ചെയ്യുക';
 }

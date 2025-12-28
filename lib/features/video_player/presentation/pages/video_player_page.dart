@@ -6,6 +6,7 @@ import 'package:youtube_player_flutter/youtube_player_flutter.dart'
     hide PlaybackSpeedButton, PlayPauseButton;
 import 'package:guardiancare/core/core.dart';
 import 'package:guardiancare/features/video_player/domain/entities/video_entity.dart';
+import 'package:guardiancare/features/video_player/presentation/constants/strings.dart';
 import 'package:guardiancare/features/video_player/presentation/cubit/video_player_cubit.dart';
 import 'package:guardiancare/features/video_player/presentation/cubit/video_player_state.dart';
 import 'package:guardiancare/features/video_player/presentation/widgets/widgets.dart';
@@ -151,7 +152,7 @@ class _VideoPlayerPageState extends State<VideoPlayerPage>
       _cubit.setPlaybackState(PlaybackState.playing);
       _startHideControlsTimer();
     } else if (value.hasError) {
-      _cubit.setError('Video playback error');
+      _cubit.setError(VideoPlayerStrings.videoPlaybackError);
     } else {
       _cubit.setPlaybackState(PlaybackState.paused);
     }
@@ -477,7 +478,7 @@ class _VideoPlayerPageState extends State<VideoPlayerPage>
           ),
           Expanded(
             child: Text(
-              state.videoTitle ?? 'Video Player',
+              state.videoTitle ?? VideoPlayerStrings.pageTitle,
               style: AppTextStyles.body1.copyWith(
                 color: AppColors.white,
                 fontWeight: FontWeight.w600,
@@ -858,7 +859,7 @@ class _VideoPlayerPageState extends State<VideoPlayerPage>
           children: [
             // Video title
             Text(
-              state.videoTitle ?? 'Loading...',
+              state.videoTitle ?? UIStrings.loading,
               style: AppTextStyles.h3.copyWith(
                 color: AppColors.white,
                 fontWeight: FontWeight.bold,
@@ -932,14 +933,14 @@ class _VideoPlayerPageState extends State<VideoPlayerPage>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Watch Progress',
+                  VideoPlayerStrings.watchProgress,
                   style: AppTextStyles.caption.copyWith(
                     color: AppColors.white.withValues(alpha: 0.6),
                   ),
                 ),
                 SizedBox(height: AppDimensions.spaceXS),
                 Text(
-                  '${_formatDuration(state.progress.position)} watched',
+                  VideoPlayerStrings.watched(_formatDuration(state.progress.position)),
                   style: AppTextStyles.body1.copyWith(
                     color: AppColors.white,
                     fontWeight: FontWeight.w600,
@@ -977,7 +978,7 @@ class _VideoPlayerPageState extends State<VideoPlayerPage>
         Expanded(
           child: _QuickActionButton(
             icon: Icons.replay_rounded,
-            label: 'Restart',
+            label: VideoPlayerStrings.restart,
             onTap: () {
               HapticFeedback.lightImpact();
               _ytController.seekTo(Duration.zero);
@@ -988,7 +989,7 @@ class _VideoPlayerPageState extends State<VideoPlayerPage>
         Expanded(
           child: _QuickActionButton(
             icon: Icons.speed_rounded,
-            label: 'Speed',
+            label: VideoPlayerStrings.speed,
             onTap: _showSpeedSelector,
           ),
         ),
@@ -996,7 +997,7 @@ class _VideoPlayerPageState extends State<VideoPlayerPage>
         Expanded(
           child: _QuickActionButton(
             icon: Icons.fullscreen_rounded,
-            label: 'Fullscreen',
+            label: VideoPlayerStrings.fullscreen,
             onTap: _enterFullScreen,
             isPrimary: true,
           ),
@@ -1018,7 +1019,7 @@ class _VideoPlayerPageState extends State<VideoPlayerPage>
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          'Video Player',
+          VideoPlayerStrings.pageTitle,
           style: AppTextStyles.appBarTitle.copyWith(color: AppColors.white),
         ),
       ),
@@ -1042,7 +1043,7 @@ class _VideoPlayerPageState extends State<VideoPlayerPage>
               ),
               SizedBox(height: AppDimensions.spaceXL),
               Text(
-                'Invalid Video URL',
+                VideoPlayerStrings.invalidVideoUrl,
                 style: AppTextStyles.h2.copyWith(
                   color: AppColors.white,
                   fontWeight: FontWeight.bold,
@@ -1050,7 +1051,7 @@ class _VideoPlayerPageState extends State<VideoPlayerPage>
               ),
               SizedBox(height: AppDimensions.spaceM),
               Text(
-                'The video link appears to be invalid.\nPlease check and try again.',
+                VideoPlayerStrings.invalidVideoUrlDescription,
                 textAlign: TextAlign.center,
                 style: AppTextStyles.body1.copyWith(
                   color: AppColors.white.withValues(alpha: 0.7),
@@ -1060,7 +1061,7 @@ class _VideoPlayerPageState extends State<VideoPlayerPage>
               SizedBox(height: AppDimensions.spaceXL),
               _QuickActionButton(
                 icon: Icons.arrow_back_rounded,
-                label: 'Go Back',
+                label: UIStrings.goBack,
                 onTap: () => Navigator.pop(context),
                 isPrimary: true,
               ),
@@ -1117,8 +1118,11 @@ class _VideoPlayerPageState extends State<VideoPlayerPage>
 
 // ==================== Supporting Widgets ====================
 
-/// Quick action button widget
-class _QuickActionButton extends StatefulWidget {
+/// Quick action button widget using centralized AnimatedButton.
+///
+/// Uses [AnimatedButton] for scale-tap animation,
+/// eliminating duplicate animation code.
+class _QuickActionButton extends StatelessWidget {
   final IconData icon;
   final String label;
   final VoidCallback onTap;
@@ -1132,90 +1136,45 @@ class _QuickActionButton extends StatefulWidget {
   });
 
   @override
-  State<_QuickActionButton> createState() => _QuickActionButtonState();
-}
-
-class _QuickActionButtonState extends State<_QuickActionButton>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _scaleAnimation;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: AppDurations.animationShort,
-    );
-    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.95).animate(
-      CurvedAnimation(parent: _controller, curve: AppCurves.tap),
-    );
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return RepaintBoundary(
-      child: GestureDetector(
-        onTapDown: (_) => _controller.forward(),
-        onTapUp: (_) => _controller.reverse(),
-        onTapCancel: () => _controller.reverse(),
-        onTap: () {
-          HapticFeedback.lightImpact();
-          widget.onTap();
-        },
-        child: AnimatedBuilder(
-          animation: _controller,
-          builder: (context, child) {
-            return Transform.scale(
-              scale: _scaleAnimation.value,
-              child: child,
-            );
-          },
-          child: Container(
-            padding: EdgeInsets.symmetric(
-              vertical: AppDimensions.spaceM,
-            ),
-            decoration: BoxDecoration(
-              gradient: widget.isPrimary
-                  ? const LinearGradient(
-                      colors: [Color(0xFF8B5CF6), Color(0xFF7C3AED)],
-                    )
-                  : null,
-              color: widget.isPrimary
-                  ? null
-                  : AppColors.white.withValues(alpha: 0.08),
-              borderRadius: AppDimensions.borderRadiusM,
-              border: widget.isPrimary
-                  ? null
-                  : Border.all(
-                      color: AppColors.white.withValues(alpha: 0.15),
-                    ),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  widget.icon,
-                  color: AppColors.white,
-                  size: AppDimensions.iconS,
-                ),
-                SizedBox(width: AppDimensions.spaceS),
-                Text(
-                  widget.label,
-                  style: AppTextStyles.button.copyWith(
-                    color: AppColors.white,
-                  ),
-                ),
-              ],
+    return AnimatedButton(
+      onTap: onTap,
+      config: AnimationPresets.scaleButton, // 0.95 scale, same as original
+      enableHaptic: true,
+      hapticType: HapticFeedbackType.light,
+      decoration: BoxDecoration(
+        gradient: isPrimary
+            ? const LinearGradient(
+                colors: [Color(0xFF8B5CF6), Color(0xFF7C3AED)],
+              )
+            : null,
+        color: isPrimary ? null : AppColors.white.withValues(alpha: 0.08),
+        borderRadius: AppDimensions.borderRadiusM,
+        border: isPrimary
+            ? null
+            : Border.all(
+                color: AppColors.white.withValues(alpha: 0.15),
+              ),
+      ),
+      padding: EdgeInsets.symmetric(
+        vertical: AppDimensions.spaceM,
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            icon,
+            color: AppColors.white,
+            size: AppDimensions.iconS,
+          ),
+          SizedBox(width: AppDimensions.spaceS),
+          Text(
+            label,
+            style: AppTextStyles.button.copyWith(
+              color: AppColors.white,
             ),
           ),
-        ),
+        ],
       ),
     );
   }
@@ -1257,7 +1216,7 @@ class _VideoEndedDialog extends StatelessWidget {
             ),
             SizedBox(height: AppDimensions.spaceL),
             Text(
-              'Video Complete!',
+              VideoPlayerStrings.videoComplete,
               style: AppTextStyles.h3.copyWith(
                 color: AppColors.white,
                 fontWeight: FontWeight.bold,
@@ -1265,7 +1224,7 @@ class _VideoEndedDialog extends StatelessWidget {
             ),
             SizedBox(height: AppDimensions.spaceS),
             Text(
-              'Would you like to watch it again?',
+              VideoPlayerStrings.watchAgainPrompt,
               style: AppTextStyles.body1.copyWith(
                 color: AppColors.white.withValues(alpha: 0.7),
               ),
@@ -1282,7 +1241,7 @@ class _VideoEndedDialog extends StatelessWidget {
                       ),
                     ),
                     child: Text(
-                      'Close',
+                      UIStrings.close,
                       style: AppTextStyles.button.copyWith(
                         color: AppColors.white.withValues(alpha: 0.7),
                       ),
@@ -1303,7 +1262,7 @@ class _VideoEndedDialog extends StatelessWidget {
                       ),
                     ),
                     child: Text(
-                      'Replay',
+                      VideoPlayerStrings.replay,
                       style: AppTextStyles.button.copyWith(
                         color: AppColors.white,
                       ),

@@ -245,6 +245,149 @@ lib/
    - Repository tests
    - BLoC tests
 
+---
+
+## 📝 String Constants Usage Guidelines
+
+All hardcoded strings in the application are centralized into organized constant classes following Clean Architecture principles. This ensures consistency, maintainability, and easier localization support.
+
+### String Constant Classes
+
+| Class | Purpose | Location |
+|-------|---------|----------|
+| `AppStrings` | Core app info, URLs, storage keys, route names | `lib/core/constants/app_strings.dart` |
+| `ErrorStrings` | Error messages (network, auth, cache, server) | `lib/core/constants/error_strings.dart` |
+| `ValidationStrings` | Input validation messages | `lib/core/constants/validation_strings.dart` |
+| `UIStrings` | UI text (buttons, labels, titles, placeholders) | `lib/core/constants/ui_strings.dart` |
+| `FeedbackStrings` | SnackBar/toast messages (success, error, warning) | `lib/core/constants/feedback_strings.dart` |
+| `FirebaseStrings` | Firebase collection/document names | `lib/core/constants/firebase_strings.dart` |
+| `ApiStrings` | API URLs, endpoints, headers | `lib/core/constants/api_strings.dart` |
+
+### Feature-Specific Strings
+
+For strings used only within a single feature, create a feature-specific strings file:
+
+```
+lib/features/{feature}/presentation/constants/strings.dart
+```
+
+Examples:
+- `ForumStrings` - Forum feature strings
+- `VideoPlayerStrings` - Video player feature strings
+
+### Usage Examples
+
+#### Single Import (Recommended)
+```dart
+// Import all constants with a single import
+import 'package:guardiancare/core/constants/constants.dart';
+
+// Usage
+Text(UIStrings.signIn);
+Text(ErrorStrings.network);
+Text(FeedbackStrings.saveSuccess);
+```
+
+#### Error Messages
+```dart
+// Use ErrorStrings for technical/system errors
+throw ServerException(ErrorStrings.server);
+return Left(Failure(ErrorStrings.networkError));
+
+// Template methods for dynamic errors
+ErrorStrings.failedTo('load data'); // "Failed to load data."
+ErrorStrings.failedToWithReason('save', 'disk full'); // "Failed to save: disk full"
+```
+
+#### Validation Messages
+```dart
+// Use ValidationStrings for form validation
+if (email.isEmpty) return ValidationStrings.emailRequired;
+if (!isValidEmail(email)) return ValidationStrings.emailInvalid;
+
+// Template methods for dynamic validation
+ValidationStrings.minLength(6); // "Must be at least 6 characters."
+ValidationStrings.maxLength(100); // "Must be at most 100 characters."
+```
+
+#### UI Text
+```dart
+// Use UIStrings for buttons, labels, titles
+ElevatedButton(
+  onPressed: onSubmit,
+  child: Text(UIStrings.submit),
+);
+
+// Time-based greetings
+Text(UIStrings.goodMorning);
+
+// Template methods for dynamic text
+UIStrings.minutesAgo(5); // "5m ago"
+UIStrings.itemCount(3, 'item'); // "3 items"
+```
+
+#### Feedback Messages
+```dart
+// Use FeedbackStrings for SnackBars and toasts
+ScaffoldMessenger.of(context).showSnackBar(
+  SnackBar(content: Text(FeedbackStrings.saveSuccess)),
+);
+
+// Template methods for dynamic feedback
+FeedbackStrings.itemSaved('Profile'); // "Profile saved successfully!"
+FeedbackStrings.confirmAction('delete'); // "Are you sure you want to delete?"
+```
+
+#### Firebase Constants
+```dart
+// Use FirebaseStrings for collection/document names
+final collection = FirebaseFirestore.instance.collection(FirebaseStrings.users);
+final data = {
+  FirebaseStrings.fieldName: name,
+  FirebaseStrings.fieldEmail: email,
+  FirebaseStrings.fieldCreatedAt: FieldValue.serverTimestamp(),
+};
+```
+
+### When to Use Constants vs. AppLocalizations
+
+| Use Case | Use This |
+|----------|----------|
+| User-facing text that needs translation | `AppLocalizations` (l10n) |
+| Technical identifiers (collection names, API endpoints) | String Constants |
+| Error codes and technical messages | `ErrorStrings` |
+| Asset paths and URLs | `AppStrings` |
+| Strings that are the same in all languages | String Constants |
+| Button labels, titles (if not localized) | `UIStrings` |
+
+### Adding New String Constants
+
+1. **Identify the category** - Determine which string class the constant belongs to
+2. **Add to appropriate file** - Add the constant to the correct file
+3. **Use descriptive names** - Use clear, descriptive constant names
+4. **Group related constants** - Keep related constants together with section comments
+5. **Add template methods** - For dynamic strings, add template methods
+
+Example:
+```dart
+// In error_strings.dart
+class ErrorStrings {
+  // ==================== New Category ====================
+  static const String newError = 'New error message.';
+  
+  // Template method for dynamic errors
+  static String customError(String detail) => 'Error: $detail';
+}
+```
+
+### Best Practices
+
+1. **Never hardcode strings** - Always use constants or localization
+2. **Single import** - Use `import 'package:guardiancare/core/constants/constants.dart';`
+3. **Feature isolation** - Keep feature-specific strings in feature folders
+4. **Consistent naming** - Follow existing naming conventions
+5. **Document new categories** - Add section comments for new constant groups
+
 ### Code Style
 
 - Follow [Effective Dart](https://dart.dev/guides/language/effective-dart)

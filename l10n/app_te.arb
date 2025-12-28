@@ -109,5 +109,25 @@
   "noCategoriesAvailable": "వర్గాలు అందుబాటులో లేవు",
   "noVideosAvailable": "వీడియోలు అందుబాటులో లేవు"
 ,
-  "noResourcesAvailable": "???? ????? ??"
+  "noResourcesAvailable": "వనరులు అందుబాటులో లేవు",
+  "forChildren": "పిల్లల కోసం",
+  "connectAndShare": "కనెక్ట్ అవ్వండి మరియు అనుభవాలను పంచుకోండి",
+  "beFirstToDiscuss": "చర్చను ప్రారంభించే మొదటి వ్యక్తి అవ్వండి!",
+  "guidelinesTitle": "ఫోరమ్ మార్గదర్శకాలు",
+  "guidelinesWelcome": "గార్డియన్ కేర్ ఫోరమ్‌కు స్వాగతం. దయచేసి ఈ మార్గదర్శకాలను అనుసరించండి:",
+  "guidelineRespect": "అన్ని సభ్యులతో గౌరవంగా మరియు మర్యాదగా ఉండండి.",
+  "guidelineNoAbuse": "అవమానకరమైన, వేధింపు లేదా హానికరమైన భాషను ఉపయోగించకండి.",
+  "guidelineNoHarmful": "అనుచితమైన లేదా హానికరమైన కంటెంట్‌ను పంచుకోకుండా ఉండండి.",
+  "guidelineConstructive": "ఇది పిల్లల భద్రతపై నిర్మాణాత్మక చర్చల కోసం ఒక స్థలం.",
+  "discussionTitle": "చర్చ",
+  "communityDiscussion": "సమాజ చర్చ",
+  "beFirstToComment": "మీ ఆలోచనలను పంచుకునే మొదటి వ్యక్తి అవ్వండి!",
+  "startTypingBelow": "క్రింద టైప్ చేయడం ప్రారంభించండి",
+  "commentsCount": "{count, plural, =0{వ్యాఖ్యలు లేవు} =1{1 వ్యాఖ్య} other{{count} వ్యాఖ్యలు}}",
+  "parentalAccessRequired": "తల్లిదండ్రుల యాక్సెస్ అవసరం",
+  "parentalAccessDescription": "ఈ విభాగం రక్షించబడింది. కొనసాగించడానికి దయచేసి మీ తల్లిదండ్రుల కీని నమోదు చేయండి.",
+  "invalidKeyTryAgain": "చెల్లని కీ. దయచేసి మళ్లీ ప్రయత్నించండి.",
+  "forgotYourKey": "మీ కీని మర్చిపోయారా?",
+  "protectedForChildSafety": "పిల్లల భద్రత కోసం రక్షించబడింది",
+  "unlock": "అన్‌లాక్ చేయండి"
 }

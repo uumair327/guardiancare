@@ -123,14 +123,7 @@ class HomePage extends StatelessWidget {
                       onQuizTap: () => context.push('/quiz'),
                       onLearnTap: () => context.push('/video'),
                       onEmergencyTap: () => context.push('/emergency'),
-                      onProfileTap: () {
-                        showParentalVerification(
-                          context,
-                          l10n.profile,
-                          () => context.push('/account'),
-                          onForgotKey: () => _handleForgotKey(context),
-                        );
-                      },
+                      onProfileTap: () => context.push('/account'),
                       onWebsiteTap: () => context.push(
                         '/webview',
                         extra: AppStrings.websiteUrl,
@@ -168,7 +161,7 @@ class HomePage extends StatelessWidget {
     if (result == true && context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: const Text('You can now use your new parental key'),
+          content: const Text(FeedbackStrings.newParentalKeyReady),
           backgroundColor: AppColors.success,
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(
@@ -197,7 +190,7 @@ class HomePage extends StatelessWidget {
       if (!launched && context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(AppStrings.errorEmailClient),
+            content: Text(ErrorStrings.emailClientError),
             duration: AppDurations.snackbarMedium,
             backgroundColor: AppColors.error,
             behavior: SnackBarBehavior.floating,
@@ -211,7 +204,7 @@ class HomePage extends StatelessWidget {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error launching email: $e'),
+            content: Text(FeedbackStrings.launchError('email: $e')),
             duration: AppDurations.snackbarMedium,
             backgroundColor: AppColors.error,
             behavior: SnackBarBehavior.floating,

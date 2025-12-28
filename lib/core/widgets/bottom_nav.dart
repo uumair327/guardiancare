@@ -144,83 +144,45 @@ class _NavItemWidget extends StatelessWidget {
             child: child,
           );
         },
-        child: AnimatedContainer(
-          duration: AppDurations.animationMedium,
-          curve: AppCurves.emphasized,
-          padding: EdgeInsets.symmetric(
-            horizontal: isSelected ? AppDimensions.spaceM : AppDimensions.spaceS,
-            vertical: AppDimensions.spaceS,
-          ),
-          decoration: BoxDecoration(
-            gradient: isSelected
-                ? LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [
-                      (item.activeColor ?? AppColors.primary).withValues(alpha: 0.15),
-                      (item.activeColor ?? AppColors.primary).withValues(alpha: 0.05),
-                    ],
-                  )
-                : null,
-            borderRadius: AppDimensions.borderRadiusL,
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // Icon with animated container
-              AnimatedContainer(
-                duration: AppDurations.animationMedium,
-                curve: AppCurves.emphasized,
-                padding: EdgeInsets.all(isSelected ? AppDimensions.spaceS : 0),
-                decoration: BoxDecoration(
-                  gradient: isSelected
-                      ? LinearGradient(
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                          colors: [
-                            item.activeColor ?? AppColors.primary,
-                            (item.activeColor ?? AppColors.primary).withValues(alpha: 0.8),
-                          ],
-                        )
-                      : null,
-                  borderRadius: AppDimensions.borderRadiusM,
-                  boxShadow: isSelected
-                      ? [
-                          BoxShadow(
-                            color: (item.activeColor ?? AppColors.primary)
-                                .withValues(alpha: 0.3),
-                            blurRadius: 8,
-                            offset: const Offset(0, 2),
-                          ),
-                        ]
-                      : null,
-                ),
-                child: Icon(
-                  isSelected ? item.activeIcon : item.icon,
-                  color: isSelected
-                      ? AppColors.white
-                      : AppColors.textSecondary,
-                  size: isSelected ? 22 : 24,
-                ),
-              ),
-              // Label (only shown when selected)
-              AnimatedSize(
-                duration: AppDurations.animationMedium,
-                curve: AppCurves.emphasized,
-                child: isSelected
-                    ? Padding(
-                        padding: EdgeInsets.only(left: AppDimensions.spaceS),
-                        child: Text(
-                          item.label,
-                          style: AppTextStyles.bodySmall.copyWith(
-                            color: item.activeColor ?? AppColors.primary,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
+        child: SizedBox(
+          width: 64,
+          height: 56,
+          child: Center(
+            child: AnimatedContainer(
+              duration: AppDurations.animationMedium,
+              curve: AppCurves.emphasized,
+              padding: EdgeInsets.all(AppDimensions.spaceS),
+              decoration: BoxDecoration(
+                gradient: isSelected
+                    ? LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          item.activeColor ?? AppColors.primary,
+                          (item.activeColor ?? AppColors.primary).withValues(alpha: 0.8),
+                        ],
                       )
-                    : const SizedBox.shrink(),
+                    : null,
+                borderRadius: AppDimensions.borderRadiusM,
+                boxShadow: isSelected
+                    ? [
+                        BoxShadow(
+                          color: (item.activeColor ?? AppColors.primary)
+                              .withValues(alpha: 0.3),
+                          blurRadius: 8,
+                          offset: const Offset(0, 2),
+                        ),
+                      ]
+                    : null,
               ),
-            ],
+              child: Icon(
+                isSelected ? item.activeIcon : item.icon,
+                color: isSelected
+                    ? AppColors.white
+                    : AppColors.textSecondary,
+                size: 24,
+              ),
+            ),
           ),
         ),
       ),

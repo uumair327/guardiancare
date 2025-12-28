@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:guardiancare/core/constants/constants.dart';
 import 'package:guardiancare/core/error/exceptions.dart';
 import 'package:guardiancare/features/authentication/data/models/user_model.dart';
 
@@ -44,13 +45,13 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       );
 
       if (credential.user == null) {
-        throw AuthException('Sign in failed: No user returned');
+        throw AuthException(ErrorStrings.withDetails(ErrorStrings.signInFailed, ErrorStrings.noUserReturned));
       }
 
       // Check if email is verified
       if (!credential.user!.emailVerified) {
         throw AuthException(
-          'Please verify your email address. Check your inbox for the verification link.',
+          ErrorStrings.emailNotVerified,
           code: 'email-not-verified',
         );
       }
@@ -75,7 +76,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         code: e.code,
       );
     } catch (e) {
-      throw AuthException('Sign in failed: ${e.toString()}');
+      throw AuthException(ErrorStrings.withDetails(ErrorStrings.signInFailed, e.toString()));
     }
   }
 
@@ -93,7 +94,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       );
 
       if (credential.user == null) {
-        throw AuthException('Sign up failed: No user returned');
+        throw AuthException(ErrorStrings.withDetails(ErrorStrings.signUpFailed, ErrorStrings.noUserReturned));
       }
 
       // Update display name
@@ -120,7 +121,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         code: e.code,
       );
     } catch (e) {
-      throw AuthException('Sign up failed: ${e.toString()}');
+      throw AuthException(ErrorStrings.withDetails(ErrorStrings.signUpFailed, e.toString()));
     }
   }
 
@@ -131,7 +132,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
 
       if (googleUser == null) {
-        throw AuthException('Google sign in cancelled');
+        throw AuthException(ErrorStrings.googleSignInCancelled);
       }
 
       // Obtain the auth details from the request
@@ -148,7 +149,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       final userCredential = await firebaseAuth.signInWithCredential(credential);
 
       if (userCredential.user == null) {
-        throw AuthException('Google sign in failed: No user returned');
+        throw AuthException(ErrorStrings.withDetails(ErrorStrings.googleSignInFailed, ErrorStrings.noUserReturned));
       }
 
       // Check if user exists in Firestore
@@ -180,7 +181,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         code: e.code,
       );
     } catch (e) {
-      throw AuthException('Google sign in failed: ${e.toString()}');
+      throw AuthException(ErrorStrings.withDetails(ErrorStrings.googleSignInFailed, e.toString()));
     }
   }
 
@@ -192,7 +193,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         googleSignIn.signOut(),
       ]);
     } catch (e) {
-      throw AuthException('Sign out failed: ${e.toString()}');
+      throw AuthException(ErrorStrings.withDetails(ErrorStrings.signOutFailed, e.toString()));
     }
   }
 
@@ -208,7 +209,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
       return UserModel.fromFirebaseUser(user, role: role);
     } catch (e) {
-      throw AuthException('Failed to get current user: ${e.toString()}');
+      throw AuthException(ErrorStrings.withDetails(ErrorStrings.getCurrentUserError, e.toString()));
     }
   }
 
@@ -222,7 +223,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         code: e.code,
       );
     } catch (e) {
-      throw AuthException('Failed to send password reset email: ${e.toString()}');
+      throw AuthException(ErrorStrings.withDetails(ErrorStrings.sendPasswordResetError, e.toString()));
     }
   }
 
@@ -234,7 +235,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     try {
       final user = firebaseAuth.currentUser;
       if (user == null) {
-        throw AuthException('No user signed in');
+        throw AuthException(ErrorStrings.noUserSignedIn);
       }
 
       if (displayName != null) {
@@ -258,7 +259,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         code: e.code,
       );
     } catch (e) {
-      throw AuthException('Failed to update profile: ${e.toString()}');
+      throw AuthException(ErrorStrings.withDetails(ErrorStrings.updateProfileError, e.toString()));
     }
   }
 

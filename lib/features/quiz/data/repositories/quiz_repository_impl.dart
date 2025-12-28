@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:guardiancare/core/constants/constants.dart';
 import 'package:guardiancare/core/error/error.dart';
 import 'package:guardiancare/features/quiz/data/datasources/quiz_local_datasource.dart';
 import 'package:guardiancare/features/quiz/data/models/question_model.dart';
@@ -21,7 +22,7 @@ class QuizRepositoryImpl implements QuizRepository {
     } on CacheException catch (e) {
       return Left(CacheFailure(e.message));
     } catch (e) {
-      return Left(CacheFailure('Failed to get quiz: ${e.toString()}'));
+      return Left(CacheFailure(ErrorStrings.withDetails(ErrorStrings.getQuizError, e.toString())));
     }
   }
 
@@ -34,7 +35,7 @@ class QuizRepositoryImpl implements QuizRepository {
     } on CacheException catch (e) {
       return Left(CacheFailure(e.message));
     } catch (e) {
-      return Left(CacheFailure('Failed to get questions: ${e.toString()}'));
+      return Left(CacheFailure(ErrorStrings.withDetails(ErrorStrings.getQuestionsError, e.toString())));
     }
   }
 
@@ -58,7 +59,7 @@ class QuizRepositoryImpl implements QuizRepository {
 
       return Right(result);
     } catch (e) {
-      return Left(CacheFailure('Failed to submit quiz: ${e.toString()}'));
+      return Left(CacheFailure(ErrorStrings.withDetails(ErrorStrings.submitQuizError, e.toString())));
     }
   }
 
@@ -72,7 +73,7 @@ class QuizRepositoryImpl implements QuizRepository {
       final isValid = localDataSource.validateQuizData(questionModels);
       return Right(isValid);
     } catch (e) {
-      return Left(CacheFailure('Failed to validate quiz: ${e.toString()}'));
+      return Left(CacheFailure(ErrorStrings.withDetails(ErrorStrings.validateQuizError, e.toString())));
     }
   }
 }

@@ -168,7 +168,7 @@ class _QuizPageState extends State<QuizPage> {
             ),
             SizedBox(height: AppDimensions.spaceS),
             Text(
-              'Check back later for new quizzes!',
+              UIStrings.checkBackLaterQuizzes,
               style: AppTextStyles.body2.copyWith(
                 color: AppColors.textSecondary,
               ),

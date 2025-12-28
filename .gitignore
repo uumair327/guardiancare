@@ -91,7 +91,6 @@ Thumbs.db
 # =============================================================================
 # Web/Windows/Linux (DO NOT TRACK)
 # =============================================================================
-lib/generated_plugin_registrant.dart
 **/windows/flutter/ephemeral/
 **/linux/flutter/ephemeral/
 

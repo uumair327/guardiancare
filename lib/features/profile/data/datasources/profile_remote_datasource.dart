@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:google_sign_in/google_sign_in.dart';
+import 'package:guardiancare/core/constants/constants.dart';
 import 'package:guardiancare/core/error/exceptions.dart';
 import 'package:guardiancare/features/profile/data/models/profile_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -37,17 +37,17 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
       final doc = await firestore.collection('users').doc(uid).get();
 
       if (!doc.exists) {
-        throw ServerException('User profile not found');
+        throw ServerException(ErrorStrings.userNotFound);
       }
 
       final data = doc.data();
       if (data == null) {
-        throw ServerException('User profile data is null');
+        throw ServerException(ErrorStrings.invalidData);
       }
 
       return ProfileModel.fromJson(data);
     } catch (e) {
-      throw ServerException('Failed to get profile: ${e.toString()}');
+      throw ServerException(ErrorStrings.withDetails(ErrorStrings.getProfileError, e.toString()));
     }
   }
 
@@ -58,7 +58,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
             profile.toJson(),
           );
     } catch (e) {
-      throw ServerException('Failed to update profile: ${e.toString()}');
+      throw ServerException(ErrorStrings.withDetails(ErrorStrings.updateProfileError, e.toString()));
     }
   }
 
@@ -67,7 +67,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
     try {
       final user = auth.currentUser;
       if (user == null) {
-        throw ServerException('No user is currently signed in');
+        throw ServerException(ErrorStrings.userNotFound);
       }
 
       // Delete user's recommendations
@@ -79,7 +79,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
       // Reauthenticate if needed and delete Firebase Auth account
       await _deleteFirebaseAuthAccount(user);
     } catch (e) {
-      throw ServerException('Failed to delete account: ${e.toString()}');
+      throw ServerException(ErrorStrings.withDetails(ErrorStrings.deleteAccountError, e.toString()));
     }
   }
 
@@ -88,7 +88,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
     try {
       await sharedPreferences.remove('has_seen_forum_guidelines');
     } catch (e) {
-      throw CacheException('Failed to clear preferences: ${e.toString()}');
+      throw CacheException(ErrorStrings.withDetails(ErrorStrings.clearPreferencesError, e.toString()));
     }
   }
 
@@ -117,7 +117,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
       if (e.code == "requires-recent-login") {
         await _reauthenticateAndDelete(user);
       } else {
-        throw ServerException('Failed to delete auth account: ${e.message}');
+        throw ServerException(ErrorStrings.withDetails(ErrorStrings.deleteAccountError, e.message ?? ''));
       }
     }
   }
@@ -133,7 +133,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
 
       await user.delete();
     } catch (e) {
-      throw ServerException('Failed to reauthenticate and delete: ${e.toString()}');
+      throw ServerException(ErrorStrings.withDetails(ErrorStrings.deleteAccountError, e.toString()));
     }
   }
 }

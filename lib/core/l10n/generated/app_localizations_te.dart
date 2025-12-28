@@ -361,5 +361,80 @@ class AppLocalizationsTe extends AppLocalizations {
   }
 
   @override
-  String get noResourcesAvailable => '???? ????? ??';
+  String get noResourcesAvailable => 'వనరులు అందుబాటులో లేవు';
+
+  @override
+  String get forChildren => 'పిల్లల కోసం';
+
+  @override
+  String get connectAndShare => 'కనెక్ట్ అవ్వండి మరియు అనుభవాలను పంచుకోండి';
+
+  @override
+  String get beFirstToDiscuss => 'చర్చను ప్రారంభించే మొదటి వ్యక్తి అవ్వండి!';
+
+  @override
+  String get guidelinesTitle => 'ఫోరమ్ మార్గదర్శకాలు';
+
+  @override
+  String get guidelinesWelcome =>
+      'గార్డియన్ కేర్ ఫోరమ్‌కు స్వాగతం. దయచేసి ఈ మార్గదర్శకాలను అనుసరించండి:';
+
+  @override
+  String get guidelineRespect =>
+      'అన్ని సభ్యులతో గౌరవంగా మరియు మర్యాదగా ఉండండి.';
+
+  @override
+  String get guidelineNoAbuse =>
+      'అవమానకరమైన, వేధింపు లేదా హానికరమైన భాషను ఉపయోగించకండి.';
+
+  @override
+  String get guidelineNoHarmful =>
+      'అనుచితమైన లేదా హానికరమైన కంటెంట్‌ను పంచుకోకుండా ఉండండి.';
+
+  @override
+  String get guidelineConstructive =>
+      'ఇది పిల్లల భద్రతపై నిర్మాణాత్మక చర్చల కోసం ఒక స్థలం.';
+
+  @override
+  String get discussionTitle => 'చర్చ';
+
+  @override
+  String get communityDiscussion => 'సమాజ చర్చ';
+
+  @override
+  String get beFirstToComment => 'మీ ఆలోచనలను పంచుకునే మొదటి వ్యక్తి అవ్వండి!';
+
+  @override
+  String get startTypingBelow => 'క్రింద టైప్ చేయడం ప్రారంభించండి';
+
+  @override
+  String commentsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count వ్యాఖ్యలు',
+      one: '1 వ్యాఖ్య',
+      zero: 'వ్యాఖ్యలు లేవు',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get parentalAccessRequired => 'తల్లిదండ్రుల యాక్సెస్ అవసరం';
+
+  @override
+  String get parentalAccessDescription =>
+      'ఈ విభాగం రక్షించబడింది. కొనసాగించడానికి దయచేసి మీ తల్లిదండ్రుల కీని నమోదు చేయండి.';
+
+  @override
+  String get invalidKeyTryAgain => 'చెల్లని కీ. దయచేసి మళ్లీ ప్రయత్నించండి.';
+
+  @override
+  String get forgotYourKey => 'మీ కీని మర్చిపోయారా?';
+
+  @override
+  String get protectedForChildSafety => 'పిల్లల భద్రత కోసం రక్షించబడింది';
+
+  @override
+  String get unlock => 'అన్‌లాక్ చేయండి';
 }

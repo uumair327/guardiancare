@@ -360,4 +360,78 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get noResourcesAvailable => 'No resources available';
+
+  @override
+  String get forChildren => 'For Children';
+
+  @override
+  String get connectAndShare => 'Connect and share experiences';
+
+  @override
+  String get beFirstToDiscuss => 'Be the first to start a discussion!';
+
+  @override
+  String get guidelinesTitle => 'Forum Guidelines';
+
+  @override
+  String get guidelinesWelcome =>
+      'Welcome to the GuardianCare Forum. Please follow these guidelines:';
+
+  @override
+  String get guidelineRespect => 'Be respectful and courteous to all members.';
+
+  @override
+  String get guidelineNoAbuse =>
+      'Do not use abusive, harassing, or harmful language.';
+
+  @override
+  String get guidelineNoHarmful =>
+      'Avoid sharing inappropriate or harmful content.';
+
+  @override
+  String get guidelineConstructive =>
+      'This is a space for constructive discussions on child safety.';
+
+  @override
+  String get discussionTitle => 'Discussion';
+
+  @override
+  String get communityDiscussion => 'Community Discussion';
+
+  @override
+  String get beFirstToComment => 'Be the first to share your thoughts!';
+
+  @override
+  String get startTypingBelow => 'Start typing below';
+
+  @override
+  String commentsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Comments',
+      one: '1 Comment',
+      zero: 'No Comments',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get parentalAccessRequired => 'Parental Access Required';
+
+  @override
+  String get parentalAccessDescription =>
+      'This section is protected. Please enter your parental key to continue.';
+
+  @override
+  String get invalidKeyTryAgain => 'Invalid key. Please try again.';
+
+  @override
+  String get forgotYourKey => 'Forgot your key?';
+
+  @override
+  String get protectedForChildSafety => 'Protected for child safety';
+
+  @override
+  String get unlock => 'Unlock';
 }

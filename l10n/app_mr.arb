@@ -125,5 +125,25 @@
   "noCategoriesAvailable": "कोणत्याही श्रेणी उपलब्ध नाहीत",
   "noVideosAvailable": "कोणतेही व्हिडिओ उपलब्ध नाहीत"
 ,
-  "noResourcesAvailable": "???? ???? ????? ???"
+  "noResourcesAvailable": "कोणतीही संसाधने उपलब्ध नाहीत",
+  "forChildren": "मुलांसाठी",
+  "connectAndShare": "जोडा आणि अनुभव शेअर करा",
+  "beFirstToDiscuss": "चर्चा सुरू करणारे पहिले व्हा!",
+  "guidelinesTitle": "फोरम मार्गदर्शक तत्त्वे",
+  "guidelinesWelcome": "गार्डियन केअर फोरममध्ये आपले स्वागत आहे. कृपया या मार्गदर्शक तत्त्वांचे पालन करा:",
+  "guidelineRespect": "सर्व सदस्यांशी आदरपूर्ण आणि सौजन्यशील रहा.",
+  "guidelineNoAbuse": "अपमानास्पद, छळवणूक किंवा हानिकारक भाषा वापरू नका.",
+  "guidelineNoHarmful": "अयोग्य किंवा हानिकारक सामग्री शेअर करणे टाळा.",
+  "guidelineConstructive": "हे बाल सुरक्षिततेवर रचनात्मक चर्चांसाठी एक जागा आहे.",
+  "discussionTitle": "चर्चा",
+  "communityDiscussion": "समुदाय चर्चा",
+  "beFirstToComment": "तुमचे विचार शेअर करणारे पहिले व्हा!",
+  "startTypingBelow": "खाली टाइप करणे सुरू करा",
+  "commentsCount": "{count, plural, =0{कोणत्याही टिप्पण्या नाहीत} =1{1 टिप्पणी} other{{count} टिप्पण्या}}",
+  "parentalAccessRequired": "पालक प्रवेश आवश्यक",
+  "parentalAccessDescription": "हा विभाग संरक्षित आहे. सुरू ठेवण्यासाठी कृपया तुमची पालक की प्रविष्ट करा.",
+  "invalidKeyTryAgain": "अवैध की. कृपया पुन्हा प्रयत्न करा.",
+  "forgotYourKey": "तुमची की विसरलात?",
+  "protectedForChildSafety": "बाल सुरक्षिततेसाठी संरक्षित",
+  "unlock": "अनलॉक करा"
 }

@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:guardiancare/core/constants/constants.dart';
 import 'package:guardiancare/core/error/exceptions.dart';
 import 'package:guardiancare/features/forum/data/models/comment_model.dart';
 import 'package:guardiancare/features/forum/data/models/forum_model.dart';
@@ -75,7 +76,7 @@ class ForumRemoteDataSourceImpl implements ForumRemoteDataSource {
             .toList();
       });
     } catch (e) {
-      throw ServerException('Failed to get comments: ${e.toString()}');
+      throw ServerException(ErrorStrings.withDetails(ErrorStrings.getCommentsError, e.toString()));
     }
   }
 
@@ -98,7 +99,7 @@ class ForumRemoteDataSourceImpl implements ForumRemoteDataSource {
           .doc(commentId)
           .set(comment.toMap());
     } catch (e) {
-      throw ServerException('Failed to add comment: ${e.toString()}');
+      throw ServerException(ErrorStrings.withDetails(ErrorStrings.addCommentError, e.toString()));
     }
   }
 
@@ -118,7 +119,7 @@ class ForumRemoteDataSourceImpl implements ForumRemoteDataSource {
 
       return UserDetailsModel.fromMap(doc.data()!);
     } catch (e) {
-      throw ServerException('Failed to get user details: ${e.toString()}');
+      throw ServerException(ErrorStrings.withDetails(ErrorStrings.getUserDetailsError, e.toString()));
     }
   }
 
@@ -144,7 +145,7 @@ class ForumRemoteDataSourceImpl implements ForumRemoteDataSource {
 
       return forumId;
     } catch (e) {
-      throw ServerException('Failed to create forum: ${e.toString()}');
+      throw ServerException(ErrorStrings.withDetails(ErrorStrings.createForumError, e.toString()));
     }
   }
 
@@ -165,7 +166,7 @@ class ForumRemoteDataSourceImpl implements ForumRemoteDataSource {
       // Delete the forum
       await firestore.collection('forum').doc(forumId).delete();
     } catch (e) {
-      throw ServerException('Failed to delete forum: ${e.toString()}');
+      throw ServerException(ErrorStrings.withDetails(ErrorStrings.deleteForumError, e.toString()));
     }
   }
 
@@ -179,7 +180,7 @@ class ForumRemoteDataSourceImpl implements ForumRemoteDataSource {
           .doc(commentId)
           .delete();
     } catch (e) {
-      throw ServerException('Failed to delete comment: ${e.toString()}');
+      throw ServerException(ErrorStrings.withDetails(ErrorStrings.deleteCommentError, e.toString()));
     }
   }
 }

@@ -223,7 +223,7 @@ class _HomeCarouselState extends State<HomeCarousel>
               ),
               SizedBox(height: AppDimensions.spaceM),
               Text(
-                'Content unavailable',
+                UIStrings.contentUnavailable,
                 style: AppTextStyles.h5.copyWith(
                   color: AppColors.error,
                   fontWeight: FontWeight.bold,
@@ -467,7 +467,7 @@ class _CarouselCardState extends State<CarouselCard>
                               ),
                             ),
                             Text(
-                              'Tap to explore',
+                              UIStrings.tapToExplore,
                               style: AppTextStyles.caption.copyWith(
                                 color: AppColors.white.withValues(alpha: 0.7),
                                 fontSize: 10,
@@ -487,7 +487,7 @@ class _CarouselCardState extends State<CarouselCard>
                           borderRadius: AppDimensions.borderRadiusS,
                         ),
                         child: Text(
-                          'childrenofindia.in',
+                          AppStrings.websiteDomain,
                           style: AppTextStyles.caption.copyWith(
                             color: AppColors.white.withValues(alpha: 0.8),
                             fontSize: 9,
@@ -532,7 +532,7 @@ class _CarouselCardState extends State<CarouselCard>
                         ),
                         SizedBox(width: 4),
                         Text(
-                          'Learn',
+                          UIStrings.learn,
                           style: AppTextStyles.caption.copyWith(
                             color: AppColors.white,
                             fontWeight: FontWeight.bold,
@@ -574,7 +574,7 @@ class _CarouselCardState extends State<CarouselCard>
             ),
             SizedBox(height: AppDimensions.spaceS),
             Text(
-              'Image unavailable',
+              UIStrings.imageUnavailable,
               style: AppTextStyles.bodySmall.copyWith(
                 color: AppColors.primary.withValues(alpha: 0.5),
               ),
@@ -588,11 +588,11 @@ class _CarouselCardState extends State<CarouselCard>
   String _getTypeLabel(String type) {
     switch (type.toLowerCase()) {
       case 'video':
-        return 'Watch Video';
+        return UIStrings.watchVideo;
       case 'custom':
-        return 'Interactive Content';
+        return UIStrings.interactiveContent;
       default:
-        return 'Read Article';
+        return UIStrings.readArticle;
     }
   }
 }

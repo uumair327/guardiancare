@@ -1,34 +1,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
-import 'package:equatable/equatable.dart';
 import 'package:guardiancare/core/error/failures.dart';
+import 'package:guardiancare/features/quiz/domain/entities/quiz_recommendation_entity.dart';
+import 'package:guardiancare/features/quiz/domain/repositories/recommendation_repository.dart';
 
-/// Entity representing a video recommendation for quiz results
-/// 
-/// Named QuizRecommendation to avoid conflict with explore feature's Recommendation
-/// 
-/// Requirements: 4.3
-class QuizRecommendation extends Equatable {
-  final String? id;
-  final String title;
-  final String videoUrl;
-  final String category;
-  final String thumbnailUrl;
-  final DateTime? timestamp;
-  final String userId;
-
-  const QuizRecommendation({
-    this.id,
-    required this.title,
-    required this.videoUrl,
-    required this.category,
-    required this.thumbnailUrl,
-    this.timestamp,
-    required this.userId,
-  });
-
+/// Model for converting QuizRecommendation to/from Firestore
+///
+/// This class handles the Firestore-specific serialization/deserialization
+/// of QuizRecommendation entities.
+class QuizRecommendationModel {
   /// Creates a [QuizRecommendation] from Firestore document
-  factory QuizRecommendation.fromFirestore(DocumentSnapshot doc) {
+  static QuizRecommendation fromFirestore(DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>;
     return QuizRecommendation(
       id: doc.id,
@@ -42,47 +24,16 @@ class QuizRecommendation extends Equatable {
   }
 
   /// Converts [QuizRecommendation] to Firestore document data
-  Map<String, dynamic> toFirestore() {
+  static Map<String, dynamic> toFirestore(QuizRecommendation recommendation) {
     return {
-      'title': title,
-      'video': videoUrl,
-      'category': category,
-      'thumbnail': thumbnailUrl,
+      'title': recommendation.title,
+      'video': recommendation.videoUrl,
+      'category': recommendation.category,
+      'thumbnail': recommendation.thumbnailUrl,
       'timestamp': FieldValue.serverTimestamp(),
-      'UID': userId,
+      'UID': recommendation.userId,
     };
   }
-
-  @override
-  List<Object?> get props => [id, title, videoUrl, category, thumbnailUrl, timestamp, userId];
-}
-
-/// Repository interface for recommendation persistence operations
-/// 
-/// This repository handles Firestore operations exclusively for recommendations.
-/// 
-/// Requirements: 4.3
-abstract class RecommendationRepository {
-  /// Saves a recommendation to Firestore
-  /// 
-  /// Returns [Either<Failure, String>] containing:
-  /// - [Right] with document ID on success
-  /// - [Left] with [ServerFailure] on error
-  Future<Either<Failure, String>> saveRecommendation(QuizRecommendation recommendation);
-
-  /// Clears all recommendations for a user
-  /// 
-  /// Returns [Either<Failure, int>] containing:
-  /// - [Right] with count of deleted documents on success
-  /// - [Left] with [ServerFailure] on error
-  Future<Either<Failure, int>> clearUserRecommendations(String userId);
-
-  /// Gets all recommendations for a user
-  /// 
-  /// Returns [Either<Failure, List<QuizRecommendation>>] containing:
-  /// - [Right] with list of recommendations on success
-  /// - [Left] with [ServerFailure] on error
-  Future<Either<Failure, List<QuizRecommendation>>> getUserRecommendations(String userId);
 }
 
 /// Implementation of [RecommendationRepository] using Firestore
@@ -102,7 +53,7 @@ class RecommendationRepositoryImpl implements RecommendationRepository {
     try {
       final docRef = await _firestore
           .collection(_collection)
-          .add(recommendation.toFirestore());
+          .add(QuizRecommendationModel.toFirestore(recommendation));
       
       return Right(docRef.id);
     } catch (e) {
@@ -148,7 +99,7 @@ class RecommendationRepositoryImpl implements RecommendationRepository {
           .get();
 
       final recommendations = querySnapshot.docs
-          .map((doc) => QuizRecommendation.fromFirestore(doc))
+          .map((doc) => QuizRecommendationModel.fromFirestore(doc))
           .toList();
 
       return Right(recommendations);

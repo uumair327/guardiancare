@@ -2,9 +2,7 @@ import 'package:flutter/foundation.dart' show debugPrint;
 import 'package:guardiancare/core/database/preferences_storage_service.dart';
 import 'package:guardiancare/core/database/hive_storage_service.dart';
 import 'package:guardiancare/core/database/sqlite_storage_service.dart';
-import 'package:guardiancare/core/database/daos/quiz_dao.dart';
-import 'package:guardiancare/core/database/daos/video_dao.dart';
-import 'package:guardiancare/core/database/daos/cache_dao.dart';
+import 'package:guardiancare/core/database/daos/daos.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 /// Unified Storage Manager

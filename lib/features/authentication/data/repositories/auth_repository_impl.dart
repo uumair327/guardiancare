@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:guardiancare/core/constants/constants.dart';
 import 'package:guardiancare/core/error/error.dart';
 import 'package:guardiancare/core/network/network.dart';
 import 'package:guardiancare/features/authentication/data/datasources/auth_remote_datasource.dart';
@@ -30,10 +31,10 @@ class AuthRepositoryImpl implements AuthRepository {
       } on AuthException catch (e) {
         return Left(AuthFailure(e.message, code: e.code));
       } catch (e) {
-        return Left(AuthFailure('Unexpected error: ${e.toString()}'));
+        return Left(AuthFailure(ErrorStrings.withDetails(ErrorStrings.unexpectedError, e.toString())));
       }
     } else {
-      return const Left(NetworkFailure('No internet connection'));
+      return Left(NetworkFailure(ErrorStrings.noInternet));
     }
   }
 
@@ -56,10 +57,10 @@ class AuthRepositoryImpl implements AuthRepository {
       } on AuthException catch (e) {
         return Left(AuthFailure(e.message, code: e.code));
       } catch (e) {
-        return Left(AuthFailure('Unexpected error: ${e.toString()}'));
+        return Left(AuthFailure(ErrorStrings.withDetails(ErrorStrings.unexpectedError, e.toString())));
       }
     } else {
-      return const Left(NetworkFailure('No internet connection'));
+      return Left(NetworkFailure(ErrorStrings.noInternet));
     }
   }
 
@@ -72,10 +73,10 @@ class AuthRepositoryImpl implements AuthRepository {
       } on AuthException catch (e) {
         return Left(AuthFailure(e.message, code: e.code));
       } catch (e) {
-        return Left(AuthFailure('Unexpected error: ${e.toString()}'));
+        return Left(AuthFailure(ErrorStrings.withDetails(ErrorStrings.unexpectedError, e.toString())));
       }
     } else {
-      return const Left(NetworkFailure('No internet connection'));
+      return Left(NetworkFailure(ErrorStrings.noInternet));
     }
   }
 
@@ -87,7 +88,7 @@ class AuthRepositoryImpl implements AuthRepository {
     } on AuthException catch (e) {
       return Left(AuthFailure(e.message, code: e.code));
     } catch (e) {
-      return Left(AuthFailure('Unexpected error: ${e.toString()}'));
+      return Left(AuthFailure(ErrorStrings.withDetails(ErrorStrings.unexpectedError, e.toString())));
     }
   }
 
@@ -99,7 +100,7 @@ class AuthRepositoryImpl implements AuthRepository {
     } on AuthException catch (e) {
       return Left(AuthFailure(e.message, code: e.code));
     } catch (e) {
-      return Left(AuthFailure('Unexpected error: ${e.toString()}'));
+      return Left(AuthFailure(ErrorStrings.withDetails(ErrorStrings.unexpectedError, e.toString())));
     }
   }
 
@@ -122,10 +123,10 @@ class AuthRepositoryImpl implements AuthRepository {
       } on AuthException catch (e) {
         return Left(AuthFailure(e.message, code: e.code));
       } catch (e) {
-        return Left(AuthFailure('Unexpected error: ${e.toString()}'));
+        return Left(AuthFailure(ErrorStrings.withDetails(ErrorStrings.unexpectedError, e.toString())));
       }
     } else {
-      return const Left(NetworkFailure('No internet connection'));
+      return Left(NetworkFailure(ErrorStrings.noInternet));
     }
   }
 
@@ -144,10 +145,10 @@ class AuthRepositoryImpl implements AuthRepository {
       } on AuthException catch (e) {
         return Left(AuthFailure(e.message, code: e.code));
       } catch (e) {
-        return Left(AuthFailure('Unexpected error: ${e.toString()}'));
+        return Left(AuthFailure(ErrorStrings.withDetails(ErrorStrings.unexpectedError, e.toString())));
       }
     } else {
-      return const Left(NetworkFailure('No internet connection'));
+      return Left(NetworkFailure(ErrorStrings.noInternet));
     }
   }
 }

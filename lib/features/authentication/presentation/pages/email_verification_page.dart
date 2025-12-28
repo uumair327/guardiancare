@@ -26,7 +26,7 @@ class _EmailVerificationPageState extends State<EmailVerificationPage> {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: const Text('Verification email sent! Please check your inbox.'),
+              content: const Text(FeedbackStrings.emailSent),
               backgroundColor: AppColors.success,
               duration: AppDurations.snackbarMedium,
             ),
@@ -37,7 +37,7 @@ class _EmailVerificationPageState extends State<EmailVerificationPage> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error: ${e.toString()}'),
+            content: Text(FeedbackStrings.errorWith(e.toString())),
             backgroundColor: AppColors.error,
             duration: AppDurations.snackbarMedium,
           ),
@@ -67,7 +67,7 @@ class _EmailVerificationPageState extends State<EmailVerificationPage> {
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: const Text('Email verified successfully!'),
+                content: const Text(FeedbackStrings.emailVerified),
                 backgroundColor: AppColors.success,
                 duration: AppDurations.snackbarMedium,
               ),
@@ -79,7 +79,7 @@ class _EmailVerificationPageState extends State<EmailVerificationPage> {
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: const Text('Email not verified yet. Please check your inbox.'),
+                content: const Text(FeedbackStrings.emailNotVerified),
                 backgroundColor: AppColors.warning,
                 duration: AppDurations.snackbarMedium,
               ),
@@ -91,7 +91,7 @@ class _EmailVerificationPageState extends State<EmailVerificationPage> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error: ${e.toString()}'),
+            content: Text(FeedbackStrings.errorWith(e.toString())),
             backgroundColor: AppColors.error,
             duration: AppDurations.snackbarMedium,
           ),

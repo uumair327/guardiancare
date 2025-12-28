@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:guardiancare/core/core.dart';
 
 /// Modern video info card with education-friendly design
@@ -225,7 +224,11 @@ class VideoInfoCard extends StatelessWidget {
   }
 }
 
-class _ActionButton extends StatefulWidget {
+/// Action button widget using centralized AnimatedButton.
+///
+/// Uses [AnimatedButton] for scale-tap animation,
+/// eliminating duplicate animation code.
+class _ActionButton extends StatelessWidget {
   final IconData icon;
   final String label;
   final VoidCallback onTap;
@@ -239,91 +242,48 @@ class _ActionButton extends StatefulWidget {
   });
 
   @override
-  State<_ActionButton> createState() => _ActionButtonState();
-}
-
-class _ActionButtonState extends State<_ActionButton>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _scaleAnimation;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: AppDurations.animationShort,
-    );
-    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.95).animate(
-      CurvedAnimation(parent: _controller, curve: AppCurves.tap),
-    );
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTapDown: (_) => _controller.forward(),
-      onTapUp: (_) => _controller.reverse(),
-      onTapCancel: () => _controller.reverse(),
-      onTap: () {
-        HapticFeedback.lightImpact();
-        widget.onTap();
-      },
-      child: AnimatedBuilder(
-        animation: _controller,
-        builder: (context, child) {
-          return Transform.scale(
-            scale: _scaleAnimation.value,
-            child: child,
-          );
-        },
-        child: Container(
-          padding: EdgeInsets.symmetric(
-            vertical: AppDimensions.spaceM,
-          ),
-          decoration: BoxDecoration(
-            gradient: widget.isPrimary
-                ? LinearGradient(
-                    colors: [
-                      const Color(0xFF8B5CF6),
-                      const Color(0xFF7C3AED),
-                    ],
-                  )
-                : null,
-            color: widget.isPrimary
-                ? null
-                : AppColors.white.withValues(alpha: 0.1),
-            borderRadius: AppDimensions.borderRadiusM,
-            border: widget.isPrimary
-                ? null
-                : Border.all(
-                    color: AppColors.white.withValues(alpha: 0.2),
-                  ),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                widget.icon,
-                color: AppColors.white,
-                size: AppDimensions.iconS,
+    return AnimatedButton(
+      onTap: onTap,
+      config: AnimationPresets.scaleButton, // 0.95 scale, same as original
+      enableHaptic: true,
+      hapticType: HapticFeedbackType.light,
+      decoration: BoxDecoration(
+        gradient: isPrimary
+            ? LinearGradient(
+                colors: [
+                  const Color(0xFF8B5CF6),
+                  const Color(0xFF7C3AED),
+                ],
+              )
+            : null,
+        color: isPrimary ? null : AppColors.white.withValues(alpha: 0.1),
+        borderRadius: AppDimensions.borderRadiusM,
+        border: isPrimary
+            ? null
+            : Border.all(
+                color: AppColors.white.withValues(alpha: 0.2),
               ),
-              SizedBox(width: AppDimensions.spaceS),
-              Text(
-                widget.label,
-                style: AppTextStyles.button.copyWith(
-                  color: AppColors.white,
-                ),
-              ),
-            ],
+      ),
+      padding: EdgeInsets.symmetric(
+        vertical: AppDimensions.spaceM,
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            icon,
+            color: AppColors.white,
+            size: AppDimensions.iconS,
           ),
-        ),
+          SizedBox(width: AppDimensions.spaceS),
+          Text(
+            label,
+            style: AppTextStyles.button.copyWith(
+              color: AppColors.white,
+            ),
+          ),
+        ],
       ),
     );
   }

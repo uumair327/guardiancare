@@ -1,3 +1,4 @@
+import 'package:guardiancare/core/constants/constants.dart';
 import 'package:guardiancare/core/error/exceptions.dart';
 import 'package:guardiancare/features/quiz/data/models/question_model.dart';
 import 'package:guardiancare/features/quiz/data/models/quiz_model.dart';
@@ -27,13 +28,13 @@ class QuizLocalDataSourceImpl implements QuizLocalDataSource {
   Future<QuizModel> getQuiz(String quizId) async {
     // In a real implementation, this would fetch from local storage
     // For now, return a placeholder
-    throw CacheException('Quiz not found in local storage');
+    throw CacheException(ErrorStrings.cacheNotFound);
   }
 
   @override
   Future<List<QuestionModel>> getQuestions(String quizId) async {
     // In a real implementation, this would fetch from local storage
-    throw CacheException('Questions not found in local storage');
+    throw CacheException(ErrorStrings.cacheNotFound);
   }
 
   @override

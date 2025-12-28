@@ -72,17 +72,17 @@ class _ResultCardState extends State<ResultCard>
   double get _percentage => widget.correctAnswers / widget.totalQuestions;
 
   String get _feedbackTitle {
-    if (_percentage >= 0.9) return 'Excellent! 🎉';
-    if (_percentage >= 0.7) return 'Great Job! 👏';
-    if (_percentage >= 0.5) return 'Good Effort! 💪';
-    return 'Keep Learning! 📚';
+    if (_percentage >= 0.9) return UIStrings.excellentFeedback;
+    if (_percentage >= 0.7) return UIStrings.greatJobFeedback;
+    if (_percentage >= 0.5) return UIStrings.goodEffortFeedback;
+    return UIStrings.keepLearningFeedback;
   }
 
   String get _feedbackMessage {
-    if (_percentage >= 0.9) return 'You\'re a quiz master!';
-    if (_percentage >= 0.7) return 'You\'re doing great!';
-    if (_percentage >= 0.5) return 'You\'re on the right track!';
-    return 'Practice makes perfect!';
+    if (_percentage >= 0.9) return UIStrings.quizMasterMessage;
+    if (_percentage >= 0.7) return UIStrings.doingGreatMessage;
+    if (_percentage >= 0.5) return UIStrings.onRightTrackMessage;
+    return UIStrings.practiceMessage;
   }
 
   Color get _resultColor {
@@ -175,7 +175,7 @@ class _ResultCardState extends State<ResultCard>
                       ),
                     ),
                     Text(
-                      'Score',
+                      UIStrings.score,
                       style: AppTextStyles.caption.copyWith(
                         color: AppColors.textSecondary,
                       ),
@@ -196,7 +196,7 @@ class _ResultCardState extends State<ResultCard>
                   children: [
                     _buildStatItem(
                       icon: Icons.check_circle_rounded,
-                      label: 'Correct',
+                      label: UIStrings.correct,
                       value: '${widget.correctAnswers}',
                       color: AppColors.success,
                     ),
@@ -207,7 +207,7 @@ class _ResultCardState extends State<ResultCard>
                     ),
                     _buildStatItem(
                       icon: Icons.cancel_rounded,
-                      label: 'Wrong',
+                      label: UIStrings.wrong,
                       value: '${widget.totalQuestions - widget.correctAnswers}',
                       color: AppColors.error,
                     ),
@@ -218,7 +218,7 @@ class _ResultCardState extends State<ResultCard>
                     ),
                     _buildStatItem(
                       icon: Icons.quiz_rounded,
-                      label: 'Total',
+                      label: UIStrings.total,
                       value: '${widget.totalQuestions}',
                       color: AppColors.primary,
                     ),
@@ -246,7 +246,7 @@ class _ResultCardState extends State<ResultCard>
                           ),
                           child: Center(
                             child: Text(
-                              'Try Again',
+                              UIStrings.tryAgainButton,
                               style: AppTextStyles.button.copyWith(
                                 color: AppColors.primary,
                               ),

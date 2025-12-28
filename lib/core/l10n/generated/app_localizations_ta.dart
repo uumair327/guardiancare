@@ -364,5 +364,82 @@ class AppLocalizationsTa extends AppLocalizations {
   }
 
   @override
-  String get noResourcesAvailable => '????? ???';
+  String get noResourcesAvailable => 'வளங்கள் எதுவும் இல்லை';
+
+  @override
+  String get forChildren => 'குழந்தைகளுக்கு';
+
+  @override
+  String get connectAndShare => 'இணைந்து அனுபவங்களைப் பகிரவும்';
+
+  @override
+  String get beFirstToDiscuss => 'விவாதத்தைத் தொடங்கும் முதல் நபராக இருங்கள்!';
+
+  @override
+  String get guidelinesTitle => 'மன்ற வழிகாட்டுதல்கள்';
+
+  @override
+  String get guidelinesWelcome =>
+      'கார்டியன் கேர் மன்றத்திற்கு வரவேற்கிறோம். இந்த வழிகாட்டுதல்களைப் பின்பற்றவும்:';
+
+  @override
+  String get guidelineRespect =>
+      'அனைத்து உறுப்பினர்களிடமும் மரியாதையாகவும் பண்பாகவும் இருங்கள்.';
+
+  @override
+  String get guidelineNoAbuse =>
+      'அவமானகரமான, துன்புறுத்தும் அல்லது தீங்கு விளைவிக்கும் மொழியைப் பயன்படுத்த வேண்டாம்.';
+
+  @override
+  String get guidelineNoHarmful =>
+      'பொருத்தமற்ற அல்லது தீங்கு விளைவிக்கும் உள்ளடக்கத்தைப் பகிர்வதைத் தவிர்க்கவும்.';
+
+  @override
+  String get guidelineConstructive =>
+      'இது குழந்தை பாதுகாப்பு குறித்த ஆக்கபூர்வமான விவாதங்களுக்கான இடம்.';
+
+  @override
+  String get discussionTitle => 'விவாதம்';
+
+  @override
+  String get communityDiscussion => 'சமூக விவாதம்';
+
+  @override
+  String get beFirstToComment =>
+      'உங்கள் எண்ணங்களைப் பகிரும் முதல் நபராக இருங்கள்!';
+
+  @override
+  String get startTypingBelow => 'கீழே தட்டச்சு செய்யத் தொடங்குங்கள்';
+
+  @override
+  String commentsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count கருத்துகள்',
+      one: '1 கருத்து',
+      zero: 'கருத்துகள் இல்லை',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get parentalAccessRequired => 'பெற்றோர் அணுகல் தேவை';
+
+  @override
+  String get parentalAccessDescription =>
+      'இந்த பகுதி பாதுகாக்கப்பட்டுள்ளது. தொடர உங்கள் பெற்றோர் விசையை உள்ளிடவும்.';
+
+  @override
+  String get invalidKeyTryAgain => 'தவறான விசை. மீண்டும் முயற்சிக்கவும்.';
+
+  @override
+  String get forgotYourKey => 'உங்கள் விசையை மறந்துவிட்டீர்களா?';
+
+  @override
+  String get protectedForChildSafety =>
+      'குழந்தை பாதுகாப்பிற்காக பாதுகாக்கப்பட்டது';
+
+  @override
+  String get unlock => 'திறக்கவும்';
 }

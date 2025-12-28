@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:guardiancare/core/constants/constants.dart';
 import 'package:guardiancare/core/error/error.dart';
 import 'package:guardiancare/features/learn/data/datasources/learn_remote_datasource.dart';
 import 'package:guardiancare/features/learn/domain/entities/category_entity.dart';
@@ -19,7 +20,7 @@ class LearnRepositoryImpl implements LearnRepository {
     } on ServerException catch (e) {
       return Left(ServerFailure(e.message));
     } catch (e) {
-      return Left(ServerFailure('Failed to get categories: ${e.toString()}'));
+      return Left(ServerFailure(ErrorStrings.withDetails(ErrorStrings.getCategoriesError, e.toString())));
     }
   }
 
@@ -33,7 +34,7 @@ class LearnRepositoryImpl implements LearnRepository {
       return Left(ServerFailure(e.message));
     } catch (e) {
       return Left(
-          ServerFailure('Failed to get videos by category: ${e.toString()}'));
+          ServerFailure(ErrorStrings.withDetails(ErrorStrings.getVideosByCategoryError, e.toString())));
     }
   }
 
@@ -46,7 +47,7 @@ class LearnRepositoryImpl implements LearnRepository {
           );
     } catch (e) {
       return Stream.value(
-        Left(ServerFailure('Failed to stream videos: ${e.toString()}')),
+        Left(ServerFailure(ErrorStrings.withDetails(ErrorStrings.streamVideosError, e.toString()))),
       );
     }
   }
