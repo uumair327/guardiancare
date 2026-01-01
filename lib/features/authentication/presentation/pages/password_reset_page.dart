@@ -63,9 +63,11 @@ class _PasswordResetPageState extends State<PasswordResetPage> {
                 ),
               );
               // Navigate back after showing success message
+              // Capture navigator before async gap to avoid BuildContext warning
+              final navigator = Navigator.of(context);
               Future.delayed(AppDurations.navigationDelay, () {
                 if (mounted) {
-                  Navigator.pop(context);
+                  navigator.pop();
                 }
               });
             }

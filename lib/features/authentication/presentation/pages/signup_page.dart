@@ -167,7 +167,7 @@ class _SignupPageState extends State<SignupPage> {
                     ),
                     SizedBox(height: AppDimensions.spaceM),
                     
-                    // Role Selection
+                    // Role Selection - Using RadioGroup for Flutter 3.32+ compatibility
                     Container(
                       decoration: BoxDecoration(
                         color: AppColors.inputBackground,
@@ -184,27 +184,27 @@ class _SignupPageState extends State<SignupPage> {
                               style: AppTextStyles.bodyLarge.copyWith(fontWeight: FontWeight.w500),
                             ),
                           ),
-                          RadioListTile<String>(
-                            title: const Text(UIStrings.parentGuardian),
-                            value: 'parent',
+                          RadioGroup<String>(
                             groupValue: _selectedRole,
                             onChanged: (value) {
-                              setState(() {
-                                _selectedRole = value!;
-                              });
+                              if (value != null) {
+                                setState(() {
+                                  _selectedRole = value;
+                                });
+                              }
                             },
-                            activeColor: AppColors.primary,
-                          ),
-                          RadioListTile<String>(
-                            title: const Text(UIStrings.child),
-                            value: 'child',
-                            groupValue: _selectedRole,
-                            onChanged: (value) {
-                              setState(() {
-                                _selectedRole = value!;
-                              });
-                            },
-                            activeColor: AppColors.primary,
+                            child: Column(
+                              children: [
+                                RadioListTile<String>(
+                                  title: const Text(UIStrings.parentGuardian),
+                                  value: 'parent',
+                                ),
+                                RadioListTile<String>(
+                                  title: const Text(UIStrings.child),
+                                  value: 'child',
+                                ),
+                              ],
+                            ),
                           ),
                         ],
                       ),

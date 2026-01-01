@@ -336,7 +336,9 @@ class _AccountContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => sl<ProfileBloc>()..add(LoadProfile(user.uid)),
+      create: (context) => sl<ProfileBloc>()
+        ..add(LoadProfile(user.uid))
+        ..add(LoadUserStats(user.uid)),
       child: BlocConsumer<ProfileBloc, ProfileState>(
         listener: (context, state) {
           _handleStateChanges(context, state);
