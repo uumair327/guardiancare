@@ -247,6 +247,23 @@ void _initProfileFeature() {
       sharedPreferences: sl(),
     ),
   );
+  
+  // User stats local data source - uses DAOs from StorageManager
+  // Only available on non-web platforms where SQLite is supported
+  if (!kIsWeb) {
+    sl.registerLazySingleton<UserStatsLocalDataSource>(
+      () => UserStatsLocalDataSourceImpl(
+        quizDao: sl<StorageManager>().quizDao!,
+        videoDao: sl<StorageManager>().videoDao!,
+      ),
+    );
+    
+    sl.registerLazySingleton<UserStatsRepository>(
+      () => UserStatsRepositoryImpl(localDataSource: sl()),
+    );
+    
+    sl.registerLazySingleton(() => GetUserStats(sl()));
+  }
 
   // Repositories
   sl.registerLazySingleton<ProfileRepository>(
@@ -269,6 +286,7 @@ void _initProfileFeature() {
       clearUserPreferences: sl(),
       localeService: sl(),
       authRepository: sl(),
+      getUserStats: kIsWeb ? null : sl(),
     ),
   );
 }

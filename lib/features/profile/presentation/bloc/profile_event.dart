@@ -20,6 +20,16 @@ class LoadProfile extends ProfileEvent {
   List<Object?> get props => [uid];
 }
 
+/// Event to load user statistics (quizzes, videos, badges)
+class LoadUserStats extends ProfileEvent {
+  final String uid;
+
+  const LoadUserStats(this.uid);
+
+  @override
+  List<Object?> get props => [uid];
+}
+
 /// Event to update user profile
 class UpdateProfileRequested extends ProfileEvent {
   final ProfileEntity profile;
