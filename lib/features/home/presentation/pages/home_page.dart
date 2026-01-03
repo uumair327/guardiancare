@@ -100,11 +100,15 @@ class HomePage extends StatelessWidget {
                               ),
                             ),
                             SizedBox(width: AppDimensions.spaceS),
-                            Text(
-                              l10n.quickActions,
-                              style: AppTextStyles.h3.copyWith(
-                                color: AppColors.textPrimary,
-                                fontWeight: FontWeight.bold,
+                            Expanded(
+                              child: Text(
+                                l10n.quickActions,
+                                style: AppTextStyles.h3.copyWith(
+                                  color: AppColors.textPrimary,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
                               ),
                             ),
                           ],

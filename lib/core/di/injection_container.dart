@@ -286,6 +286,12 @@ void _initProfileFeature() {
       clearUserPreferences: sl(),
       localeService: sl(),
       authRepository: sl(),
+    ),
+  );
+  
+  // UserStatsCubit - handles user statistics separately (SRP)
+  sl.registerFactory(
+    () => UserStatsCubit(
       getUserStats: kIsWeb ? null : sl(),
     ),
   );

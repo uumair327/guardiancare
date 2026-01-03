@@ -5,7 +5,6 @@ import 'package:guardiancare/features/authentication/domain/repositories/auth_re
 import 'package:guardiancare/features/profile/domain/usecases/clear_user_preferences.dart';
 import 'package:guardiancare/features/profile/domain/usecases/delete_account.dart';
 import 'package:guardiancare/features/profile/domain/usecases/get_profile.dart';
-import 'package:guardiancare/features/profile/domain/usecases/get_user_stats.dart';
 import 'package:guardiancare/features/profile/domain/usecases/update_profile.dart';
 import 'package:guardiancare/features/profile/presentation/bloc/profile_event.dart';
 import 'package:guardiancare/features/profile/presentation/bloc/profile_state.dart';
@@ -20,7 +19,6 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   final ClearUserPreferences clearUserPreferences;
   final LocaleService localeService;
   final AuthRepository authRepository;
-  final GetUserStats? getUserStats;
 
   ProfileBloc({
     required this.getProfile,
@@ -29,10 +27,8 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     required this.clearUserPreferences,
     required this.localeService,
     required this.authRepository,
-    this.getUserStats,
   }) : super(ProfileInitial()) {
     on<LoadProfile>(_onLoadProfile);
-    on<LoadUserStats>(_onLoadUserStats);
     on<UpdateProfileRequested>(_onUpdateProfile);
     on<DeleteAccountRequested>(_onDeleteAccount);
     on<ClearPreferencesRequested>(_onClearPreferences);
@@ -51,27 +47,6 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     result.fold(
       (failure) => emit(ProfileError(failure.message)),
       (profile) => emit(ProfileLoaded(profile)),
-    );
-  }
-
-  /// Load user statistics (quizzes, videos, badges)
-  Future<void> _onLoadUserStats(
-    LoadUserStats event,
-    Emitter<ProfileState> emit,
-  ) async {
-    // Skip if getUserStats is not available (web platform)
-    if (getUserStats == null) {
-      emit(const UserStatsLoaded(null));
-      return;
-    }
-
-    emit(UserStatsLoading());
-
-    final result = await getUserStats!(event.uid);
-
-    result.fold(
-      (failure) => emit(UserStatsError(failure.message)),
-      (stats) => emit(UserStatsLoaded(stats)),
     );
   }
 

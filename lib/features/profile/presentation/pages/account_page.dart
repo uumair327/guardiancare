@@ -200,24 +200,6 @@ class _AccountPlaceholder extends StatelessWidget {
             borderRadius: AppDimensions.borderRadiusXL,
           ),
         ),
-        // Stats placeholder
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: AppDimensions.screenPaddingH),
-          child: Row(
-            children: List.generate(3, (index) {
-              return Expanded(
-                child: Container(
-                  height: 80,
-                  margin: EdgeInsets.symmetric(horizontal: AppDimensions.spaceXS),
-                  decoration: BoxDecoration(
-                    color: AppColors.shimmerBase,
-                    borderRadius: AppDimensions.borderRadiusM,
-                  ),
-                ),
-              );
-            }),
-          ),
-        ),
         SizedBox(height: AppDimensions.spaceL),
         // Content placeholder
         Expanded(
@@ -335,10 +317,15 @@ class _AccountContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => sl<ProfileBloc>()
-        ..add(LoadProfile(user.uid))
-        ..add(LoadUserStats(user.uid)),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => sl<ProfileBloc>()..add(LoadProfile(user.uid)),
+        ),
+        BlocProvider(
+          create: (context) => sl<UserStatsCubit>()..loadStats(user.uid),
+        ),
+      ],
       child: BlocConsumer<ProfileBloc, ProfileState>(
         listener: (context, state) {
           _handleStateChanges(context, state);
@@ -534,10 +521,17 @@ class _AccountContent extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          ProfileHeader(profile: profile),
+          // Profile header with proper horizontal margin
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: AppDimensions.screenPaddingH),
+            child: ProfileHeader(profile: profile),
+          ),
           SizedBox(height: AppDimensions.spaceL),
-          _buildStatsRow(context),
-          SizedBox(height: AppDimensions.spaceL),
+          
+          // TODO: Stats cards temporarily disabled - uncomment when stats tracking is fully implemented
+          // _buildStatsRow(context),
+          // SizedBox(height: AppDimensions.spaceL),
+          
           FadeSlideWidget(
             delay: const Duration(milliseconds: 100),
             child: ProfileSection(
@@ -614,44 +608,52 @@ class _AccountContent extends StatelessWidget {
     );
   }
 
-  Widget _buildStatsRow(BuildContext context) {
-    return FadeSlideWidget(
-      delay: const Duration(milliseconds: 50),
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: AppDimensions.screenPaddingH),
-        child: Row(
-          children: [
-            Expanded(
-              child: ProfileStatCard(
-                icon: Icons.quiz_rounded,
-                label: UIStrings.quizzes,
-                value: '0',
-                index: 0,
-              ),
-            ),
-            SizedBox(width: AppDimensions.spaceM),
-            Expanded(
-              child: ProfileStatCard(
-                icon: Icons.play_circle_rounded,
-                label: UIStrings.videos,
-                value: '0',
-                index: 1,
-              ),
-            ),
-            SizedBox(width: AppDimensions.spaceM),
-            Expanded(
-              child: ProfileStatCard(
-                icon: Icons.emoji_events_rounded,
-                label: UIStrings.badges,
-                value: '0',
-                index: 2,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+  // TODO: Stats row temporarily disabled - uncomment when stats tracking is fully implemented
+  // Widget _buildStatsRow(BuildContext context) {
+  //   return FadeSlideWidget(
+  //     delay: const Duration(milliseconds: 50),
+  //     child: Padding(
+  //       padding: EdgeInsets.symmetric(horizontal: AppDimensions.screenPaddingH),
+  //       child: BlocBuilder<UserStatsCubit, UserStatsState>(
+  //         builder: (context, state) {
+  //           final stats = state is UserStatsLoaded ? state.stats : null;
+  //           final isLoading = state is UserStatsLoading;
+  //           
+  //           return Row(
+  //             children: [
+  //               Expanded(
+  //                 child: ProfileStatCard(
+  //                   icon: Icons.quiz_rounded,
+  //                   label: UIStrings.quizzes,
+  //                   value: isLoading ? '-' : '${stats?.quizzesCompleted ?? 0}',
+  //                   index: 0,
+  //                 ),
+  //               ),
+  //               SizedBox(width: AppDimensions.spaceM),
+  //               Expanded(
+  //                 child: ProfileStatCard(
+  //                   icon: Icons.play_circle_rounded,
+  //                   label: UIStrings.videos,
+  //                   value: isLoading ? '-' : '${stats?.videosCompleted ?? 0}',
+  //                   index: 1,
+  //                 ),
+  //               ),
+  //               SizedBox(width: AppDimensions.spaceM),
+  //               Expanded(
+  //                 child: ProfileStatCard(
+  //                   icon: Icons.emoji_events_rounded,
+  //                   label: UIStrings.badges,
+  //                   value: isLoading ? '-' : '${stats?.badgesEarned ?? 0}',
+  //                   index: 2,
+  //                 ),
+  //               ),
+  //             ],
+  //           );
+  //         },
+  //       ),
+  //     ),
+  //   );
+  // }
 
   String _getCurrentLanguageName(BuildContext context) {
     final currentLocale = Localizations.localeOf(context);
