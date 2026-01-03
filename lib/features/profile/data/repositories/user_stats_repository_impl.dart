@@ -20,7 +20,7 @@ class UserStatsRepositoryImpl implements UserStatsRepository {
       return Right(stats);
     } catch (e) {
       return Left(CacheFailure(
-        message: 'Failed to load user statistics: ${e.toString()}',
+        'Failed to load user statistics: ${e.toString()}',
       ));
     }
   }
@@ -34,7 +34,7 @@ class UserStatsRepositoryImpl implements UserStatsRepository {
       return Right(badges);
     } catch (e) {
       return Left(CacheFailure(
-        message: 'Failed to calculate badges: ${e.toString()}',
+        'Failed to calculate badges: ${e.toString()}',
       ));
     }
   }

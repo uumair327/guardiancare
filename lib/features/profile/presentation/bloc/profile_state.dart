@@ -1,7 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:guardiancare/features/profile/domain/entities/profile_entity.dart';
-import 'package:guardiancare/features/profile/domain/entities/user_stats_entity.dart';
 
 /// Base class for profile states
 abstract class ProfileState extends Equatable {
@@ -25,29 +24,6 @@ class ProfileLoaded extends ProfileState {
 
   @override
   List<Object?> get props => [profile];
-}
-
-/// User stats loading state
-class UserStatsLoading extends ProfileState {}
-
-/// User stats loaded successfully
-class UserStatsLoaded extends ProfileState {
-  final UserStatsEntity? stats;
-
-  const UserStatsLoaded(this.stats);
-
-  @override
-  List<Object?> get props => [stats];
-}
-
-/// User stats error state
-class UserStatsError extends ProfileState {
-  final String message;
-
-  const UserStatsError(this.message);
-
-  @override
-  List<Object?> get props => [message];
 }
 
 /// Profile updated successfully

@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:guardiancare/core/core.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 /// Modern, Play Store compliant Terms and Conditions dialog.
 ///
 /// Features:
-/// - COPPA/GDPR compliant privacy disclosures
+/// - COPPA compliant parent/guardian confirmation
 /// - Child-friendly language and design
-/// - Explicit consent checkboxes for data collection
-/// - Links to full privacy policy and terms of service
 /// - Educational app-specific disclosures
 ///
 /// This widget follows Google Play's Families Policy requirements
@@ -52,11 +49,12 @@ class TermsAndConditionsDialog extends StatefulWidget {
 
 class _TermsAndConditionsDialogState extends State<TermsAndConditionsDialog>
     with SingleTickerProviderStateMixin {
-  // Consent checkboxes state
-  bool _acceptedTerms = false;
-  bool _acceptedPrivacy = false;
-  bool _acceptedDataCollection = false;
+  // Consent checkbox state - only parent/guardian confirmation needed
   bool _isParentOrGuardian = false;
+  
+  // Scroll tracking - user must scroll to bottom to accept
+  bool _hasScrolledToBottom = false;
+  late ScrollController _scrollController;
 
   late AnimationController _animController;
   late Animation<double> _scaleAnimation;
@@ -64,6 +62,9 @@ class _TermsAndConditionsDialogState extends State<TermsAndConditionsDialog>
   @override
   void initState() {
     super.initState();
+    _scrollController = ScrollController();
+    _scrollController.addListener(_onScroll);
+    
     _animController = AnimationController(
       vsync: this,
       duration: AppDurations.animationMedium,
@@ -73,28 +74,43 @@ class _TermsAndConditionsDialogState extends State<TermsAndConditionsDialog>
       curve: AppCurves.standard,
     );
     _animController.forward();
+    
+    // Check if content is scrollable after first frame
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkIfScrollable();
+    });
+  }
+  
+  void _checkIfScrollable() {
+    if (_scrollController.hasClients) {
+      // If content doesn't need scrolling, mark as scrolled
+      if (_scrollController.position.maxScrollExtent <= 0) {
+        setState(() => _hasScrolledToBottom = true);
+      }
+    }
+  }
+  
+  void _onScroll() {
+    if (!_hasScrolledToBottom && _scrollController.hasClients) {
+      final maxScroll = _scrollController.position.maxScrollExtent;
+      final currentScroll = _scrollController.position.pixels;
+      // Consider scrolled to bottom when within 20 pixels of the end
+      if (currentScroll >= maxScroll - 20) {
+        setState(() => _hasScrolledToBottom = true);
+      }
+    }
   }
 
   @override
   void dispose() {
+    _scrollController.removeListener(_onScroll);
+    _scrollController.dispose();
     _animController.dispose();
     super.dispose();
   }
 
-  /// Checks if all required consents have been given
-  bool get _canAccept =>
-      _acceptedTerms &&
-      _acceptedPrivacy &&
-      _acceptedDataCollection &&
-      _isParentOrGuardian;
-
-  /// Launches external URL for privacy policy or terms
-  Future<void> _launchUrl(String url) async {
-    final uri = Uri.parse(url);
-    if (await canLaunchUrl(uri)) {
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
-    }
-  }
+  /// Checks if required consent has been given and user has scrolled
+  bool get _canAccept => _isParentOrGuardian && _hasScrolledToBottom;
 
   @override
   Widget build(BuildContext context) {
@@ -190,190 +206,119 @@ class _TermsAndConditionsDialogState extends State<TermsAndConditionsDialog>
   }
 
   Widget _buildContent() {
-    return SingleChildScrollView(
-      padding: EdgeInsets.all(AppDimensions.spaceL),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // App Purpose Section
-          _buildInfoCard(
-            icon: Icons.school_rounded,
-            title: 'Educational Safety App',
-            description:
-                'GuardianCare helps families learn about child safety through '
-                'educational content, quizzes, and community discussions.',
-            color: const Color(0xFF10B981),
-          ),
-          SizedBox(height: AppDimensions.spaceM),
-
-          // Data Collection Disclosure
-          _buildInfoCard(
-            icon: Icons.security_rounded,
-            title: 'How We Protect Your Data',
-            description:
-                'We collect minimal data needed to provide our services:\n'
-                '• Account info (name, email) for personalization\n'
-                '• Quiz progress to track learning\n'
-                '• No data is shared with third parties for advertising',
-            color: const Color(0xFF3B82F6),
-          ),
-          SizedBox(height: AppDimensions.spaceL),
-
-          // Consent Checkboxes
-          Text(
-            'Please confirm the following:',
-            style: AppTextStyles.body2.copyWith(
-              fontWeight: FontWeight.w600,
-              color: AppColors.textPrimary,
-            ),
-          ),
-          SizedBox(height: AppDimensions.spaceM),
-
-          // Parent/Guardian Confirmation (COPPA Compliance)
-          _buildConsentCheckbox(
-            value: _isParentOrGuardian,
-            onChanged: (value) {
-              HapticFeedback.selectionClick();
-              setState(() => _isParentOrGuardian = value ?? false);
-            },
-            title: 'I am a parent or guardian',
-            subtitle: 'I confirm I am 18+ years old and responsible for '
-                'any child using this app',
-            icon: Icons.family_restroom_rounded,
-            isRequired: true,
-          ),
-
-          // Terms of Service
-          _buildConsentCheckbox(
-            value: _acceptedTerms,
-            onChanged: (value) {
-              HapticFeedback.selectionClick();
-              setState(() => _acceptedTerms = value ?? false);
-            },
-            title: 'Terms of Service',
-            subtitle: 'I agree to the terms of service and community guidelines',
-            icon: Icons.description_rounded,
-            isRequired: true,
-            onLinkTap: () => _launchUrl(
-              'https://guardiancare.app/terms',
-            ),
-          ),
-
-          // Privacy Policy
-          _buildConsentCheckbox(
-            value: _acceptedPrivacy,
-            onChanged: (value) {
-              HapticFeedback.selectionClick();
-              setState(() => _acceptedPrivacy = value ?? false);
-            },
-            title: 'Privacy Policy',
-            subtitle: 'I have read and accept the privacy policy',
-            icon: Icons.privacy_tip_rounded,
-            isRequired: true,
-            onLinkTap: () => _launchUrl(
-              'https://guardiancare.app/privacy',
-            ),
-          ),
-
-          // Data Collection Consent
-          _buildConsentCheckbox(
-            value: _acceptedDataCollection,
-            onChanged: (value) {
-              HapticFeedback.selectionClick();
-              setState(() => _acceptedDataCollection = value ?? false);
-            },
-            title: 'Data Collection',
-            subtitle: 'I consent to the collection of data as described above '
-                'to improve the educational experience',
-            icon: Icons.analytics_rounded,
-            isRequired: true,
-          ),
-
-          SizedBox(height: AppDimensions.spaceM),
-
-          // Additional Info
-          Container(
-            padding: EdgeInsets.all(AppDimensions.spaceM),
-            decoration: BoxDecoration(
-              color: AppColors.info.withValues(alpha: 0.1),
-              borderRadius: AppDimensions.borderRadiusM,
-              border: Border.all(
-                color: AppColors.info.withValues(alpha: 0.3),
-              ),
-            ),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Icon(
-                  Icons.info_outline_rounded,
-                  color: AppColors.info,
-                  size: 20,
+    return Stack(
+      children: [
+        SingleChildScrollView(
+          controller: _scrollController,
+          padding: EdgeInsets.all(AppDimensions.spaceL),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Terms and Conditions Section
+              Text(
+                'Terms and Conditions',
+                style: AppTextStyles.h5.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.textPrimary,
                 ),
-                SizedBox(width: AppDimensions.spaceS),
-                Expanded(
-                  child: Text(
-                    'You can manage your data and privacy settings anytime '
-                    'from your account page. We never sell your personal information.',
+              ),
+              SizedBox(height: AppDimensions.spaceS),
+              Text(
+                'Please read and accept the following terms and conditions to proceed.',
+                style: AppTextStyles.body2.copyWith(
+                  color: AppColors.textSecondary,
+                ),
+              ),
+              SizedBox(height: AppDimensions.spaceL),
+
+              // Terms bullet points
+              _buildTermItem('Your data will be securely stored.'),
+              _buildTermItem('You agree to follow the platform rules and regulations.'),
+              _buildTermItem('You acknowledge the responsibility of safeguarding your account.'),
+              
+              SizedBox(height: AppDimensions.spaceL),
+
+              // Parent/Guardian Confirmation (COPPA Compliance)
+              _buildConsentCheckbox(
+                value: _isParentOrGuardian,
+                onChanged: (value) {
+                  HapticFeedback.selectionClick();
+                  setState(() => _isParentOrGuardian = value ?? false);
+                },
+                title: 'I am a parent or guardian',
+                subtitle: 'I confirm I am 18+ years old and responsible for '
+                    'any child using this app',
+                icon: Icons.family_restroom_rounded,
+                isRequired: true,
+              ),
+            ],
+          ),
+        ),
+        // Scroll down indicator
+        if (!_hasScrolledToBottom)
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: Container(
+              padding: EdgeInsets.symmetric(vertical: AppDimensions.spaceS),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    AppColors.surface.withValues(alpha: 0),
+                    AppColors.surface,
+                  ],
+                ),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.keyboard_arrow_down_rounded,
+                    color: AppColors.primary,
+                    size: 20,
+                  ),
+                  SizedBox(width: AppDimensions.spaceXS),
+                  Text(
+                    'Scroll down to accept',
                     style: AppTextStyles.caption.copyWith(
-                      color: AppColors.info,
+                      color: AppColors.primary,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
-        ],
-      ),
+      ],
     );
   }
 
-  Widget _buildInfoCard({
-    required IconData icon,
-    required String title,
-    required String description,
-    required Color color,
-  }) {
-    return Container(
-      padding: EdgeInsets.all(AppDimensions.spaceM),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.08),
-        borderRadius: AppDimensions.borderRadiusL,
-        border: Border.all(
-          color: color.withValues(alpha: 0.2),
-        ),
-      ),
+  Widget _buildTermItem(String text) {
+    return Padding(
+      padding: EdgeInsets.only(bottom: AppDimensions.spaceS),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            padding: EdgeInsets.all(AppDimensions.spaceS),
+            margin: EdgeInsets.only(top: 6),
+            width: 6,
+            height: 6,
             decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.15),
-              borderRadius: AppDimensions.borderRadiusS,
+              color: AppColors.primary,
+              shape: BoxShape.circle,
             ),
-            child: Icon(icon, color: color, size: 24),
           ),
           SizedBox(width: AppDimensions.spaceM),
           Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: AppTextStyles.body2.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.textPrimary,
-                  ),
-                ),
-                SizedBox(height: AppDimensions.spaceXS),
-                Text(
-                  description,
-                  style: AppTextStyles.caption.copyWith(
-                    color: AppColors.textSecondary,
-                    height: 1.4,
-                  ),
-                ),
-              ],
+            child: Text(
+              text,
+              style: AppTextStyles.body2.copyWith(
+                color: AppColors.textPrimary,
+                height: 1.4,
+              ),
             ),
           ),
         ],
@@ -538,32 +483,23 @@ class _TermsAndConditionsDialogState extends State<TermsAndConditionsDialog>
                       ]
                     : null,
               ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.check_circle_rounded,
+              child: Center(
+                child: Text(
+                  'I Agree',
+                  style: AppTextStyles.button.copyWith(
                     color: _canAccept ? AppColors.white : AppColors.gray500,
-                    size: 20,
+                    fontWeight: FontWeight.bold,
                   ),
-                  SizedBox(width: AppDimensions.spaceS),
-                  Text(
-                    'Accept & Continue',
-                    style: AppTextStyles.button.copyWith(
-                      color: _canAccept ? AppColors.white : AppColors.gray500,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
+                ),
               ),
             ),
           ),
           SizedBox(height: AppDimensions.spaceS),
-          // Decline Button
+          // Cancel Button
           TextButton(
             onPressed: widget.onDecline,
             child: Text(
-              'Not Now',
+              'Cancel',
               style: AppTextStyles.body2.copyWith(
                 color: AppColors.textSecondary,
               ),

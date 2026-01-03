@@ -1,5 +1,4 @@
-import 'package:guardiancare/core/database/daos/quiz_dao.dart';
-import 'package:guardiancare/core/database/daos/video_dao.dart';
+import 'package:guardiancare/core/database/daos/daos.dart';
 import 'package:guardiancare/features/profile/domain/entities/user_stats_entity.dart';
 
 /// Local data source for user statistics.

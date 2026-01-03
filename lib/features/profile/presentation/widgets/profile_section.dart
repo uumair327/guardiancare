@@ -38,11 +38,15 @@ class ProfileSection extends StatelessWidget {
                 ),
                 SizedBox(width: AppDimensions.spaceS),
               ],
-              Text(
-                title,
-                style: AppTextStyles.h5.copyWith(
-                  color: AppColors.primary,
-                  fontWeight: FontWeight.bold,
+              Expanded(
+                child: Text(
+                  title,
+                  style: AppTextStyles.h5.copyWith(
+                    color: AppColors.primary,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
             ],

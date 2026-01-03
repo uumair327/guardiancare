@@ -482,29 +482,50 @@ class _ForumHeaderState extends State<_ForumHeader>
                     dividerColor: Colors.transparent,
                     labelColor: const Color(0xFF8B5CF6),
                     unselectedLabelColor: AppColors.white.withValues(alpha: 0.8),
-                    labelStyle: AppTextStyles.bodySmall.copyWith(
+                    labelStyle: AppTextStyles.caption.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
-                    unselectedLabelStyle: AppTextStyles.bodySmall,
+                    unselectedLabelStyle: AppTextStyles.caption,
+                    labelPadding: EdgeInsets.zero,
                     tabs: [
                       Tab(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(Icons.family_restroom_rounded, size: 18),
-                            SizedBox(width: 6),
-                            Text(l10n.parentForums),
-                          ],
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 4),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(Icons.family_restroom_rounded, size: 16),
+                              SizedBox(width: 4),
+                              Flexible(
+                                child: Text(
+                                  l10n.parentForums,
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 1,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                       Tab(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(Icons.child_care_rounded, size: 18),
-                            SizedBox(width: 6),
-                            Text(l10n.forChildren),
-                          ],
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 4),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(Icons.child_care_rounded, size: 16),
+                              SizedBox(width: 4),
+                              Flexible(
+                                child: Text(
+                                  l10n.forChildren,
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 1,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ],
