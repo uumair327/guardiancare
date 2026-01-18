@@ -10,7 +10,8 @@ class ForgotParentalKeyDialog extends StatefulWidget {
   const ForgotParentalKeyDialog({super.key});
 
   @override
-  State<ForgotParentalKeyDialog> createState() => _ForgotParentalKeyDialogState();
+  State<ForgotParentalKeyDialog> createState() =>
+      _ForgotParentalKeyDialogState();
 }
 
 class _ForgotParentalKeyDialogState extends State<ForgotParentalKeyDialog> {
@@ -18,7 +19,7 @@ class _ForgotParentalKeyDialogState extends State<ForgotParentalKeyDialog> {
   final TextEditingController _answerController = TextEditingController();
   final TextEditingController _newKeyController = TextEditingController();
   final TextEditingController _confirmKeyController = TextEditingController();
-  
+
   bool _isLoading = false;
   bool _obscureAnswer = true;
   bool _obscureNewKey = true;
@@ -89,7 +90,8 @@ class _ForgotParentalKeyDialogState extends State<ForgotParentalKeyDialog> {
       }
 
       final storedAnswerHash = doc.data()?['securityAnswer'] as String?;
-      final enteredAnswerHash = _hashString(_answerController.text.toLowerCase().trim());
+      final enteredAnswerHash =
+          _hashString(_answerController.text.toLowerCase().trim());
 
       if (storedAnswerHash == enteredAnswerHash) {
         setState(() {
@@ -102,9 +104,9 @@ class _ForgotParentalKeyDialogState extends State<ForgotParentalKeyDialog> {
         });
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
+          SnackBar(
             content: Text(FeedbackStrings.incorrectAnswer),
-            backgroundColor: Colors.red,
+            backgroundColor: context.colors.error,
           ),
         );
       }
@@ -116,7 +118,7 @@ class _ForgotParentalKeyDialogState extends State<ForgotParentalKeyDialog> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(FeedbackStrings.errorWith(e.toString())),
-          backgroundColor: Colors.red,
+          backgroundColor: context.colors.error,
         ),
       );
     }
@@ -152,11 +154,11 @@ class _ForgotParentalKeyDialogState extends State<ForgotParentalKeyDialog> {
 
       if (!mounted) return;
       Navigator.of(context).pop(true); // Return true to indicate success
-      
+
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
+        SnackBar(
           content: Text(FeedbackStrings.parentalKeyReset),
-          backgroundColor: Colors.green,
+          backgroundColor: context.colors.success,
         ),
       );
     } catch (e) {
@@ -167,7 +169,7 @@ class _ForgotParentalKeyDialogState extends State<ForgotParentalKeyDialog> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(FeedbackStrings.errorWith(e.toString())),
-          backgroundColor: Colors.red,
+          backgroundColor: context.colors.error,
         ),
       );
     }
@@ -220,7 +222,8 @@ class _ForgotParentalKeyDialogState extends State<ForgotParentalKeyDialog> {
               border: const OutlineInputBorder(),
               prefixIcon: Icon(Icons.question_answer, color: AppColors.primary),
               suffixIcon: IconButton(
-                icon: Icon(_obscureAnswer ? Icons.visibility : Icons.visibility_off),
+                icon: Icon(
+                    _obscureAnswer ? Icons.visibility : Icons.visibility_off),
                 onPressed: () {
                   setState(() {
                     _obscureAnswer = !_obscureAnswer;
@@ -235,6 +238,7 @@ class _ForgotParentalKeyDialogState extends State<ForgotParentalKeyDialog> {
               }
               return null;
             },
+            onTapOutside: (_) => FocusManager.instance.primaryFocus?.unfocus(),
           ),
         ] else ...[
           const Center(
@@ -267,7 +271,8 @@ class _ForgotParentalKeyDialogState extends State<ForgotParentalKeyDialog> {
             border: const OutlineInputBorder(),
             prefixIcon: Icon(Icons.lock, color: AppColors.primary),
             suffixIcon: IconButton(
-              icon: Icon(_obscureNewKey ? Icons.visibility : Icons.visibility_off),
+              icon: Icon(
+                  _obscureNewKey ? Icons.visibility : Icons.visibility_off),
               onPressed: () {
                 setState(() {
                   _obscureNewKey = !_obscureNewKey;
@@ -285,6 +290,7 @@ class _ForgotParentalKeyDialogState extends State<ForgotParentalKeyDialog> {
             }
             return null;
           },
+          onTapOutside: (_) => FocusManager.instance.primaryFocus?.unfocus(),
         ),
         const SizedBox(height: 16),
         TextFormField(
@@ -295,7 +301,8 @@ class _ForgotParentalKeyDialogState extends State<ForgotParentalKeyDialog> {
             border: const OutlineInputBorder(),
             prefixIcon: Icon(Icons.lock_outline, color: AppColors.primary),
             suffixIcon: IconButton(
-              icon: Icon(_obscureConfirmKey ? Icons.visibility : Icons.visibility_off),
+              icon: Icon(
+                  _obscureConfirmKey ? Icons.visibility : Icons.visibility_off),
               onPressed: () {
                 setState(() {
                   _obscureConfirmKey = !_obscureConfirmKey;
@@ -313,6 +320,7 @@ class _ForgotParentalKeyDialogState extends State<ForgotParentalKeyDialog> {
             }
             return null;
           },
+          onTapOutside: (_) => FocusManager.instance.primaryFocus?.unfocus(),
         ),
       ],
     );
@@ -361,7 +369,7 @@ class _ForgotParentalKeyDialogState extends State<ForgotParentalKeyDialog> {
                   height: 20,
                   child: CircularProgressIndicator(
                     strokeWidth: 2,
-                    color: Colors.white,
+                    color: AppColors.white,
                   ),
                 )
               : Text(_step == 1 ? UIStrings.verify : UIStrings.resetKey),

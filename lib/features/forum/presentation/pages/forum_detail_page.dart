@@ -6,7 +6,7 @@ import 'package:guardiancare/features/forum/forum.dart';
 import 'package:intl/intl.dart';
 
 /// Modern Forum Detail Page with educational-friendly design
-/// 
+///
 /// Features:
 /// - Gradient header with forum info
 /// - Animated comments list
@@ -32,26 +32,28 @@ class ForumDetailPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => sl<ForumBloc>()..add(LoadComments(forumId)),
-      child: Scaffold(
-        backgroundColor: AppColors.background,
-        body: SafeArea(
-          bottom: false,
-          child: Column(
-            children: [
-              // Header
-              _ForumDetailHeader(
-                title: forumTitle,
-                description: forumDescription,
-                createdAt: createdAt,
-                userId: userId,
-              ),
-              // Comments list
-              Expanded(
-                child: _CommentsSection(forumId: forumId),
-              ),
-              // Comment input
-              CommentInput(forumId: forumId),
-            ],
+      child: Builder(
+        builder: (context) => Scaffold(
+          backgroundColor: context.colors.background,
+          body: SafeArea(
+            bottom: false,
+            child: Column(
+              children: [
+                // Header
+                _ForumDetailHeader(
+                  title: forumTitle,
+                  description: forumDescription,
+                  createdAt: createdAt,
+                  userId: userId,
+                ),
+                // Comments list
+                Expanded(
+                  child: _CommentsSection(forumId: forumId),
+                ),
+                // Comment input
+                CommentInput(forumId: forumId),
+              ],
+            ),
           ),
         ),
       ),
@@ -84,8 +86,8 @@ class _ForumDetailHeaderState extends State<_ForumDetailHeader>
   late Animation<Offset> _slideAnimation;
   bool _isExpanded = false;
 
-  static const _primaryColor = Color(0xFF8B5CF6);
-  static const _secondaryColor = Color(0xFF7C3AED);
+  static Color get _primaryColor => AppColors.videoPrimary;
+  static Color get _secondaryColor => AppColors.videoPrimaryDark;
 
   @override
   void initState() {
@@ -124,7 +126,7 @@ class _ForumDetailHeaderState extends State<_ForumDetailHeader>
   String _getTimeAgo(DateTime dateTime) {
     final now = DateTime.now();
     final difference = now.difference(dateTime);
-    
+
     if (difference.inDays > 30) {
       return DateFormat('MMM d, yyyy').format(dateTime);
     } else if (difference.inDays > 0) {
@@ -144,7 +146,7 @@ class _ForumDetailHeaderState extends State<_ForumDetailHeader>
     return RepaintBoundary(
       child: Container(
         decoration: BoxDecoration(
-          gradient: const LinearGradient(
+          gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [_primaryColor, _secondaryColor],
@@ -286,7 +288,8 @@ class _ForumDetailHeaderState extends State<_ForumDetailHeader>
                       ),
                     ),
                     // Description (expandable)
-                    if (widget.description != null && widget.description!.isNotEmpty) ...[
+                    if (widget.description != null &&
+                        widget.description!.isNotEmpty) ...[
                       SizedBox(height: AppDimensions.spaceM),
                       GestureDetector(
                         onTap: () {
@@ -319,26 +322,36 @@ class _ForumDetailHeaderState extends State<_ForumDetailHeader>
                       if (widget.description!.length > 100)
                         Padding(
                           padding: EdgeInsets.only(top: AppDimensions.spaceXS),
-                          child: Row(
-                            children: [
-                              Text(
-                                _isExpanded ? UIStrings.showLess : UIStrings.showMore,
-                                style: AppTextStyles.caption.copyWith(
-                                  color: AppColors.white.withValues(alpha: 0.8),
-                                  fontWeight: FontWeight.w600,
+                          child: GestureDetector(
+                            onTap: () {
+                              HapticFeedback.selectionClick();
+                              setState(() => _isExpanded = !_isExpanded);
+                            },
+                            child: Row(
+                              children: [
+                                Text(
+                                  _isExpanded
+                                      ? UIStrings.showLess
+                                      : UIStrings.showMore,
+                                  style: AppTextStyles.caption.copyWith(
+                                    color:
+                                        AppColors.white.withValues(alpha: 0.8),
+                                    fontWeight: FontWeight.w600,
+                                  ),
                                 ),
-                              ),
-                              SizedBox(width: 4),
-                              AnimatedRotation(
-                                turns: _isExpanded ? 0.5 : 0,
-                                duration: AppDurations.animationShort,
-                                child: Icon(
-                                  Icons.keyboard_arrow_down_rounded,
-                                  size: 16,
-                                  color: AppColors.white.withValues(alpha: 0.8),
+                                SizedBox(width: 4),
+                                AnimatedRotation(
+                                  turns: _isExpanded ? 0.5 : 0,
+                                  duration: AppDurations.animationShort,
+                                  child: Icon(
+                                    Icons.keyboard_arrow_down_rounded,
+                                    size: 16,
+                                    color:
+                                        AppColors.white.withValues(alpha: 0.8),
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
                     ],
@@ -406,7 +419,7 @@ class _CommentsSection extends StatelessWidget {
 
   const _CommentsSection({required this.forumId});
 
-  static const _primaryColor = Color(0xFF8B5CF6);
+  static Color get _primaryColor => AppColors.videoPrimary;
 
   @override
   Widget build(BuildContext context) {
@@ -418,7 +431,8 @@ class _CommentsSection extends StatelessWidget {
             SnackBar(
               content: Row(
                 children: [
-                  Icon(Icons.error_outline_rounded, color: AppColors.white, size: 20),
+                  Icon(Icons.error_outline_rounded,
+                      color: AppColors.white, size: 20),
                   SizedBox(width: AppDimensions.spaceS),
                   Expanded(child: Text(state.message)),
                 ],
@@ -445,7 +459,7 @@ class _CommentsSection extends StatelessWidget {
 
         if (state is CommentsLoaded && state.forumId == forumId) {
           if (state.comments.isEmpty) {
-            return _buildEmptyState(l10n);
+            return _buildEmptyState(context, l10n);
           }
 
           return RefreshIndicator(
@@ -460,7 +474,8 @@ class _CommentsSection extends StatelessWidget {
               itemCount: state.comments.length + 1, // +1 for header
               itemBuilder: (context, index) {
                 if (index == 0) {
-                  return _buildCommentsHeader(state.comments.length, l10n);
+                  return _buildCommentsHeader(
+                      context, state.comments.length, l10n);
                 }
                 return CommentItem(
                   comment: state.comments[index - 1],
@@ -476,7 +491,8 @@ class _CommentsSection extends StatelessWidget {
     );
   }
 
-  Widget _buildCommentsHeader(int count, AppLocalizations l10n) {
+  Widget _buildCommentsHeader(
+      BuildContext context, int count, AppLocalizations l10n) {
     return Padding(
       padding: EdgeInsets.only(bottom: AppDimensions.spaceM),
       child: Row(
@@ -497,7 +513,7 @@ class _CommentsSection extends StatelessWidget {
           Text(
             l10n.commentsCount(count),
             style: AppTextStyles.h4.copyWith(
-              color: AppColors.textPrimary,
+              color: context.colors.textPrimary,
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -531,7 +547,7 @@ class _CommentsSection extends StatelessWidget {
     );
   }
 
-  Widget _buildEmptyState(AppLocalizations l10n) {
+  Widget _buildEmptyState(BuildContext context, AppLocalizations l10n) {
     return FadeSlideWidget(
       duration: AppDurations.animationMedium,
       child: Center(
@@ -554,7 +570,7 @@ class _CommentsSection extends StatelessWidget {
             Text(
               l10n.noCommentsYet,
               style: AppTextStyles.h4.copyWith(
-                color: AppColors.textPrimary,
+                color: context.colors.textPrimary,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -562,7 +578,7 @@ class _CommentsSection extends StatelessWidget {
             Text(
               l10n.beFirstToComment,
               style: AppTextStyles.body2.copyWith(
-                color: AppColors.textSecondary,
+                color: context.colors.textSecondary,
               ),
             ),
             SizedBox(height: AppDimensions.spaceL),

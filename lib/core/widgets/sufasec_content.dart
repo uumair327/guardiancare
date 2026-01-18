@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:guardiancare/core/core.dart';
 
 class CustomContentPage extends StatelessWidget {
   final Map<String, dynamic> content;
@@ -19,26 +20,26 @@ class CustomContentPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildDescriptionSection(),
-            if (stats.isNotEmpty) _buildStatsGrid(),
+            _buildDescriptionSection(context),
+            if (stats.isNotEmpty) _buildStatsGrid(context),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildDescriptionSection() {
+  Widget _buildDescriptionSection(BuildContext context) {
     return Text(
       content['description']?.toString() ?? '',
-      style: const TextStyle(
+      style: TextStyle(
         fontSize: 16,
         height: 1.5,
-        color: Colors.black87,
+        color: context.colors.textPrimary,
       ),
     );
   }
 
-  Widget _buildStatsGrid() {
+  Widget _buildStatsGrid(BuildContext context) {
     final stats = content['stats'] as Map<String, dynamic>;
 
     return Padding(
@@ -52,27 +53,27 @@ class CustomContentPage extends StatelessWidget {
         crossAxisSpacing: 15,
         children: [
           if (stats.containsKey('children'))
-            _buildStatCard('Children Reached', stats['children']),
+            _buildStatCard(context, 'Children Reached', stats['children']),
           if (stats.containsKey('families'))
-            _buildStatCard('Families Supported', stats['families']),
+            _buildStatCard(context, 'Families Supported', stats['families']),
           if (stats.containsKey('districts'))
-            _buildStatCard('Districts Covered', stats['districts']),
+            _buildStatCard(context, 'Districts Covered', stats['districts']),
           if (stats.containsKey('states'))
-            _buildStatCard('States Operating', stats['states']),
+            _buildStatCard(context, 'States Operating', stats['states']),
         ],
       ),
     );
   }
 
-  Widget _buildStatCard(String label, dynamic value) {
+  Widget _buildStatCard(BuildContext context, String label, dynamic value) {
     return Container(
       padding: const EdgeInsets.all(15),
       decoration: BoxDecoration(
-        color: Colors.blue.shade50,
+        color: context.colors.primary.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.2),
+            color: context.colors.textSecondary.withValues(alpha: 0.2),
             spreadRadius: 2,
             blurRadius: 5,
           ),
@@ -83,10 +84,10 @@ class CustomContentPage extends StatelessWidget {
         children: [
           Text(
             '$value',
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 28,
               fontWeight: FontWeight.bold,
-              color: Colors.blue,
+              color: context.colors.primary,
             ),
           ),
           const SizedBox(height: 5),
@@ -95,7 +96,7 @@ class CustomContentPage extends StatelessWidget {
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 14,
-              color: Colors.blue.shade800,
+              color: context.colors.primaryDark,
               fontWeight: FontWeight.w500,
             ),
           ),

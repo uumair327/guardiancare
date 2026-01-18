@@ -32,16 +32,16 @@ Future<void> init() async {
   sl.registerLazySingleton(() => FirebaseAuth.instance);
   sl.registerLazySingleton(() => FirebaseFirestore.instance);
   sl.registerLazySingleton(() => GoogleSignIn());
-  
+
   // Initialize Storage Manager (SQLite + Hive)
   final storageManager = StorageManager.instance;
   await storageManager.init();
   sl.registerLazySingleton(() => storageManager);
-  
+
   // Register storage services for dependency injection
   // Legacy HiveService for backward compatibility
   sl.registerLazySingleton(() => HiveService.instance);
-  
+
   // New SRP-compliant storage services (Requirements: 8.1, 8.2, 8.3, 8.4)
   sl.registerLazySingleton<PreferencesStorageService>(
     () => storageManager.preferencesService,
@@ -52,14 +52,17 @@ Future<void> init() async {
   sl.registerLazySingleton<SQLiteStorageService>(
     () => storageManager.sqliteService,
   );
-  
+
   // DatabaseService is only available on non-web platforms
   if (!kIsWeb) {
     sl.registerLazySingleton(() => DatabaseService.instance);
   }
-  
+
   // Register LocaleService
   sl.registerLazySingleton(() => LocaleService(sharedPreferences));
+
+  // Register ThemeService
+  sl.registerLazySingleton(() => ThemeService(sharedPreferences));
 
   // ============================================================================
   // Managers (SRP - Single Responsibility Principle)
@@ -87,7 +90,7 @@ void _initManagers() {
   // Parental Verification Services (SRP - Requirements: 9.1, 9.2, 9.3, 9.4)
   // Must be initialized first as other managers depend on them
   // ============================================================================
-  
+
   // CryptoService - handles cryptographic operations exclusively
   sl.registerLazySingleton<CryptoService>(
     () => const CryptoServiceImpl(),
@@ -133,6 +136,11 @@ void _initManagers() {
   // LocaleManager - manages application locale
   sl.registerLazySingleton<LocaleManager>(
     () => LocaleManagerImpl(localeService: sl()),
+  );
+
+  // ThemeManager - manages application theme
+  sl.registerLazySingleton<ThemeManager>(
+    () => ThemeManagerImpl(themeService: sl()),
   );
 
   // AppLifecycleManager - manages app lifecycle events
@@ -247,7 +255,7 @@ void _initProfileFeature() {
       sharedPreferences: sl(),
     ),
   );
-  
+
   // User stats local data source - uses DAOs from StorageManager
   // Only available on non-web platforms where SQLite is supported
   if (!kIsWeb) {
@@ -257,11 +265,11 @@ void _initProfileFeature() {
         videoDao: sl<StorageManager>().videoDao!,
       ),
     );
-    
+
     sl.registerLazySingleton<UserStatsRepository>(
       () => UserStatsRepositoryImpl(localDataSource: sl()),
     );
-    
+
     sl.registerLazySingleton(() => GetUserStats(sl()));
   }
 
@@ -288,7 +296,7 @@ void _initProfileFeature() {
       authRepository: sl(),
     ),
   );
-  
+
   // UserStatsCubit - handles user statistics separately (SRP)
   sl.registerFactory(
     () => UserStatsCubit(
@@ -337,7 +345,7 @@ void _initQuizFeature() {
   sl.registerLazySingleton<GeminiAIService>(
     () => GeminiAIServiceImpl(),
   );
-  
+
   sl.registerLazySingleton<YoutubeSearchService>(
     () => YoutubeSearchServiceImpl(),
   );
@@ -346,7 +354,7 @@ void _initQuizFeature() {
   sl.registerLazySingleton<QuizRepository>(
     () => QuizRepositoryImpl(localDataSource: sl()),
   );
-  
+
   sl.registerLazySingleton<RecommendationRepository>(
     () => RecommendationRepositoryImpl(firestore: sl()),
   );
@@ -357,11 +365,12 @@ void _initQuizFeature() {
   sl.registerLazySingleton(() => SubmitQuiz(sl()));
   sl.registerLazySingleton(() => ValidateQuiz(sl()));
   sl.registerLazySingleton(() => RecommendationUseCase(
-    geminiService: sl(),
-    youtubeService: sl(),
-    repository: sl<RecommendationRepository>(),
-  ));
-  sl.registerLazySingleton(() => GenerateRecommendations(sl<RecommendationUseCase>()));
+        geminiService: sl(),
+        youtubeService: sl(),
+        repository: sl<RecommendationRepository>(),
+      ));
+  sl.registerLazySingleton(
+      () => GenerateRecommendations(sl<RecommendationUseCase>()));
 
   // BLoC
   sl.registerFactory(

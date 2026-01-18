@@ -20,8 +20,8 @@ class QuizProgressIndicator extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final progress = currentQuestion / totalQuestions;
-    final active = activeColor ?? AppColors.primary;
-    final inactive = inactiveColor ?? AppColors.divider;
+    final active = activeColor ?? context.colors.primary;
+    final inactive = inactiveColor ?? context.colors.border;
 
     return RepaintBoundary(
       child: Column(
@@ -72,7 +72,7 @@ class QuizProgressIndicator extends StatelessWidget {
               Text(
                 'Question $currentQuestion of $totalQuestions',
                 style: AppTextStyles.bodySmall.copyWith(
-                  color: AppColors.textSecondary,
+                  color: context.colors.textSecondary,
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -127,7 +127,8 @@ class _QuizCircularProgressState extends State<QuizCircularProgress>
       duration: AppDurations.animationLong,
     );
 
-    _progressAnimation = Tween<double>(begin: 0.0, end: widget.progress).animate(
+    _progressAnimation =
+        Tween<double>(begin: 0.0, end: widget.progress).animate(
       CurvedAnimation(parent: _controller, curve: AppCurves.emphasized),
     );
 
@@ -156,8 +157,8 @@ class _QuizCircularProgressState extends State<QuizCircularProgress>
 
   @override
   Widget build(BuildContext context) {
-    final active = widget.activeColor ?? AppColors.primary;
-    final inactive = widget.inactiveColor ?? AppColors.divider;
+    final active = widget.activeColor ?? context.colors.primary;
+    final inactive = widget.inactiveColor ?? context.colors.border;
 
     return RepaintBoundary(
       child: SizedBox(

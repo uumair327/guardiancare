@@ -6,7 +6,7 @@ import 'package:guardiancare/features/forum/forum.dart';
 import 'package:intl/intl.dart';
 
 /// Forum List Item with educational-friendly design
-/// 
+///
 /// Features:
 /// - 3D tilt effect on touch
 /// - Gradient accent with category colors
@@ -31,13 +31,13 @@ class _ForumListItemState extends State<ForumListItem>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _scaleAnimation;
-  
+
   bool _isPressed = false;
   Offset _tiltOffset = Offset.zero;
 
-  // Educational-friendly purple color palette
-  static const _primaryColor = Color(0xFF8B5CF6);
-  static const _secondaryColor = Color(0xFF7C3AED);
+  // Educational-friendly purple color palette - using centralized colors
+  static Color get _primaryColor => AppColors.videoPrimary;
+  static Color get _secondaryColor => AppColors.videoPrimaryDark;
 
   @override
   void initState() {
@@ -82,10 +82,10 @@ class _ForumListItemState extends State<ForumListItem>
     final RenderBox box = context.findRenderObject() as RenderBox;
     final size = box.size;
     final localPosition = details.localPosition;
-    
+
     final dx = (localPosition.dx - size.width / 2) / (size.width / 2);
     final dy = (localPosition.dy - size.height / 2) / (size.height / 2);
-    
+
     setState(() {
       _tiltOffset = Offset(
         dy.clamp(-1.0, 1.0) * 0.015,
@@ -107,7 +107,7 @@ class _ForumListItemState extends State<ForumListItem>
   String _getTimeAgo(DateTime dateTime) {
     final now = DateTime.now();
     final difference = now.difference(dateTime);
-    
+
     if (difference.inDays > 30) {
       return DateFormat('MMM d, yyyy').format(dateTime);
     } else if (difference.inDays > 0) {
@@ -146,12 +146,12 @@ class _ForumListItemState extends State<ForumListItem>
                   ..rotateY(_tiltOffset.dy),
                 transformAlignment: Alignment.center,
                 decoration: BoxDecoration(
-                  color: AppColors.cardBackground,
+                  color: context.colors.surface,
                   borderRadius: AppDimensions.borderRadiusL,
                   border: Border.all(
-                    color: _isPressed 
+                    color: _isPressed
                         ? _primaryColor.withValues(alpha: 0.3)
-                        : AppColors.divider.withValues(alpha: 0.5),
+                        : context.colors.divider.withValues(alpha: 0.5),
                     width: 1,
                   ),
                   boxShadow: [
@@ -183,7 +183,7 @@ class _ForumListItemState extends State<ForumListItem>
                   bottom: 0,
                   child: Container(
                     width: 4,
-                    decoration: const BoxDecoration(
+                    decoration: BoxDecoration(
                       gradient: LinearGradient(
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
@@ -233,7 +233,7 @@ class _ForumListItemState extends State<ForumListItem>
                                 Text(
                                   widget.forum.title,
                                   style: AppTextStyles.h4.copyWith(
-                                    color: AppColors.textPrimary,
+                                    color: context.colors.textPrimary,
                                     fontWeight: FontWeight.w600,
                                     height: 1.3,
                                   ),
@@ -247,38 +247,39 @@ class _ForumListItemState extends State<ForumListItem>
                                     Icon(
                                       Icons.person_outline_rounded,
                                       size: 14,
-                                      color: AppColors.textSecondary,
+                                      color: context.colors.textSecondary,
                                     ),
                                     SizedBox(width: 4),
                                     Flexible(
                                       child: Text(
                                         widget.forum.userId,
                                         style: AppTextStyles.caption.copyWith(
-                                          color: AppColors.textSecondary,
+                                          color: context.colors.textSecondary,
                                         ),
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
                                       ),
                                     ),
                                     Container(
-                                      margin: EdgeInsets.symmetric(horizontal: 6),
+                                      margin:
+                                          EdgeInsets.symmetric(horizontal: 6),
                                       width: 3,
                                       height: 3,
                                       decoration: BoxDecoration(
-                                        color: AppColors.textSecondary,
+                                        color: context.colors.textSecondary,
                                         shape: BoxShape.circle,
                                       ),
                                     ),
                                     Icon(
                                       Icons.schedule_rounded,
                                       size: 14,
-                                      color: AppColors.textSecondary,
+                                      color: context.colors.textSecondary,
                                     ),
                                     SizedBox(width: 4),
                                     Text(
                                       _getTimeAgo(widget.forum.createdAt),
                                       style: AppTextStyles.caption.copyWith(
-                                        color: AppColors.textSecondary,
+                                        color: context.colors.textSecondary,
                                       ),
                                     ),
                                   ],
@@ -311,7 +312,7 @@ class _ForumListItemState extends State<ForumListItem>
                         widget.forum.description,
                         style: AppTextStyles.body2.copyWith(
                           height: 1.5,
-                          color: AppColors.textSecondary,
+                          color: context.colors.textSecondary,
                         ),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
@@ -329,7 +330,7 @@ class _ForumListItemState extends State<ForumListItem>
                           _buildBadge(
                             icon: Icons.family_restroom_rounded,
                             label: ForumStrings.family,
-                            color: const Color(0xFF10B981),
+                            color: AppColors.cardEmerald,
                           ),
                           const Spacer(),
                           Text(

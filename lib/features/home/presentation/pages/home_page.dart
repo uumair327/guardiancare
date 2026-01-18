@@ -7,7 +7,7 @@ import 'package:guardiancare/features/home/home.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 /// Home Page with animations and 3D effects
-/// 
+///
 /// Features:
 /// - Animated welcome header
 /// - Staggered action grid animations
@@ -20,7 +20,7 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    
+
     return Scaffold(
       body: SafeArea(
         child: BlocConsumer<HomeBloc, HomeState>(
@@ -39,7 +39,9 @@ class HomePage extends StatelessWidget {
                     label: l10n.retry,
                     textColor: AppColors.white,
                     onPressed: () {
-                      context.read<HomeBloc>().add(const RefreshCarouselItems());
+                      context
+                          .read<HomeBloc>()
+                          .add(const RefreshCarouselItems());
                     },
                   ),
                 ),
@@ -53,7 +55,7 @@ class HomePage extends StatelessWidget {
                 await Future.delayed(AppDurations.animationMedium);
               },
               color: AppColors.primary,
-              backgroundColor: AppColors.white,
+              backgroundColor: context.colors.surface,
               child: CustomScrollView(
                 physics: const BouncingScrollPhysics(
                   parent: AlwaysScrollableScrollPhysics(),
@@ -63,7 +65,7 @@ class HomePage extends StatelessWidget {
                   SliverToBoxAdapter(
                     child: const WelcomeHeader(),
                   ),
-                  
+
                   // Carousel Section with fade-in
                   SliverToBoxAdapter(
                     child: FadeSlideWidget(
@@ -75,11 +77,11 @@ class HomePage extends StatelessWidget {
                       ),
                     ),
                   ),
-                  
+
                   SliverToBoxAdapter(
                     child: SizedBox(height: AppDimensions.spaceL),
                   ),
-                  
+
                   // Quick Actions Section Header
                   SliverToBoxAdapter(
                     child: FadeSlideWidget(
@@ -104,7 +106,7 @@ class HomePage extends StatelessWidget {
                               child: Text(
                                 l10n.quickActions,
                                 style: AppTextStyles.h3.copyWith(
-                                  color: AppColors.textPrimary,
+                                  color: context.colors.textPrimary,
                                   fontWeight: FontWeight.bold,
                                 ),
                                 maxLines: 2,
@@ -116,11 +118,11 @@ class HomePage extends StatelessWidget {
                       ),
                     ),
                   ),
-                  
+
                   SliverToBoxAdapter(
                     child: SizedBox(height: AppDimensions.spaceM),
                   ),
-                  
+
                   // Action Grid with staggered animations
                   SliverToBoxAdapter(
                     child: ActionGrid(
@@ -142,7 +144,7 @@ class HomePage extends StatelessWidget {
                       },
                     ),
                   ),
-                  
+
                   // Bottom spacing for navigation bar
                   SliverToBoxAdapter(
                     child: SizedBox(height: AppDimensions.spaceXXL * 2),

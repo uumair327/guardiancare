@@ -36,30 +36,30 @@ class _PagesState extends State<Pages> with SingleTickerProviderStateMixin {
       icon: Icons.home_outlined,
       activeIcon: Icons.home_rounded,
       label: 'Home',
-      activeColor: Color(0xFFEF4934), // Primary red - matches home page
+      activeColor: AppColors.primary, // Primary red - matches home page
     ),
     ModernNavItem(
       icon: Icons.explore_outlined,
       activeIcon: Icons.explore_rounded,
       label: 'Explore',
-      activeColor: Color(0xFF10B981), // Emerald
+      activeColor: AppColors.cardEmerald, // Emerald
     ),
     ModernNavItem(
       icon: Icons.forum_outlined,
       activeIcon: Icons.forum_rounded,
       label: 'Forum',
-      activeColor: Color(0xFF8B5CF6), // Purple
+      activeColor: AppColors.videoPrimary, // Purple
     ),
   ];
 
   @override
   void initState() {
     super.initState();
-    
+
     // Initialize blocs once - they will persist across locale changes
     _homeBloc = sl<HomeBloc>()..add(const LoadCarouselItems());
     _forumBloc = sl<ForumBloc>();
-    
+
     _fadeController = AnimationController(
       vsync: this,
       duration: AppDurations.animationMedium,
@@ -154,7 +154,7 @@ class _PagesState extends State<Pages> with SingleTickerProviderStateMixin {
       children: [
         Scaffold(
           extendBody: true,
-          backgroundColor: AppColors.background,
+          backgroundColor: context.colors.background,
           body: FadeTransition(
             opacity: _fadeAnimation,
             child: AnimatedSwitcher(

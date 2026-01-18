@@ -20,8 +20,7 @@ class BottomNav extends StatefulWidget {
   State<BottomNav> createState() => _BottomNavState();
 }
 
-class _BottomNavState extends State<BottomNav>
-    with TickerProviderStateMixin {
+class _BottomNavState extends State<BottomNav> with TickerProviderStateMixin {
   late List<AnimationController> _controllers;
   late List<Animation<double>> _scaleAnimations;
 
@@ -73,11 +72,11 @@ class _BottomNavState extends State<BottomNav>
         AppDimensions.spaceM,
       ),
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: context.colors.surface,
         borderRadius: AppDimensions.borderRadiusXL,
         boxShadow: [
           BoxShadow(
-            color: AppColors.primary.withValues(alpha: 0.15),
+            color: context.colors.primary.withValues(alpha: 0.15),
             blurRadius: 20,
             offset: const Offset(0, -4),
             spreadRadius: 2,
@@ -158,8 +157,9 @@ class _NavItemWidget extends StatelessWidget {
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                         colors: [
-                          item.activeColor ?? AppColors.primary,
-                          (item.activeColor ?? AppColors.primary).withValues(alpha: 0.8),
+                          item.activeColor ?? context.colors.primary,
+                          (item.activeColor ?? context.colors.primary)
+                              .withValues(alpha: 0.8),
                         ],
                       )
                     : null,
@@ -167,7 +167,7 @@ class _NavItemWidget extends StatelessWidget {
                 boxShadow: isSelected
                     ? [
                         BoxShadow(
-                          color: (item.activeColor ?? AppColors.primary)
+                          color: (item.activeColor ?? context.colors.primary)
                               .withValues(alpha: 0.3),
                           blurRadius: 8,
                           offset: const Offset(0, 2),
@@ -177,9 +177,8 @@ class _NavItemWidget extends StatelessWidget {
               ),
               child: Icon(
                 isSelected ? item.activeIcon : item.icon,
-                color: isSelected
-                    ? AppColors.white
-                    : AppColors.textSecondary,
+                color:
+                    isSelected ? AppColors.white : context.colors.textSecondary,
                 size: 24,
               ),
             ),
@@ -265,18 +264,18 @@ class _FloatingBottomNavState extends State<FloatingBottomNav>
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              AppColors.surface,
-              AppColors.surface.withValues(alpha: 0.98),
+              context.colors.surface,
+              context.colors.surface.withValues(alpha: 0.98),
             ],
           ),
           borderRadius: BorderRadius.circular(32),
           border: Border.all(
-            color: AppColors.primary.withValues(alpha: 0.1),
+            color: context.colors.primary.withValues(alpha: 0.1),
             width: 1,
           ),
           boxShadow: [
             BoxShadow(
-              color: AppColors.primary.withValues(alpha: 0.1),
+              color: context.colors.primary.withValues(alpha: 0.1),
               blurRadius: 24,
               offset: const Offset(0, 8),
               spreadRadius: 4,
@@ -364,7 +363,7 @@ class _FloatingNavItemState extends State<_FloatingNavItem>
 
   @override
   Widget build(BuildContext context) {
-    final color = widget.item.activeColor ?? AppColors.primary;
+    final color = widget.item.activeColor ?? context.colors.primary;
 
     return GestureDetector(
       onTap: widget.onTap,
@@ -415,7 +414,9 @@ class _FloatingNavItemState extends State<_FloatingNavItem>
                 ),
                 child: Icon(
                   widget.isSelected ? widget.item.activeIcon : widget.item.icon,
-                  color: widget.isSelected ? AppColors.white : AppColors.textSecondary,
+                  color: widget.isSelected
+                      ? AppColors.white
+                      : context.colors.textSecondary,
                   size: widget.isSelected ? 22 : 24,
                 ),
               ),

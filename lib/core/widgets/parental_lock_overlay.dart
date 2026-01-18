@@ -27,12 +27,12 @@ class _ParentalLockOverlayState extends State<ParentalLockOverlay>
     with SingleTickerProviderStateMixin {
   final TextEditingController _keyController = TextEditingController();
   final FocusNode _focusNode = FocusNode();
-  
+
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
   late Animation<double> _scaleAnimation;
   late Animation<double> _slideAnimation;
-  
+
   bool _obscureKey = true;
   bool _isLoading = false;
   bool _showError = false;
@@ -42,7 +42,7 @@ class _ParentalLockOverlayState extends State<ParentalLockOverlay>
   @override
   void initState() {
     super.initState();
-    
+
     _animationController = AnimationController(
       vsync: this,
       duration: AppDurations.animationMedium,
@@ -79,7 +79,7 @@ class _ParentalLockOverlayState extends State<ParentalLockOverlay>
     try {
       final service = ParentalVerificationService();
       _serviceAvailable = true;
-      
+
       if (service.isVerifiedForSession) {
         // Already verified in this session
         setState(() => _isLocked = false);
@@ -107,7 +107,7 @@ class _ParentalLockOverlayState extends State<ParentalLockOverlay>
 
   Future<void> _verify() async {
     final key = _keyController.text.trim();
-    
+
     if (key.length < 4) {
       setState(() => _showError = true);
       HapticFeedback.heavyImpact();
@@ -120,7 +120,7 @@ class _ParentalLockOverlayState extends State<ParentalLockOverlay>
     });
 
     bool isValid = false;
-    
+
     if (_serviceAvailable) {
       try {
         final service = ParentalVerificationService();
@@ -138,7 +138,7 @@ class _ParentalLockOverlayState extends State<ParentalLockOverlay>
         _isLoading = false;
         _isLocked = false;
       });
-      
+
       // Animate out then call callback
       await _animationController.reverse();
       widget.onUnlocked();
@@ -149,7 +149,7 @@ class _ParentalLockOverlayState extends State<ParentalLockOverlay>
         _showError = true;
       });
       _keyController.clear();
-      
+
       // Shake animation
       _shakeAnimation();
     }
@@ -182,7 +182,7 @@ class _ParentalLockOverlayState extends State<ParentalLockOverlay>
           absorbing: true,
           child: widget.child,
         ),
-        
+
         // Blur overlay
         Positioned.fill(
           child: AnimatedBuilder(
@@ -202,7 +202,7 @@ class _ParentalLockOverlayState extends State<ParentalLockOverlay>
             },
           ),
         ),
-        
+
         // Lock card
         Positioned.fill(
           child: AnimatedBuilder(
@@ -235,16 +235,16 @@ class _ParentalLockOverlayState extends State<ParentalLockOverlay>
 
   Widget _buildLockCard(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    
+
     return Container(
       constraints: const BoxConstraints(maxWidth: 400),
       padding: EdgeInsets.all(AppDimensions.spaceXL),
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: context.colors.surface,
         borderRadius: AppDimensions.borderRadiusXL,
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF8B5CF6).withValues(alpha: 0.25),
+            color: AppColors.videoPrimary.withValues(alpha: 0.25),
             blurRadius: 32,
             offset: const Offset(0, 16),
             spreadRadius: 4,
@@ -257,7 +257,7 @@ class _ParentalLockOverlayState extends State<ParentalLockOverlay>
           // Lock icon with animation
           _buildLockIcon(),
           SizedBox(height: AppDimensions.spaceL),
-          
+
           // Title
           Text(
             l10n.parentalAccessRequired,
@@ -268,7 +268,7 @@ class _ParentalLockOverlayState extends State<ParentalLockOverlay>
             textAlign: TextAlign.center,
           ),
           SizedBox(height: AppDimensions.spaceS),
-          
+
           // Subtitle
           Text(
             l10n.parentalAccessDescription,
@@ -278,10 +278,10 @@ class _ParentalLockOverlayState extends State<ParentalLockOverlay>
             textAlign: TextAlign.center,
           ),
           SizedBox(height: AppDimensions.spaceXL),
-          
+
           // Input field
           _buildInputField(context),
-          
+
           // Error message
           if (_showError) ...[
             SizedBox(height: AppDimensions.spaceS),
@@ -292,28 +292,28 @@ class _ParentalLockOverlayState extends State<ParentalLockOverlay>
                 children: [
                   Icon(
                     Icons.error_outline_rounded,
-                    color: AppColors.error,
+                    color: context.colors.error,
                     size: AppDimensions.iconXS,
                   ),
                   SizedBox(width: AppDimensions.spaceXS),
                   Text(
                     l10n.invalidKeyTryAgain,
                     style: AppTextStyles.bodySmall.copyWith(
-                      color: AppColors.error,
+                      color: context.colors.error,
                     ),
                   ),
                 ],
               ),
             ),
           ],
-          
+
           SizedBox(height: AppDimensions.spaceL),
-          
+
           // Unlock button
           _buildUnlockButton(context),
-          
+
           SizedBox(height: AppDimensions.spaceM),
-          
+
           // Forgot key link
           if (widget.onForgotKey != null)
             ScaleTapWidget(
@@ -323,15 +323,15 @@ class _ParentalLockOverlayState extends State<ParentalLockOverlay>
                 child: Text(
                   l10n.forgotYourKey,
                   style: AppTextStyles.bodySmall.copyWith(
-                    color: const Color(0xFF8B5CF6),
+                    color: AppColors.videoPrimary,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
               ),
             ),
-          
+
           SizedBox(height: AppDimensions.spaceM),
-          
+
           // Info badge
           _buildInfoBadge(context),
         ],
@@ -347,8 +347,8 @@ class _ParentalLockOverlayState extends State<ParentalLockOverlay>
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            const Color(0xFF8B5CF6).withValues(alpha: 0.15),
-            const Color(0xFF8B5CF6).withValues(alpha: 0.05),
+            AppColors.videoPrimary.withValues(alpha: 0.15),
+            AppColors.videoPrimary.withValues(alpha: 0.05),
           ],
         ),
         shape: BoxShape.circle,
@@ -360,14 +360,14 @@ class _ParentalLockOverlayState extends State<ParentalLockOverlay>
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              Color(0xFF8B5CF6),
-              Color(0xFF7C3AED),
+              AppColors.videoPrimary,
+              AppColors.videoPrimaryDark,
             ],
           ),
           shape: BoxShape.circle,
           boxShadow: [
             BoxShadow(
-              color: const Color(0xFF8B5CF6).withValues(alpha: 0.4),
+              color: AppColors.videoPrimary.withValues(alpha: 0.4),
               blurRadius: 16,
               offset: const Offset(0, 4),
             ),
@@ -385,12 +385,12 @@ class _ParentalLockOverlayState extends State<ParentalLockOverlay>
   Widget _buildInputField(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.background,
+        color: context.colors.inputBackground,
         borderRadius: AppDimensions.borderRadiusM,
         border: Border.all(
           color: _showError
-              ? AppColors.error
-              : const Color(0xFF8B5CF6).withValues(alpha: 0.3),
+              ? context.colors.error
+              : AppColors.videoPrimary.withValues(alpha: 0.3),
           width: _showError ? 2 : 1.5,
         ),
       ),
@@ -406,7 +406,7 @@ class _ParentalLockOverlayState extends State<ParentalLockOverlay>
         decoration: InputDecoration(
           hintText: '• • • •',
           hintStyle: AppTextStyles.h4.copyWith(
-            color: AppColors.textSecondary.withValues(alpha: 0.5),
+            color: context.colors.textSecondary.withValues(alpha: 0.5),
             letterSpacing: 12,
           ),
           border: InputBorder.none,
@@ -416,12 +416,14 @@ class _ParentalLockOverlayState extends State<ParentalLockOverlay>
           ),
           prefixIcon: Icon(
             Icons.vpn_key_rounded,
-            color: const Color(0xFF8B5CF6),
+            color: AppColors.videoPrimary,
           ),
           suffixIcon: IconButton(
             icon: Icon(
-              _obscureKey ? Icons.visibility_rounded : Icons.visibility_off_rounded,
-              color: AppColors.textSecondary,
+              _obscureKey
+                  ? Icons.visibility_rounded
+                  : Icons.visibility_off_rounded,
+              color: context.colors.textSecondary,
             ),
             onPressed: () {
               HapticFeedback.selectionClick();
@@ -430,6 +432,7 @@ class _ParentalLockOverlayState extends State<ParentalLockOverlay>
           ),
         ),
         onSubmitted: (_) => _verify(),
+        onTapOutside: (_) => FocusManager.instance.primaryFocus?.unfocus(),
         onChanged: (_) {
           if (_showError) {
             setState(() => _showError = false);
@@ -441,7 +444,7 @@ class _ParentalLockOverlayState extends State<ParentalLockOverlay>
 
   Widget _buildUnlockButton(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    
+
     return SizedBox(
       width: double.infinity,
       child: ScaleTapWidget(
@@ -455,12 +458,12 @@ class _ParentalLockOverlayState extends State<ParentalLockOverlay>
               end: Alignment.bottomRight,
               colors: _isLoading
                   ? [
-                      const Color(0xFF8B5CF6).withValues(alpha: 0.5),
-                      const Color(0xFF7C3AED).withValues(alpha: 0.3),
+                      AppColors.videoPrimary.withValues(alpha: 0.5),
+                      AppColors.videoPrimaryDark.withValues(alpha: 0.3),
                     ]
                   : [
-                      const Color(0xFF8B5CF6),
-                      const Color(0xFF7C3AED),
+                      AppColors.videoPrimary,
+                      AppColors.videoPrimaryDark,
                     ],
             ),
             borderRadius: AppDimensions.borderRadiusM,
@@ -468,7 +471,7 @@ class _ParentalLockOverlayState extends State<ParentalLockOverlay>
                 ? null
                 : [
                     BoxShadow(
-                      color: const Color(0xFF8B5CF6).withValues(alpha: 0.4),
+                      color: AppColors.videoPrimary.withValues(alpha: 0.4),
                       blurRadius: 12,
                       offset: const Offset(0, 4),
                     ),
@@ -507,7 +510,7 @@ class _ParentalLockOverlayState extends State<ParentalLockOverlay>
 
   Widget _buildInfoBadge(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    
+
     return Container(
       padding: EdgeInsets.symmetric(
         horizontal: AppDimensions.spaceM,

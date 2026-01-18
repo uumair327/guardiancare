@@ -51,7 +51,7 @@ class _TermsAndConditionsDialogState extends State<TermsAndConditionsDialog>
     with SingleTickerProviderStateMixin {
   // Consent checkbox state - only parent/guardian confirmation needed
   bool _isParentOrGuardian = false;
-  
+
   // Scroll tracking - user must scroll to bottom to accept
   bool _hasScrolledToBottom = false;
   late ScrollController _scrollController;
@@ -64,7 +64,7 @@ class _TermsAndConditionsDialogState extends State<TermsAndConditionsDialog>
     super.initState();
     _scrollController = ScrollController();
     _scrollController.addListener(_onScroll);
-    
+
     _animController = AnimationController(
       vsync: this,
       duration: AppDurations.animationMedium,
@@ -74,13 +74,13 @@ class _TermsAndConditionsDialogState extends State<TermsAndConditionsDialog>
       curve: AppCurves.standard,
     );
     _animController.forward();
-    
+
     // Check if content is scrollable after first frame
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _checkIfScrollable();
     });
   }
-  
+
   void _checkIfScrollable() {
     if (_scrollController.hasClients) {
       // If content doesn't need scrolling, mark as scrolled
@@ -89,7 +89,7 @@ class _TermsAndConditionsDialogState extends State<TermsAndConditionsDialog>
       }
     }
   }
-  
+
   void _onScroll() {
     if (!_hasScrolledToBottom && _scrollController.hasClients) {
       final maxScroll = _scrollController.position.maxScrollExtent;
@@ -126,7 +126,7 @@ class _TermsAndConditionsDialogState extends State<TermsAndConditionsDialog>
         child: Container(
           constraints: const BoxConstraints(maxWidth: 400, maxHeight: 600),
           decoration: BoxDecoration(
-            color: AppColors.surface,
+            color: context.colors.surface,
             borderRadius: AppDimensions.borderRadiusXL,
             boxShadow: [
               BoxShadow(
@@ -219,23 +219,25 @@ class _TermsAndConditionsDialogState extends State<TermsAndConditionsDialog>
                 'Terms and Conditions',
                 style: AppTextStyles.h5.copyWith(
                   fontWeight: FontWeight.bold,
-                  color: AppColors.textPrimary,
+                  color: context.colors.textPrimary,
                 ),
               ),
               SizedBox(height: AppDimensions.spaceS),
               Text(
                 'Please read and accept the following terms and conditions to proceed.',
                 style: AppTextStyles.body2.copyWith(
-                  color: AppColors.textSecondary,
+                  color: context.colors.textSecondary,
                 ),
               ),
               SizedBox(height: AppDimensions.spaceL),
 
               // Terms bullet points
               _buildTermItem('Your data will be securely stored.'),
-              _buildTermItem('You agree to follow the platform rules and regulations.'),
-              _buildTermItem('You acknowledge the responsibility of safeguarding your account.'),
-              
+              _buildTermItem(
+                  'You agree to follow the platform rules and regulations.'),
+              _buildTermItem(
+                  'You acknowledge the responsibility of safeguarding your account.'),
+
               SizedBox(height: AppDimensions.spaceL),
 
               // Parent/Guardian Confirmation (COPPA Compliance)
@@ -267,8 +269,8 @@ class _TermsAndConditionsDialogState extends State<TermsAndConditionsDialog>
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [
-                    AppColors.surface.withValues(alpha: 0),
-                    AppColors.surface,
+                    context.colors.surface.withValues(alpha: 0),
+                    context.colors.surface,
                   ],
                 ),
               ),
@@ -316,7 +318,7 @@ class _TermsAndConditionsDialogState extends State<TermsAndConditionsDialog>
             child: Text(
               text,
               style: AppTextStyles.body2.copyWith(
-                color: AppColors.textPrimary,
+                color: context.colors.textPrimary,
                 height: 1.4,
               ),
             ),
@@ -345,12 +347,12 @@ class _TermsAndConditionsDialogState extends State<TermsAndConditionsDialog>
           decoration: BoxDecoration(
             color: value
                 ? AppColors.primary.withValues(alpha: 0.05)
-                : AppColors.gray100,
+                : context.colors.inputBackground,
             borderRadius: AppDimensions.borderRadiusM,
             border: Border.all(
               color: value
                   ? AppColors.primary.withValues(alpha: 0.3)
-                  : AppColors.gray200,
+                  : context.colors.divider,
               width: value ? 1.5 : 1,
             ),
           ),
@@ -363,10 +365,10 @@ class _TermsAndConditionsDialogState extends State<TermsAndConditionsDialog>
                 width: 24,
                 height: 24,
                 decoration: BoxDecoration(
-                  color: value ? AppColors.primary : AppColors.white,
+                  color: value ? AppColors.primary : context.colors.surface,
                   borderRadius: BorderRadius.circular(6),
                   border: Border.all(
-                    color: value ? AppColors.primary : AppColors.gray300,
+                    color: value ? AppColors.primary : context.colors.divider,
                     width: 2,
                   ),
                 ),
@@ -390,7 +392,7 @@ class _TermsAndConditionsDialogState extends State<TermsAndConditionsDialog>
                           size: 16,
                           color: value
                               ? AppColors.primary
-                              : AppColors.textSecondary,
+                              : context.colors.textSecondary,
                         ),
                         SizedBox(width: AppDimensions.spaceXS),
                         Text(
@@ -399,7 +401,7 @@ class _TermsAndConditionsDialogState extends State<TermsAndConditionsDialog>
                             fontWeight: FontWeight.w600,
                             color: value
                                 ? AppColors.primary
-                                : AppColors.textPrimary,
+                                : context.colors.textPrimary,
                           ),
                         ),
                         if (isRequired) ...[
@@ -418,7 +420,7 @@ class _TermsAndConditionsDialogState extends State<TermsAndConditionsDialog>
                     Text(
                       subtitle,
                       style: AppTextStyles.caption.copyWith(
-                        color: AppColors.textSecondary,
+                        color: context.colors.textSecondary,
                       ),
                     ),
                     if (onLinkTap != null) ...[
@@ -449,7 +451,7 @@ class _TermsAndConditionsDialogState extends State<TermsAndConditionsDialog>
     return Container(
       padding: EdgeInsets.all(AppDimensions.spaceL),
       decoration: BoxDecoration(
-        color: AppColors.gray50,
+        color: context.colors.background,
         borderRadius: BorderRadius.only(
           bottomLeft: Radius.circular(AppDimensions.radiusXL),
           bottomRight: Radius.circular(AppDimensions.radiusXL),
@@ -471,7 +473,7 @@ class _TermsAndConditionsDialogState extends State<TermsAndConditionsDialog>
                         colors: [AppColors.primary, AppColors.primaryDark],
                       )
                     : null,
-                color: _canAccept ? null : AppColors.gray300,
+                color: _canAccept ? null : context.colors.divider,
                 borderRadius: AppDimensions.borderRadiusM,
                 boxShadow: _canAccept
                     ? [
@@ -487,7 +489,9 @@ class _TermsAndConditionsDialogState extends State<TermsAndConditionsDialog>
                 child: Text(
                   'I Agree',
                   style: AppTextStyles.button.copyWith(
-                    color: _canAccept ? AppColors.white : AppColors.gray500,
+                    color: _canAccept
+                        ? AppColors.white
+                        : context.colors.textSecondary,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -501,7 +505,7 @@ class _TermsAndConditionsDialogState extends State<TermsAndConditionsDialog>
             child: Text(
               'Cancel',
               style: AppTextStyles.body2.copyWith(
-                color: AppColors.textSecondary,
+                color: context.colors.textSecondary,
               ),
             ),
           ),

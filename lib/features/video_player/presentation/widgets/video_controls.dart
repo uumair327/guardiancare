@@ -96,7 +96,7 @@ class PlayPauseButton extends StatelessWidget {
       hapticType: HapticFeedbackType.medium,
       boxShadow: [
         BoxShadow(
-          color: const Color(0xFF8B5CF6).withValues(alpha: 0.4),
+          color: AppColors.videoPrimarySubtle40,
           blurRadius: 16,
           offset: const Offset(0, 4),
         ),
@@ -105,14 +105,7 @@ class PlayPauseButton extends StatelessWidget {
         width: size,
         height: size,
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              const Color(0xFF8B5CF6),
-              const Color(0xFF7C3AED),
-            ],
-          ),
+          gradient: AppColors.videoGradient,
           shape: BoxShape.circle,
         ),
         child: AnimatedSwitcher(

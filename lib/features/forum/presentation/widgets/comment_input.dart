@@ -5,7 +5,7 @@ import 'package:guardiancare/core/core.dart';
 import 'package:guardiancare/features/forum/forum.dart';
 
 /// Comment Input with educational-friendly design
-/// 
+///
 /// Features:
 /// - Animated send button
 /// - Character counter with color feedback
@@ -24,28 +24,28 @@ class _CommentInputState extends State<CommentInput>
     with SingleTickerProviderStateMixin {
   final TextEditingController _controller = TextEditingController();
   final FocusNode _focusNode = FocusNode();
-  
+
   late AnimationController _animationController;
   late Animation<double> _scaleAnimation;
-  
+
   static const int _maxCharacters = 1000;
   int _characterCount = 0;
   bool _isFocused = false;
 
-  static const _primaryColor = Color(0xFF8B5CF6);
-  static const _secondaryColor = Color(0xFF7C3AED);
+  static Color get _primaryColor => AppColors.videoPrimary;
+  static Color get _secondaryColor => AppColors.videoPrimaryDark;
 
   @override
   void initState() {
     super.initState();
     _controller.addListener(_onTextChanged);
     _focusNode.addListener(_onFocusChanged);
-    
+
     _animationController = AnimationController(
       vsync: this,
       duration: AppDurations.animationShort,
     );
-    
+
     _scaleAnimation = Tween<double>(begin: 1.0, end: 0.95).animate(
       CurvedAnimation(parent: _animationController, curve: AppCurves.tap),
     );
@@ -75,7 +75,7 @@ class _CommentInputState extends State<CommentInput>
 
   void _submitComment(BuildContext context) {
     final text = _controller.text.trim();
-    
+
     if (text.isEmpty) {
       HapticFeedback.heavyImpact();
       ScaffoldMessenger.of(context).showSnackBar(
@@ -121,20 +121,20 @@ class _CommentInputState extends State<CommentInput>
     }
 
     HapticFeedback.mediumImpact();
-    
+
     context.read<ForumBloc>().add(
-      SubmitComment(
-        forumId: widget.forumId,
-        text: text,
-      ),
-    );
+          SubmitComment(
+            forumId: widget.forumId,
+            text: text,
+          ),
+        );
   }
 
   Color _getCharacterCountColor() {
     final percentage = _characterCount / _maxCharacters;
     if (percentage >= 0.9) return AppColors.error;
     if (percentage >= 0.7) return AppColors.warning;
-    return AppColors.textSecondary;
+    return context.colors.textSecondary;
   }
 
   bool get _canSubmit => _controller.text.trim().isNotEmpty;
@@ -147,12 +147,13 @@ class _CommentInputState extends State<CommentInput>
           _controller.clear();
           setState(() => _characterCount = 0);
           _focusNode.unfocus();
-          
+
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Row(
                 children: [
-                  Icon(Icons.check_circle_rounded, color: AppColors.white, size: 20),
+                  Icon(Icons.check_circle_rounded,
+                      color: AppColors.white, size: 20),
                   SizedBox(width: AppDimensions.spaceS),
                   Text(FeedbackStrings.commentPosted),
                 ],
@@ -173,7 +174,7 @@ class _CommentInputState extends State<CommentInput>
         },
         builder: (context, state) {
           final isSubmitting = state is CommentSubmitting;
-          
+
           return Container(
             padding: EdgeInsets.fromLTRB(
               AppDimensions.screenPaddingH,
@@ -182,7 +183,7 @@ class _CommentInputState extends State<CommentInput>
               AppDimensions.spaceM + MediaQuery.of(context).padding.bottom,
             ),
             decoration: BoxDecoration(
-              color: AppColors.surface,
+              color: context.colors.surface,
               boxShadow: [
                 BoxShadow(
                   color: _primaryColor.withValues(alpha: 0.08),
@@ -192,9 +193,9 @@ class _CommentInputState extends State<CommentInput>
               ],
               border: Border(
                 top: BorderSide(
-                  color: _isFocused 
+                  color: _isFocused
                       ? _primaryColor.withValues(alpha: 0.3)
-                      : AppColors.divider.withValues(alpha: 0.5),
+                      : context.colors.divider.withValues(alpha: 0.5),
                 ),
               ),
             ),
@@ -208,12 +209,12 @@ class _CommentInputState extends State<CommentInput>
                       child: AnimatedContainer(
                         duration: AppDurations.animationShort,
                         decoration: BoxDecoration(
-                          color: AppColors.background,
+                          color: context.colors.background,
                           borderRadius: AppDimensions.borderRadiusL,
                           border: Border.all(
                             color: _isFocused
                                 ? _primaryColor.withValues(alpha: 0.5)
-                                : AppColors.divider,
+                                : context.colors.divider,
                             width: _isFocused ? 1.5 : 1,
                           ),
                           boxShadow: _isFocused
@@ -228,6 +229,8 @@ class _CommentInputState extends State<CommentInput>
                         ),
                         child: TextField(
                           controller: _controller,
+                          onTapOutside: (_) =>
+                              FocusManager.instance.primaryFocus?.unfocus(),
                           focusNode: _focusNode,
                           maxLines: 4,
                           minLines: 1,
@@ -235,12 +238,13 @@ class _CommentInputState extends State<CommentInput>
                           enabled: !isSubmitting,
                           textCapitalization: TextCapitalization.sentences,
                           style: AppTextStyles.body2.copyWith(
-                            color: AppColors.textPrimary,
+                            color: context.colors.textPrimary,
                           ),
                           decoration: InputDecoration(
                             hintText: ForumStrings.shareYourThoughts,
                             hintStyle: AppTextStyles.body2.copyWith(
-                              color: AppColors.textSecondary.withValues(alpha: 0.6),
+                              color: context.colors.textSecondary
+                                  .withValues(alpha: 0.6),
                             ),
                             border: InputBorder.none,
                             contentPadding: EdgeInsets.symmetric(
@@ -257,7 +261,7 @@ class _CommentInputState extends State<CommentInput>
                                 Icons.chat_bubble_outline_rounded,
                                 color: _isFocused
                                     ? _primaryColor
-                                    : AppColors.textSecondary,
+                                    : context.colors.textSecondary,
                                 size: 20,
                               ),
                             ),
@@ -291,7 +295,7 @@ class _CommentInputState extends State<CommentInput>
                           height: 48,
                           decoration: BoxDecoration(
                             gradient: _canSubmit && !isSubmitting
-                                ? const LinearGradient(
+                                ? LinearGradient(
                                     begin: Alignment.topLeft,
                                     end: Alignment.bottomRight,
                                     colors: [_primaryColor, _secondaryColor],
@@ -299,12 +303,13 @@ class _CommentInputState extends State<CommentInput>
                                 : null,
                             color: _canSubmit && !isSubmitting
                                 ? null
-                                : AppColors.divider,
+                                : context.colors.divider,
                             borderRadius: AppDimensions.borderRadiusM,
                             boxShadow: _canSubmit && !isSubmitting
                                 ? [
                                     BoxShadow(
-                                      color: _primaryColor.withValues(alpha: 0.4),
+                                      color:
+                                          _primaryColor.withValues(alpha: 0.4),
                                       blurRadius: 12,
                                       offset: const Offset(0, 4),
                                     ),
@@ -325,7 +330,7 @@ class _CommentInputState extends State<CommentInput>
                                     Icons.send_rounded,
                                     color: _canSubmit
                                         ? AppColors.white
-                                        : AppColors.textSecondary,
+                                        : context.colors.textSecondary,
                                     size: 20,
                                   ),
                           ),
@@ -341,7 +346,8 @@ class _CommentInputState extends State<CommentInput>
                     Text(
                       ForumStrings.beRespectful,
                       style: AppTextStyles.caption.copyWith(
-                        color: AppColors.textSecondary.withValues(alpha: 0.7),
+                        color:
+                            context.colors.textSecondary.withValues(alpha: 0.7),
                         fontSize: 11,
                       ),
                     ),

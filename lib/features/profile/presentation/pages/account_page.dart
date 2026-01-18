@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:guardiancare/core/core.dart';
+import 'package:guardiancare/core/di/di.dart' as di;
 import 'package:guardiancare/features/consent/consent.dart';
 import 'package:guardiancare/features/profile/profile.dart';
 import 'package:guardiancare/main.dart' show Guardiancare;
@@ -74,14 +75,14 @@ class _AccountPageState extends State<AccountPage>
     // Handle no user case without parental lock
     if (widget.user == null) {
       return Scaffold(
-        backgroundColor: AppColors.background,
+        backgroundColor: context.colors.background,
         appBar: _buildAppBar(context),
         body: _buildNoUserScreen(context),
       );
     }
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: context.colors.background,
       appBar: _buildAppBar(context),
       body: ParentalLockOverlay(
         onUnlocked: _onUnlocked,
@@ -101,9 +102,9 @@ class _AccountPageState extends State<AccountPage>
     return AppBar(
       elevation: 0,
       scrolledUnderElevation: 0,
-      backgroundColor: AppColors.background,
+      backgroundColor: context.colors.background,
       leading: IconButton(
-        icon: Icon(Icons.arrow_back_rounded, color: AppColors.textPrimary),
+        icon: Icon(Icons.arrow_back_rounded, color: context.colors.textPrimary),
         onPressed: () {
           HapticFeedback.lightImpact();
           context.pop();
@@ -112,7 +113,7 @@ class _AccountPageState extends State<AccountPage>
       title: Text(
         l10n.profile,
         style: AppTextStyles.h4.copyWith(
-          color: AppColors.textPrimary,
+          color: context.colors.textPrimary,
           fontWeight: FontWeight.bold,
         ),
       ),
@@ -143,7 +144,7 @@ class _AccountPageState extends State<AccountPage>
             Text(
               l10n.noUserSignedIn,
               style: AppTextStyles.h4.copyWith(
-                color: AppColors.textPrimary,
+                color: context.colors.textPrimary,
               ),
             ),
             SizedBox(height: AppDimensions.spaceM),
@@ -204,7 +205,8 @@ class _AccountPlaceholder extends StatelessWidget {
         // Content placeholder
         Expanded(
           child: ListView.builder(
-            padding: EdgeInsets.symmetric(horizontal: AppDimensions.screenPaddingH),
+            padding:
+                EdgeInsets.symmetric(horizontal: AppDimensions.screenPaddingH),
             itemCount: 3,
             itemBuilder: (context, index) {
               return Padding(
@@ -274,37 +276,38 @@ class _AccountContent extends StatelessWidget {
   Future<void> _confirmAndLogout(BuildContext context) async {
     final l10n = AppLocalizations.of(context);
     final shouldLogout = await showDialog<bool>(
-      context: context,
-      builder: (BuildContext dialogContext) {
-        final dialogL10n = AppLocalizations.of(dialogContext);
-        return AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppDimensions.dialogRadius),
-          ),
-          title: Row(
-            children: [
-              Icon(Icons.logout_rounded, color: AppColors.primary),
-              SizedBox(width: AppDimensions.spaceS),
-              Text(l10n.logout, style: AppTextStyles.dialogTitle),
-            ],
-          ),
-          content: Text(l10n.logoutConfirm, style: AppTextStyles.body2),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(dialogContext).pop(false),
-              child: Text(dialogL10n.cancel),
-            ),
-            ElevatedButton(
-              onPressed: () => Navigator.of(dialogContext).pop(true),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primary,
+          context: context,
+          builder: (BuildContext dialogContext) {
+            final dialogL10n = AppLocalizations.of(dialogContext);
+            return AlertDialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(AppDimensions.dialogRadius),
               ),
-              child: Text(dialogL10n.logout),
-            ),
-          ],
-        );
-      },
-    ) ?? false;
+              title: Row(
+                children: [
+                  Icon(Icons.logout_rounded, color: AppColors.primary),
+                  SizedBox(width: AppDimensions.spaceS),
+                  Text(l10n.logout, style: AppTextStyles.dialogTitle),
+                ],
+              ),
+              content: Text(l10n.logoutConfirm, style: AppTextStyles.body2),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(dialogContext).pop(false),
+                  child: Text(dialogL10n.cancel),
+                ),
+                ElevatedButton(
+                  onPressed: () => Navigator.of(dialogContext).pop(true),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primary,
+                  ),
+                  child: Text(dialogL10n.logout),
+                ),
+              ],
+            );
+          },
+        ) ??
+        false;
 
     if (shouldLogout && context.mounted) {
       context.read<ProfileBloc>().add(const LogoutRequested());
@@ -391,8 +394,10 @@ class _AccountContent extends StatelessWidget {
   }
 
   Widget _buildContent(BuildContext context, ProfileState state) {
-    if (state is ProfileLoading || state is AccountDeleting ||
-        state is LoggingOut || state is LanguageChanging) {
+    if (state is ProfileLoading ||
+        state is AccountDeleting ||
+        state is LoggingOut ||
+        state is LanguageChanging) {
       return _buildLoadingState();
     }
 
@@ -422,7 +427,8 @@ class _AccountContent extends StatelessWidget {
         ),
         SizedBox(height: AppDimensions.spaceL),
         Padding(
-          padding: EdgeInsets.symmetric(horizontal: AppDimensions.screenPaddingH),
+          padding:
+              EdgeInsets.symmetric(horizontal: AppDimensions.screenPaddingH),
           child: Column(
             children: List.generate(4, (index) {
               return Padding(
@@ -467,7 +473,7 @@ class _AccountContent extends StatelessWidget {
             Text(
               UIStrings.oopsSomethingWentWrong,
               style: AppTextStyles.h4.copyWith(
-                color: AppColors.textPrimary,
+                color: context.colors.textPrimary,
               ),
             ),
             SizedBox(height: AppDimensions.spaceS),
@@ -476,7 +482,7 @@ class _AccountContent extends StatelessWidget {
               child: Text(
                 message,
                 style: AppTextStyles.body2.copyWith(
-                  color: AppColors.textSecondary,
+                  color: context.colors.textSecondary,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -494,14 +500,18 @@ class _AccountContent extends StatelessWidget {
                 ),
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
-                    colors: [AppColors.primary, AppColors.primary.withValues(alpha: 0.8)],
+                    colors: [
+                      AppColors.primary,
+                      AppColors.primary.withValues(alpha: 0.8)
+                    ],
                   ),
                   borderRadius: AppDimensions.borderRadiusM,
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.refresh_rounded, color: AppColors.white, size: AppDimensions.iconS),
+                    Icon(Icons.refresh_rounded,
+                        color: AppColors.white, size: AppDimensions.iconS),
                     SizedBox(width: AppDimensions.spaceS),
                     Text(l10n.retry, style: AppTextStyles.button),
                   ],
@@ -523,15 +533,16 @@ class _AccountContent extends StatelessWidget {
         children: [
           // Profile header with proper horizontal margin
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: AppDimensions.screenPaddingH),
+            padding:
+                EdgeInsets.symmetric(horizontal: AppDimensions.screenPaddingH),
             child: ProfileHeader(profile: profile),
           ),
           SizedBox(height: AppDimensions.spaceL),
-          
+
           // TODO: Stats cards temporarily disabled - uncomment when stats tracking is fully implemented
           // _buildStatsRow(context),
           // SizedBox(height: AppDimensions.spaceL),
-          
+
           FadeSlideWidget(
             delay: const Duration(milliseconds: 100),
             child: ProfileSection(
@@ -569,6 +580,7 @@ class _AccountContent extends StatelessWidget {
                     );
                   },
                 ),
+                _buildThemeToggleItem(context),
                 ProfileMenuItem(
                   icon: Icons.logout_rounded,
                   title: l10n.logout,
@@ -608,6 +620,35 @@ class _AccountContent extends StatelessWidget {
     );
   }
 
+  /// Build theme toggle menu item
+  Widget _buildThemeToggleItem(BuildContext context) {
+    final themeManager = di.sl<ThemeManager>();
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final l10n = AppLocalizations.of(context);
+
+    return ProfileMenuItem(
+      icon: isDark ? Icons.dark_mode_rounded : Icons.light_mode_rounded,
+      title: l10n.language.contains('Theme') ? l10n.language : 'Theme Mode',
+      subtitle: isDark ? 'Dark mode enabled' : 'Light mode enabled',
+      showArrow: false,
+      trailing: Switch.adaptive(
+        value: isDark,
+        onChanged: (value) {
+          HapticFeedback.lightImpact();
+          themeManager.changeTheme(
+            value ? ThemeMode.dark : ThemeMode.light,
+          );
+        },
+        thumbColor:
+            WidgetStateProperty.all(Theme.of(context).colorScheme.primary),
+      ),
+      onTap: () {
+        HapticFeedback.lightImpact();
+        themeManager.toggleTheme();
+      },
+    );
+  }
+
   // TODO: Stats row temporarily disabled - uncomment when stats tracking is fully implemented
   // Widget _buildStatsRow(BuildContext context) {
   //   return FadeSlideWidget(
@@ -618,7 +659,7 @@ class _AccountContent extends StatelessWidget {
   //         builder: (context, state) {
   //           final stats = state is UserStatsLoaded ? state.stats : null;
   //           final isLoading = state is UserStatsLoading;
-  //           
+  //
   //           return Row(
   //             children: [
   //               Expanded(

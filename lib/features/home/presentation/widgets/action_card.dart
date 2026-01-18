@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:guardiancare/core/core.dart';
 
 /// Action Card with 3D effects and animations
-/// 
+///
 /// Features:
 /// - 3D tilt effect on touch
 /// - Scale animation on tap
@@ -38,7 +38,7 @@ class _ActionCardState extends State<ActionCard>
   late AnimationController _controller;
   late Animation<double> _scaleAnimation;
   late Animation<double> _elevationAnimation;
-  
+
   bool _isPressed = false;
   Offset _tiltOffset = Offset.zero;
 
@@ -77,14 +77,14 @@ class _ActionCardState extends State<ActionCard>
 
   void _onPanUpdate(DragUpdateDetails details) {
     if (!widget.enable3DEffect) return;
-    
+
     final RenderBox box = context.findRenderObject() as RenderBox;
     final size = box.size;
     final localPosition = details.localPosition;
-    
+
     final dx = (localPosition.dx - size.width / 2) / (size.width / 2);
     final dy = (localPosition.dy - size.height / 2) / (size.height / 2);
-    
+
     setState(() {
       _tiltOffset = Offset(
         dy.clamp(-1.0, 1.0) * 0.08,
@@ -132,7 +132,8 @@ class _ActionCardState extends State<ActionCard>
                   borderRadius: AppDimensions.borderRadiusL,
                   boxShadow: [
                     BoxShadow(
-                      color: widget.color.withValues(alpha: _isPressed ? 0.3 : 0.2),
+                      color: widget.color
+                          .withValues(alpha: _isPressed ? 0.3 : 0.2),
                       blurRadius: _elevationAnimation.value * 2,
                       offset: Offset(
                         _tiltOffset.dy * 15,
@@ -161,8 +162,8 @@ class _ActionCardState extends State<ActionCard>
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            AppColors.white,
-            AppColors.white.withValues(alpha: 0.95),
+            context.colors.surface,
+            context.colors.surface.withValues(alpha: 0.95),
           ],
         ),
         borderRadius: AppDimensions.borderRadiusL,
@@ -227,7 +228,7 @@ class _ActionCardState extends State<ActionCard>
             widget.label,
             style: AppTextStyles.bodySmall.copyWith(
               fontWeight: FontWeight.w600,
-              color: AppColors.textPrimary,
+              color: context.colors.textPrimary,
             ),
             textAlign: TextAlign.center,
             maxLines: 2,

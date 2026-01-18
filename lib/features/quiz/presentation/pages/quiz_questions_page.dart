@@ -8,7 +8,7 @@ import 'package:guardiancare/features/quiz/presentation/bloc/quiz_state.dart';
 import 'package:guardiancare/features/quiz/presentation/widgets/widgets.dart';
 
 /// Quiz questions page with modern UI and animations
-/// 
+///
 /// This page follows SRP by:
 /// - Only rendering UI and dispatching events to QuizBloc
 /// - Not containing business logic (scoring, Firestore access, recommendation calls)
@@ -58,7 +58,7 @@ class _QuizQuestionsPageState extends State<QuizQuestionsPage>
         : null;
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: context.colors.background,
       body: Column(
         children: [
           // Modern header
@@ -157,7 +157,7 @@ class _QuizQuestionsPageState extends State<QuizQuestionsPage>
                 padding: EdgeInsets.symmetric(vertical: AppDimensions.spaceM),
                 decoration: BoxDecoration(
                   border: Border.all(
-                    color: AppColors.primary,
+                    color: context.colors.primary,
                     width: 2,
                   ),
                   borderRadius: AppDimensions.borderRadiusM,
@@ -168,14 +168,14 @@ class _QuizQuestionsPageState extends State<QuizQuestionsPage>
                     children: [
                       Icon(
                         Icons.arrow_back_rounded,
-                        color: AppColors.primary,
+                        color: context.colors.primary,
                         size: AppDimensions.iconS,
                       ),
                       SizedBox(width: AppDimensions.spaceS),
                       Text(
                         l10n.previous,
                         style: AppTextStyles.button.copyWith(
-                          color: AppColors.primary,
+                          color: context.colors.primary,
                         ),
                       ),
                     ],
@@ -203,15 +203,16 @@ class _QuizQuestionsPageState extends State<QuizQuestionsPage>
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
-                      AppColors.primary,
-                      AppColors.primary.withValues(alpha: 0.8),
+                      context.colors.primary,
+                      context.colors.primary.withValues(alpha: 0.8),
                     ],
                   ),
                   borderRadius: AppDimensions.borderRadiusM,
                   boxShadow: selectedOption != null
                       ? [
                           BoxShadow(
-                            color: AppColors.primary.withValues(alpha: 0.3),
+                            color:
+                                context.colors.primary.withValues(alpha: 0.3),
                             blurRadius: 8,
                             offset: const Offset(0, 4),
                           ),
@@ -356,25 +357,25 @@ class _QuizQuestionsPageState extends State<QuizQuestionsPage>
         icon = Icons.auto_awesome;
         title = l10n.generatingRecommendations;
         subtitle = l10n.checkExploreTab;
-        iconColor = AppColors.primary;
+        iconColor = context.colors.primary;
         break;
       case RecommendationsStatus.generated:
         icon = Icons.check_circle;
         title = l10n.generatingRecommendations;
         subtitle = l10n.checkExploreTab;
-        iconColor = AppColors.success;
+        iconColor = context.colors.success;
         break;
       case RecommendationsStatus.failed:
         icon = Icons.error_outline;
         title = l10n.generatingRecommendations;
         subtitle = state.error ?? l10n.checkExploreTab;
-        iconColor = AppColors.error;
+        iconColor = context.colors.error;
         break;
       case RecommendationsStatus.idle:
         icon = Icons.auto_awesome;
         title = l10n.generatingRecommendations;
         subtitle = l10n.checkExploreTab;
-        iconColor = AppColors.primary;
+        iconColor = context.colors.primary;
     }
 
     return FadeSlideWidget(
@@ -382,7 +383,7 @@ class _QuizQuestionsPageState extends State<QuizQuestionsPage>
       child: Container(
         padding: EdgeInsets.all(AppDimensions.spaceL),
         decoration: BoxDecoration(
-          color: AppColors.surface,
+          color: context.colors.surface,
           borderRadius: AppDimensions.borderRadiusL,
           border: Border.all(
             color: iconColor.withValues(alpha: 0.2),
@@ -417,14 +418,14 @@ class _QuizQuestionsPageState extends State<QuizQuestionsPage>
                     title,
                     style: AppTextStyles.body1.copyWith(
                       fontWeight: FontWeight.w600,
-                      color: AppColors.textPrimary,
+                      color: context.colors.textPrimary,
                     ),
                   ),
                   SizedBox(height: AppDimensions.spaceXS),
                   Text(
                     subtitle,
                     style: AppTextStyles.bodySmall.copyWith(
-                      color: AppColors.textSecondary,
+                      color: context.colors.textSecondary,
                     ),
                   ),
                 ],

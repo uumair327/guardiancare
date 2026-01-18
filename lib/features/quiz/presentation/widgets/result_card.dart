@@ -86,9 +86,9 @@ class _ResultCardState extends State<ResultCard>
   }
 
   Color get _resultColor {
-    if (_percentage >= 0.7) return AppColors.success;
-    if (_percentage >= 0.5) return AppColors.warning;
-    return AppColors.error;
+    if (_percentage >= 0.7) return context.colors.success;
+    if (_percentage >= 0.5) return context.colors.warning;
+    return context.colors.error;
   }
 
   @override
@@ -113,7 +113,7 @@ class _ResultCardState extends State<ResultCard>
         child: Container(
           padding: EdgeInsets.all(AppDimensions.spaceXL),
           decoration: BoxDecoration(
-            color: AppColors.surface,
+            color: context.colors.surface,
             borderRadius: AppDimensions.borderRadiusXL,
             boxShadow: [
               BoxShadow(
@@ -154,7 +154,7 @@ class _ResultCardState extends State<ResultCard>
               Text(
                 _feedbackMessage,
                 style: AppTextStyles.body1.copyWith(
-                  color: AppColors.textSecondary,
+                  color: context.colors.textSecondary,
                 ),
               ),
               SizedBox(height: AppDimensions.spaceXL),
@@ -188,7 +188,7 @@ class _ResultCardState extends State<ResultCard>
               Container(
                 padding: EdgeInsets.all(AppDimensions.spaceM),
                 decoration: BoxDecoration(
-                  color: AppColors.background,
+                  color: context.colors.background,
                   borderRadius: AppDimensions.borderRadiusM,
                 ),
                 child: Row(
@@ -203,7 +203,7 @@ class _ResultCardState extends State<ResultCard>
                     Container(
                       width: 1,
                       height: 40,
-                      color: AppColors.divider,
+                      color: context.colors.divider,
                     ),
                     _buildStatItem(
                       icon: Icons.cancel_rounded,
@@ -214,7 +214,7 @@ class _ResultCardState extends State<ResultCard>
                     Container(
                       width: 1,
                       height: 40,
-                      color: AppColors.divider,
+                      color: context.colors.divider,
                     ),
                     _buildStatItem(
                       icon: Icons.quiz_rounded,
@@ -319,7 +319,7 @@ class _ResultCardState extends State<ResultCard>
         Text(
           label,
           style: AppTextStyles.caption.copyWith(
-            color: AppColors.textSecondary,
+            color: context.colors.textSecondary,
           ),
         ),
       ],

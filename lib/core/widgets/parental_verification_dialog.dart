@@ -14,10 +14,12 @@ class ParentalVerificationDialog extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<ParentalVerificationDialog> createState() => _ParentalVerificationDialogState();
+  State<ParentalVerificationDialog> createState() =>
+      _ParentalVerificationDialogState();
 }
 
-class _ParentalVerificationDialogState extends State<ParentalVerificationDialog> {
+class _ParentalVerificationDialogState
+    extends State<ParentalVerificationDialog> {
   final TextEditingController _keyController = TextEditingController();
   final _verificationService = ParentalVerificationService();
   bool _obscureKey = true;
@@ -32,9 +34,9 @@ class _ParentalVerificationDialogState extends State<ParentalVerificationDialog>
   Future<void> _verify() async {
     if (_keyController.text.length < 4) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
+        SnackBar(
           content: Text('Key must be at least 4 characters'),
-          backgroundColor: AppColors.error,
+          backgroundColor: context.colors.error,
         ),
       );
       return;
@@ -44,11 +46,14 @@ class _ParentalVerificationDialogState extends State<ParentalVerificationDialog>
       _isLoading = true;
     });
 
-    final isValid = await _verificationService.verifyParentalKey(_keyController.text);
+    final isValid =
+        await _verificationService.verifyParentalKey(_keyController.text);
 
     setState(() {
       _isLoading = false;
     });
+
+    if (!mounted) return;
 
     if (isValid) {
       Navigator.of(context).pop();
@@ -56,14 +61,14 @@ class _ParentalVerificationDialogState extends State<ParentalVerificationDialog>
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Access granted to ${widget.featureName}'),
-          backgroundColor: AppColors.success,
+          backgroundColor: context.colors.success,
         ),
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
+        SnackBar(
           content: Text('Invalid parental key'),
-          backgroundColor: AppColors.error,
+          backgroundColor: context.colors.error,
         ),
       );
     }
@@ -77,10 +82,11 @@ class _ParentalVerificationDialogState extends State<ParentalVerificationDialog>
       ),
       title: Row(
         children: [
-          const Icon(Icons.lock, color: AppColors.primary),
+          Icon(Icons.lock, color: context.colors.primary),
           SizedBox(width: AppDimensions.spaceM),
           Expanded(
-            child: Text('Parental Verification', style: AppTextStyles.dialogTitle),
+            child:
+                Text('Parental Verification', style: AppTextStyles.dialogTitle),
           ),
         ],
       ),
@@ -90,7 +96,7 @@ class _ParentalVerificationDialogState extends State<ParentalVerificationDialog>
         children: [
           Text(
             'Enter your parental key to access ${widget.featureName}',
-            style: const TextStyle(color: AppColors.textSecondary),
+            style: TextStyle(color: context.colors.textSecondary),
           ),
           const SizedBox(height: 16),
           TextField(
@@ -99,9 +105,10 @@ class _ParentalVerificationDialogState extends State<ParentalVerificationDialog>
               labelText: 'Parental Key',
               hintText: 'Enter your key',
               border: const OutlineInputBorder(),
-              prefixIcon: const Icon(Icons.vpn_key, color: AppColors.primary),
+              prefixIcon: Icon(Icons.vpn_key, color: context.colors.primary),
               suffixIcon: IconButton(
-                icon: Icon(_obscureKey ? Icons.visibility : Icons.visibility_off),
+                icon:
+                    Icon(_obscureKey ? Icons.visibility : Icons.visibility_off),
                 onPressed: () {
                   setState(() {
                     _obscureKey = !_obscureKey;
@@ -112,6 +119,7 @@ class _ParentalVerificationDialogState extends State<ParentalVerificationDialog>
             keyboardType: TextInputType.text,
             obscureText: _obscureKey,
             onSubmitted: (_) => _verify(),
+            onTapOutside: (_) => FocusManager.instance.primaryFocus?.unfocus(),
           ),
           const SizedBox(height: 8),
           Align(
@@ -146,7 +154,7 @@ class _ParentalVerificationDialogState extends State<ParentalVerificationDialog>
         ElevatedButton(
           onPressed: _isLoading ? null : _verify,
           style: ElevatedButton.styleFrom(
-            backgroundColor: AppColors.primary,
+            backgroundColor: context.colors.primary,
           ),
           child: _isLoading
               ? const SizedBox(

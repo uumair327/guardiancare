@@ -35,52 +35,57 @@ class OptionCard extends StatelessWidget {
     this.onTap,
   });
 
-  Color _backgroundColor(bool isSelected, bool showFeedback, bool isCorrect) {
+  Color _backgroundColor(BuildContext context, bool isSelected,
+      bool showFeedback, bool isCorrect) {
     if (showFeedback) {
       if (isCorrect) {
-        return AppColors.success.withValues(alpha: 0.15);
+        return context.colors.success.withValues(alpha: 0.15);
       } else if (isSelected) {
-        return AppColors.error.withValues(alpha: 0.15);
+        return context.colors.error.withValues(alpha: 0.15);
       }
     }
     if (isSelected) {
-      return AppColors.primary.withValues(alpha: 0.1);
+      return context.colors.primary.withValues(alpha: 0.1);
     }
-    return AppColors.surface;
+    return context.colors.surface;
   }
 
-  Color _borderColor(bool isSelected, bool showFeedback, bool isCorrect) {
+  Color _borderColor(BuildContext context, bool isSelected, bool showFeedback,
+      bool isCorrect) {
     if (showFeedback) {
       if (isCorrect) {
-        return AppColors.success;
+        return context.colors.success;
       } else if (isSelected) {
-        return AppColors.error;
+        return context.colors.error;
       }
     }
     if (isSelected) {
-      return AppColors.primary;
+      return context.colors.primary;
     }
-    return AppColors.divider;
+    return context.colors.border;
   }
 
-  Color _labelColor(bool isSelected, bool showFeedback, bool isCorrect) {
+  Color _labelColor(BuildContext context, bool isSelected, bool showFeedback,
+      bool isCorrect) {
     if (showFeedback) {
-      if (isCorrect) return AppColors.success;
-      if (isSelected) return AppColors.error;
+      if (isCorrect) return context.colors.success;
+      if (isSelected) return context.colors.error;
     }
-    if (isSelected) return AppColors.primary;
-    return AppColors.textSecondary;
+    if (isSelected) return context.colors.primary;
+    return context.colors.textSecondary;
   }
 
   @override
   Widget build(BuildContext context) {
-    final label = index < _optionLabels.length
-        ? _optionLabels[index]
-        : '${index + 1}';
+    final label =
+        index < _optionLabels.length ? _optionLabels[index] : '${index + 1}';
 
-    final backgroundColor = _backgroundColor(isSelected, showFeedback, isCorrect);
-    final borderColor = _borderColor(isSelected, showFeedback, isCorrect);
-    final labelColor = _labelColor(isSelected, showFeedback, isCorrect);
+    final backgroundColor =
+        _backgroundColor(context, isSelected, showFeedback, isCorrect);
+    final borderColor =
+        _borderColor(context, isSelected, showFeedback, isCorrect);
+    final labelColor =
+        _labelColor(context, isSelected, showFeedback, isCorrect);
 
     // Disable interaction when showing feedback or no onTap callback
     final isEnabled = !showFeedback && onTap != null;
@@ -117,18 +122,15 @@ class OptionCard extends StatelessWidget {
               width: 36,
               height: 36,
               decoration: BoxDecoration(
-                color: isSelected
-                    ? labelColor
-                    : labelColor.withValues(alpha: 0.1),
+                color:
+                    isSelected ? labelColor : labelColor.withValues(alpha: 0.1),
                 borderRadius: AppDimensions.borderRadiusS,
               ),
               child: Center(
                 child: Text(
                   label,
                   style: AppTextStyles.body1.copyWith(
-                    color: isSelected
-                        ? AppColors.white
-                        : labelColor,
+                    color: isSelected ? AppColors.white : labelColor,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -140,9 +142,8 @@ class OptionCard extends StatelessWidget {
               child: Text(
                 option,
                 style: AppTextStyles.body1.copyWith(
-                  color: AppColors.textPrimary,
-                  fontWeight:
-                      isSelected ? FontWeight.w600 : FontWeight.normal,
+                  color: context.colors.textPrimary,
+                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
                 ),
               ),
             ),
@@ -155,12 +156,8 @@ class OptionCard extends StatelessWidget {
                 child: Icon(
                   isCorrect
                       ? Icons.check_circle_rounded
-                      : (isSelected
-                          ? Icons.cancel_rounded
-                          : null),
-                  color: isCorrect
-                      ? AppColors.success
-                      : AppColors.error,
+                      : (isSelected ? Icons.cancel_rounded : null),
+                  color: isCorrect ? AppColors.success : AppColors.error,
                   size: AppDimensions.iconM,
                 ),
               ),

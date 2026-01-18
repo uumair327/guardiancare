@@ -17,14 +17,14 @@ class UserDetailsWidget extends StatelessWidget {
             children: [
               CircleAvatar(
                 radius: AppDimensions.iconXS,
-                backgroundColor: AppColors.gray300,
+                backgroundColor: context.colors.border,
                 child: Icon(Icons.person, size: AppDimensions.iconXS),
               ),
               SizedBox(width: AppDimensions.spaceS),
               Text(
                 'Loading...',
                 style: AppTextStyles.caption.copyWith(
-                  color: AppColors.textSecondary,
+                  color: context.colors.textSecondary,
                 ),
               ),
             ],
@@ -36,14 +36,14 @@ class UserDetailsWidget extends StatelessWidget {
             children: [
               CircleAvatar(
                 radius: AppDimensions.iconXS,
-                backgroundColor: AppColors.gray300,
+                backgroundColor: context.colors.border,
                 child: Icon(Icons.person, size: AppDimensions.iconXS),
               ),
               SizedBox(width: AppDimensions.spaceS),
               Text(
                 'Unknown User',
                 style: AppTextStyles.caption.copyWith(
-                  color: AppColors.textSecondary,
+                  color: context.colors.textSecondary,
                 ),
               ),
             ],
@@ -55,7 +55,7 @@ class UserDetailsWidget extends StatelessWidget {
                 backgroundImage: userDetails.userImage.isNotEmpty
                     ? NetworkImage(userDetails.userImage)
                     : null,
-                backgroundColor: AppColors.gray300,
+                backgroundColor: context.colors.border,
                 child: userDetails.userImage.isEmpty
                     ? Icon(Icons.person, size: AppDimensions.iconXS)
                     : null,
@@ -73,7 +73,7 @@ class UserDetailsWidget extends StatelessWidget {
                     Text(
                       userDetails.userEmail,
                       style: AppTextStyles.caption.copyWith(
-                        color: AppColors.textSecondary,
+                        color: context.colors.textSecondary,
                       ),
                       overflow: TextOverflow.ellipsis,
                     ),

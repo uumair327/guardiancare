@@ -10,7 +10,7 @@ import 'package:guardiancare/features/learn/presentation/bloc/learn_state.dart';
 import 'package:guardiancare/features/learn/presentation/widgets/widgets.dart';
 
 /// VideoPage - Modern, education-friendly learning page
-/// 
+///
 /// Features:
 /// - Animated header with gradient
 /// - Category cards with 3D effects
@@ -37,7 +37,7 @@ class _VideoPageContent extends StatelessWidget {
     return BlocBuilder<LearnBloc, LearnState>(
       builder: (context, state) {
         return Scaffold(
-          backgroundColor: AppColors.background,
+          backgroundColor: context.colors.background,
           body: Column(
             children: [
               // Modern header
@@ -151,7 +151,8 @@ class _VideoPageContent extends StatelessWidget {
     );
   }
 
-  Widget _buildErrorView(BuildContext context, LearnError state, AppLocalizations l10n) {
+  Widget _buildErrorView(
+      BuildContext context, LearnError state, AppLocalizations l10n) {
     return FadeSlideWidget(
       duration: AppDurations.animationMedium,
       child: Center(
@@ -176,7 +177,7 @@ class _VideoPageContent extends StatelessWidget {
               Text(
                 UIStrings.oopsSomethingWentWrong,
                 style: AppTextStyles.h3.copyWith(
-                  color: AppColors.textPrimary,
+                  color: context.colors.textPrimary,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -184,7 +185,7 @@ class _VideoPageContent extends StatelessWidget {
               Text(
                 state.message,
                 style: AppTextStyles.body2.copyWith(
-                  color: AppColors.textSecondary,
+                  color: context.colors.textSecondary,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -249,7 +250,7 @@ class _CategoryGridView extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
 
     if (categories.isEmpty) {
-      return _buildEmptyState(l10n);
+      return _buildEmptyState(context, l10n);
     }
 
     return CustomScrollView(
@@ -281,7 +282,7 @@ class _CategoryGridView extends StatelessWidget {
                   Text(
                     UIStrings.learningCategories,
                     style: AppTextStyles.h4.copyWith(
-                      color: AppColors.textPrimary,
+                      color: context.colors.textPrimary,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -334,7 +335,9 @@ class _CategoryGridView extends StatelessWidget {
                     category: category,
                     index: index,
                     onTap: () {
-                      context.read<LearnBloc>().add(CategorySelected(category.name));
+                      context
+                          .read<LearnBloc>()
+                          .add(CategorySelected(category.name));
                     },
                   ),
                 );
@@ -351,7 +354,7 @@ class _CategoryGridView extends StatelessWidget {
     );
   }
 
-  Widget _buildEmptyState(AppLocalizations l10n) {
+  Widget _buildEmptyState(BuildContext context, AppLocalizations l10n) {
     return FadeSlideWidget(
       duration: AppDurations.animationMedium,
       child: Center(
@@ -374,14 +377,14 @@ class _CategoryGridView extends StatelessWidget {
             Text(
               l10n.noCategoriesAvailable,
               style: AppTextStyles.h4.copyWith(
-                color: AppColors.textSecondary,
+                color: context.colors.textSecondary,
               ),
             ),
             SizedBox(height: AppDimensions.spaceS),
             Text(
               UIStrings.checkBackLater,
               style: AppTextStyles.body2.copyWith(
-                color: AppColors.textSecondary,
+                color: context.colors.textSecondary,
               ),
             ),
           ],
@@ -406,7 +409,7 @@ class _VideoGridView extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
 
     if (videos.isEmpty) {
-      return _buildEmptyState(l10n);
+      return _buildEmptyState(context, l10n);
     }
 
     return CustomScrollView(
@@ -439,7 +442,7 @@ class _VideoGridView extends StatelessWidget {
                     child: Text(
                       UIStrings.videos,
                       style: AppTextStyles.h4.copyWith(
-                        color: AppColors.textPrimary,
+                        color: context.colors.textPrimary,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -509,7 +512,7 @@ class _VideoGridView extends StatelessWidget {
     );
   }
 
-  Widget _buildEmptyState(AppLocalizations l10n) {
+  Widget _buildEmptyState(BuildContext context, AppLocalizations l10n) {
     return FadeSlideWidget(
       duration: AppDurations.animationMedium,
       child: Center(
@@ -532,14 +535,14 @@ class _VideoGridView extends StatelessWidget {
             Text(
               l10n.noVideosAvailable,
               style: AppTextStyles.h4.copyWith(
-                color: AppColors.textSecondary,
+                color: context.colors.textSecondary,
               ),
             ),
             SizedBox(height: AppDimensions.spaceS),
             Text(
               UIStrings.newVideosComingSoon,
               style: AppTextStyles.body2.copyWith(
-                color: AppColors.textSecondary,
+                color: context.colors.textSecondary,
               ),
             ),
           ],

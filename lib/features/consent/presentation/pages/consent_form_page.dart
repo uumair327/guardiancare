@@ -36,11 +36,11 @@ class _ConsentFormPageState extends State<ConsentFormPage> {
   void _submitConsent() {
     // Dispatch submit event to bloc
     context.read<ConsentBloc>().add(
-      SubmitParentalKey(
-        key: _keyController.text,
-        uid: '', // UID is not needed for local storage
-      ),
-    );
+          SubmitParentalKey(
+            key: _keyController.text,
+            uid: '', // UID is not needed for local storage
+          ),
+        );
   }
 
   @override
@@ -154,9 +154,10 @@ class _ConsentFormPageState extends State<ConsentFormPage> {
                         width: double.infinity,
                         height: AppDimensions.buttonHeight,
                         child: ElevatedButton(
-                          onPressed: _agreedToTerms && _isKeyValid && !isSubmitting
-                              ? _submitConsent
-                              : null,
+                          onPressed:
+                              _agreedToTerms && _isKeyValid && !isSubmitting
+                                  ? _submitConsent
+                                  : null,
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.primary,
                             foregroundColor: AppColors.onPrimary,
@@ -173,7 +174,7 @@ class _ConsentFormPageState extends State<ConsentFormPage> {
                                   child: CircularProgressIndicator(
                                     strokeWidth: 2,
                                     valueColor: AlwaysStoppedAnimation<Color>(
-                                      Colors.white,
+                                      AppColors.white,
                                     ),
                                   ),
                                 )

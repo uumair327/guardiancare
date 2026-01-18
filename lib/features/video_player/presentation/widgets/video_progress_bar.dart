@@ -32,7 +32,7 @@ class _VideoProgressBarState extends State<VideoProgressBar> {
 
   @override
   Widget build(BuildContext context) {
-    final progressColor = widget.progressColor ?? const Color(0xFF8B5CF6);
+    final progressColor = widget.progressColor ?? AppColors.videoPrimary;
     final bufferedColor = widget.bufferedColor ?? AppColors.white.withValues(alpha: 0.3);
     final backgroundColor = widget.backgroundColor ?? AppColors.white.withValues(alpha: 0.15);
 

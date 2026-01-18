@@ -21,7 +21,7 @@ class PlaybackSpeedSelector extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(AppDimensions.spaceM),
       decoration: BoxDecoration(
-        color: const Color(0xFF1A1A2E),
+        color: AppColors.videoSurface,
         borderRadius: AppDimensions.borderRadiusL,
         border: Border.all(
           color: AppColors.white.withValues(alpha: 0.1),
@@ -131,11 +131,7 @@ class _SpeedChipState extends State<_SpeedChip>
               vertical: AppDimensions.spaceS,
             ),
             decoration: BoxDecoration(
-              gradient: widget.isSelected
-                  ? const LinearGradient(
-                      colors: [Color(0xFF8B5CF6), Color(0xFF7C3AED)],
-                    )
-                  : null,
+              gradient: widget.isSelected ? AppColors.videoGradient : null,
               color: widget.isSelected
                   ? null
                   : AppColors.white.withValues(alpha: 0.08),

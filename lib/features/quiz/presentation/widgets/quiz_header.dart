@@ -87,9 +87,9 @@ class _QuizHeaderState extends State<QuizHeader>
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              AppColors.primary,
-              AppColors.primary.withValues(alpha: 0.85),
-              AppColors.primaryDark,
+              context.colors.primary,
+              context.colors.primary.withValues(alpha: 0.85),
+              context.colors.primaryDark,
             ],
             stops: const [0.0, 0.5, 1.0],
           ),
@@ -172,7 +172,9 @@ class _QuizHeaderState extends State<QuizHeader>
                           shape: BoxShape.circle,
                         ),
                         child: Icon(
-                          isInQuiz ? Icons.help_outline_rounded : Icons.quiz_rounded,
+                          isInQuiz
+                              ? Icons.help_outline_rounded
+                              : Icons.quiz_rounded,
                           color: AppColors.white,
                           size: AppDimensions.iconL,
                         ),
@@ -195,7 +197,7 @@ class _QuizHeaderState extends State<QuizHeader>
                       children: [
                         Icon(
                           Icons.emoji_events_outlined,
-                          color: AppColors.warning,
+                          color: context.colors.warning,
                           size: AppDimensions.iconS,
                         ),
                         SizedBox(width: AppDimensions.spaceS),

@@ -46,27 +46,28 @@ class _ExplorePageState extends State<ExplorePage>
           getResources: GetResources(repository),
         );
       },
-      child: Scaffold(
-        backgroundColor: AppColors.background,
-        body: Column(
-          children: [
-            _ExploreHeader(tabController: _tabController),
-            Expanded(
-              child: TabBarView(
-                controller: _tabController,
-                children: const [
-                  _RecommendedTab(),
-                  _ResourcesTab(),
-                ],
+      child: Builder(
+        builder: (context) => Scaffold(
+          backgroundColor: context.colors.background,
+          body: Column(
+            children: [
+              _ExploreHeader(tabController: _tabController),
+              Expanded(
+                child: TabBarView(
+                  controller: _tabController,
+                  children: const [
+                    _RecommendedTab(),
+                    _ResourcesTab(),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
 }
-
 
 /// Modern header with gradient and animated tabs
 class _ExploreHeader extends StatefulWidget {
@@ -129,9 +130,9 @@ class _ExploreHeaderState extends State<_ExploreHeader>
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              const Color(0xFF10B981), // Emerald
-              const Color(0xFF10B981).withValues(alpha: 0.85),
-              const Color(0xFF059669), // Darker emerald
+              AppColors.cardEmerald,
+              AppColors.cardEmerald.withValues(alpha: 0.85),
+              AppColors.successDark,
             ],
             stops: const [0.0, 0.5, 1.0],
           ),
@@ -228,8 +229,9 @@ class _ExploreHeaderState extends State<_ExploreHeader>
                     ),
                     indicatorSize: TabBarIndicatorSize.tab,
                     dividerColor: Colors.transparent,
-                    labelColor: const Color(0xFF10B981),
-                    unselectedLabelColor: AppColors.white.withValues(alpha: 0.8),
+                    labelColor: AppColors.cardEmerald,
+                    unselectedLabelColor:
+                        AppColors.white.withValues(alpha: 0.8),
                     labelStyle: AppTextStyles.bodySmall.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
@@ -279,7 +281,6 @@ class _ExploreHeaderState extends State<_ExploreHeader>
   }
 }
 
-
 /// Recommended videos tab with modern design
 class _RecommendedTab extends StatefulWidget {
   const _RecommendedTab();
@@ -306,7 +307,7 @@ class _RecommendedTabState extends State<_RecommendedTab> {
 
     return RefreshIndicator(
       onRefresh: _refreshRecommendations,
-      color: const Color(0xFF10B981),
+      color: AppColors.cardEmerald,
       child: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance
             .collection('recommendations')
@@ -319,7 +320,7 @@ class _RecommendedTabState extends State<_RecommendedTab> {
           }
 
           if (snapshot.hasError) {
-            return _buildErrorState(l10n, snapshot.error.toString());
+            return _buildErrorState(context, l10n, snapshot.error.toString());
           }
 
           if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
@@ -381,20 +382,20 @@ class _RecommendedTabState extends State<_RecommendedTab> {
               Container(
                 padding: EdgeInsets.all(AppDimensions.spaceXL),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF10B981).withValues(alpha: 0.1),
+                  color: AppColors.cardEmerald.withValues(alpha: 0.1),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
                   Icons.person_outline_rounded,
                   size: AppDimensions.iconXXL,
-                  color: const Color(0xFF10B981),
+                  color: AppColors.cardEmerald,
                 ),
               ),
               SizedBox(height: AppDimensions.spaceL),
               Text(
                 l10n.loginToViewRecommendations,
                 style: AppTextStyles.h4.copyWith(
-                  color: AppColors.textPrimary,
+                  color: context.colors.textPrimary,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -409,14 +410,14 @@ class _RecommendedTabState extends State<_RecommendedTab> {
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: [
-                        const Color(0xFF10B981),
-                        const Color(0xFF10B981).withValues(alpha: 0.8),
+                        AppColors.cardEmerald,
+                        AppColors.cardEmerald.withValues(alpha: 0.8),
                       ],
                     ),
                     borderRadius: AppDimensions.borderRadiusM,
                     boxShadow: [
                       BoxShadow(
-                        color: const Color(0xFF10B981).withValues(alpha: 0.3),
+                        color: AppColors.cardEmerald.withValues(alpha: 0.3),
                         blurRadius: 8,
                         offset: const Offset(0, 4),
                       ),
@@ -456,7 +457,8 @@ class _RecommendedTabState extends State<_RecommendedTab> {
     );
   }
 
-  Widget _buildErrorState(AppLocalizations l10n, String error) {
+  Widget _buildErrorState(
+      BuildContext context, AppLocalizations l10n, String error) {
     return FadeSlideWidget(
       child: Center(
         child: Padding(
@@ -479,13 +481,14 @@ class _RecommendedTabState extends State<_RecommendedTab> {
               SizedBox(height: AppDimensions.spaceL),
               Text(
                 ErrorStrings.generic,
-                style: AppTextStyles.h4.copyWith(color: AppColors.textPrimary),
+                style: AppTextStyles.h4
+                    .copyWith(color: context.colors.textPrimary),
               ),
               SizedBox(height: AppDimensions.spaceS),
               Text(
                 error,
                 style: AppTextStyles.bodySmall.copyWith(
-                  color: AppColors.textSecondary,
+                  color: context.colors.textSecondary,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -507,26 +510,27 @@ class _RecommendedTabState extends State<_RecommendedTab> {
             child: Container(
               padding: EdgeInsets.all(AppDimensions.spaceXL),
               decoration: BoxDecoration(
-                color: const Color(0xFF10B981).withValues(alpha: 0.1),
+                color: AppColors.cardEmerald.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
               child: Icon(
                 Icons.video_library_outlined,
                 size: AppDimensions.iconXXL * 1.2,
-                color: const Color(0xFF10B981),
+                color: AppColors.cardEmerald,
               ),
             ),
           ),
           SizedBox(height: AppDimensions.spaceL),
           Text(
             l10n.noRecommendationsYet,
-            style: AppTextStyles.h3.copyWith(color: AppColors.textPrimary),
+            style: AppTextStyles.h3.copyWith(color: context.colors.textPrimary),
             textAlign: TextAlign.center,
           ),
           SizedBox(height: AppDimensions.spaceS),
           Text(
             l10n.takeQuizForRecommendations,
-            style: AppTextStyles.body2.copyWith(color: AppColors.textSecondary),
+            style: AppTextStyles.body2
+                .copyWith(color: context.colors.textSecondary),
             textAlign: TextAlign.center,
           ),
           SizedBox(height: AppDimensions.spaceXL),
@@ -541,14 +545,14 @@ class _RecommendedTabState extends State<_RecommendedTab> {
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
-                      const Color(0xFF10B981),
-                      const Color(0xFF10B981).withValues(alpha: 0.8),
+                      AppColors.cardEmerald,
+                      AppColors.cardEmerald.withValues(alpha: 0.8),
                     ],
                   ),
                   borderRadius: AppDimensions.borderRadiusM,
                   boxShadow: [
                     BoxShadow(
-                      color: const Color(0xFF10B981).withValues(alpha: 0.3),
+                      color: AppColors.cardEmerald.withValues(alpha: 0.3),
                       blurRadius: 8,
                       offset: const Offset(0, 4),
                     ),
@@ -580,7 +584,6 @@ class _RecommendedTabState extends State<_RecommendedTab> {
   }
 }
 
-
 /// Modern recommended video card
 class _RecommendedVideoCard extends StatefulWidget {
   final String title;
@@ -604,15 +607,8 @@ class _RecommendedVideoCardState extends State<_RecommendedVideoCard>
   late AnimationController _controller;
   late Animation<double> _scaleAnimation;
 
-  static const List<Color> _cardColors = [
-    Color(0xFF6366F1),
-    Color(0xFF8B5CF6),
-    Color(0xFFEC4899),
-    Color(0xFFF59E0B),
-    Color(0xFF10B981),
-  ];
-
-  Color get _accentColor => _cardColors[widget.index % _cardColors.length];
+  Color get _accentColor =>
+      AppColors.cardPalette[widget.index % AppColors.cardPalette.length];
 
   @override
   void initState() {
@@ -654,7 +650,7 @@ class _RecommendedVideoCardState extends State<_RecommendedVideoCard>
           },
           child: Container(
             decoration: BoxDecoration(
-              color: AppColors.surface,
+              color: context.colors.surface,
               borderRadius: AppDimensions.borderRadiusL,
               boxShadow: [
                 BoxShadow(
@@ -747,7 +743,7 @@ class _RecommendedVideoCardState extends State<_RecommendedVideoCard>
                           widget.title,
                           style: AppTextStyles.body1.copyWith(
                             fontWeight: FontWeight.w600,
-                            color: AppColors.textPrimary,
+                            color: context.colors.textPrimary,
                           ),
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
@@ -786,7 +782,6 @@ class _RecommendedVideoCardState extends State<_RecommendedVideoCard>
   }
 }
 
-
 /// Resources tab with modern design
 class _ResourcesTab extends StatelessWidget {
   const _ResourcesTab();
@@ -803,11 +798,11 @@ class _ResourcesTab extends StatelessWidget {
         }
 
         if (snapshot.hasError) {
-          return _buildErrorState(l10n, snapshot.error.toString());
+          return _buildErrorState(context, l10n, snapshot.error.toString());
         }
 
         if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-          return _buildEmptyState(l10n);
+          return _buildEmptyState(context, l10n);
         }
 
         final resources = snapshot.data!.docs;
@@ -817,7 +812,7 @@ class _ResourcesTab extends StatelessWidget {
             HapticFeedback.lightImpact();
             await Future.delayed(AppDurations.animationMedium);
           },
-          color: const Color(0xFF10B981),
+          color: AppColors.cardEmerald,
           child: ListView.builder(
             physics: const AlwaysScrollableScrollPhysics(),
             padding: EdgeInsets.all(AppDimensions.screenPaddingH),
@@ -866,7 +861,8 @@ class _ResourcesTab extends StatelessWidget {
     );
   }
 
-  Widget _buildErrorState(AppLocalizations l10n, String error) {
+  Widget _buildErrorState(
+      BuildContext context, AppLocalizations l10n, String error) {
     return FadeSlideWidget(
       child: Center(
         child: Padding(
@@ -889,7 +885,8 @@ class _ResourcesTab extends StatelessWidget {
               SizedBox(height: AppDimensions.spaceL),
               Text(
                 ErrorStrings.failedTo('load resources'),
-                style: AppTextStyles.h4.copyWith(color: AppColors.textPrimary),
+                style: AppTextStyles.h4
+                    .copyWith(color: context.colors.textPrimary),
               ),
             ],
           ),
@@ -898,7 +895,7 @@ class _ResourcesTab extends StatelessWidget {
     );
   }
 
-  Widget _buildEmptyState(AppLocalizations l10n) {
+  Widget _buildEmptyState(BuildContext context, AppLocalizations l10n) {
     return FadeSlideWidget(
       child: Center(
         child: Padding(
@@ -909,19 +906,20 @@ class _ResourcesTab extends StatelessWidget {
               Container(
                 padding: EdgeInsets.all(AppDimensions.spaceXL),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF10B981).withValues(alpha: 0.1),
+                  color: AppColors.cardEmerald.withValues(alpha: 0.1),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
                   Icons.library_books_outlined,
                   size: AppDimensions.iconXXL * 1.2,
-                  color: const Color(0xFF10B981),
+                  color: AppColors.cardEmerald,
                 ),
               ),
               SizedBox(height: AppDimensions.spaceL),
               Text(
                 l10n.noResourcesAvailable,
-                style: AppTextStyles.h4.copyWith(color: AppColors.textPrimary),
+                style: AppTextStyles.h4
+                    .copyWith(color: context.colors.textPrimary),
                 textAlign: TextAlign.center,
               ),
             ],
@@ -959,21 +957,21 @@ class _ResourceCardState extends State<_ResourceCard>
   late AnimationController _controller;
   late Animation<double> _scaleAnimation;
 
-  static final List<Color> _typeColors = [
-    const Color(0xFF6366F1),
-    const Color(0xFFEC4899),
-    const Color(0xFFEF4444),
-    const Color(0xFF3B82F6),
-    const Color(0xFF10B981),
+  static const List<Color> _typeColors = [
+    AppColors.cardIndigo,
+    AppColors.cardPink,
+    AppColors.cardRed,
+    AppColors.cardBlue,
+    AppColors.cardEmerald,
   ];
 
   Color get _typeColor {
-    final colors = {
-      'article': const Color(0xFF6366F1),
-      'video': const Color(0xFFEC4899),
-      'pdf': const Color(0xFFEF4444),
-      'link': const Color(0xFF3B82F6),
-      'guide': const Color(0xFF10B981),
+    const colors = {
+      'article': AppColors.cardIndigo,
+      'video': AppColors.cardPink,
+      'pdf': AppColors.cardRed,
+      'link': AppColors.cardBlue,
+      'guide': AppColors.cardEmerald,
     };
     return colors[widget.type.toLowerCase()] ??
         _typeColors[widget.index % _typeColors.length];
@@ -1049,7 +1047,7 @@ class _ResourceCardState extends State<_ResourceCard>
           child: Container(
             padding: EdgeInsets.all(AppDimensions.spaceM),
             decoration: BoxDecoration(
-              color: AppColors.surface,
+              color: context.colors.surface,
               borderRadius: AppDimensions.borderRadiusL,
               border: Border.all(
                 color: _typeColor.withValues(alpha: 0.2),
@@ -1110,7 +1108,7 @@ class _ResourceCardState extends State<_ResourceCard>
                         widget.title,
                         style: AppTextStyles.body1.copyWith(
                           fontWeight: FontWeight.w600,
-                          color: AppColors.textPrimary,
+                          color: context.colors.textPrimary,
                         ),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
@@ -1120,7 +1118,7 @@ class _ResourceCardState extends State<_ResourceCard>
                         Text(
                           widget.description,
                           style: AppTextStyles.bodySmall.copyWith(
-                            color: AppColors.textSecondary,
+                            color: context.colors.textSecondary,
                             height: 1.4,
                           ),
                           maxLines: 2,

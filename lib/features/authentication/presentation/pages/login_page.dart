@@ -14,8 +14,7 @@ class LoginPage extends StatefulWidget {
   State<LoginPage> createState() => _LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage>
-    with TickerProviderStateMixin {
+class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
   late AnimationController _mainController;
   late AnimationController _floatController;
   late Animation<double> _fadeAnimation;
@@ -71,7 +70,7 @@ class _LoginPageState extends State<LoginPage>
   }
 
   /// Initiates Google Sign-In flow after user accepts terms and conditions.
-  /// 
+  ///
   /// Shows terms dialog first, then triggers authentication if accepted.
   Future<void> _handleGoogleSignIn(BuildContext context) async {
     HapticFeedback.mediumImpact();
@@ -90,45 +89,48 @@ class _LoginPageState extends State<LoginPage>
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => sl<AuthBloc>()..add(const CheckAuthStatus()),
-      child: Scaffold(
-        backgroundColor: AppColors.background,
-        body: BlocConsumer<AuthBloc, AuthState>(
-          listener: (context, state) {
-            if (state is AuthError) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Row(
-                    children: [
-                      Icon(Icons.error_outline_rounded, color: AppColors.white, size: 20),
-                      SizedBox(width: AppDimensions.spaceS),
-                      Expanded(child: Text(state.message)),
-                    ],
+      child: Builder(
+        builder: (context) => Scaffold(
+          backgroundColor: context.colors.background,
+          body: BlocConsumer<AuthBloc, AuthState>(
+            listener: (context, state) {
+              if (state is AuthError) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Row(
+                      children: [
+                        Icon(Icons.error_outline_rounded,
+                            color: AppColors.white, size: 20),
+                        SizedBox(width: AppDimensions.spaceS),
+                        Expanded(child: Text(state.message)),
+                      ],
+                    ),
+                    backgroundColor: AppColors.error,
+                    behavior: SnackBarBehavior.floating,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: AppDimensions.borderRadiusM,
+                    ),
                   ),
-                  backgroundColor: AppColors.error,
-                  behavior: SnackBarBehavior.floating,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: AppDimensions.borderRadiusM,
+                );
+              } else if (state is AuthAuthenticated) {
+                context.go('/');
+              }
+            },
+            builder: (context, state) {
+              return Stack(
+                children: [
+                  // Background decorations
+                  _buildBackgroundDecorations(),
+                  // Main content
+                  SafeArea(
+                    child: state is AuthLoading
+                        ? _buildLoadingState()
+                        : _buildLoginContent(context),
                   ),
-                ),
+                ],
               );
-            } else if (state is AuthAuthenticated) {
-              context.go('/');
-            }
-          },
-          builder: (context, state) {
-            return Stack(
-              children: [
-                // Background decorations
-                _buildBackgroundDecorations(),
-                // Main content
-                SafeArea(
-                  child: state is AuthLoading
-                      ? _buildLoadingState()
-                      : _buildLoginContent(context),
-                ),
-              ],
-            );
-          },
+            },
+          ),
         ),
       ),
     );
@@ -225,7 +227,7 @@ class _LoginPageState extends State<LoginPage>
 
   Widget _buildLoginContent(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    
+
     return SingleChildScrollView(
       physics: const BouncingScrollPhysics(),
       child: Padding(
@@ -345,7 +347,7 @@ class _LoginPageState extends State<LoginPage>
       width: double.infinity,
       padding: EdgeInsets.all(AppDimensions.spaceL),
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: context.colors.surface,
         borderRadius: AppDimensions.borderRadiusXL,
         boxShadow: [
           BoxShadow(
@@ -361,7 +363,7 @@ class _LoginPageState extends State<LoginPage>
           Text(
             l10n.welcome,
             style: AppTextStyles.h2.copyWith(
-              color: AppColors.textPrimary,
+              color: context.colors.textPrimary,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -369,7 +371,7 @@ class _LoginPageState extends State<LoginPage>
           Text(
             'Join us in keeping children safe',
             style: AppTextStyles.body2.copyWith(
-              color: AppColors.textSecondary,
+              color: context.colors.textSecondary,
             ),
             textAlign: TextAlign.center,
           ),
@@ -449,7 +451,7 @@ class _LoginPageState extends State<LoginPage>
             Text(
               'Continue with Google',
               style: AppTextStyles.button.copyWith(
-                color: AppColors.textPrimary,
+                color: context.colors.textPrimary,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -465,13 +467,13 @@ class _LoginPageState extends State<LoginPage>
         icon: Icons.school_rounded,
         title: 'Learn Safety',
         description: 'Educational content for children',
-        color: const Color(0xFF10B981),
+        color: AppColors.cardEmerald,
       ),
       _FeatureItem(
         icon: Icons.forum_rounded,
         title: 'Community',
         description: 'Connect with other parents',
-        color: const Color(0xFF8B5CF6),
+        color: AppColors.videoPrimary,
       ),
       _FeatureItem(
         icon: Icons.emergency_rounded,
@@ -489,7 +491,7 @@ class _LoginPageState extends State<LoginPage>
           child: Text(
             'What you can do',
             style: AppTextStyles.h5.copyWith(
-              color: AppColors.textPrimary,
+              color: context.colors.textPrimary,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -510,7 +512,7 @@ class _LoginPageState extends State<LoginPage>
       margin: EdgeInsets.only(bottom: AppDimensions.spaceS),
       padding: EdgeInsets.all(AppDimensions.spaceM),
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: context.colors.surface,
         borderRadius: AppDimensions.borderRadiusL,
         border: Border.all(
           color: feature.color.withValues(alpha: 0.15),
@@ -539,13 +541,13 @@ class _LoginPageState extends State<LoginPage>
                   feature.title,
                   style: AppTextStyles.bodySmall.copyWith(
                     fontWeight: FontWeight.bold,
-                    color: AppColors.textPrimary,
+                    color: context.colors.textPrimary,
                   ),
                 ),
                 Text(
                   feature.description,
                   style: AppTextStyles.caption.copyWith(
-                    color: AppColors.textSecondary,
+                    color: context.colors.textSecondary,
                   ),
                 ),
               ],
