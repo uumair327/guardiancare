@@ -66,7 +66,7 @@ class _WebViewPageState extends State<WebViewPage>
   void _initWebView() {
     _controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..setBackgroundColor(const Color(0xFF0F0F1A))
+      ..setBackgroundColor(AppColors.videoBackground)
       ..setNavigationDelegate(
         NavigationDelegate(
           onProgress: (int progress) {
@@ -105,7 +105,8 @@ class _WebViewPageState extends State<WebViewPage>
             if (mounted) {
               setState(() {
                 _hasError = true;
-                _errorMessage = 'HTTP Error: ${error.response?.statusCode ?? 'Unknown'}';
+                _errorMessage =
+                    'HTTP Error: ${error.response?.statusCode ?? 'Unknown'}';
                 _isLoading = false;
               });
             }
@@ -141,7 +142,7 @@ class _WebViewPageState extends State<WebViewPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF0F0F1A),
+      backgroundColor: AppColors.videoBackground,
       body: SafeArea(
         child: Column(
           children: [
@@ -165,10 +166,10 @@ class _WebViewPageState extends State<WebViewPage>
         child: Container(
           padding: EdgeInsets.all(AppDimensions.spaceM),
           decoration: BoxDecoration(
-            color: const Color(0xFF1A1A2E),
+            color: AppColors.videoSurface,
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.2),
+                color: AppColors.shadowMedium, // Approx 0.2
                 blurRadius: 8,
                 offset: const Offset(0, 2),
               ),
@@ -225,12 +226,12 @@ class _WebViewPageState extends State<WebViewPage>
         Row(
           children: [
             Icon(
-              _currentUrl.startsWith('https') 
-                  ? Icons.lock_rounded 
+              _currentUrl.startsWith('https')
+                  ? Icons.lock_rounded
                   : Icons.lock_open_rounded,
               color: _currentUrl.startsWith('https')
-                  ? const Color(0xFF22C55E)
-                  : const Color(0xFFEF4444),
+                  ? AppColors.emergencyGreen
+                  : AppColors.error,
               size: 12,
             ),
             SizedBox(width: 4),
@@ -278,9 +279,9 @@ class _WebViewPageState extends State<WebViewPage>
       child: _isLoading
           ? LinearProgressIndicator(
               value: _loadingProgress / 100,
-              backgroundColor: const Color(0xFF1A1A2E),
+              backgroundColor: AppColors.videoSurface,
               valueColor: const AlwaysStoppedAnimation<Color>(
-                Color(0xFF8B5CF6),
+                AppColors.videoPrimary,
               ),
             )
           : const SizedBox.shrink(),
@@ -292,8 +293,7 @@ class _WebViewPageState extends State<WebViewPage>
       child: Stack(
         children: [
           WebViewWidget(controller: _controller),
-          if (_isLoading && _loadingProgress < 30)
-            _buildLoadingOverlay(),
+          if (_isLoading && _loadingProgress < 30) _buildLoadingOverlay(),
         ],
       ),
     );
@@ -301,7 +301,7 @@ class _WebViewPageState extends State<WebViewPage>
 
   Widget _buildLoadingOverlay() {
     return Container(
-      color: const Color(0xFF0F0F1A),
+      color: AppColors.videoBackground,
       child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -310,12 +310,12 @@ class _WebViewPageState extends State<WebViewPage>
               padding: EdgeInsets.all(AppDimensions.spaceL),
               decoration: BoxDecoration(
                 gradient: const LinearGradient(
-                  colors: [Color(0xFF8B5CF6), Color(0xFF7C3AED)],
+                  colors: [AppColors.videoPrimary, AppColors.videoPrimaryDark],
                 ),
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
-                    color: const Color(0xFF8B5CF6).withValues(alpha: 0.4),
+                    color: AppColors.videoPrimary.withValues(alpha: 0.4),
                     blurRadius: 20,
                     offset: const Offset(0, 4),
                   ),
@@ -358,12 +358,12 @@ class _WebViewPageState extends State<WebViewPage>
             Container(
               padding: EdgeInsets.all(AppDimensions.spaceL),
               decoration: BoxDecoration(
-                color: const Color(0xFFEF4444).withValues(alpha: 0.1),
+                color: AppColors.error.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
               child: const Icon(
                 Icons.wifi_off_rounded,
-                color: Color(0xFFEF4444),
+                color: AppColors.error,
                 size: 48,
               ),
             ),
@@ -377,8 +377,8 @@ class _WebViewPageState extends State<WebViewPage>
             ),
             SizedBox(height: AppDimensions.spaceS),
             Text(
-              _errorMessage.isNotEmpty 
-                  ? _errorMessage 
+              _errorMessage.isNotEmpty
+                  ? _errorMessage
                   : 'Please check your internet connection',
               style: AppTextStyles.body1.copyWith(
                 color: AppColors.white.withValues(alpha: 0.6),
@@ -402,12 +402,15 @@ class _WebViewPageState extends State<WebViewPage>
                 ),
                 decoration: BoxDecoration(
                   gradient: const LinearGradient(
-                    colors: [Color(0xFF8B5CF6), Color(0xFF7C3AED)],
+                    colors: [
+                      AppColors.videoPrimary,
+                      AppColors.videoPrimaryDark
+                    ],
                   ),
                   borderRadius: AppDimensions.borderRadiusM,
                   boxShadow: [
                     BoxShadow(
-                      color: const Color(0xFF8B5CF6).withValues(alpha: 0.4),
+                      color: AppColors.videoPrimary.withValues(alpha: 0.4),
                       blurRadius: 16,
                       offset: const Offset(0, 4),
                     ),
@@ -439,7 +442,6 @@ class _WebViewPageState extends State<WebViewPage>
     );
   }
 
-
   Widget _buildBottomNavigation() {
     return Container(
       padding: EdgeInsets.symmetric(
@@ -447,7 +449,7 @@ class _WebViewPageState extends State<WebViewPage>
         vertical: AppDimensions.spaceM,
       ),
       decoration: BoxDecoration(
-        color: const Color(0xFF1A1A2E),
+        color: AppColors.videoSurface,
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.2),
@@ -562,7 +564,7 @@ class _WebViewPageState extends State<WebViewPage>
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('Link copied to clipboard'),
-        backgroundColor: const Color(0xFF22C55E),
+        backgroundColor: AppColors.emergencyGreen,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(
           borderRadius: AppDimensions.borderRadiusM,
@@ -577,7 +579,7 @@ class _WebViewPageState extends State<WebViewPage>
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('Opening in browser...'),
-        backgroundColor: const Color(0xFF8B5CF6),
+        backgroundColor: AppColors.videoPrimary,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(
           borderRadius: AppDimensions.borderRadiusM,
@@ -618,7 +620,7 @@ class _WebViewOptionsSheet extends StatelessWidget {
       margin: EdgeInsets.all(AppDimensions.spaceM),
       padding: EdgeInsets.all(AppDimensions.spaceL),
       decoration: BoxDecoration(
-        color: const Color(0xFF1A1A2E),
+        color: AppColors.videoSurface,
         borderRadius: AppDimensions.borderRadiusXL,
       ),
       child: SafeArea(
@@ -648,7 +650,10 @@ class _WebViewOptionsSheet extends StatelessWidget {
                     padding: EdgeInsets.all(AppDimensions.spaceS),
                     decoration: BoxDecoration(
                       gradient: const LinearGradient(
-                        colors: [Color(0xFF8B5CF6), Color(0xFF7C3AED)],
+                        colors: [
+                          AppColors.videoPrimary,
+                          AppColors.videoPrimaryDark
+                        ],
                       ),
                       borderRadius: AppDimensions.borderRadiusS,
                     ),

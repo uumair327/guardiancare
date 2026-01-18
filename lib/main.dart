@@ -55,7 +55,7 @@ class Guardiancare extends StatefulWidget {
 
   @override
   State<Guardiancare> createState() => GuardiancareState();
-  
+
   // Static method to access state from anywhere
   static GuardiancareState? of(BuildContext context) {
     return context.findAncestorStateOfType<GuardiancareState>();
@@ -66,35 +66,41 @@ class Guardiancare extends StatefulWidget {
 /// Follows Single Responsibility Principle by delegating to managers:
 /// - AuthStateManager: handles authentication state
 /// - LocaleManager: handles locale/language changes
+/// - ThemeManager: handles theme/dark mode changes
 /// - AppLifecycleManager: handles app lifecycle events
-class GuardiancareState extends State<Guardiancare> with WidgetsBindingObserver {
+class GuardiancareState extends State<Guardiancare>
+    with WidgetsBindingObserver {
   // Managers injected via dependency injection
   late final AuthStateManager _authManager;
   late final LocaleManager _localeManager;
+  late final ThemeManager _themeManager;
   late final AppLifecycleManager _lifecycleManager;
 
   // Subscriptions for cleanup
   StreamSubscription<User?>? _authSubscription;
   StreamSubscription<AuthStateEvent>? _authEventSubscription;
   StreamSubscription<Locale>? _localeSubscription;
+  StreamSubscription<ThemeMode>? _themeSubscription;
 
   // Local state for UI updates
   User? _user;
   Locale _locale = const Locale('en');
+  ThemeMode _themeMode = ThemeMode.system;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    
+
     // Get managers from dependency injection
     _authManager = di.sl<AuthStateManager>();
     _localeManager = di.sl<LocaleManager>();
+    _themeManager = di.sl<ThemeManager>();
     _lifecycleManager = di.sl<AppLifecycleManager>();
-    
+
     // Initialize managers and set up subscriptions
     _initializeManagers();
-    
+
     debugPrint("GuardiancareState initialized with managers");
   }
 
@@ -106,10 +112,24 @@ class GuardiancareState extends State<Guardiancare> with WidgetsBindingObserver 
       });
     });
 
+    // Load saved theme through ThemeManager
+    _themeManager.loadSavedTheme().then((_) {
+      setState(() {
+        _themeMode = _themeManager.currentThemeMode;
+      });
+    });
+
     // Subscribe to locale changes from LocaleManager
     _localeSubscription = _localeManager.localeChanges.listen((locale) {
       setState(() {
         _locale = locale;
+      });
+    });
+
+    // Subscribe to theme changes from ThemeManager
+    _themeSubscription = _themeManager.themeChanges.listen((themeMode) {
+      setState(() {
+        _themeMode = themeMode;
       });
     });
 
@@ -132,7 +152,8 @@ class GuardiancareState extends State<Guardiancare> with WidgetsBindingObserver 
 
   /// Change locale - delegates to LocaleManager
   void changeLocale(Locale newLocale) {
-    debugPrint('GuardiancareState: Requesting locale change to ${newLocale.languageCode}');
+    debugPrint(
+        'GuardiancareState: Requesting locale change to ${newLocale.languageCode}');
     _localeManager.changeLocale(newLocale);
   }
 
@@ -142,6 +163,7 @@ class GuardiancareState extends State<Guardiancare> with WidgetsBindingObserver 
     _authSubscription?.cancel();
     _authEventSubscription?.cancel();
     _localeSubscription?.cancel();
+    _themeSubscription?.cancel();
     super.dispose();
   }
 
@@ -171,11 +193,12 @@ class GuardiancareState extends State<Guardiancare> with WidgetsBindingObserver 
         title: AppStrings.appName,
         routerConfig: AppRouter.router,
         debugShowCheckedModeBanner: false,
-        
+
         // Theme configuration
         theme: AppTheme.lightTheme,
         darkTheme: AppTheme.darkTheme,
-        
+        themeMode: _themeMode,
+
         // Localization configuration
         locale: _locale,
         localizationsDelegates: const [

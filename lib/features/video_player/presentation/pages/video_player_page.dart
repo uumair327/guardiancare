@@ -103,7 +103,7 @@ class _VideoPlayerPageState extends State<VideoPlayerPage>
       const SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
         statusBarIconBrightness: Brightness.light,
-        systemNavigationBarColor: Color(0xFF0F0F1A),
+        systemNavigationBarColor: AppColors.videoBackground,
         systemNavigationBarIconBrightness: Brightness.light,
       ),
     );
@@ -293,7 +293,7 @@ class _VideoPlayerPageState extends State<VideoPlayerPage>
     
     showModalBottomSheet(
       context: context,
-      backgroundColor: Colors.transparent,
+      backgroundColor: AppColors.transparent,
       isScrollControlled: true,
       builder: (context) => BlocBuilder<VideoPlayerCubit, VideoPlayerState>(
         bloc: _cubit,
@@ -466,7 +466,7 @@ class _VideoPlayerPageState extends State<VideoPlayerPage>
         horizontal: AppDimensions.spaceS,
         vertical: AppDimensions.spaceXS,
       ),
-      color: const Color(0xFF1A1A2E),
+      color: AppColors.videoSurface,
       child: Row(
         children: [
           IconButton(
@@ -634,15 +634,11 @@ class _VideoPlayerPageState extends State<VideoPlayerPage>
         width: 64,
         height: 64,
         decoration: BoxDecoration(
-          gradient: const LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [Color(0xFF8B5CF6), Color(0xFF7C3AED)],
-          ),
+          gradient: AppColors.videoGradient,
           shape: BoxShape.circle,
           boxShadow: [
             BoxShadow(
-              color: const Color(0xFF8B5CF6).withValues(alpha: 0.5),
+              color: AppColors.videoPrimarySubtle50,
               blurRadius: 20,
               offset: const Offset(0, 4),
             ),
@@ -667,7 +663,7 @@ class _VideoPlayerPageState extends State<VideoPlayerPage>
       height: 64,
       child: CircularProgressIndicator(
         strokeWidth: 3,
-        valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF8B5CF6)),
+        valueColor: AlwaysStoppedAnimation<Color>(AppColors.videoPrimary),
       ),
     );
   }
@@ -763,13 +759,11 @@ class _VideoPlayerPageState extends State<VideoPlayerPage>
               child: Container(
                 height: 4,
                 decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [Color(0xFF8B5CF6), Color(0xFF7C3AED)],
-                  ),
+                  gradient: AppColors.videoGradient,
                   borderRadius: BorderRadius.circular(2),
                   boxShadow: [
                     BoxShadow(
-                      color: const Color(0xFF8B5CF6).withValues(alpha: 0.5),
+                      color: AppColors.videoPrimarySubtle50,
                       blurRadius: 6,
                     ),
                   ],
@@ -788,7 +782,7 @@ class _VideoPlayerPageState extends State<VideoPlayerPage>
                   shape: BoxShape.circle,
                   boxShadow: [
                     BoxShadow(
-                      color: const Color(0xFF8B5CF6).withValues(alpha: 0.5),
+                      color: AppColors.videoPrimarySubtle50,
                       blurRadius: 8,
                     ),
                   ],
@@ -851,7 +845,7 @@ class _VideoPlayerPageState extends State<VideoPlayerPage>
 
   Widget _buildVideoInfoSection(VideoPlayerState state) {
     return Container(
-      color: const Color(0xFF0F0F1A),
+      color: AppColors.videoBackground,
       child: SingleChildScrollView(
         padding: EdgeInsets.all(AppDimensions.spaceL),
         child: Column(
@@ -890,13 +884,13 @@ class _VideoPlayerPageState extends State<VideoPlayerPage>
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            const Color(0xFF8B5CF6).withValues(alpha: 0.15),
-            const Color(0xFF7C3AED).withValues(alpha: 0.1),
+            AppColors.videoPrimarySubtle15,
+            AppColors.videoPrimarySubtle10,
           ],
         ),
         borderRadius: AppDimensions.borderRadiusL,
         border: Border.all(
-          color: const Color(0xFF8B5CF6).withValues(alpha: 0.3),
+          color: AppColors.videoPrimarySubtle30,
         ),
       ),
       child: Row(
@@ -912,8 +906,8 @@ class _VideoPlayerPageState extends State<VideoPlayerPage>
                   value: progressPercent / 100,
                   strokeWidth: 5,
                   backgroundColor: AppColors.white.withValues(alpha: 0.1),
-                  valueColor: const AlwaysStoppedAnimation<Color>(
-                    Color(0xFF8B5CF6),
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    AppColors.videoPrimary,
                   ),
                 ),
                 Text(
@@ -956,13 +950,13 @@ class _VideoPlayerPageState extends State<VideoPlayerPage>
               vertical: AppDimensions.spaceS,
             ),
             decoration: BoxDecoration(
-              color: const Color(0xFF8B5CF6).withValues(alpha: 0.2),
+              color: AppColors.videoPrimarySubtle20,
               borderRadius: AppDimensions.borderRadiusS,
             ),
             child: Text(
               '-${_formatDuration(state.progress.total - state.progress.position)}',
               style: AppTextStyles.bodySmall.copyWith(
-                color: const Color(0xFF8B5CF6),
+                color: AppColors.videoPrimary,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -1010,9 +1004,9 @@ class _VideoPlayerPageState extends State<VideoPlayerPage>
 
   Widget _buildInvalidUrlScreen() {
     return Scaffold(
-      backgroundColor: const Color(0xFF0F0F1A),
+      backgroundColor: AppColors.videoBackground,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF1A1A2E),
+        backgroundColor: AppColors.videoSurface,
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_rounded, color: AppColors.white),
@@ -1032,12 +1026,12 @@ class _VideoPlayerPageState extends State<VideoPlayerPage>
               Container(
                 padding: EdgeInsets.all(AppDimensions.spaceXL),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF8B5CF6).withValues(alpha: 0.1),
+                  color: AppColors.videoPrimarySubtle10,
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.error_outline_rounded,
-                  color: Color(0xFF8B5CF6),
+                  color: AppColors.videoPrimary,
                   size: 64,
                 ),
               ),
@@ -1143,11 +1137,7 @@ class _QuickActionButton extends StatelessWidget {
       enableHaptic: true,
       hapticType: HapticFeedbackType.light,
       decoration: BoxDecoration(
-        gradient: isPrimary
-            ? const LinearGradient(
-                colors: [Color(0xFF8B5CF6), Color(0xFF7C3AED)],
-              )
-            : null,
+        gradient: isPrimary ? AppColors.videoGradient : null,
         color: isPrimary ? null : AppColors.white.withValues(alpha: 0.08),
         borderRadius: AppDimensions.borderRadiusM,
         border: isPrimary
@@ -1193,7 +1183,7 @@ class _VideoEndedDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      backgroundColor: const Color(0xFF1A1A2E),
+      backgroundColor: AppColors.videoSurface,
       shape: RoundedRectangleBorder(
         borderRadius: AppDimensions.borderRadiusL,
       ),
@@ -1205,12 +1195,12 @@ class _VideoEndedDialog extends StatelessWidget {
             Container(
               padding: EdgeInsets.all(AppDimensions.spaceL),
               decoration: BoxDecoration(
-                color: const Color(0xFF8B5CF6).withValues(alpha: 0.15),
+                color: AppColors.videoPrimarySubtle15,
                 shape: BoxShape.circle,
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.check_circle_rounded,
-                color: Color(0xFF8B5CF6),
+                color: AppColors.videoPrimary,
                 size: 48,
               ),
             ),
@@ -1253,7 +1243,7 @@ class _VideoEndedDialog extends StatelessWidget {
                   child: ElevatedButton(
                     onPressed: onReplay,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF8B5CF6),
+                      backgroundColor: AppColors.videoPrimary,
                       padding: EdgeInsets.symmetric(
                         vertical: AppDimensions.spaceM,
                       ),

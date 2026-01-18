@@ -85,17 +85,17 @@ class _QuestionCardState extends State<QuestionCard>
         child: Container(
           padding: EdgeInsets.all(AppDimensions.spaceL),
           decoration: BoxDecoration(
-            color: AppColors.surface,
+            color: context.colors.surface,
             borderRadius: AppDimensions.borderRadiusL,
             boxShadow: [
               BoxShadow(
-                color: AppColors.primary.withValues(alpha: 0.1),
+                color: context.colors.primary.withValues(alpha: 0.1),
                 blurRadius: 16,
                 offset: const Offset(0, 4),
               ),
             ],
             border: Border.all(
-              color: AppColors.primary.withValues(alpha: 0.1),
+              color: context.colors.primary.withValues(alpha: 0.1),
               width: 1,
             ),
           ),
@@ -111,8 +111,8 @@ class _QuestionCardState extends State<QuestionCard>
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
-                      AppColors.primary,
-                      AppColors.primary.withValues(alpha: 0.8),
+                      context.colors.primary,
+                      context.colors.primary.withValues(alpha: 0.8),
                     ],
                   ),
                   borderRadius: AppDimensions.borderRadiusM,
@@ -141,7 +141,7 @@ class _QuestionCardState extends State<QuestionCard>
               Text(
                 widget.question,
                 style: AppTextStyles.h4.copyWith(
-                  color: AppColors.textPrimary,
+                  color: context.colors.textPrimary,
                   height: 1.4,
                 ),
               ),

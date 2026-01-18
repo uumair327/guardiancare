@@ -1,6 +1,8 @@
 // Web-specific implementation of VideoPlayerPage using YouTube iframe embed
 // This file is used on web platform where youtube_player_flutter is not supported
 
+// ignore_for_file: avoid_web_libraries_in_flutter, deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'dart:html' as html;
 import 'dart:ui_web' as ui_web;
@@ -28,9 +30,10 @@ class _VideoPlayerPageState extends State<VideoPlayerPage> {
     super.initState();
     _videoId = _extractVideoId(widget.videoUrl);
     _isVideoUrlValid = _videoId != null;
-    
+
     if (_isVideoUrlValid) {
-      _viewId = 'youtube-player-feature-${DateTime.now().millisecondsSinceEpoch}';
+      _viewId =
+          'youtube-player-feature-${DateTime.now().millisecondsSinceEpoch}';
       _registerViewFactory();
     }
   }
@@ -38,7 +41,8 @@ class _VideoPlayerPageState extends State<VideoPlayerPage> {
   String? _extractVideoId(String url) {
     // Handle various YouTube URL formats
     final regexPatterns = [
-      RegExp(r'(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})'),
+      RegExp(
+          r'(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})'),
       RegExp(r'youtube\.com\/v\/([a-zA-Z0-9_-]{11})'),
       RegExp(r'youtube\.com\/shorts\/([a-zA-Z0-9_-]{11})'),
     ];
@@ -49,12 +53,12 @@ class _VideoPlayerPageState extends State<VideoPlayerPage> {
         return match.group(1);
       }
     }
-    
+
     // Check if the URL is already just a video ID
     if (RegExp(r'^[a-zA-Z0-9_-]{11}$').hasMatch(url)) {
       return url;
     }
-    
+
     return null;
   }
 
@@ -63,11 +67,13 @@ class _VideoPlayerPageState extends State<VideoPlayerPage> {
       _viewId,
       (int viewId) {
         final iframe = html.IFrameElement()
-          ..src = 'https://www.youtube.com/embed/$_videoId?autoplay=1&rel=0&modestbranding=1&enablejsapi=1'
+          ..src =
+              'https://www.youtube.com/embed/$_videoId?autoplay=1&rel=0&modestbranding=1&enablejsapi=1'
           ..style.border = 'none'
           ..style.width = '100%'
           ..style.height = '100%'
-          ..allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen'
+          ..allow =
+              'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen'
           ..allowFullscreen = true;
         return iframe;
       },
@@ -81,7 +87,7 @@ class _VideoPlayerPageState extends State<VideoPlayerPage> {
     }
 
     return Scaffold(
-      backgroundColor: const Color(0xFF0F0F1A),
+      backgroundColor: AppColors.videoBackground,
       body: SafeArea(
         child: Column(
           children: [
@@ -111,7 +117,7 @@ class _VideoPlayerPageState extends State<VideoPlayerPage> {
         horizontal: AppDimensions.spaceS,
         vertical: AppDimensions.spaceXS,
       ),
-      color: const Color(0xFF1A1A2E),
+      color: AppColors.videoSurface,
       child: Row(
         children: [
           IconButton(
@@ -136,7 +142,7 @@ class _VideoPlayerPageState extends State<VideoPlayerPage> {
 
   Widget _buildVideoInfoSection() {
     return Container(
-      color: const Color(0xFF0F0F1A),
+      color: AppColors.videoBackground,
       child: SingleChildScrollView(
         padding: EdgeInsets.all(AppDimensions.spaceL),
         child: Column(
@@ -175,13 +181,13 @@ class _VideoPlayerPageState extends State<VideoPlayerPage> {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            const Color(0xFF8B5CF6).withValues(alpha: 0.15),
-            const Color(0xFF7C3AED).withValues(alpha: 0.1),
+            AppColors.videoPrimarySubtle15,
+            AppColors.videoPrimarySubtle10,
           ],
         ),
         borderRadius: AppDimensions.borderRadiusL,
         border: Border.all(
-          color: const Color(0xFF8B5CF6).withValues(alpha: 0.3),
+          color: AppColors.videoPrimarySubtle30,
         ),
       ),
       child: Row(
@@ -189,12 +195,12 @@ class _VideoPlayerPageState extends State<VideoPlayerPage> {
           Container(
             padding: EdgeInsets.all(AppDimensions.spaceM),
             decoration: BoxDecoration(
-              color: const Color(0xFF8B5CF6).withValues(alpha: 0.2),
+              color: AppColors.videoPrimarySubtle20,
               shape: BoxShape.circle,
             ),
-            child: const Icon(
+            child: Icon(
               Icons.play_circle_outline_rounded,
-              color: Color(0xFF8B5CF6),
+              color: AppColors.videoPrimary,
               size: 32,
             ),
           ),
@@ -238,7 +244,7 @@ class _VideoPlayerPageState extends State<VideoPlayerPage> {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text(FeedbackStrings.fullscreenHint),
-                  backgroundColor: const Color(0xFF8B5CF6),
+                  backgroundColor: AppColors.videoPrimary,
                   behavior: SnackBarBehavior.floating,
                   shape: RoundedRectangleBorder(
                     borderRadius: AppDimensions.borderRadiusM,
@@ -264,9 +270,9 @@ class _VideoPlayerPageState extends State<VideoPlayerPage> {
 
   Widget _buildInvalidUrlScreen() {
     return Scaffold(
-      backgroundColor: const Color(0xFF0F0F1A),
+      backgroundColor: AppColors.videoBackground,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF1A1A2E),
+        backgroundColor: AppColors.videoSurface,
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_rounded, color: AppColors.white),
@@ -286,12 +292,12 @@ class _VideoPlayerPageState extends State<VideoPlayerPage> {
               Container(
                 padding: EdgeInsets.all(AppDimensions.spaceXL),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF8B5CF6).withValues(alpha: 0.1),
+                  color: AppColors.videoPrimarySubtle10,
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.error_outline_rounded,
-                  color: Color(0xFF8B5CF6),
+                  color: AppColors.videoPrimary,
                   size: 64,
                 ),
               ),
@@ -318,7 +324,7 @@ class _VideoPlayerPageState extends State<VideoPlayerPage> {
                 icon: const Icon(Icons.arrow_back_rounded),
                 label: Text(UIStrings.goBack),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF8B5CF6),
+                  backgroundColor: AppColors.videoPrimary,
                   foregroundColor: AppColors.white,
                   padding: EdgeInsets.symmetric(
                     horizontal: AppDimensions.spaceXL,
@@ -366,11 +372,7 @@ class _QuickActionButton extends StatelessWidget {
         enableHaptic: true,
         hapticType: HapticFeedbackType.light,
         decoration: BoxDecoration(
-          gradient: isPrimary
-              ? const LinearGradient(
-                  colors: [Color(0xFF8B5CF6), Color(0xFF7C3AED)],
-                )
-              : null,
+          gradient: isPrimary ? AppColors.videoGradient : null,
           color: isPrimary ? null : AppColors.white.withValues(alpha: 0.08),
           borderRadius: AppDimensions.borderRadiusM,
           border: isPrimary

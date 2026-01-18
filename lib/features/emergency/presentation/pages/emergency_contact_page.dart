@@ -68,7 +68,7 @@ class _EmergencyContactPageState extends State<EmergencyContactPage>
     return BlocProvider(
       create: (context) => sl<EmergencyBloc>()..add(LoadEmergencyContacts()),
       child: Scaffold(
-        backgroundColor: const Color(0xFF0F0F1A),
+        backgroundColor: AppColors.videoBackground,
         body: SafeArea(
           child: Column(
             children: [
@@ -81,7 +81,8 @@ class _EmergencyContactPageState extends State<EmergencyContactPage>
                       return _buildLoadingState();
                     }
 
-                    if (state is EmergencyError && state is! EmergencyContactsLoaded) {
+                    if (state is EmergencyError &&
+                        state is! EmergencyContactsLoaded) {
                       return _buildErrorState(context, l10n, state.message);
                     }
 
@@ -108,7 +109,7 @@ class _EmergencyContactPageState extends State<EmergencyContactPage>
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(state.message),
-          backgroundColor: const Color(0xFFEF4444),
+          backgroundColor: AppColors.error,
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(
             borderRadius: AppDimensions.borderRadiusM,
@@ -187,15 +188,11 @@ class _EmergencyContactPageState extends State<EmergencyContactPage>
     return Container(
       padding: EdgeInsets.all(AppDimensions.spaceM),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [Color(0xFFEF4444), Color(0xFFDC2626)],
-        ),
+        gradient: AppColors.emergencyRedGradient,
         borderRadius: AppDimensions.borderRadiusM,
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFFEF4444).withValues(alpha: 0.4),
+            color: AppColors.error.withValues(alpha: 0.4),
             blurRadius: 16,
             offset: const Offset(0, 4),
           ),
@@ -209,7 +206,6 @@ class _EmergencyContactPageState extends State<EmergencyContactPage>
     );
   }
 
-
   Widget _buildLoadingState() {
     return SingleChildScrollView(
       padding: EdgeInsets.all(AppDimensions.spaceL),
@@ -219,12 +215,12 @@ class _EmergencyContactPageState extends State<EmergencyContactPage>
           (index) => Padding(
             padding: EdgeInsets.only(bottom: AppDimensions.spaceL),
             child: ShimmerLoading(
-              baseColor: const Color(0xFF1A1A2E),
-              highlightColor: const Color(0xFF2D2D44),
+              baseColor: AppColors.emergencyShimmerBase,
+              highlightColor: AppColors.emergencyShimmerHighlight,
               child: Container(
                 height: 180,
                 decoration: BoxDecoration(
-                  color: const Color(0xFF1A1A2E),
+                  color: AppColors.emergencyShimmerBase,
                   borderRadius: AppDimensions.borderRadiusL,
                 ),
               ),
@@ -249,12 +245,12 @@ class _EmergencyContactPageState extends State<EmergencyContactPage>
             Container(
               padding: EdgeInsets.all(AppDimensions.spaceL),
               decoration: BoxDecoration(
-                color: const Color(0xFFEF4444).withValues(alpha: 0.1),
+                color: AppColors.error.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
               child: Icon(
                 Icons.error_outline_rounded,
-                color: const Color(0xFFEF4444),
+                color: AppColors.error,
                 size: 48,
               ),
             ),
@@ -286,13 +282,11 @@ class _EmergencyContactPageState extends State<EmergencyContactPage>
                   vertical: AppDimensions.spaceM,
                 ),
                 decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [Color(0xFF8B5CF6), Color(0xFF7C3AED)],
-                  ),
+                  gradient: AppColors.videoGradient,
                   borderRadius: AppDimensions.borderRadiusM,
                   boxShadow: [
                     BoxShadow(
-                      color: const Color(0xFF8B5CF6).withValues(alpha: 0.4),
+                      color: AppColors.videoPrimarySubtle30,
                       blurRadius: 16,
                       offset: const Offset(0, 4),
                     ),
@@ -336,7 +330,7 @@ class _EmergencyContactPageState extends State<EmergencyContactPage>
                 icon: Icons.medical_services_rounded,
                 title: l10n.emergencyServices,
                 contacts: emergencyServices,
-                gradientColors: const [Color(0xFFEF4444), Color(0xFFDC2626)],
+                gradientColors: const [AppColors.cardRed, AppColors.errorDark],
                 onCall: (number) => _handleCall(context, number),
               ),
             ),
@@ -349,7 +343,10 @@ class _EmergencyContactPageState extends State<EmergencyContactPage>
                 icon: Icons.child_care_rounded,
                 title: l10n.childSafety,
                 contacts: childSafety,
-                gradientColors: const [Color(0xFF8B5CF6), Color(0xFF7C3AED)],
+                gradientColors: const [
+                  AppColors.videoPrimary,
+                  AppColors.videoPrimaryDark
+                ],
                 onCall: (number) => _handleCall(context, number),
               ),
             ),
@@ -368,7 +365,8 @@ class _EmergencyContactPageState extends State<EmergencyContactPage>
     final delay = index * 0.15;
     final animation = CurvedAnimation(
       parent: _contentAnimController,
-      curve: Interval(delay, delay + 0.5, curve: AppCurves.emphasizedDecelerate),
+      curve:
+          Interval(delay, delay + 0.5, curve: AppCurves.emphasizedDecelerate),
     );
 
     return AnimatedBuilder(
@@ -392,13 +390,13 @@ class _EmergencyContactPageState extends State<EmergencyContactPage>
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            const Color(0xFFEF4444).withValues(alpha: 0.15),
-            const Color(0xFFDC2626).withValues(alpha: 0.1),
+            AppColors.error.withValues(alpha: 0.15),
+            AppColors.error.withValues(alpha: 0.1),
           ],
         ),
         borderRadius: AppDimensions.borderRadiusL,
         border: Border.all(
-          color: const Color(0xFFEF4444).withValues(alpha: 0.3),
+          color: AppColors.error.withValues(alpha: 0.3),
         ),
       ),
       child: Row(
@@ -406,12 +404,12 @@ class _EmergencyContactPageState extends State<EmergencyContactPage>
           Container(
             padding: EdgeInsets.all(AppDimensions.spaceS),
             decoration: BoxDecoration(
-              color: const Color(0xFFEF4444).withValues(alpha: 0.2),
+              color: AppColors.error.withValues(alpha: 0.2),
               borderRadius: AppDimensions.borderRadiusS,
             ),
-            child: const Icon(
+            child: Icon(
               Icons.info_outline_rounded,
-              color: Color(0xFFEF4444),
+              color: AppColors.error,
               size: 20,
             ),
           ),
@@ -437,13 +435,13 @@ class _EmergencyContactPageState extends State<EmergencyContactPage>
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            const Color(0xFF8B5CF6).withValues(alpha: 0.15),
-            const Color(0xFF7C3AED).withValues(alpha: 0.1),
+            AppColors.videoPrimarySubtle10,
+            AppColors.videoPrimarySubtle10.withValues(alpha: 0.5),
           ],
         ),
         borderRadius: AppDimensions.borderRadiusL,
         border: Border.all(
-          color: const Color(0xFF8B5CF6).withValues(alpha: 0.3),
+          color: AppColors.videoPrimarySubtle30,
         ),
       ),
       child: Column(
@@ -454,9 +452,7 @@ class _EmergencyContactPageState extends State<EmergencyContactPage>
               Container(
                 padding: EdgeInsets.all(AppDimensions.spaceS),
                 decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [Color(0xFF8B5CF6), Color(0xFF7C3AED)],
-                  ),
+                  gradient: AppColors.videoGradient,
                   borderRadius: AppDimensions.borderRadiusS,
                 ),
                 child: const Icon(
@@ -529,7 +525,7 @@ class _CallConfirmationSheet extends StatelessWidget {
       margin: EdgeInsets.all(AppDimensions.spaceM),
       padding: EdgeInsets.all(AppDimensions.spaceL),
       decoration: BoxDecoration(
-        color: const Color(0xFF1A1A2E),
+        color: AppColors.videoSurface,
         borderRadius: AppDimensions.borderRadiusXL,
       ),
       child: SafeArea(
@@ -550,13 +546,11 @@ class _CallConfirmationSheet extends StatelessWidget {
             Container(
               padding: EdgeInsets.all(AppDimensions.spaceL),
               decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [Color(0xFF22C55E), Color(0xFF16A34A)],
-                ),
+                gradient: AppColors.emergencyGreenGradient,
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
-                    color: const Color(0xFF22C55E).withValues(alpha: 0.4),
+                    color: AppColors.emergencyGreen.withValues(alpha: 0.4),
                     blurRadius: 20,
                     offset: const Offset(0, 4),
                   ),
@@ -619,13 +613,12 @@ class _CallConfirmationSheet extends StatelessWidget {
                         vertical: AppDimensions.spaceM,
                       ),
                       decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          colors: [Color(0xFF22C55E), Color(0xFF16A34A)],
-                        ),
+                        gradient: AppColors.emergencyGreenGradient,
                         borderRadius: AppDimensions.borderRadiusM,
                         boxShadow: [
                           BoxShadow(
-                            color: const Color(0xFF22C55E).withValues(alpha: 0.4),
+                            color:
+                                AppColors.emergencyGreen.withValues(alpha: 0.4),
                             blurRadius: 12,
                             offset: const Offset(0, 4),
                           ),

@@ -19,7 +19,7 @@ class _ForumPageState extends State<ForumPage>
     with SingleTickerProviderStateMixin {
   bool _isUnlocked = false;
   bool _hasSeenGuidelines = false;
-  
+
   late AnimationController _fadeController;
   late Animation<double> _fadeAnimation;
 
@@ -96,12 +96,12 @@ class _ForumPageState extends State<ForumPage>
               Container(
                 padding: EdgeInsets.all(AppDimensions.spaceS),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF8B5CF6).withValues(alpha: 0.1),
+                  color: AppColors.videoPrimarySubtle10,
                   borderRadius: AppDimensions.borderRadiusS,
                 ),
                 child: Icon(
                   Icons.gavel_rounded,
-                  color: const Color(0xFF8B5CF6),
+                  color: AppColors.videoPrimary,
                   size: AppDimensions.iconM,
                 ),
               ),
@@ -132,7 +132,7 @@ class _ForumPageState extends State<ForumPage>
                 _buildGuidelineItem(
                   Icons.shield_rounded,
                   l10n.guidelineNoHarmful,
-                  const Color(0xFF8B5CF6),
+                  AppColors.videoPrimary,
                 ),
                 _buildGuidelineItem(
                   Icons.chat_rounded,
@@ -151,9 +151,7 @@ class _ForumPageState extends State<ForumPage>
                   vertical: AppDimensions.spaceS,
                 ),
                 decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [Color(0xFF8B5CF6), Color(0xFF7C3AED)],
-                  ),
+                  gradient: AppColors.videoGradient,
                   borderRadius: AppDimensions.borderRadiusM,
                 ),
                 child: Text(UIStrings.iAgree, style: AppTextStyles.button),
@@ -195,15 +193,18 @@ class _ForumPageState extends State<ForumPage>
 
   @override
   Widget build(BuildContext context) {
-    return ParentalLockOverlay(
-      onUnlocked: _onUnlocked,
-      onForgotKey: _handleForgotKey,
-      child: _isUnlocked
-          ? FadeTransition(
-              opacity: _fadeAnimation,
-              child: const _ForumContent(),
-            )
-          : const _ForumPlaceholder(),
+    return Scaffold(
+      backgroundColor: context.colors.background,
+      body: ParentalLockOverlay(
+        onUnlocked: _onUnlocked,
+        onForgotKey: _handleForgotKey,
+        child: _isUnlocked
+            ? FadeTransition(
+                opacity: _fadeAnimation,
+                child: const _ForumContent(),
+              )
+            : const _ForumPlaceholder(),
+      ),
     );
   }
 }
@@ -224,8 +225,8 @@ class _ForumPlaceholder extends StatelessWidget {
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [
-                const Color(0xFF8B5CF6).withValues(alpha: 0.3),
-                const Color(0xFF7C3AED).withValues(alpha: 0.2),
+                AppColors.videoPrimarySubtle30,
+                AppColors.videoPrimarySubtle20,
               ],
             ),
             borderRadius: BorderRadius.only(
@@ -381,9 +382,9 @@ class _ForumHeaderState extends State<_ForumHeader>
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              const Color(0xFF8B5CF6),
-              const Color(0xFF8B5CF6).withValues(alpha: 0.85),
-              const Color(0xFF7C3AED),
+              AppColors.videoPrimary,
+              AppColors.videoPrimarySubtle50.withValues(alpha: 0.85),
+              AppColors.videoPrimaryDark,
             ],
             stops: const [0.0, 0.5, 1.0],
           ),
@@ -480,8 +481,9 @@ class _ForumHeaderState extends State<_ForumHeader>
                     ),
                     indicatorSize: TabBarIndicatorSize.tab,
                     dividerColor: Colors.transparent,
-                    labelColor: const Color(0xFF8B5CF6),
-                    unselectedLabelColor: AppColors.white.withValues(alpha: 0.8),
+                    labelColor: AppColors.videoPrimary,
+                    unselectedLabelColor:
+                        AppColors.white.withValues(alpha: 0.8),
                     labelStyle: AppTextStyles.caption.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
@@ -540,7 +542,6 @@ class _ForumHeaderState extends State<_ForumHeader>
   }
 }
 
-
 /// Forum list view for each category
 class _ForumListView extends StatelessWidget {
   final ForumCategory category;
@@ -578,7 +579,7 @@ class _ForumListView extends StatelessWidget {
           }
 
           if (state.forums.isEmpty) {
-            return _buildEmptyState(l10n);
+            return _buildEmptyState(context, l10n);
           }
 
           return RefreshIndicator(
@@ -587,7 +588,7 @@ class _ForumListView extends StatelessWidget {
               context.read<ForumBloc>().add(RefreshForums(category));
               await Future.delayed(AppDurations.animationMedium);
             },
-            color: const Color(0xFF8B5CF6),
+            color: AppColors.videoPrimary,
             child: ListView.builder(
               itemCount: state.forums.length,
               padding: EdgeInsets.all(AppDimensions.screenPaddingH),
@@ -641,7 +642,7 @@ class _ForumListView extends StatelessWidget {
     );
   }
 
-  Widget _buildEmptyState(AppLocalizations l10n) {
+  Widget _buildEmptyState(BuildContext context, AppLocalizations l10n) {
     return FadeSlideWidget(
       duration: AppDurations.animationMedium,
       child: Center(
@@ -651,24 +652,26 @@ class _ForumListView extends StatelessWidget {
             Container(
               padding: EdgeInsets.all(AppDimensions.spaceXL),
               decoration: BoxDecoration(
-                color: const Color(0xFF8B5CF6).withValues(alpha: 0.1),
+                color: AppColors.videoPrimarySubtle10,
                 shape: BoxShape.circle,
               ),
               child: Icon(
                 Icons.forum_outlined,
                 size: AppDimensions.iconXXL,
-                color: const Color(0xFF8B5CF6),
+                color: AppColors.videoPrimary,
               ),
             ),
             SizedBox(height: AppDimensions.spaceL),
             Text(
               l10n.noForumsAvailable,
-              style: AppTextStyles.h4.copyWith(color: AppColors.textPrimary),
+              style:
+                  AppTextStyles.h4.copyWith(color: context.colors.textPrimary),
             ),
             SizedBox(height: AppDimensions.spaceS),
             Text(
               l10n.beFirstToDiscuss,
-              style: AppTextStyles.body2.copyWith(color: AppColors.textSecondary),
+              style: AppTextStyles.body2
+                  .copyWith(color: context.colors.textSecondary),
             ),
           ],
         ),
@@ -702,7 +705,8 @@ class _ForumListView extends StatelessWidget {
             SizedBox(height: AppDimensions.spaceL),
             Text(
               l10n.somethingWentWrong,
-              style: AppTextStyles.h4.copyWith(color: AppColors.textPrimary),
+              style:
+                  AppTextStyles.h4.copyWith(color: context.colors.textPrimary),
             ),
             SizedBox(height: AppDimensions.spaceS),
             Padding(
@@ -710,7 +714,8 @@ class _ForumListView extends StatelessWidget {
               child: Text(
                 message,
                 textAlign: TextAlign.center,
-                style: AppTextStyles.body2.copyWith(color: AppColors.textSecondary),
+                style: AppTextStyles.body2
+                    .copyWith(color: context.colors.textSecondary),
               ),
             ),
             SizedBox(height: AppDimensions.spaceL),
@@ -725,13 +730,11 @@ class _ForumListView extends StatelessWidget {
                   vertical: AppDimensions.spaceM,
                 ),
                 decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [Color(0xFF8B5CF6), Color(0xFF7C3AED)],
-                  ),
+                  gradient: AppColors.videoGradient,
                   borderRadius: AppDimensions.borderRadiusM,
                   boxShadow: [
                     BoxShadow(
-                      color: const Color(0xFF8B5CF6).withValues(alpha: 0.3),
+                      color: AppColors.videoPrimarySubtle30,
                       blurRadius: 8,
                       offset: const Offset(0, 4),
                     ),

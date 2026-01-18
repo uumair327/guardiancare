@@ -8,14 +8,14 @@ import 'package:flutter/services.dart';
 import 'package:guardiancare/core/core.dart';
 
 /// Modern, educational-friendly Parental Consent Setup Form
-/// 
+///
 /// Design Principles:
 /// - Child-safe, family-friendly visual design
 /// - COPPA/GDPR compliant consent collection
 /// - Clear step-by-step wizard flow
 /// - Accessible and inclusive UI
 /// - Play Store Families Policy compliant
-/// 
+///
 /// Architecture: Follows Clean Architecture + SOLID principles
 /// - Single Responsibility: Each step widget handles one concern
 /// - Open/Closed: Extensible step system
@@ -29,7 +29,8 @@ class EnhancedConsentFormPage extends StatefulWidget {
   });
 
   @override
-  State<EnhancedConsentFormPage> createState() => _EnhancedConsentFormPageState();
+  State<EnhancedConsentFormPage> createState() =>
+      _EnhancedConsentFormPageState();
 }
 
 class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage>
@@ -54,7 +55,7 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage>
   int _currentStep = 0;
 
   String? _selectedSecurityQuestion;
-  
+
   // Security questions - educational and family-friendly
   final List<String> _securityQuestions = [
     'What is your favorite family activity?',
@@ -84,7 +85,8 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage>
     _slideAnimation = Tween<Offset>(
       begin: const Offset(0.3, 0),
       end: Offset.zero,
-    ).animate(CurvedAnimation(parent: _animController, curve: Curves.easeOutCubic));
+    ).animate(
+        CurvedAnimation(parent: _animController, curve: Curves.easeOutCubic));
     _animController.forward();
   }
 
@@ -134,13 +136,17 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage>
       final user = FirebaseAuth.instance.currentUser;
       if (user == null) throw Exception('No user logged in');
 
-      await FirebaseFirestore.instance.collection('consents').doc(user.uid).set({
+      await FirebaseFirestore.instance
+          .collection('consents')
+          .doc(user.uid)
+          .set({
         'parentEmail': _parentEmailController.text.trim(),
         'childName': _childNameController.text.trim(),
         'isChildAbove12': _isChildAbove12,
         'parentalKey': _hashString(_keyController.text),
         'securityQuestion': _selectedSecurityQuestion,
-        'securityAnswer': _hashString(_securityAnswerController.text.toLowerCase().trim()),
+        'securityAnswer':
+            _hashString(_securityAnswerController.text.toLowerCase().trim()),
         'timestamp': FieldValue.serverTimestamp(),
       });
 
@@ -158,7 +164,8 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage>
         content: Text(message),
         backgroundColor: AppColors.error,
         behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: AppDimensions.borderRadiusS),
+        shape:
+            RoundedRectangleBorder(borderRadius: AppDimensions.borderRadiusS),
       ),
     );
   }
@@ -166,7 +173,7 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: context.colors.background,
       body: SafeArea(
         child: Column(
           children: [
@@ -259,19 +266,24 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage>
               width: 36,
               height: 36,
               decoration: BoxDecoration(
-                color: isActive ? AppColors.white : AppColors.white.withValues(alpha: 0.3),
+                color: isActive
+                    ? AppColors.white
+                    : AppColors.white.withValues(alpha: 0.3),
                 shape: BoxShape.circle,
-                boxShadow: isActive ? [
-                  BoxShadow(
-                    color: AppColors.black.withValues(alpha: 0.1),
-                    blurRadius: 8,
-                    offset: const Offset(0, 2),
-                  ),
-                ] : null,
+                boxShadow: isActive
+                    ? [
+                        BoxShadow(
+                          color: AppColors.black.withValues(alpha: 0.1),
+                          blurRadius: 8,
+                          offset: const Offset(0, 2),
+                        ),
+                      ]
+                    : null,
               ),
               child: Center(
                 child: isCompleted
-                    ? Icon(Icons.check_rounded, color: AppColors.primary, size: 20)
+                    ? Icon(Icons.check_rounded,
+                        color: AppColors.primary, size: 20)
                     : Text(
                         '${index + 1}',
                         style: AppTextStyles.labelLarge.copyWith(
@@ -330,7 +342,8 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage>
           icon: Icons.email_rounded,
           keyboardType: TextInputType.emailAddress,
           validator: (value) {
-            if (value == null || value.isEmpty) return ValidationStrings.parentEmailRequired;
+            if (value == null || value.isEmpty)
+              return ValidationStrings.parentEmailRequired;
             if (!value.contains('@')) return ValidationStrings.emailInvalid;
             return null;
           },
@@ -342,7 +355,8 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage>
           hint: UIStrings.childNameHint,
           icon: Icons.child_care_rounded,
           validator: (value) {
-            if (value == null || value.isEmpty) return ValidationStrings.childNameRequired;
+            if (value == null || value.isEmpty)
+              return ValidationStrings.childNameRequired;
             return null;
           },
         ),
@@ -369,11 +383,14 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage>
           icon: Icons.vpn_key_rounded,
           obscureText: _obscureKey,
           suffixIcon: IconButton(
-            icon: Icon(_obscureKey ? Icons.visibility_rounded : Icons.visibility_off_rounded),
+            icon: Icon(_obscureKey
+                ? Icons.visibility_rounded
+                : Icons.visibility_off_rounded),
             onPressed: () => setState(() => _obscureKey = !_obscureKey),
           ),
           validator: (value) {
-            if (value == null || value.isEmpty) return ValidationStrings.parentalKeyRequired;
+            if (value == null || value.isEmpty)
+              return ValidationStrings.parentalKeyRequired;
             if (value.length < 4) return ValidationStrings.parentalKeyMinLength;
             return null;
           },
@@ -386,19 +403,25 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage>
           icon: Icons.lock_outline_rounded,
           obscureText: _obscureConfirmKey,
           suffixIcon: IconButton(
-            icon: Icon(_obscureConfirmKey ? Icons.visibility_rounded : Icons.visibility_off_rounded),
-            onPressed: () => setState(() => _obscureConfirmKey = !_obscureConfirmKey),
+            icon: Icon(_obscureConfirmKey
+                ? Icons.visibility_rounded
+                : Icons.visibility_off_rounded),
+            onPressed: () =>
+                setState(() => _obscureConfirmKey = !_obscureConfirmKey),
           ),
           validator: (value) {
-            if (value == null || value.isEmpty) return ValidationStrings.confirmParentalKeyRequired;
-            if (value != _keyController.text) return ValidationStrings.keysDoNotMatch;
+            if (value == null || value.isEmpty)
+              return ValidationStrings.confirmParentalKeyRequired;
+            if (value != _keyController.text)
+              return ValidationStrings.keysDoNotMatch;
             return null;
           },
         ),
         SizedBox(height: AppDimensions.spaceL),
         _buildInfoCard(
           icon: Icons.info_outline_rounded,
-          text: 'Your parental key protects sensitive features. Keep it safe and memorable!',
+          text:
+              'Your parental key protects sensitive features. Keep it safe and memorable!',
           color: AppColors.info,
         ),
       ],
@@ -424,11 +447,14 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage>
           icon: Icons.question_answer_rounded,
           obscureText: _obscureAnswer,
           suffixIcon: IconButton(
-            icon: Icon(_obscureAnswer ? Icons.visibility_rounded : Icons.visibility_off_rounded),
+            icon: Icon(_obscureAnswer
+                ? Icons.visibility_rounded
+                : Icons.visibility_off_rounded),
             onPressed: () => setState(() => _obscureAnswer = !_obscureAnswer),
           ),
           validator: (value) {
-            if (value == null || value.isEmpty) return ValidationStrings.answerRequired;
+            if (value == null || value.isEmpty)
+              return ValidationStrings.answerRequired;
             if (value.length < 2) return ValidationStrings.answerMinLength;
             return null;
           },
@@ -438,7 +464,8 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage>
         SizedBox(height: AppDimensions.spaceM),
         _buildInfoCard(
           icon: Icons.shield_rounded,
-          text: 'Your security answer helps recover your parental key if forgotten.',
+          text:
+              'Your security answer helps recover your parental key if forgotten.',
           color: AppColors.success,
         ),
       ],
@@ -464,7 +491,8 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage>
               color: AppColors.primary.withValues(alpha: 0.15),
               borderRadius: AppDimensions.borderRadiusM,
             ),
-            child: Icon(icon, color: AppColors.primary, size: AppDimensions.iconM),
+            child:
+                Icon(icon, color: AppColors.primary, size: AppDimensions.iconM),
           ),
           SizedBox(width: AppDimensions.spaceM),
           Expanded(
@@ -481,7 +509,8 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage>
                 SizedBox(height: AppDimensions.spaceXXS),
                 Text(
                   subtitle,
-                  style: AppTextStyles.caption.copyWith(color: AppColors.textSecondary),
+                  style: AppTextStyles.caption
+                      .copyWith(color: context.colors.textSecondary),
                 ),
               ],
             ),
@@ -503,11 +532,11 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage>
   }) {
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.white,
+        color: context.colors.surface,
         borderRadius: AppDimensions.borderRadiusL,
         boxShadow: [
           BoxShadow(
-            color: AppColors.shadowLight,
+            color: context.colors.primary.withValues(alpha: 0.1),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -529,7 +558,7 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage>
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: AppDimensions.borderRadiusL,
-            borderSide: BorderSide(color: AppColors.border, width: 1),
+            borderSide: BorderSide(color: context.colors.border, width: 1),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: AppDimensions.borderRadiusL,
@@ -544,10 +573,11 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage>
             borderSide: BorderSide(color: AppColors.error, width: 2),
           ),
           filled: true,
-          fillColor: AppColors.white,
+          fillColor: context.colors.surface,
           contentPadding: EdgeInsets.all(AppDimensions.spaceM),
         ),
         validator: validator,
+        onTapOutside: (_) => FocusManager.instance.primaryFocus?.unfocus(),
       ),
     );
   }
@@ -555,11 +585,11 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage>
   Widget _buildModernDropdown() {
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.white,
+        color: context.colors.surface,
         borderRadius: AppDimensions.borderRadiusL,
         boxShadow: [
           BoxShadow(
-            color: AppColors.shadowLight,
+            color: context.colors.primary.withValues(alpha: 0.1),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -570,21 +600,22 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage>
         isExpanded: true,
         decoration: InputDecoration(
           labelText: UIStrings.selectSecurityQuestion,
-          prefixIcon: Icon(Icons.help_outline_rounded, color: AppColors.primary),
+          prefixIcon:
+              Icon(Icons.help_outline_rounded, color: AppColors.primary),
           border: OutlineInputBorder(
             borderRadius: AppDimensions.borderRadiusL,
             borderSide: BorderSide.none,
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: AppDimensions.borderRadiusL,
-            borderSide: BorderSide(color: AppColors.border, width: 1),
+            borderSide: BorderSide(color: context.colors.border, width: 1),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: AppDimensions.borderRadiusL,
             borderSide: BorderSide(color: AppColors.primary, width: 2),
           ),
           filled: true,
-          fillColor: AppColors.white,
+          fillColor: context.colors.surface,
           contentPadding: EdgeInsets.all(AppDimensions.spaceM),
         ),
         items: _securityQuestions.map((question) {
@@ -600,7 +631,8 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage>
         }).toList(),
         onChanged: (value) => setState(() => _selectedSecurityQuestion = value),
         validator: (value) {
-          if (value == null || value.isEmpty) return ValidationStrings.securityQuestionRequired;
+          if (value == null || value.isEmpty)
+            return ValidationStrings.securityQuestionRequired;
           return null;
         },
       ),
@@ -611,15 +643,15 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage>
     return Container(
       padding: EdgeInsets.all(AppDimensions.spaceM),
       decoration: BoxDecoration(
-        color: AppColors.white,
+        color: context.colors.surface,
         borderRadius: AppDimensions.borderRadiusL,
         border: Border.all(
-          color: _isChildAbove12 ? AppColors.primary : AppColors.border,
+          color: _isChildAbove12 ? AppColors.primary : context.colors.border,
           width: _isChildAbove12 ? 2 : 1,
         ),
         boxShadow: [
           BoxShadow(
-            color: AppColors.shadowLight,
+            color: context.colors.primary.withValues(alpha: 0.1),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -643,7 +675,9 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage>
               ),
               child: Icon(
                 Icons.cake_rounded,
-                color: _isChildAbove12 ? AppColors.primary : AppColors.textSecondary,
+                color: _isChildAbove12
+                    ? AppColors.primary
+                    : context.colors.textSecondary,
               ),
             ),
             SizedBox(width: AppDimensions.spaceM),
@@ -653,11 +687,13 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage>
                 children: [
                   Text(
                     UIStrings.isChildAbove12,
-                    style: AppTextStyles.body1.copyWith(fontWeight: FontWeight.w500),
+                    style: AppTextStyles.body1
+                        .copyWith(fontWeight: FontWeight.w500),
                   ),
                   Text(
                     'Additional features for older children',
-                    style: AppTextStyles.caption.copyWith(color: AppColors.textSecondary),
+                    style: AppTextStyles.caption
+                        .copyWith(color: context.colors.textSecondary),
                   ),
                 ],
               ),
@@ -688,10 +724,10 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage>
       decoration: BoxDecoration(
         color: _agreedToTerms
             ? AppColors.success.withValues(alpha: 0.08)
-            : AppColors.white,
+            : context.colors.surface,
         borderRadius: AppDimensions.borderRadiusL,
         border: Border.all(
-          color: _agreedToTerms ? AppColors.success : AppColors.border,
+          color: _agreedToTerms ? AppColors.success : context.colors.border,
           width: _agreedToTerms ? 2 : 1,
         ),
       ),
@@ -708,7 +744,8 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage>
               width: 28,
               height: 28,
               decoration: BoxDecoration(
-                color: _agreedToTerms ? AppColors.success : AppColors.white,
+                color:
+                    _agreedToTerms ? AppColors.success : context.colors.surface,
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(
                   color: _agreedToTerms ? AppColors.success : AppColors.gray400,
@@ -724,8 +761,11 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage>
               child: Text(
                 UIStrings.agreeToTerms,
                 style: AppTextStyles.body2.copyWith(
-                  color: _agreedToTerms ? AppColors.success : AppColors.textPrimary,
-                  fontWeight: _agreedToTerms ? FontWeight.w600 : FontWeight.normal,
+                  color: _agreedToTerms
+                      ? AppColors.success
+                      : context.colors.textPrimary,
+                  fontWeight:
+                      _agreedToTerms ? FontWeight.w600 : FontWeight.normal,
                 ),
               ),
             ),
@@ -785,7 +825,8 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage>
                 child: ScaleTapWidget(
                   onTap: _previousStep,
                   child: Container(
-                    padding: EdgeInsets.symmetric(vertical: AppDimensions.spaceM),
+                    padding:
+                        EdgeInsets.symmetric(vertical: AppDimensions.spaceM),
                     decoration: BoxDecoration(
                       color: AppColors.gray100,
                       borderRadius: AppDimensions.borderRadiusM,
@@ -793,7 +834,8 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage>
                     child: Center(
                       child: Text(
                         UIStrings.back,
-                        style: AppTextStyles.button.copyWith(color: AppColors.textSecondary),
+                        style: AppTextStyles.button
+                            .copyWith(color: AppColors.textSecondary),
                       ),
                     ),
                   ),
@@ -808,7 +850,9 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage>
               child: ScaleTapWidget(
                 onTap: _isSubmitting
                     ? null
-                    : (_currentStep < _totalSteps - 1 ? _nextStep : _submitConsent),
+                    : (_currentStep < _totalSteps - 1
+                        ? _nextStep
+                        : _submitConsent),
                 child: Container(
                   padding: EdgeInsets.symmetric(vertical: AppDimensions.spaceM),
                   decoration: BoxDecoration(
@@ -831,7 +875,8 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage>
                             height: 24,
                             child: CircularProgressIndicator(
                               strokeWidth: 2,
-                              valueColor: AlwaysStoppedAnimation(AppColors.white),
+                              valueColor:
+                                  AlwaysStoppedAnimation(AppColors.white),
                             ),
                           )
                         : Row(

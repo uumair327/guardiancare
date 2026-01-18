@@ -1,3 +1,4 @@
+// ignore_for_file: avoid_web_libraries_in_flutter, deprecated_member_use
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:guardiancare/core/core.dart';
@@ -67,7 +68,8 @@ class _WebViewPageState extends State<WebViewPage>
       ..style.border = 'none'
       ..style.width = '100%'
       ..style.height = '100%'
-      ..allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture'
+      ..allow =
+          'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture'
       ..allowFullscreen = true;
 
     _iframe!.onLoad.listen((_) {
@@ -103,7 +105,7 @@ class _WebViewPageState extends State<WebViewPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF0F0F1A),
+      backgroundColor: AppColors.videoBackground,
       body: SafeArea(
         child: Column(
           children: [
@@ -127,10 +129,10 @@ class _WebViewPageState extends State<WebViewPage>
         child: Container(
           padding: EdgeInsets.all(AppDimensions.spaceM),
           decoration: BoxDecoration(
-            color: const Color(0xFF1A1A2E),
+            color: AppColors.videoSurface,
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.2),
+                color: AppColors.shadowMedium, // 0.2 approx
                 blurRadius: 8,
                 offset: const Offset(0, 2),
               ),
@@ -187,12 +189,12 @@ class _WebViewPageState extends State<WebViewPage>
         Row(
           children: [
             Icon(
-              _currentUrl.startsWith('https') 
-                  ? Icons.lock_rounded 
+              _currentUrl.startsWith('https')
+                  ? Icons.lock_rounded
                   : Icons.lock_open_rounded,
               color: _currentUrl.startsWith('https')
-                  ? const Color(0xFF22C55E)
-                  : const Color(0xFFEF4444),
+                  ? AppColors.emergencyGreen
+                  : AppColors.error,
               size: 12,
             ),
             SizedBox(width: 4),
@@ -239,9 +241,9 @@ class _WebViewPageState extends State<WebViewPage>
       height: _isLoading ? 3 : 0,
       child: _isLoading
           ? const LinearProgressIndicator(
-              backgroundColor: Color(0xFF1A1A2E),
+              backgroundColor: AppColors.videoSurface,
               valueColor: AlwaysStoppedAnimation<Color>(
-                Color(0xFF8B5CF6),
+                AppColors.videoPrimary,
               ),
             )
           : const SizedBox.shrink(),
@@ -259,7 +261,7 @@ class _WebViewPageState extends State<WebViewPage>
         vertical: AppDimensions.spaceM,
       ),
       decoration: BoxDecoration(
-        color: const Color(0xFF1A1A2E),
+        color: AppColors.videoSurface,
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.2),
@@ -363,7 +365,7 @@ class _WebViewPageState extends State<WebViewPage>
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: const Text('Link copied to clipboard'),
-        backgroundColor: const Color(0xFF22C55E),
+        backgroundColor: AppColors.emergencyGreen,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(
           borderRadius: AppDimensions.borderRadiusM,
@@ -404,7 +406,7 @@ class _WebViewOptionsSheet extends StatelessWidget {
       margin: EdgeInsets.all(AppDimensions.spaceM),
       padding: EdgeInsets.all(AppDimensions.spaceL),
       decoration: BoxDecoration(
-        color: const Color(0xFF1A1A2E),
+        color: AppColors.videoSurface,
         borderRadius: AppDimensions.borderRadiusXL,
       ),
       child: SafeArea(
@@ -432,7 +434,10 @@ class _WebViewOptionsSheet extends StatelessWidget {
                     padding: EdgeInsets.all(AppDimensions.spaceS),
                     decoration: BoxDecoration(
                       gradient: const LinearGradient(
-                        colors: [Color(0xFF8B5CF6), Color(0xFF7C3AED)],
+                        colors: [
+                          AppColors.videoPrimary,
+                          AppColors.videoPrimaryDark
+                        ],
                       ),
                       borderRadius: AppDimensions.borderRadiusS,
                     ),

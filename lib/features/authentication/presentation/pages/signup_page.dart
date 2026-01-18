@@ -17,7 +17,7 @@ class _SignupPageState extends State<SignupPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
-  
+
   String _selectedRole = 'parent';
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
@@ -60,277 +60,291 @@ class _SignupPageState extends State<SignupPage> {
         ),
         body: SafeArea(
           child: BlocConsumer<AuthBloc, AuthState>(
-          listener: (context, state) {
-            if (state is AuthError) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(state.message),
-                  backgroundColor: AppColors.error,
-                  duration: AppDurations.snackbarMedium,
-                ),
-              );
-            } else if (state is AuthAuthenticated) {
-              // Show email verification message
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: const Text(
-                    'Account created! Please check your email to verify your account before signing in.',
+            listener: (context, state) {
+              if (state is AuthError) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(state.message),
+                    backgroundColor: AppColors.error,
+                    duration: AppDurations.snackbarMedium,
                   ),
-                  backgroundColor: AppColors.success,
-                  duration: AppDurations.snackbarLong,
-                ),
-              );
-              // Sign out the user so they must verify email first
-              context.read<AuthBloc>().add(SignOutRequested());
-              // Navigate to login
-              Future.delayed(AppDurations.navigationDelay, () {
-                if (context.mounted) {
-                  context.go('/login');
-                }
-              });
-            }
-          },
-          builder: (context, state) {
-            if (state is AuthLoading) {
-              return Center(
-                child: CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
-                ),
-              );
-            }
+                );
+              } else if (state is AuthAuthenticated) {
+                // Show email verification message
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: const Text(
+                      'Account created! Please check your email to verify your account before signing in.',
+                    ),
+                    backgroundColor: AppColors.success,
+                    duration: AppDurations.snackbarLong,
+                  ),
+                );
+                // Sign out the user so they must verify email first
+                context.read<AuthBloc>().add(SignOutRequested());
+                // Navigate to login
+                Future.delayed(AppDurations.navigationDelay, () {
+                  if (context.mounted) {
+                    context.go('/login');
+                  }
+                });
+              }
+            },
+            builder: (context, state) {
+              if (state is AuthLoading) {
+                return Center(
+                  child: CircularProgressIndicator(
+                    valueColor:
+                        AlwaysStoppedAnimation<Color>(AppColors.primary),
+                  ),
+                );
+              }
 
-            return SingleChildScrollView(
-              padding: AppDimensions.paddingAllL,
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Create Account',
-                      style: AppTextStyles.h1.copyWith(color: AppColors.primary),
-                    ),
-                    SizedBox(height: AppDimensions.spaceS),
-                    Text(
-                      'Sign up to get started',
-                      style: AppTextStyles.bodyLarge.copyWith(color: AppColors.textSecondary),
-                    ),
-                    SizedBox(height: AppDimensions.spaceXL),
-                    
-                    // Full Name Field
-                    TextFormField(
-                      controller: _nameController,
-                      decoration: InputDecoration(
-                        labelText: 'Full Name',
-                        prefixIcon: const Icon(Icons.person_outline),
-                        border: OutlineInputBorder(
-                          borderRadius: AppDimensions.borderRadiusM,
+              return SingleChildScrollView(
+                padding: AppDimensions.paddingAllL,
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Create Account',
+                        style:
+                            AppTextStyles.h1.copyWith(color: AppColors.primary),
+                      ),
+                      SizedBox(height: AppDimensions.spaceS),
+                      Text(
+                        'Sign up to get started',
+                        style: AppTextStyles.bodyLarge
+                            .copyWith(color: AppColors.textSecondary),
+                      ),
+                      SizedBox(height: AppDimensions.spaceXL),
+
+                      // Full Name Field
+                      TextFormField(
+                        controller: _nameController,
+                        decoration: InputDecoration(
+                          labelText: 'Full Name',
+                          prefixIcon: const Icon(Icons.person_outline),
+                          border: OutlineInputBorder(
+                            borderRadius: AppDimensions.borderRadiusM,
+                          ),
+                          filled: true,
+                          fillColor: AppColors.inputBackground,
                         ),
-                        filled: true,
-                        fillColor: AppColors.inputBackground,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter your full name';
+                          }
+                          if (value.length < 2) {
+                            return 'Name must be at least 2 characters';
+                          }
+                          return null;
+                        },
+                        onTapOutside: (_) =>
+                            FocusManager.instance.primaryFocus?.unfocus(),
                       ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter your full name';
-                        }
-                        if (value.length < 2) {
-                          return 'Name must be at least 2 characters';
-                        }
-                        return null;
-                      },
-                    ),
-                    SizedBox(height: AppDimensions.spaceM),
-                    
-                    // Email Field
-                    TextFormField(
-                      controller: _emailController,
-                      keyboardType: TextInputType.emailAddress,
-                      decoration: InputDecoration(
-                        labelText: 'Email',
-                        prefixIcon: const Icon(Icons.email_outlined),
-                        border: OutlineInputBorder(
-                          borderRadius: AppDimensions.borderRadiusM,
+                      SizedBox(height: AppDimensions.spaceM),
+
+                      // Email Field
+                      TextFormField(
+                        controller: _emailController,
+                        keyboardType: TextInputType.emailAddress,
+                        decoration: InputDecoration(
+                          labelText: 'Email',
+                          prefixIcon: const Icon(Icons.email_outlined),
+                          border: OutlineInputBorder(
+                            borderRadius: AppDimensions.borderRadiusM,
+                          ),
+                          filled: true,
+                          fillColor: AppColors.inputBackground,
                         ),
-                        filled: true,
-                        fillColor: AppColors.inputBackground,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter your email';
+                          }
+                          if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
+                              .hasMatch(value)) {
+                            return 'Please enter a valid email';
+                          }
+                          return null;
+                        },
+                        onTapOutside: (_) =>
+                            FocusManager.instance.primaryFocus?.unfocus(),
                       ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter your email';
-                        }
-                        if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
-                            .hasMatch(value)) {
-                          return 'Please enter a valid email';
-                        }
-                        return null;
-                      },
-                    ),
-                    SizedBox(height: AppDimensions.spaceM),
-                    
-                    // Role Selection - Using RadioGroup for Flutter 3.32+ compatibility
-                    Container(
-                      decoration: BoxDecoration(
-                        color: AppColors.inputBackground,
-                        borderRadius: AppDimensions.borderRadiusM,
-                        border: Border.all(color: AppColors.inputBorder),
+                      SizedBox(height: AppDimensions.spaceM),
+
+                      // Role Selection - Using RadioGroup for Flutter 3.32+ compatibility
+                      Container(
+                        decoration: BoxDecoration(
+                          color: AppColors.inputBackground,
+                          borderRadius: AppDimensions.borderRadiusM,
+                          border: Border.all(color: AppColors.inputBorder),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: AppDimensions.paddingAllM,
+                              child: Text(
+                                'I am a:',
+                                style: AppTextStyles.bodyLarge
+                                    .copyWith(fontWeight: FontWeight.w500),
+                              ),
+                            ),
+                            RadioGroup<String>(
+                              groupValue: _selectedRole,
+                              onChanged: (value) {
+                                if (value != null) {
+                                  setState(() {
+                                    _selectedRole = value;
+                                  });
+                                }
+                              },
+                              child: Column(
+                                children: [
+                                  RadioListTile<String>(
+                                    title: const Text(UIStrings.parentGuardian),
+                                    value: 'parent',
+                                  ),
+                                  RadioListTile<String>(
+                                    title: const Text(UIStrings.child),
+                                    value: 'child',
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Padding(
-                            padding: AppDimensions.paddingAllM,
-                            child: Text(
-                              'I am a:',
-                              style: AppTextStyles.bodyLarge.copyWith(fontWeight: FontWeight.w500),
+                      SizedBox(height: AppDimensions.spaceM),
+
+                      // Password Field
+                      TextFormField(
+                        controller: _passwordController,
+                        obscureText: _obscurePassword,
+                        decoration: InputDecoration(
+                          labelText: 'Password',
+                          prefixIcon: const Icon(Icons.lock_outline),
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              _obscurePassword
+                                  ? Icons.visibility_off
+                                  : Icons.visibility,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                _obscurePassword = !_obscurePassword;
+                              });
+                            },
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: AppDimensions.borderRadiusM,
+                          ),
+                          filled: true,
+                          fillColor: AppColors.inputBackground,
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter your password';
+                          }
+                          if (value.length < 6) {
+                            return 'Password must be at least 6 characters';
+                          }
+                          return null;
+                        },
+                        onTapOutside: (_) =>
+                            FocusManager.instance.primaryFocus?.unfocus(),
+                      ),
+                      SizedBox(height: AppDimensions.spaceM),
+
+                      // Confirm Password Field
+                      TextFormField(
+                        controller: _confirmPasswordController,
+                        obscureText: _obscureConfirmPassword,
+                        decoration: InputDecoration(
+                          labelText: 'Confirm Password',
+                          prefixIcon: const Icon(Icons.lock_outline),
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              _obscureConfirmPassword
+                                  ? Icons.visibility_off
+                                  : Icons.visibility,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                _obscureConfirmPassword =
+                                    !_obscureConfirmPassword;
+                              });
+                            },
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: AppDimensions.borderRadiusM,
+                          ),
+                          filled: true,
+                          fillColor: AppColors.inputBackground,
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please confirm your password';
+                          }
+                          if (value != _passwordController.text) {
+                            return 'Passwords do not match';
+                          }
+                          return null;
+                        },
+                        onTapOutside: (_) =>
+                            FocusManager.instance.primaryFocus?.unfocus(),
+                      ),
+                      SizedBox(height: AppDimensions.spaceL),
+
+                      // Sign Up Button
+                      SizedBox(
+                        width: double.infinity,
+                        height: AppDimensions.buttonHeight,
+                        child: ElevatedButton(
+                          onPressed: () => _handleSignup(context),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.primary,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: AppDimensions.borderRadiusM,
                             ),
                           ),
-                          RadioGroup<String>(
-                            groupValue: _selectedRole,
-                            onChanged: (value) {
-                              if (value != null) {
-                                setState(() {
-                                  _selectedRole = value;
-                                });
-                              }
-                            },
-                            child: Column(
+                          child: Text(
+                            'Sign Up',
+                            style: AppTextStyles.button,
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: AppDimensions.spaceM),
+
+                      // Login Link
+                      Center(
+                        child: TextButton(
+                          onPressed: () => context.go('/login'),
+                          child: Text.rich(
+                            TextSpan(
+                              text: 'Already have an account? ',
+                              style: AppTextStyles.bodyMedium
+                                  .copyWith(color: AppColors.textSecondary),
                               children: [
-                                RadioListTile<String>(
-                                  title: const Text(UIStrings.parentGuardian),
-                                  value: 'parent',
-                                ),
-                                RadioListTile<String>(
-                                  title: const Text(UIStrings.child),
-                                  value: 'child',
+                                TextSpan(
+                                  text: 'Login',
+                                  style: TextStyle(
+                                    color: AppColors.primary,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                               ],
                             ),
                           ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(height: AppDimensions.spaceM),
-                    
-                    // Password Field
-                    TextFormField(
-                      controller: _passwordController,
-                      obscureText: _obscurePassword,
-                      decoration: InputDecoration(
-                        labelText: 'Password',
-                        prefixIcon: const Icon(Icons.lock_outline),
-                        suffixIcon: IconButton(
-                          icon: Icon(
-                            _obscurePassword
-                                ? Icons.visibility_off
-                                : Icons.visibility,
-                          ),
-                          onPressed: () {
-                            setState(() {
-                              _obscurePassword = !_obscurePassword;
-                            });
-                          },
-                        ),
-                        border: OutlineInputBorder(
-                          borderRadius: AppDimensions.borderRadiusM,
-                        ),
-                        filled: true,
-                        fillColor: AppColors.inputBackground,
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter your password';
-                        }
-                        if (value.length < 6) {
-                          return 'Password must be at least 6 characters';
-                        }
-                        return null;
-                      },
-                    ),
-                    SizedBox(height: AppDimensions.spaceM),
-                    
-                    // Confirm Password Field
-                    TextFormField(
-                      controller: _confirmPasswordController,
-                      obscureText: _obscureConfirmPassword,
-                      decoration: InputDecoration(
-                        labelText: 'Confirm Password',
-                        prefixIcon: const Icon(Icons.lock_outline),
-                        suffixIcon: IconButton(
-                          icon: Icon(
-                            _obscureConfirmPassword
-                                ? Icons.visibility_off
-                                : Icons.visibility,
-                          ),
-                          onPressed: () {
-                            setState(() {
-                              _obscureConfirmPassword = !_obscureConfirmPassword;
-                            });
-                          },
-                        ),
-                        border: OutlineInputBorder(
-                          borderRadius: AppDimensions.borderRadiusM,
-                        ),
-                        filled: true,
-                        fillColor: AppColors.inputBackground,
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please confirm your password';
-                        }
-                        if (value != _passwordController.text) {
-                          return 'Passwords do not match';
-                        }
-                        return null;
-                      },
-                    ),
-                    SizedBox(height: AppDimensions.spaceL),
-                    
-                    // Sign Up Button
-                    SizedBox(
-                      width: double.infinity,
-                      height: AppDimensions.buttonHeight,
-                      child: ElevatedButton(
-                        onPressed: () => _handleSignup(context),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primary,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: AppDimensions.borderRadiusM,
-                          ),
-                        ),
-                        child: Text(
-                          'Sign Up',
-                          style: AppTextStyles.button,
                         ),
                       ),
-                    ),
-                    SizedBox(height: AppDimensions.spaceM),
-                    
-                    // Login Link
-                    Center(
-                      child: TextButton(
-                        onPressed: () => context.go('/login'),
-                        child: Text.rich(
-                          TextSpan(
-                            text: 'Already have an account? ',
-                            style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSecondary),
-                            children: [
-                              TextSpan(
-                                text: 'Login',
-                                style: TextStyle(
-                                  color: AppColors.primary,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-            );
-          },
+              );
+            },
           ),
         ),
       ),

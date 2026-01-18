@@ -90,15 +90,17 @@ class _PasswordResetPageState extends State<PasswordResetPage> {
                   children: [
                     Text(
                       'Reset Password',
-                      style: AppTextStyles.h1.copyWith(color: AppColors.primary),
+                      style:
+                          AppTextStyles.h1.copyWith(color: AppColors.primary),
                     ),
                     SizedBox(height: AppDimensions.spaceS),
                     Text(
                       'Enter your email address and we\'ll send you a link to reset your password.',
-                      style: AppTextStyles.bodyLarge.copyWith(color: AppColors.textSecondary),
+                      style: AppTextStyles.bodyLarge
+                          .copyWith(color: AppColors.textSecondary),
                     ),
                     SizedBox(height: AppDimensions.spaceXL),
-                    
+
                     // Email Field
                     TextFormField(
                       controller: _emailController,
@@ -122,9 +124,11 @@ class _PasswordResetPageState extends State<PasswordResetPage> {
                         }
                         return null;
                       },
+                      onTapOutside: (_) =>
+                          FocusManager.instance.primaryFocus?.unfocus(),
                     ),
                     SizedBox(height: AppDimensions.spaceL),
-                    
+
                     // Reset Password Button
                     SizedBox(
                       width: double.infinity,
@@ -144,7 +148,7 @@ class _PasswordResetPageState extends State<PasswordResetPage> {
                       ),
                     ),
                     SizedBox(height: AppDimensions.spaceM),
-                    
+
                     // Back to Login Link
                     Center(
                       child: TextButton(
@@ -152,7 +156,8 @@ class _PasswordResetPageState extends State<PasswordResetPage> {
                         child: Text.rich(
                           TextSpan(
                             text: 'Remember your password? ',
-                            style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSecondary),
+                            style: AppTextStyles.bodyMedium
+                                .copyWith(color: AppColors.textSecondary),
                             children: [
                               TextSpan(
                                 text: 'Login',

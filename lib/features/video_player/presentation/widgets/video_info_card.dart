@@ -29,8 +29,8 @@ class VideoInfoCard extends StatelessWidget {
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            const Color(0xFF1A1A2E),
-            const Color(0xFF16213E),
+            AppColors.videoSurface,
+            AppColors.videoSurfaceLight,
           ],
         ),
         borderRadius: BorderRadius.only(
@@ -122,9 +122,9 @@ class VideoInfoCard extends StatelessWidget {
                   value: progressPercent / 100,
                   strokeWidth: 4,
                   backgroundColor: AppColors.white.withValues(alpha: 0.1),
-                  valueColor: const AlwaysStoppedAnimation<Color>(
-                    Color(0xFF8B5CF6),
-                  ),
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                  AppColors.videoPrimary,
+                ),
                 ),
                 Text(
                   '$progressPercent%',
@@ -168,13 +168,13 @@ class VideoInfoCard extends StatelessWidget {
               vertical: AppDimensions.spaceS,
             ),
             decoration: BoxDecoration(
-              color: const Color(0xFF8B5CF6).withValues(alpha: 0.2),
+              color: AppColors.videoPrimarySubtle20,
               borderRadius: AppDimensions.borderRadiusS,
             ),
             child: Text(
               '-${_formatDuration(duration! - position!)}',
               style: AppTextStyles.bodySmall.copyWith(
-                color: const Color(0xFF8B5CF6),
+                color: AppColors.videoPrimary,
                 fontWeight: FontWeight.w600,
                 fontFeatures: [const FontFeature.tabularFigures()],
               ),
@@ -250,12 +250,7 @@ class _ActionButton extends StatelessWidget {
       hapticType: HapticFeedbackType.light,
       decoration: BoxDecoration(
         gradient: isPrimary
-            ? LinearGradient(
-                colors: [
-                  const Color(0xFF8B5CF6),
-                  const Color(0xFF7C3AED),
-                ],
-              )
+            ? AppColors.videoGradient
             : null,
         color: isPrimary ? null : AppColors.white.withValues(alpha: 0.1),
         borderRadius: AppDimensions.borderRadiusM,

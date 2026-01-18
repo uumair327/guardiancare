@@ -18,7 +18,7 @@ class EmergencyContactCard extends StatefulWidget {
     required this.title,
     required this.contacts,
     required this.onCall,
-    this.gradientColors = const [Color(0xFF8B5CF6), Color(0xFF7C3AED)],
+    this.gradientColors = const [AppColors.videoPrimary, AppColors.videoPrimaryDark],
   });
 
   @override
@@ -50,7 +50,7 @@ class _EmergencyContactCardState extends State<EmergencyContactCard>
     return RepaintBoundary(
       child: Container(
         decoration: BoxDecoration(
-          color: const Color(0xFF1A1A2E),
+          color: AppColors.videoSurface,
           borderRadius: AppDimensions.borderRadiusL,
           boxShadow: [
             BoxShadow(
@@ -324,12 +324,12 @@ class _CallButtonState extends State<_CallButton>
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: [Color(0xFF22C55E), Color(0xFF16A34A)],
+              colors: [AppColors.emergencyGreen, AppColors.emergencyGreenDark],
             ),
             borderRadius: AppDimensions.borderRadiusM,
             boxShadow: [
               BoxShadow(
-                color: const Color(0xFF22C55E).withValues(alpha: 0.4),
+                color: AppColors.emergencyGreen.withValues(alpha: 0.4),
                 blurRadius: 12,
                 offset: const Offset(0, 4),
               ),

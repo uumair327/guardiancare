@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:guardiancare/core/constants/app_colors.dart';
 import 'package:guardiancare/core/constants/app_dimensions.dart';
+import 'package:guardiancare/core/constants/theme_colors.dart';
 
 /// Enhanced shimmer loading effect
-/// 
+///
 /// Features:
 /// - Smooth gradient animation
 /// - Customizable colors
@@ -11,16 +12,16 @@ import 'package:guardiancare/core/constants/app_dimensions.dart';
 /// - Performance optimized
 class ShimmerLoading extends StatefulWidget {
   final Widget child;
-  final Color baseColor;
-  final Color highlightColor;
+  final Color? baseColor;
+  final Color? highlightColor;
   final Duration duration;
   final bool enabled;
 
   const ShimmerLoading({
     super.key,
     required this.child,
-    this.baseColor = const Color(0xFFE5E7EB),
-    this.highlightColor = const Color(0xFFF9FAFB),
+    this.baseColor,
+    this.highlightColor,
     this.duration = const Duration(milliseconds: 1500),
     this.enabled = true,
   });
@@ -41,11 +42,11 @@ class _ShimmerLoadingState extends State<ShimmerLoading>
       vsync: this,
       duration: widget.duration,
     );
-    
+
     _animation = Tween<double>(begin: -2, end: 2).animate(
       CurvedAnimation(parent: _controller, curve: Curves.easeInOutSine),
     );
-    
+
     if (widget.enabled) {
       _controller.repeat();
     }
@@ -79,6 +80,11 @@ class _ShimmerLoadingState extends State<ShimmerLoading>
       child: AnimatedBuilder(
         animation: _animation,
         builder: (context, child) {
+          final effectiveBaseColor =
+              widget.baseColor ?? context.colors.shimmerBase;
+          final effectiveHighlightColor =
+              widget.highlightColor ?? context.colors.shimmerHighlight;
+
           return ShaderMask(
             blendMode: BlendMode.srcATop,
             shaderCallback: (bounds) {
@@ -86,9 +92,9 @@ class _ShimmerLoadingState extends State<ShimmerLoading>
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  widget.baseColor,
-                  widget.highlightColor,
-                  widget.baseColor,
+                  effectiveBaseColor,
+                  effectiveHighlightColor,
+                  effectiveBaseColor,
                 ],
                 stops: [
                   0.0,

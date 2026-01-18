@@ -101,12 +101,12 @@ class _ProfileMenuItemState extends State<ProfileMenuItem>
             decoration: BoxDecoration(
               color: _isPressed
                   ? _iconColor.withValues(alpha: 0.05)
-                  : AppColors.surface,
+                  : context.colors.surface,
               borderRadius: AppDimensions.borderRadiusM,
               border: Border.all(
                 color: _isPressed
                     ? _iconColor.withValues(alpha: 0.2)
-                    : AppColors.divider.withValues(alpha: 0.5),
+                    : context.colors.divider.withValues(alpha: 0.5),
                 width: 1,
               ),
             ),
@@ -136,7 +136,7 @@ class _ProfileMenuItemState extends State<ProfileMenuItem>
                         style: AppTextStyles.body1.copyWith(
                           color: widget.isDanger
                               ? AppColors.error
-                              : AppColors.textPrimary,
+                              : context.colors.textPrimary,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
@@ -145,7 +145,7 @@ class _ProfileMenuItemState extends State<ProfileMenuItem>
                         Text(
                           widget.subtitle!,
                           style: AppTextStyles.bodySmall.copyWith(
-                            color: AppColors.textSecondary,
+                            color: context.colors.textSecondary,
                           ),
                         ),
                       ],
@@ -158,7 +158,7 @@ class _ProfileMenuItemState extends State<ProfileMenuItem>
                 else if (widget.showArrow)
                   Icon(
                     Icons.chevron_right_rounded,
-                    color: AppColors.textSecondary,
+                    color: context.colors.textSecondary,
                     size: AppDimensions.iconM,
                   ),
               ],

@@ -60,9 +60,8 @@ class _QuizPageState extends State<QuizPage> {
 
   Future<void> getQuestions() async {
     try {
-      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
-          .collection('quiz_questions')
-          .get();
+      QuerySnapshot querySnapshot =
+          await FirebaseFirestore.instance.collection('quiz_questions').get();
       List<Map<String, dynamic>> ques = [];
       for (var doc in querySnapshot.docs) {
         final data = doc.data() as Map<String, dynamic>;
@@ -95,7 +94,7 @@ class _QuizPageState extends State<QuizPage> {
     final l10n = AppLocalizations.of(context);
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: context.colors.background,
       body: Column(
         children: [
           // Modern header
@@ -130,7 +129,7 @@ class _QuizPageState extends State<QuizPage> {
             child: ShimmerLoading(
               child: Container(
                 decoration: BoxDecoration(
-                  color: AppColors.shimmerBase,
+                  color: context.colors.surfaceVariant,
                   borderRadius: AppDimensions.borderRadiusL,
                 ),
               ),
@@ -150,27 +149,27 @@ class _QuizPageState extends State<QuizPage> {
             Container(
               padding: EdgeInsets.all(AppDimensions.spaceXL),
               decoration: BoxDecoration(
-                color: AppColors.primary.withValues(alpha: 0.1),
+                color: context.colors.primary.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
               child: Icon(
                 Icons.quiz_rounded,
                 size: AppDimensions.iconXXL * 1.5,
-                color: AppColors.primary,
+                color: context.colors.primary,
               ),
             ),
             SizedBox(height: AppDimensions.spaceL),
             Text(
               l10n.noQuizzesAvailable,
               style: AppTextStyles.h4.copyWith(
-                color: AppColors.textPrimary,
+                color: context.colors.textPrimary,
               ),
             ),
             SizedBox(height: AppDimensions.spaceS),
             Text(
               UIStrings.checkBackLaterQuizzes,
               style: AppTextStyles.body2.copyWith(
-                color: AppColors.textSecondary,
+                color: context.colors.textSecondary,
               ),
             ),
           ],
@@ -182,7 +181,7 @@ class _QuizPageState extends State<QuizPage> {
   Widget _buildQuizGrid() {
     return RefreshIndicator(
       onRefresh: _loadData,
-      color: AppColors.primary,
+      color: context.colors.primary,
       child: Padding(
         padding: EdgeInsets.all(AppDimensions.screenPaddingH),
         child: GridView.builder(

@@ -18,6 +18,8 @@ class LanguageSelectorDialog extends StatelessWidget {
     final supportedLocales = LocaleService.getSupportedLocales();
 
     return Dialog(
+      backgroundColor: context.colors.surface,
+      surfaceTintColor: context.colors.surface,
       shape: RoundedRectangleBorder(
         borderRadius: AppDimensions.borderRadiusL,
       ),
@@ -30,7 +32,7 @@ class LanguageSelectorDialog extends StatelessWidget {
             Container(
               padding: AppDimensions.paddingAllL,
               decoration: BoxDecoration(
-                color: AppColors.primary,
+                color: context.colors.primary,
                 borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(AppDimensions.radiusL),
                   topRight: Radius.circular(AppDimensions.radiusL),
@@ -78,19 +80,23 @@ class LanguageSelectorDialog extends StatelessWidget {
                       style: AppTextStyles.h3.copyWith(
                         fontWeight:
                             isSelected ? FontWeight.bold : FontWeight.normal,
-                        color: isSelected ? AppColors.primary : AppColors.textPrimary,
+                        color: isSelected
+                            ? context.colors.primary
+                            : context.colors.textPrimary,
                       ),
                     ),
                     subtitle: Text(
                       localeInfo.name,
                       style: AppTextStyles.bodySmall.copyWith(
-                        color: isSelected ? AppColors.primary : AppColors.textSecondary,
+                        color: isSelected
+                            ? context.colors.primary
+                            : context.colors.textSecondary,
                       ),
                     ),
                     trailing: isSelected
                         ? Icon(
                             Icons.check_circle,
-                            color: AppColors.primary,
+                            color: context.colors.primary,
                             size: AppDimensions.iconL,
                           )
                         : null,

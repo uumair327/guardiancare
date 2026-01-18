@@ -5,7 +5,7 @@ import 'package:guardiancare/features/forum/forum.dart';
 import 'package:intl/intl.dart';
 
 /// Comment Item with educational-friendly design
-/// 
+///
 /// Features:
 /// - Animated appearance
 /// - User avatar with gradient
@@ -32,7 +32,7 @@ class _CommentItemState extends State<CommentItem> {
   String? _userImage;
   bool _isLoadingUser = true;
 
-  static const _primaryColor = Color(0xFF8B5CF6);
+  static Color get _primaryColor => AppColors.videoPrimary;
 
   @override
   void initState() {
@@ -54,8 +54,8 @@ class _CommentItemState extends State<CommentItem> {
             },
             (userDetails) {
               _userName = userDetails.userName;
-              _userImage = userDetails.userImage.isNotEmpty 
-                  ? userDetails.userImage 
+              _userImage = userDetails.userImage.isNotEmpty
+                  ? userDetails.userImage
                   : null;
             },
           );
@@ -80,7 +80,7 @@ class _CommentItemState extends State<CommentItem> {
   String _getTimeAgo(DateTime dateTime) {
     final now = DateTime.now();
     final difference = now.difference(dateTime);
-    
+
     if (difference.inDays > 30) {
       return DateFormat('MMM d, yyyy').format(dateTime);
     } else if (difference.inDays > 0) {
@@ -95,15 +95,8 @@ class _CommentItemState extends State<CommentItem> {
   }
 
   Color _getAvatarColor(String userId) {
-    final colors = [
-      const Color(0xFF8B5CF6),
-      const Color(0xFF10B981),
-      const Color(0xFF6366F1),
-      const Color(0xFFF59E0B),
-      const Color(0xFFEC4899),
-      const Color(0xFF14B8A6),
-    ];
-    return colors[userId.hashCode.abs() % colors.length];
+    return AppColors
+        .cardPalette[userId.hashCode.abs() % AppColors.cardPalette.length];
   }
 
   String _getInitials(String name) {
@@ -122,7 +115,7 @@ class _CommentItemState extends State<CommentItem> {
         width: 40,
         height: 40,
         decoration: BoxDecoration(
-          color: AppColors.gray200,
+          color: context.colors.inputBackground,
           shape: BoxShape.circle,
         ),
         child: Center(
@@ -131,7 +124,8 @@ class _CommentItemState extends State<CommentItem> {
             height: 16,
             child: CircularProgressIndicator(
               strokeWidth: 2,
-              valueColor: AlwaysStoppedAnimation<Color>(AppColors.gray400),
+              valueColor:
+                  AlwaysStoppedAnimation<Color>(context.colors.textSecondary),
             ),
           ),
         ),
@@ -169,7 +163,7 @@ class _CommentItemState extends State<CommentItem> {
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
-                  color: AppColors.gray200,
+                  color: context.colors.inputBackground,
                   shape: BoxShape.circle,
                 ),
                 child: Center(
@@ -243,10 +237,10 @@ class _CommentItemState extends State<CommentItem> {
           margin: EdgeInsets.only(bottom: AppDimensions.spaceM),
           padding: EdgeInsets.all(AppDimensions.spaceM),
           decoration: BoxDecoration(
-            color: AppColors.cardBackground,
+            color: context.colors.surface,
             borderRadius: AppDimensions.borderRadiusL,
             border: Border.all(
-              color: AppColors.divider.withValues(alpha: 0.5),
+              color: context.colors.divider.withValues(alpha: 0.5),
             ),
             boxShadow: [
               BoxShadow(
@@ -273,7 +267,7 @@ class _CommentItemState extends State<CommentItem> {
                                 width: 80,
                                 height: 14,
                                 decoration: BoxDecoration(
-                                  color: AppColors.gray200,
+                                  color: context.colors.inputBackground,
                                   borderRadius: BorderRadius.circular(4),
                                 ),
                               )
@@ -281,7 +275,7 @@ class _CommentItemState extends State<CommentItem> {
                                 displayName,
                                 style: AppTextStyles.bodySmall.copyWith(
                                   fontWeight: FontWeight.w600,
-                                  color: AppColors.textPrimary,
+                                  color: context.colors.textPrimary,
                                 ),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
@@ -292,13 +286,13 @@ class _CommentItemState extends State<CommentItem> {
                             Icon(
                               Icons.schedule_rounded,
                               size: 12,
-                              color: AppColors.textSecondary,
+                              color: context.colors.textSecondary,
                             ),
                             SizedBox(width: 4),
                             Text(
                               _getTimeAgo(widget.comment.createdAt),
                               style: AppTextStyles.caption.copyWith(
-                                color: AppColors.textSecondary,
+                                color: context.colors.textSecondary,
                               ),
                             ),
                           ],
@@ -343,7 +337,7 @@ class _CommentItemState extends State<CommentItem> {
                   widget.comment.text,
                   style: AppTextStyles.body2.copyWith(
                     height: 1.6,
-                    color: AppColors.textPrimary,
+                    color: context.colors.textPrimary,
                   ),
                   maxLines: 4,
                   overflow: TextOverflow.ellipsis,
@@ -352,7 +346,7 @@ class _CommentItemState extends State<CommentItem> {
                   widget.comment.text,
                   style: AppTextStyles.body2.copyWith(
                     height: 1.6,
-                    color: AppColors.textPrimary,
+                    color: context.colors.textPrimary,
                   ),
                 ),
                 crossFadeState: _isExpanded

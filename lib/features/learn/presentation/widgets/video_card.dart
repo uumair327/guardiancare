@@ -87,7 +87,7 @@ class _VideoCardState extends State<VideoCard>
               duration: AppDurations.animationShort,
               curve: AppCurves.standard,
               decoration: BoxDecoration(
-                color: AppColors.cardBackground,
+                color: context.colors.surface,
                 borderRadius: AppDimensions.borderRadiusL,
                 boxShadow: [
                   BoxShadow(
@@ -156,7 +156,8 @@ class _VideoCardState extends State<VideoCard>
                           // Play button
                           Center(
                             child: AnimatedScale(
-                              scale: _isPressed ? 0.9 : (_isHovered ? 1.1 : 1.0),
+                              scale:
+                                  _isPressed ? 0.9 : (_isHovered ? 1.1 : 1.0),
                               duration: AppDurations.animationShort,
                               child: AnimatedOpacity(
                                 duration: AppDurations.animationShort,
@@ -164,11 +165,13 @@ class _VideoCardState extends State<VideoCard>
                                 child: Container(
                                   padding: EdgeInsets.all(AppDimensions.spaceM),
                                   decoration: BoxDecoration(
-                                    color: AppColors.white.withValues(alpha: 0.95),
+                                    color:
+                                        AppColors.white.withValues(alpha: 0.95),
                                     shape: BoxShape.circle,
                                     boxShadow: [
                                       BoxShadow(
-                                        color: AppColors.black.withValues(alpha: 0.2),
+                                        color: AppColors.black
+                                            .withValues(alpha: 0.2),
                                         blurRadius: 12,
                                         offset: const Offset(0, 4),
                                       ),
@@ -226,7 +229,7 @@ class _VideoCardState extends State<VideoCard>
                         widget.video.title,
                         style: AppTextStyles.bodySmall.copyWith(
                           fontWeight: FontWeight.w600,
-                          color: AppColors.textPrimary,
+                          color: context.colors.textPrimary,
                           height: 1.2,
                         ),
                         maxLines: 2,
@@ -319,7 +322,7 @@ class _VideoListCardState extends State<VideoListCard>
               vertical: AppDimensions.spaceS,
             ),
             decoration: BoxDecoration(
-              color: AppColors.cardBackground,
+              color: context.colors.surface,
               borderRadius: AppDimensions.borderRadiusL,
               boxShadow: [
                 BoxShadow(
@@ -386,7 +389,7 @@ class _VideoListCardState extends State<VideoListCard>
                             widget.video.title,
                             style: AppTextStyles.bodyMedium.copyWith(
                               fontWeight: FontWeight.w600,
-                              color: AppColors.textPrimary,
+                              color: context.colors.textPrimary,
                             ),
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,

@@ -83,6 +83,14 @@ android {
         }
     }
     
+    // 16KB page size alignment for Android 15+ devices
+    // Required for Play Store compliance on newer devices
+    packaging {
+        jniLibs {
+            useLegacyPackaging false
+        }
+    }
+    
     // Split APKs by ABI for smaller downloads
     splits {
         abi {

@@ -39,19 +39,7 @@ class _QuizCardState extends State<QuizCard> {
     end: 0.96,
   );
 
-  // Quiz colors for visual variety
-  static const List<Color> _quizColors = [
-    Color(0xFF6366F1), // Indigo
-    Color(0xFF8B5CF6), // Purple
-    Color(0xFFEC4899), // Pink
-    Color(0xFFF59E0B), // Amber
-    Color(0xFF10B981), // Emerald
-    Color(0xFF3B82F6), // Blue
-    Color(0xFFEF4444), // Red
-    Color(0xFF14B8A6), // Teal
-  ];
-
-  Color get _cardColor => _quizColors[widget.index % _quizColors.length];
+  Color get _cardColor => AppColors.cardPalette[widget.index % AppColors.cardPalette.length];
 
   void _onPanUpdate(DragUpdateDetails details) {
     final RenderBox box = context.findRenderObject() as RenderBox;
