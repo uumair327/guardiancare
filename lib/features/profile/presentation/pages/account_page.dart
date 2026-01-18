@@ -240,6 +240,7 @@ class _AccountContent extends StatelessWidget {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
+          backgroundColor: context.colors.surface,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(AppDimensions.dialogRadius),
           ),
@@ -247,14 +248,27 @@ class _AccountContent extends StatelessWidget {
             children: [
               Icon(Icons.warning_rounded, color: AppColors.error),
               SizedBox(width: AppDimensions.spaceS),
-              Text(l10n.deleteAccount, style: AppTextStyles.dialogTitle),
+              Text(
+                l10n.deleteAccount,
+                style: AppTextStyles.dialogTitle.copyWith(
+                  color: context.colors.textPrimary,
+                ),
+              ),
             ],
           ),
-          content: Text(l10n.deleteAccountConfirm, style: AppTextStyles.body2),
+          content: Text(
+            l10n.deleteAccountConfirm,
+            style: AppTextStyles.body2.copyWith(
+              color: context.colors.textSecondary,
+            ),
+          ),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(false),
-              child: Text(l10n.no),
+              child: Text(
+                l10n.no,
+                style: TextStyle(color: context.colors.textSecondary),
+              ),
             ),
             ElevatedButton(
               onPressed: () => Navigator.of(context).pop(true),
@@ -280,6 +294,7 @@ class _AccountContent extends StatelessWidget {
           builder: (BuildContext dialogContext) {
             final dialogL10n = AppLocalizations.of(dialogContext);
             return AlertDialog(
+              backgroundColor: context.colors.surface,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(AppDimensions.dialogRadius),
               ),
@@ -287,21 +302,37 @@ class _AccountContent extends StatelessWidget {
                 children: [
                   Icon(Icons.logout_rounded, color: AppColors.primary),
                   SizedBox(width: AppDimensions.spaceS),
-                  Text(l10n.logout, style: AppTextStyles.dialogTitle),
+                  Text(
+                    l10n.logout,
+                    style: AppTextStyles.dialogTitle.copyWith(
+                      color: context.colors.textPrimary,
+                    ),
+                  ),
                 ],
               ),
-              content: Text(l10n.logoutConfirm, style: AppTextStyles.body2),
+              content: Text(
+                l10n.logoutConfirm,
+                style: AppTextStyles.body2.copyWith(
+                  color: context.colors.textSecondary,
+                ),
+              ),
               actions: [
                 TextButton(
                   onPressed: () => Navigator.of(dialogContext).pop(false),
-                  child: Text(dialogL10n.cancel),
+                  child: Text(
+                    dialogL10n.cancel,
+                    style: TextStyle(color: context.colors.textSecondary),
+                  ),
                 ),
                 ElevatedButton(
                   onPressed: () => Navigator.of(dialogContext).pop(true),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
                   ),
-                  child: Text(dialogL10n.logout),
+                  child: Text(
+                    dialogL10n.logout,
+                    style: TextStyle(color: AppColors.white),
+                  ),
                 ),
               ],
             );
