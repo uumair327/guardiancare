@@ -451,7 +451,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
             Text(
               'Continue with Google',
               style: AppTextStyles.button.copyWith(
-                color: context.colors.textPrimary,
+                color: AppColors.textPrimary,
                 fontWeight: FontWeight.w600,
               ),
             ),

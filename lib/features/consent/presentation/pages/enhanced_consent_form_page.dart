@@ -177,19 +177,26 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage>
       body: SafeArea(
         child: Column(
           children: [
-            _buildHeader(),
             Expanded(
               child: SingleChildScrollView(
-                padding: EdgeInsets.all(AppDimensions.screenPaddingH),
-                child: Form(
-                  key: _formKey,
-                  child: FadeTransition(
-                    opacity: _fadeAnimation,
-                    child: SlideTransition(
-                      position: _slideAnimation,
-                      child: _buildCurrentStep(),
+                physics: const BouncingScrollPhysics(),
+                child: Column(
+                  children: [
+                    _buildHeader(),
+                    Padding(
+                      padding: EdgeInsets.all(AppDimensions.screenPaddingH),
+                      child: Form(
+                        key: _formKey,
+                        child: FadeTransition(
+                          opacity: _fadeAnimation,
+                          child: SlideTransition(
+                            position: _slideAnimation,
+                            child: _buildCurrentStep(),
+                          ),
+                        ),
+                      ),
                     ),
-                  ),
+                  ],
                 ),
               ),
             ),
@@ -546,10 +553,14 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage>
         controller: controller,
         keyboardType: keyboardType,
         obscureText: obscureText,
-        style: AppTextStyles.body1,
+        style: AppTextStyles.body1.copyWith(color: context.colors.textPrimary),
         decoration: InputDecoration(
           labelText: label,
+          labelStyle:
+              AppTextStyles.label.copyWith(color: context.colors.textSecondary),
           hintText: hint,
+          hintStyle:
+              AppTextStyles.hint.copyWith(color: context.colors.textTertiary),
           prefixIcon: Icon(icon, color: AppColors.primary),
           suffixIcon: suffixIcon,
           border: OutlineInputBorder(
@@ -600,6 +611,8 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage>
         isExpanded: true,
         decoration: InputDecoration(
           labelText: UIStrings.selectSecurityQuestion,
+          labelStyle:
+              AppTextStyles.label.copyWith(color: context.colors.textSecondary),
           prefixIcon:
               Icon(Icons.help_outline_rounded, color: AppColors.primary),
           border: OutlineInputBorder(
@@ -623,7 +636,8 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage>
             value: question,
             child: Text(
               question,
-              style: AppTextStyles.body2,
+              style: AppTextStyles.body2
+                  .copyWith(color: context.colors.textPrimary),
               overflow: TextOverflow.ellipsis,
               maxLines: 1,
             ),
@@ -687,8 +701,10 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage>
                 children: [
                   Text(
                     UIStrings.isChildAbove12,
-                    style: AppTextStyles.body1
-                        .copyWith(fontWeight: FontWeight.w500),
+                    style: AppTextStyles.body1.copyWith(
+                      fontWeight: FontWeight.w500,
+                      color: context.colors.textPrimary,
+                    ),
                   ),
                   Text(
                     'Additional features for older children',
@@ -806,7 +822,7 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage>
     return Container(
       padding: EdgeInsets.all(AppDimensions.screenPaddingH),
       decoration: BoxDecoration(
-        color: AppColors.white,
+        color: context.colors.surface,
         boxShadow: [
           BoxShadow(
             color: AppColors.shadowMedium,
@@ -828,14 +844,14 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage>
                     padding:
                         EdgeInsets.symmetric(vertical: AppDimensions.spaceM),
                     decoration: BoxDecoration(
-                      color: AppColors.gray100,
+                      color: context.colors.surfaceVariant,
                       borderRadius: AppDimensions.borderRadiusM,
                     ),
                     child: Center(
                       child: Text(
                         UIStrings.back,
                         style: AppTextStyles.button
-                            .copyWith(color: AppColors.textSecondary),
+                            .copyWith(color: context.colors.textSecondary),
                       ),
                     ),
                   ),
