@@ -105,6 +105,10 @@ firebase_options.dart
 *.jks
 *.keystore
 
+# Firebase config files (contain API keys)
+**/google-services.json
+**/GoogleService-Info.plist
+
 # =============================================================================
 # Build Outputs & Releases (DO NOT TRACK)
 # =============================================================================
