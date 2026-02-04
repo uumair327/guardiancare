@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:guardiancare/core/constants/constants.dart';
 import 'package:guardiancare/core/error/exceptions.dart';
@@ -178,6 +179,21 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     } on FirebaseAuthException catch (e) {
       throw AuthException(
         _getAuthErrorMessage(e.code),
+        code: e.code,
+      );
+    } on PlatformException catch (e) {
+      // Handle Google Sign-In specific errors
+      if (e.code == 'sign_in_failed') {
+        throw AuthException(
+          'Google Sign-In failed. Please ensure:\n'
+          '1. SHA-1 certificate is added to Firebase Console\n'
+          '2. Google Sign-In is enabled in Firebase Authentication\n'
+          '3. You have internet connection',
+          code: e.code,
+        );
+      }
+      throw AuthException(
+        ErrorStrings.withDetails(ErrorStrings.googleSignInFailed, e.message ?? e.code),
         code: e.code,
       );
     } catch (e) {

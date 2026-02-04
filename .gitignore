@@ -1,5 +1,65 @@
 # =============================================================================
-# Flutter/Dart (Auto-generated - DO NOT TRACK)
+# PRODUCTION-LEVEL .GITIGNORE FOR FLUTTER/FIREBASE PROJECTS
+# =============================================================================
+# Last updated: 2026-02-04
+# Project: GuardianCare
+# =============================================================================
+
+# =============================================================================
+# 🔐 SECRETS & SENSITIVE FILES (CRITICAL - NEVER TRACK)
+# =============================================================================
+# Firebase Configuration (contains API keys - NEVER commit)
+**/google-services.json
+**/GoogleService-Info.plist
+**/firebase_options.dart
+**/firebase_app_id_file.json
+
+# Environment & Secret Files
+*.env
+.env.*
+.env.local
+.env.development
+.env.staging
+.env.production
+**/.env
+**/secrets.dart
+**/keys.dart
+**/config.dart
+**/credentials.dart
+**/api_keys.dart
+
+# Service Account Keys (EXTREMELY SENSITIVE)
+**/service-account*.json
+**/serviceAccount*.json
+**/*-service-account.json
+**/*-credentials.json
+
+# Keystore & Signing Files
+*.jks
+*.keystore
+*.p12
+*.pem
+*.key
+**/key.properties
+**/upload-keystore.jks
+**/release-keystore.jks
+**/debug.keystore
+
+# OAuth & API Tokens
+**/oauth*.json
+**/token*.json
+**/.secrets/
+
+# =============================================================================
+# 📄 DOCUMENTATION FILES (IGNORE ALL EXCEPT README)
+# =============================================================================
+*.md
+!README.md
+!LICENSE
+!LICENSE.md
+
+# =============================================================================
+# 🔧 FLUTTER/DART (Auto-generated - DO NOT TRACK)
 # =============================================================================
 .dart_tool/
 .flutter-plugins
@@ -10,60 +70,101 @@
 build/
 **/doc/api/
 
-# Generated code files
+# Generated Code Files
 *.g.dart
 *.freezed.dart
 *.mocks.dart
+*.gr.dart
+*.config.dart
 
 # =============================================================================
-# IDE & Editors (Local settings - DO NOT TRACK)
+# 💻 IDE & EDITORS (Local settings - DO NOT TRACK)
 # =============================================================================
 # IntelliJ/Android Studio
 .idea/
 *.iml
 *.ipr
 *.iws
+.idea_modules/
 
 # VS Code
 .vscode/
+*.code-workspace
 
-# IDX
+# IDX (Google Cloud)
 .idx/
 
+# Vim
+*.swp
+*.swo
+*~
+*.vim
+
+# Emacs
+*~
+\#*\#
+.#*
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
 # =============================================================================
-# Flutter Metadata (Auto-generated - DO NOT TRACK)
+# 📱 FLUTTER METADATA (Auto-generated - DO NOT TRACK)
 # =============================================================================
 .metadata
 devtools_options.yaml
+.flutter-plugins-dependencies
 
 # =============================================================================
-# OS Generated (DO NOT TRACK)
+# 🖥️ OS GENERATED FILES (DO NOT TRACK)
 # =============================================================================
+# macOS
 .DS_Store
 .DS_Store?
 ._*
 .Spotlight-V100
 .Trashes
-ehthumbs.db
+.AppleDouble
+.LSOverride
+Icon?
+
+# Windows
 Thumbs.db
-*.swp
-*.swo
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.lnk
+
+# Linux
 *~
+.directory
+.Trash-*
 
 # =============================================================================
-# Android (DO NOT TRACK)
+# 🤖 ANDROID (DO NOT TRACK)
 # =============================================================================
 **/android/**/gradle-wrapper.jar
-**/android/.gradle
+**/android/.gradle/
 **/android/captures/
 **/android/gradlew
 **/android/gradlew.bat
 **/android/local.properties
 **/android/**/GeneratedPluginRegistrant.java
-**/android/key.properties
+**/android/**/GeneratedPluginRegistrant.kt
+**/android/app/debug/
+**/android/app/profile/
+**/android/app/release/
+**/android/.cxx/
+
+# Android Build Outputs
+**/android/app/build/
+**/android/app/outputs/
+**/android/**/intermediates/
+**/android/**/generated/
 
 # =============================================================================
-# iOS/macOS (DO NOT TRACK)
+# 🍎 iOS/macOS (DO NOT TRACK)
 # =============================================================================
 **/ios/**/*.mode1v3
 **/ios/**/*.mode2v3
@@ -78,86 +179,163 @@ Thumbs.db
 **/ios/Flutter/Flutter.framework
 **/ios/Flutter/Flutter.podspec
 **/ios/Flutter/Generated.xcconfig
-**/ios/Flutter/ephemeral
+**/ios/Flutter/ephemeral/
 **/ios/Flutter/app.flx
 **/ios/Flutter/app.zip
 **/ios/Flutter/flutter_assets/
+**/ios/Flutter/flutter_export_environment.sh
 **/ios/Pods/
+**/ios/Podfile.lock
 **/ios/ServiceDefinitions.json
 **/ios/Runner/GeneratedPluginRegistrant.*
-**/macos/Flutter/ephemeral
+**/ios/.symlinks/
+
+# macOS
+**/macos/Flutter/ephemeral/
 **/macos/Pods/
+**/macos/Podfile.lock
+**/macos/.symlinks/
 
 # =============================================================================
-# Web/Windows/Linux (DO NOT TRACK)
+# 🌐 WEB/WINDOWS/LINUX (DO NOT TRACK)
 # =============================================================================
 **/windows/flutter/ephemeral/
 **/linux/flutter/ephemeral/
+**/web/.dart_tool/
 
 # =============================================================================
-# Secrets & Sensitive Files (NEVER TRACK)
-# =============================================================================
-**/keys.dart
-*.env
-.env.*
-secrets.dart
-firebase_options.dart
-*.jks
-*.keystore
-
-# Firebase config files (contain API keys)
-**/google-services.json
-**/GoogleService-Info.plist
-
-# =============================================================================
-# Build Outputs & Releases (DO NOT TRACK)
+# 📦 BUILD OUTPUTS & RELEASES (DO NOT TRACK)
 # =============================================================================
 release_builds/
 apk/
+build/
+outputs/
 *.apk
 *.aab
 *.ipa
+*.deb
+*.rpm
+*.dmg
+*.exe
+*.msi
+*.msix
+*.appx
 app.*.symbols
 app.*.map.json
 
 # =============================================================================
-# Logs & Debug (DO NOT TRACK)
+# 📊 LOGS, DEBUG & TEMP FILES (DO NOT TRACK)
 # =============================================================================
 *.log
+*.logs
 flutter_log.txt
 analysis_output.txt
+analysis.txt
+debug.log
+error.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.npm/
+*.tmp
+*.temp
+*.cache
 
 # =============================================================================
-# Project Specific (DO NOT TRACK)
-# =============================================================================
-old_lib/
-
-# =============================================================================
-# Coverage & Testing (DO NOT TRACK)
+# 🧪 COVERAGE & TESTING (DO NOT TRACK)
 # =============================================================================
 coverage/
 .test_coverage.dart
 lcov.info
+*.lcov
+.nyc_output/
+test-results/
+.jest/
 
 # =============================================================================
-# Miscellaneous (DO NOT TRACK)
+# 📁 PROJECT SPECIFIC (DO NOT TRACK)
+# =============================================================================
+old_lib/
+deprecated/
+backup/
+temp/
+tmp/
+scratch/
+.cache/
+
+# Scripts (keep purge-secrets, migrate-users visible for security)
+scripts/*.json
+scripts/*.log
+
+# =============================================================================
+# 🔧 NODE.JS (if using for tooling/scripts)
+# =============================================================================
+node_modules/
+npm-debug.log
+yarn-error.log
+package-lock.json
+yarn.lock
+.pnpm-store/
+
+# =============================================================================
+# 🐍 PYTHON (if using for tooling/scripts)
+# =============================================================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+ENV/
+.venv/
+
+# =============================================================================
+# 🔒 SECURITY AUDIT FILES
+# =============================================================================
+security-audit*.txt
+vulnerability-report*.txt
+
+# =============================================================================
+# ☁️ CLOUD & DEPLOYMENT
+# =============================================================================
+.firebase/
+.firebaserc
+firebase-debug.log
+firebase-debug.*.log
+.vercel/
+.netlify/
+.amplify/
+
+# =============================================================================
+# 📝 MISCELLANEOUS (DO NOT TRACK)
 # =============================================================================
 *.class
-*.pyc
 .buildlog/
-.history
+.history/
 .svn/
 migrate_working_dir/
 .atom/
-old_lib
+*.bak
+*.orig
+
 # =============================================================================
-# FILES TO KEEP IN GITHUB (Important for project)
+# ✅ FILES TO KEEP IN GITHUB (Important for project)
 # =============================================================================
-# .gitignore - This file (version control config)
-# .github/ - GitHub workflows, issue templates
-# .kiro/ - Project specs and steering files
-# analysis_options.yaml - Dart linting rules
-# firebase.json - Firebase hosting config
-# l10n.yaml - Localization config
-# pubspec.yaml - Project dependencies
-# pubspec.lock - Locked dependencies for reproducible builds
+# The following files SHOULD be tracked (not ignored):
+# 
+# ├── .github/              - GitHub workflows, issue templates
+# ├── .kiro/                - Project specs and steering files (if applicable)
+# ├── .agent/               - AI agent workflows
+# ├── README.md             - Project documentation (exception to *.md rule)
+# ├── analysis_options.yaml - Dart linting rules
+# ├── firebase.json         - Firebase hosting config (no secrets)
+# ├── firestore.rules       - Firestore security rules
+# ├── firestore.indexes.json- Firestore indexes
+# ├── l10n.yaml             - Localization config  
+# ├── pubspec.yaml          - Project dependencies
+# ├── pubspec.lock          - Locked dependencies for reproducible builds
+# ├── lib/                  - Application source code
+# ├── test/                 - Test files
+# ├── assets/               - Static assets (images, fonts)
+# └── scripts/              - Utility scripts (*.js, *.bat, *.sh)
+android/app/google-services_old.json

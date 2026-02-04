@@ -1,1 +1,29 @@
-{"flutter":{"platforms":{"android":{"default":{"projectId":"guardiancare-a210f","appId":"1:331315801686:android:51cee5c22ec4493e7595f7","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"guardiancare-a210f","configurations":{"android":"1:331315801686:android:51cee5c22ec4493e7595f7","ios":"1:331315801686:ios:f9b6693b41daae0d7595f7","macos":"1:331315801686:ios:f9b6693b41daae0d7595f7","web":"1:331315801686:web:2a2609fb7d0ec4187595f7","windows":"1:331315801686:web:890d5aa832db1f5a7595f7"}}}}}}
+{
+    "firestore": {
+        "rules": "firestore.rules",
+        "indexes": "firestore.indexes.json"
+    },
+    "flutter": {
+        "platforms": {
+            "android": {
+                "default": {
+                    "projectId": "REPLACE_WITH_NEW_PROJECT_ID",
+                    "appId": "REPLACE_WITH_NEW_APP_ID",
+                    "fileOutput": "android/app/google-services.json"
+                }
+            },
+            "dart": {
+                "lib/firebase_options.dart": {
+                    "projectId": "REPLACE_WITH_NEW_PROJECT_ID",
+                    "configurations": {
+                        "android": "REPLACE_WITH_NEW_ANDROID_APP_ID",
+                        "ios": "REPLACE_WITH_NEW_IOS_APP_ID",
+                        "macos": "REPLACE_WITH_NEW_MACOS_APP_ID",
+                        "web": "REPLACE_WITH_NEW_WEB_APP_ID",
+                        "windows": "REPLACE_WITH_NEW_WINDOWS_APP_ID"
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,146 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // ==================== Helper Functions ====================
+    
+    // Check if user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    // Check if user is the owner of the document
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+    
+    // Check if user has admin role (stored in users collection)
+    function isAdmin() {
+      return isAuthenticated() && 
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+    
+    // ==================== Users Collection ====================
+    match /users/{userId} {
+      // Users can read their own profile
+      allow read: if isOwner(userId);
+      // Users can create their own profile on signup
+      allow create: if isOwner(userId);
+      // Users can update their own profile
+      allow update: if isOwner(userId);
+      // Only admins can delete users
+      allow delete: if isAdmin();
+    }
+    
+    // ==================== Consents Collection ====================
+    match /consents/{userId} {
+      // Only the user can access their consent data
+      allow read, write: if isOwner(userId);
+    }
+    
+    // ==================== Forum Collection ====================
+    match /forum/{postId} {
+      // Anyone authenticated can read forum posts
+      allow read: if isAuthenticated();
+      // Users can create posts
+      allow create: if isAuthenticated() && 
+        request.resource.data.authorId == request.auth.uid;
+      // Only author or admin can update/delete
+      allow update, delete: if isAuthenticated() &&
+        (resource.data.authorId == request.auth.uid || isAdmin());
+      
+      // Comments subcollection
+      match /comments/{commentId} {
+        allow read: if isAuthenticated();
+        allow create: if isAuthenticated() &&
+          request.resource.data.authorId == request.auth.uid;
+        allow update, delete: if isAuthenticated() &&
+          (resource.data.authorId == request.auth.uid || isAdmin());
+      }
+    }
+    
+    // ==================== Carousel Items (Read-only) ====================
+    match /carousel_items/{itemId} {
+      allow read: if isAuthenticated();
+      // Only admins can write
+      allow write: if isAdmin();
+    }
+    
+    // ==================== Videos Collection ====================
+    match /videos/{videoId} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin();
+    }
+    
+    // ==================== Learn Collection ====================
+    match /learn/{learnId} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin();
+    }
+    
+    // ==================== Quizzes ====================
+    match /quizes/{quizId} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin();
+    }
+    
+    match /quiz_questions/{questionId} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin();
+    }
+    
+    match /quiz_results/{resultId} {
+      // Users can read/write their own quiz results
+      allow read, write: if isAuthenticated() &&
+        request.auth.uid == resource.data.userId;
+      allow create: if isAuthenticated() &&
+        request.resource.data.userId == request.auth.uid;
+    }
+    
+    // ==================== Recommendations ====================
+    match /recommendations/{recId} {
+      // User-specific recommendations
+      allow read: if isAuthenticated() &&
+        (resource.data.userId == request.auth.uid || isAdmin());
+      allow write: if isAdmin();
+    }
+    
+    // ==================== Resources ====================
+    match /resources/{resourceId} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin();
+    }
+    
+    // ==================== Reports ====================
+    match /reports/{reportId} {
+      // Only the user who created or admins can access
+      allow read: if isAuthenticated() &&
+        (resource.data.userId == request.auth.uid || isAdmin());
+      allow create: if isAuthenticated() &&
+        request.resource.data.userId == request.auth.uid;
+      allow update, delete: if isAdmin();
+    }
+    
+    // ==================== Notifications ====================
+    match /notifications/{notifId} {
+      allow read: if isAuthenticated() &&
+        resource.data.userId == request.auth.uid;
+      allow create: if isAdmin();
+      allow update: if isAuthenticated() &&
+        resource.data.userId == request.auth.uid;
+      allow delete: if isAdmin();
+    }
+    
+    // ==================== Settings ====================
+    match /settings/{settingId} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin();
+    }
+    
+    // ==================== Default: Deny All ====================
+    // Any collection not explicitly defined above is denied
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
