@@ -339,3 +339,6 @@ migrate_working_dir/
 # ├── assets/               - Static assets (images, fonts)
 # └── scripts/              - Utility scripts (*.js, *.bat, *.sh)
 android/app/google-services_old.json
+.agent/workflows
+.kiro
+.idx
