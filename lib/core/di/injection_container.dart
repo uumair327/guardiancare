@@ -31,7 +31,11 @@ Future<void> init() async {
   sl.registerLazySingleton(() => sharedPreferences);
   sl.registerLazySingleton(() => FirebaseAuth.instance);
   sl.registerLazySingleton(() => FirebaseFirestore.instance);
-  sl.registerLazySingleton(() => GoogleSignIn());
+  sl.registerLazySingleton(() => GoogleSignIn(
+    scopes: ['email', 'profile'],
+    // If Google Sign-In still fails, add your Web Client ID here:
+    // serverClientId: 'YOUR_WEB_CLIENT_ID.apps.googleusercontent.com',
+  ));
 
   // Initialize Storage Manager (SQLite + Hive)
   final storageManager = StorageManager.instance;
