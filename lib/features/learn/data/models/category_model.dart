@@ -17,6 +17,14 @@ class CategoryModel extends CategoryEntity {
     );
   }
 
+  /// Create CategoryModel from Map (for IDataStore)
+  factory CategoryModel.fromMap(Map<String, dynamic> map) {
+    return CategoryModel(
+      name: map['name'] as String? ?? '',
+      thumbnail: map['thumbnail'] as String? ?? '',
+    );
+  }
+
   /// Convert CategoryModel to JSON
   Map<String, dynamic> toJson() {
     return {

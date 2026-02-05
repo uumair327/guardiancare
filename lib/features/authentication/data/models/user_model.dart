@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
+import 'package:guardiancare/core/backend/models/backend_user.dart';
 import 'package:guardiancare/features/authentication/domain/entities/user_entity.dart';
 
 /// Data model for User that extends the domain entity
@@ -11,6 +12,18 @@ class UserModel extends UserEntity {
     super.role,
     super.createdAt,
   });
+
+  /// Create UserModel from BackendUser (Backend Agnostic)
+  factory UserModel.fromBackendUser(BackendUser user, {String? role}) {
+    return UserModel(
+      uid: user.id,
+      email: user.email ?? '', // Handle nullable email gracefully if needed
+      displayName: user.displayName,
+      photoURL: user.photoUrl,
+      role: role,
+      createdAt: user.createdAt,
+    );
+  }
 
   /// Create UserModel from Firebase User
   factory UserModel.fromFirebaseUser(firebase_auth.User user, {String? role}) {
@@ -32,7 +45,7 @@ class UserModel extends UserEntity {
       displayName: json['displayName'] as String?,
       photoURL: json['photoURL'] as String?,
       role: json['role'] as String?,
-      createdAt: json['createdAt'] != null 
+      createdAt: json['createdAt'] != null
           ? DateTime.parse(json['createdAt'] as String)
           : null,
     );

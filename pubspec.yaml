@@ -79,6 +79,7 @@ dependencies:
 
   # Legacy (consider removing if not used)
   get: ^4.7.2
+  firebase_storage: ^12.4.10
 
 dev_dependencies:
   flutter_test:

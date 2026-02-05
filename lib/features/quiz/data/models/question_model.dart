@@ -3,6 +3,7 @@ import 'package:guardiancare/features/quiz/domain/entities/question_entity.dart'
 /// Question model extending QuestionEntity with JSON serialization
 class QuestionModel extends QuestionEntity {
   const QuestionModel({
+    super.quizId,
     required super.question,
     required super.options,
     required super.correctAnswerIndex,
@@ -13,12 +14,15 @@ class QuestionModel extends QuestionEntity {
   /// Create QuestionModel from JSON/Map
   factory QuestionModel.fromJson(Map<String, dynamic> json) {
     return QuestionModel(
+      quizId: json['quiz'] as String? ?? '',
       question: json['question'] as String? ?? '',
       options: (json['options'] as List<dynamic>?)
               ?.map((e) => e.toString())
               .toList() ??
           [],
-      correctAnswerIndex: json['correctAnswerIndex'] as int? ?? 0,
+      correctAnswerIndex:
+          (json['correctAnswerIndex'] ?? json['correctOptionIndex']) as int? ??
+              0,
       category: json['category'] as String? ?? 'General',
       explanation: json['explanation'] as String?,
     );
@@ -27,6 +31,7 @@ class QuestionModel extends QuestionEntity {
   /// Convert QuestionModel to JSON
   Map<String, dynamic> toJson() {
     return {
+      'quiz': quizId,
       'question': question,
       'options': options,
       'correctAnswerIndex': correctAnswerIndex,
@@ -38,6 +43,7 @@ class QuestionModel extends QuestionEntity {
   /// Create QuestionModel from QuestionEntity
   factory QuestionModel.fromEntity(QuestionEntity entity) {
     return QuestionModel(
+      quizId: entity.quizId,
       question: entity.question,
       options: entity.options,
       correctAnswerIndex: entity.correctAnswerIndex,

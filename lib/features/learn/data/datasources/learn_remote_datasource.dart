@@ -1,6 +1,7 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:guardiancare/core/constants/constants.dart';
+import 'package:flutter/foundation.dart';
+import 'package:guardiancare/core/backend/backend.dart';
 import 'package:guardiancare/core/error/exceptions.dart';
+import 'package:guardiancare/core/constants/constants.dart';
 import 'package:guardiancare/features/learn/data/models/category_model.dart';
 import 'package:guardiancare/features/learn/data/models/video_model.dart';
 
@@ -16,34 +17,46 @@ abstract class LearnRemoteDataSource {
   Stream<List<VideoModel>> getVideosByCategoryStream(String category);
 }
 
+/// Implementation of LearnRemoteDataSource using IDataStore abstraction
+///
+/// Following: DIP (Dependency Inversion Principle)
 class LearnRemoteDataSourceImpl implements LearnRemoteDataSource {
-  final FirebaseFirestore firestore;
+  final IDataStore _dataStore;
 
-  LearnRemoteDataSourceImpl({required this.firestore});
+  LearnRemoteDataSourceImpl({required IDataStore dataStore})
+      : _dataStore = dataStore;
 
   @override
   Future<List<CategoryModel>> getCategories() async {
     try {
-      final QuerySnapshot thumbnails = await firestore
-          .collection('learn')
-          .get()
-          .timeout(const Duration(seconds: 10));
+      final result = await _dataStore.getAll('learn');
 
-      final List<CategoryModel> categories = [];
-      for (var doc in thumbnails.docs) {
-        try {
-          final category = CategoryModel.fromFirestore(doc);
-          if (category.isValid) {
-            categories.add(category);
+      return result.when(
+        success: (docs) {
+          final List<CategoryModel> categories = [];
+          for (var doc in docs) {
+            try {
+              final category = CategoryModel.fromMap(doc);
+              if (category.isValid) {
+                categories.add(category);
+              }
+            } catch (e) {
+              debugPrint('LearnDataSource: Error processing category: $e');
+            }
           }
-        } catch (e) {
-          print('LearnDataSource: Error processing category ${doc.id}: $e');
-        }
-      }
-
-      return categories;
+          return categories;
+        },
+        failure: (error) {
+          debugPrint(
+              'LearnDataSource: Error fetching categories: ${error.message}');
+          throw ServerException(ErrorStrings.withDetails(
+              ErrorStrings.getCategoriesError, error.message));
+        },
+      );
     } catch (e) {
-      throw ServerException(ErrorStrings.withDetails(ErrorStrings.getCategoriesError, e.toString()));
+      if (e is ServerException) rethrow;
+      throw ServerException(ErrorStrings.withDetails(
+          ErrorStrings.getCategoriesError, e.toString()));
     }
   }
 
@@ -51,67 +64,77 @@ class LearnRemoteDataSourceImpl implements LearnRemoteDataSource {
   Future<List<VideoModel>> getVideosByCategory(String category) async {
     try {
       // Try exact match first
-      QuerySnapshot videosSnapshot = await firestore
-          .collection('videos')
-          .where('category', isEqualTo: category)
-          .get()
-          .timeout(const Duration(seconds: 15));
+      final options = QueryOptions(
+        filters: [QueryFilter.equals('category', category)],
+      );
 
-      List<QueryDocumentSnapshot> videosDocs = videosSnapshot.docs;
+      final result = await _dataStore.query('videos', options: options);
 
-      // If no exact match, try case-insensitive search
-      if (videosDocs.isEmpty) {
-        QuerySnapshot allVideos = await firestore
-            .collection('videos')
-            .get()
-            .timeout(const Duration(seconds: 15));
-
-        videosDocs = allVideos.docs.where((doc) {
-          final data = doc.data() as Map<String, dynamic>;
-          final videoCategory = data['category'] as String? ?? '';
-          return videoCategory.toLowerCase() == category.toLowerCase();
-        }).toList();
-      }
-
-      final List<VideoModel> videos = [];
-      for (var doc in videosDocs) {
-        try {
-          final video = VideoModel.fromFirestore(doc);
-          if (video.isValid) {
-            videos.add(video);
+      return await result.when(
+        success: (docs) async {
+          if (docs.isNotEmpty) {
+            return _mapVideos(docs);
           }
-        } catch (e) {
-          print('LearnDataSource: Error processing video ${doc.id}: $e');
-        }
-      }
 
-      return videos;
+          // If no exact match, try backend-agnostic "case-insensitive" fallback
+          // Note: In a real backend, we'd want a case-insensitive query capability
+          // For now, fetching all and filtering (same as previous implementation)
+          final allVideosResult = await _dataStore.getAll('videos');
+
+          return allVideosResult.when(
+            success: (allDocs) {
+              final filteredDocs = allDocs.where((doc) {
+                final videoCategory = doc['category'] as String? ?? '';
+                return videoCategory.toLowerCase() == category.toLowerCase();
+              }).toList();
+              return _mapVideos(filteredDocs);
+            },
+            failure: (error) => [],
+          );
+        },
+        failure: (error) {
+          debugPrint(
+              'LearnDataSource: Error fetching videos: ${error.message}');
+          throw ServerException(ErrorStrings.withDetails(
+              ErrorStrings.getVideosByCategoryError, error.message));
+        },
+      );
     } catch (e) {
-      throw ServerException(ErrorStrings.withDetails(ErrorStrings.getVideosByCategoryError, e.toString()));
+      if (e is ServerException) rethrow;
+      throw ServerException(ErrorStrings.withDetails(
+          ErrorStrings.getVideosByCategoryError, e.toString()));
     }
   }
 
   @override
   Stream<List<VideoModel>> getVideosByCategoryStream(String category) {
-    return firestore
-        .collection('videos')
-        .where('category', isEqualTo: category)
-        .snapshots()
-        .map((snapshot) {
-      List<VideoModel> videos = [];
+    final options = QueryOptions(
+      filters: [QueryFilter.equals('category', category)],
+    );
 
-      for (var doc in snapshot.docs) {
-        try {
-          final video = VideoModel.fromFirestore(doc);
-          if (video.isValid) {
-            videos.add(video);
-          }
-        } catch (e) {
-          print('LearnDataSource: Error processing video ${doc.id}: $e');
-        }
-      }
-
-      return videos;
+    return _dataStore.streamQuery('videos', options: options).map((result) {
+      return result.when(
+        success: (docs) => _mapVideos(docs),
+        failure: (error) {
+          debugPrint('LearnDataSource: Stream error: ${error.message}');
+          return <VideoModel>[];
+        },
+      );
     });
+  }
+
+  List<VideoModel> _mapVideos(List<Map<String, dynamic>> docs) {
+    final List<VideoModel> videos = [];
+    for (var doc in docs) {
+      try {
+        final video = VideoModel.fromMap(doc);
+        if (video.isValid) {
+          videos.add(video);
+        }
+      } catch (e) {
+        debugPrint('LearnDataSource: Error processing video: $e');
+      }
+    }
+    return videos;
   }
 }

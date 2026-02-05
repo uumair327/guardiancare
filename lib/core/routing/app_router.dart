@@ -1,39 +1,52 @@
 import 'dart:async';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:guardiancare/core/core.dart';
+import 'package:guardiancare/core/backend/backend.dart';
+import 'package:guardiancare/core/di/di.dart' as di;
 import 'package:guardiancare/features/features.dart';
+import 'package:guardiancare/features/quiz/domain/entities/question_entity.dart';
 import 'package:guardiancare/features/video_player/presentation/pages/video_player_page.dart'
     as video_player;
 
 /// Application router that defines route configurations.
-/// 
+///
 /// Authentication redirect logic is delegated to [AuthGuard] following
 /// the Single Responsibility Principle.
+///
+/// Following: DIP (Dependency Inversion Principle) - uses IAuthService abstraction
 class AppRouter {
   static final _rootNavigatorKey = GlobalKey<NavigatorState>();
-  
-  /// The AuthGuard instance used for authentication checks.
-  /// Can be overridden for testing purposes.
-  static AuthGuard _authGuard = FirebaseAuthGuard();
-  
+
+  // Lazy initialization of AuthGuard using IAuthService
+  static AuthGuard? _authGuard;
+
+  /// Get the AuthGuard instance (lazy initialized)
+  static AuthGuard get authGuard {
+    _authGuard ??= AuthGuardImpl(authService: di.sl<IAuthService>());
+    return _authGuard!;
+  }
+
   /// Sets the AuthGuard instance. Useful for testing.
   static void setAuthGuard(AuthGuard guard) {
     _authGuard = guard;
   }
-  
-  /// Resets the AuthGuard to the default FirebaseAuthGuard.
+
+  /// Resets the AuthGuard to use IAuthService.
   static void resetAuthGuard() {
-    _authGuard = FirebaseAuthGuard();
+    _authGuard = AuthGuardImpl(authService: di.sl<IAuthService>());
   }
-  
+
+  /// Get auth state changes stream for router refresh
+  static Stream<BackendUser?> get _authStateChanges =>
+      di.sl<IAuthService>().authStateChanges;
+
   static GoRouter router = GoRouter(
     navigatorKey: _rootNavigatorKey,
     initialLocation: '/',
-    refreshListenable: GoRouterRefreshStream(FirebaseAuth.instance.authStateChanges()),
-    redirect: (context, state) => _authGuard.redirect(context, state),
+    refreshListenable: GoRouterRefreshStream(_authStateChanges),
+    redirect: (context, state) => authGuard.redirect(context, state),
     routes: [
       // Auth routes
       GoRoute(
@@ -78,9 +91,9 @@ class AppRouter {
         path: '/quiz-questions',
         name: 'quiz-questions',
         builder: (context, state) {
-          final questions = state.extra as List<Map<String, dynamic>>;
+          final questions = state.extra as List<QuestionEntity>;
           return BlocProvider(
-            create: (_) => sl<QuizBloc>(),
+            create: (_) => di.sl<QuizBloc>(),
             child: QuizQuestionsPage(questions: questions),
           );
         },
@@ -105,8 +118,10 @@ class AppRouter {
         path: '/account',
         name: 'account',
         builder: (context, state) {
-          final user = FirebaseAuth.instance.currentUser;
-          return AccountPage(user: user);
+          // Use IAuthService to get current user
+          final authService = di.sl<IAuthService>();
+          final backendUser = authService.currentUser;
+          return AccountPage(backendUser: backendUser);
         },
       ),
 
@@ -121,14 +136,14 @@ class AppRouter {
           final forumDescription = forumData?['description'] as String?;
           final createdAtStr = forumData?['createdAt'] as String?;
           final userId = forumData?['userId'] as String?;
-          
+
           DateTime? createdAt;
           if (createdAtStr != null) {
             try {
               createdAt = DateTime.parse(createdAtStr);
             } catch (_) {}
           }
-          
+
           return ForumDetailPage(
             forumId: forumId,
             forumTitle: forumTitle,
@@ -174,7 +189,6 @@ class AppRouter {
     ],
   );
 }
-
 
 // Helper class to convert Stream to ChangeNotifier for GoRouter
 class GoRouterRefreshStream extends ChangeNotifier {

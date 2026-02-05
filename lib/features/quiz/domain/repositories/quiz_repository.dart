@@ -19,6 +19,18 @@ abstract class QuizRepository {
     required List<QuestionEntity> questions,
   });
 
+  /// Get all available quizzes
+  Future<Either<Failure, List<QuizEntity>>> getAllQuizzes();
+
   /// Validate quiz data
   Either<Failure, bool> validateQuizData(List<QuestionEntity> questions);
+
+  /// Save quiz history to remote storage
+  Future<Either<Failure, void>> saveQuizHistory({
+    required String uid,
+    required String quizName,
+    required int score,
+    required int totalQuestions,
+    required List<String> categories,
+  });
 }

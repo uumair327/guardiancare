@@ -88,13 +88,14 @@ class SubmitAnswerRequested extends QuizEvent {
   });
 
   @override
-  List<Object?> get props => [questionIndex, selectedOption, correctAnswerIndex];
+  List<Object?> get props =>
+      [questionIndex, selectedOption, correctAnswerIndex];
 }
 
 /// Event when quiz is completed and needs to be processed
 /// Requirements: 2.2
 class CompleteQuizRequested extends QuizEvent {
-  final List<Map<String, dynamic>> questions;
+  final List<QuestionEntity> questions;
   final int correctAnswers;
   final int totalQuestions;
 

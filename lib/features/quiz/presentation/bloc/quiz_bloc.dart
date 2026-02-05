@@ -1,15 +1,16 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:guardiancare/core/backend/backend.dart';
+import 'package:guardiancare/features/quiz/domain/entities/question_entity.dart';
 import 'package:guardiancare/features/quiz/domain/usecases/generate_recommendations.dart';
+import 'package:guardiancare/features/quiz/domain/usecases/save_quiz_history.dart';
 import 'package:guardiancare/features/quiz/domain/usecases/submit_quiz.dart';
 import 'package:guardiancare/features/quiz/domain/usecases/validate_quiz.dart';
 import 'package:guardiancare/features/quiz/presentation/bloc/quiz_event.dart';
 import 'package:guardiancare/features/quiz/presentation/bloc/quiz_state.dart';
 
 /// BLoC for managing quiz state with Clean Architecture
-/// 
+///
 /// Handles all quiz business logic including:
 /// - Answer selection and validation (Requirements: 2.1)
 /// - Quiz completion and result persistence (Requirements: 2.2)
@@ -18,11 +19,15 @@ class QuizBloc extends Bloc<QuizEvent, QuizState> {
   final SubmitQuiz submitQuiz;
   final ValidateQuiz validateQuiz;
   final GenerateRecommendations generateRecommendations;
+  final SaveQuizHistory saveQuizHistory;
+  final IAuthService authService;
 
   QuizBloc({
     required this.submitQuiz,
     required this.validateQuiz,
     required this.generateRecommendations,
+    required this.saveQuizHistory,
+    required this.authService,
   }) : super(const QuizState()) {
     on<AnswerSelected>(_onAnswerSelected);
     on<FeedbackShown>(_onFeedbackShown);
@@ -84,8 +89,8 @@ class QuizBloc extends Bloc<QuizEvent, QuizState> {
 
   void _onPreviousQuestion(PreviousQuestion event, Emitter<QuizState> emit) {
     if (state.currentQuestionIndex > 0) {
-      emit(state.copyWith(
-          currentQuestionIndex: state.currentQuestionIndex - 1));
+      emit(
+          state.copyWith(currentQuestionIndex: state.currentQuestionIndex - 1));
     }
   }
 
@@ -127,7 +132,7 @@ class QuizBloc extends Bloc<QuizEvent, QuizState> {
   void _onSubmitAnswerRequested(
       SubmitAnswerRequested event, Emitter<QuizState> emit) {
     final isCorrect = event.selectedOption == event.correctAnswerIndex;
-    
+
     final validationResult = QuizAnswerValidationResult(
       questionIndex: event.questionIndex,
       isCorrect: isCorrect,
@@ -153,8 +158,9 @@ class QuizBloc extends Bloc<QuizEvent, QuizState> {
   Future<void> _onCompleteQuizRequested(
       CompleteQuizRequested event, Emitter<QuizState> emit) async {
     debugPrint('🎯 QuizBloc: Quiz completion requested');
-    debugPrint('   Correct answers: ${event.correctAnswers}/${event.totalQuestions}');
-    
+    debugPrint(
+        '   Correct answers: ${event.correctAnswers}/${event.totalQuestions}');
+
     emit(state.copyWith(isSubmitting: true));
 
     try {
@@ -162,25 +168,23 @@ class QuizBloc extends Bloc<QuizEvent, QuizState> {
       final categories = _extractCategories(event.questions);
       debugPrint('📂 Extracted categories: $categories');
 
-      // Persist quiz results to Firestore
-      final user = FirebaseAuth.instance.currentUser;
+      // Persist quiz results
+      final user = authService.currentUser;
       if (user != null) {
-        debugPrint('💾 Saving quiz results for user: ${user.uid}');
-        final quizResultData = {
-          'uid': user.uid,
-          'quizName': event.questions.isNotEmpty 
-              ? event.questions[0]['quiz'] ?? 'Unknown'
-              : 'Unknown',
-          'score': event.correctAnswers,
-          'totalQuestions': event.totalQuestions,
-          'categories': categories,
-          'timestamp': FieldValue.serverTimestamp(),
-        };
-        
-        await FirebaseFirestore.instance
-            .collection('quiz_results')
-            .add(quizResultData);
-        debugPrint('✅ Quiz results saved to Firestore');
+        debugPrint('💾 Saving quiz results for user: ${user.id}');
+
+        // Logic to get quizName from first question's quizId
+        final quizName =
+            event.questions.isNotEmpty ? event.questions[0].quizId : 'Unknown';
+
+        await saveQuizHistory(SaveQuizHistoryParams(
+          uid: user.id,
+          quizName: quizName,
+          score: event.correctAnswers,
+          totalQuestions: event.totalQuestions,
+          categories: categories,
+        ));
+        debugPrint('✅ Quiz results saved');
       } else {
         debugPrint('⚠️ No user logged in, skipping quiz result save');
       }
@@ -216,8 +220,9 @@ class QuizBloc extends Bloc<QuizEvent, QuizState> {
       GenerateRecommendationsRequested event, Emitter<QuizState> emit) async {
     debugPrint('🎯 QuizBloc: Starting recommendation generation');
     debugPrint('   Categories: ${event.categories}');
-    
-    emit(state.copyWith(recommendationsStatus: RecommendationsStatus.generating));
+
+    emit(state.copyWith(
+        recommendationsStatus: RecommendationsStatus.generating));
 
     final result = await generateRecommendations(
       GenerateRecommendationsParams(categories: event.categories),
@@ -225,7 +230,8 @@ class QuizBloc extends Bloc<QuizEvent, QuizState> {
 
     result.fold(
       (failure) {
-        debugPrint('❌ QuizBloc: Recommendation generation failed: ${failure.message}');
+        debugPrint(
+            '❌ QuizBloc: Recommendation generation failed: ${failure.message}');
         emit(state.copyWith(
           recommendationsStatus: RecommendationsStatus.failed,
           error: failure.message,
@@ -241,21 +247,20 @@ class QuizBloc extends Bloc<QuizEvent, QuizState> {
   }
 
   /// Extracts categories from quiz questions
-  List<String> _extractCategories(List<Map<String, dynamic>> questions) {
+  List<String> _extractCategories(List<QuestionEntity> questions) {
     final categories = <String>{};
-    
+
     for (final question in questions) {
-      final category = question['category'];
-      if (category != null && category.toString().isNotEmpty) {
-        categories.add(category.toString());
+      if (question.category.isNotEmpty) {
+        categories.add(question.category);
       }
     }
 
     // Fallback to quiz name if no categories found
     if (categories.isEmpty && questions.isNotEmpty) {
-      final quizName = questions[0]['quiz'];
-      if (quizName != null && quizName.toString().isNotEmpty) {
-        categories.add(quizName.toString());
+      final quizName = questions[0].quizId;
+      if (quizName.isNotEmpty) {
+        categories.add(quizName);
       }
     }
 

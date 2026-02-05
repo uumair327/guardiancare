@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:guardiancare/core/core.dart';
+import 'package:guardiancare/features/quiz/domain/entities/question_entity.dart';
 import 'package:guardiancare/features/quiz/presentation/bloc/quiz_bloc.dart';
 import 'package:guardiancare/features/quiz/presentation/bloc/quiz_event.dart';
 import 'package:guardiancare/features/quiz/presentation/bloc/quiz_state.dart';
@@ -13,7 +14,7 @@ import 'package:guardiancare/features/quiz/presentation/widgets/widgets.dart';
 /// - Only rendering UI and dispatching events to QuizBloc
 /// - Not containing business logic (scoring, Firestore access, recommendation calls)
 class QuizQuestionsPage extends StatefulWidget {
-  final List<Map<String, dynamic>> questions;
+  final List<QuestionEntity> questions;
 
   const QuizQuestionsPage({super.key, required this.questions});
 
@@ -81,7 +82,7 @@ class _QuizQuestionsPageState extends State<QuizQuestionsPage>
     );
   }
 
-  Widget _buildQuestionContent(Map<String, dynamic> question) {
+  Widget _buildQuestionContent(QuestionEntity question) {
     final isLastQuestion = currentQuestionIndex >= widget.questions.length - 1;
     final l10n = AppLocalizations.of(context);
 
@@ -100,7 +101,7 @@ class _QuizQuestionsPageState extends State<QuizQuestionsPage>
             SizedBox(height: AppDimensions.spaceL),
             // Question card
             QuestionCard(
-              question: question['question'] ?? '',
+              question: question.question,
               questionNumber: currentQuestionIndex + 1,
               totalQuestions: widget.questions.length,
             ),
@@ -117,9 +118,9 @@ class _QuizQuestionsPageState extends State<QuizQuestionsPage>
     );
   }
 
-  List<Widget> _buildOptions(Map<String, dynamic> question) {
-    final options = question['options'] as List? ?? [];
-    final correctIndex = question['correctAnswerIndex'];
+  List<Widget> _buildOptions(QuestionEntity question) {
+    final options = question.options;
+    final correctIndex = question.correctAnswerIndex;
 
     return List.generate(options.length, (index) {
       final delay = Duration(milliseconds: 100 + (index * 50));
@@ -254,7 +255,7 @@ class _QuizQuestionsPageState extends State<QuizQuestionsPage>
     if (selectedOption == null) return;
 
     final correctIndex =
-        widget.questions[currentQuestionIndex]['correctAnswerIndex'];
+        widget.questions[currentQuestionIndex].correctAnswerIndex;
 
     // Dispatch event to QuizBloc for validation
     context.read<QuizBloc>().add(SubmitAnswerRequested(

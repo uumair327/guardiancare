@@ -1,20 +1,21 @@
 import 'dart:async';
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart' show debugPrint;
+import 'package:guardiancare/core/backend/backend.dart';
 import 'package:guardiancare/core/models/auth_state_event.dart';
 
 /// Abstract interface for authentication state management
 /// Follows Single Responsibility Principle - only manages auth state
+/// Follows Dependency Inversion Principle - depends on IAuthService abstraction
 abstract class AuthStateManager {
-  /// Stream of Firebase auth state changes
-  Stream<User?> get authStateChanges;
+  /// Stream of authentication state changes
+  Stream<BackendUser?> get authStateChanges;
 
   /// Stream of auth state events for dependent services
   Stream<AuthStateEvent> get authEvents;
 
   /// Current authenticated user
-  User? get currentUser;
+  BackendUser? get currentUser;
 
   /// Notify dependent services about logout
   void notifyLogout();
@@ -23,34 +24,41 @@ abstract class AuthStateManager {
   void dispose();
 }
 
-/// Implementation of AuthStateManager
-/// Manages authentication state and notifies dependent services through events
+/// Implementation of AuthStateManager using IAuthService abstraction
+///
+/// This implementation is backend-agnostic and works with any
+/// authentication provider that implements IAuthService.
+///
+/// Following: DIP (Dependency Inversion Principle)
 class AuthStateManagerImpl implements AuthStateManager {
-  final FirebaseAuth _auth;
+  final IAuthService _authService;
   final StreamController<AuthStateEvent> _eventController =
       StreamController<AuthStateEvent>.broadcast();
 
-  StreamSubscription<User?>? _authSubscription;
-  User? _currentUser;
+  StreamSubscription<BackendUser?>? _authSubscription;
+  BackendUser? _currentUser;
 
-  AuthStateManagerImpl({FirebaseAuth? auth}) : _auth = auth ?? FirebaseAuth.instance {
+  AuthStateManagerImpl({required IAuthService authService})
+      : _authService = authService {
     _init();
   }
 
   void _init() {
-    _currentUser = _auth.currentUser;
-    _authSubscription = _auth.authStateChanges().listen(_onAuthStateChanged);
-    debugPrint('AuthStateManager initialized. Current user: ${_currentUser?.uid}');
+    _currentUser = _authService.currentUser;
+    _authSubscription =
+        _authService.authStateChanges.listen(_onAuthStateChanged);
+    debugPrint(
+        'AuthStateManager initialized. Current user: ${_currentUser?.id}');
   }
 
-  void _onAuthStateChanged(User? user) {
+  void _onAuthStateChanged(BackendUser? user) {
     final previousUser = _currentUser;
     _currentUser = user;
 
     if (user != null && previousUser == null) {
       // User logged in
-      _eventController.add(AuthStateEvent.login(user));
-      debugPrint('AuthStateManager: User logged in - ${user.uid}');
+      _eventController.add(AuthStateEvent.loginFromBackendUser(user));
+      debugPrint('AuthStateManager: User logged in - ${user.id}');
     } else if (user == null && previousUser != null) {
       // User logged out
       _eventController.add(AuthStateEvent.logout());
@@ -59,13 +67,13 @@ class AuthStateManagerImpl implements AuthStateManager {
   }
 
   @override
-  Stream<User?> get authStateChanges => _auth.authStateChanges();
+  Stream<BackendUser?> get authStateChanges => _authService.authStateChanges;
 
   @override
   Stream<AuthStateEvent> get authEvents => _eventController.stream;
 
   @override
-  User? get currentUser => _currentUser;
+  BackendUser? get currentUser => _currentUser;
 
   @override
   void notifyLogout() {

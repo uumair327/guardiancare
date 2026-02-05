@@ -1,5 +1,5 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
+import 'package:guardiancare/core/backend/backend.dart';
 import 'package:guardiancare/features/home/data/models/carousel_item_model.dart';
 
 /// Abstract interface for home remote data source
@@ -8,38 +8,52 @@ abstract class HomeRemoteDataSource {
   Stream<List<CarouselItemModel>> getCarouselItems();
 }
 
-/// Implementation of home remote data source using Firebase Firestore
+/// Implementation of home remote data source using IDataStore abstraction
+///
+/// Following: DIP (Dependency Inversion Principle)
+/// This data source depends on IDataStore abstraction, not Firebase directly.
 class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
-  final FirebaseFirestore firestore;
+  final IDataStore _dataStore;
 
-  HomeRemoteDataSourceImpl({required this.firestore});
+  HomeRemoteDataSourceImpl({required IDataStore dataStore})
+      : _dataStore = dataStore;
 
   @override
   Stream<List<CarouselItemModel>> getCarouselItems() {
     debugPrint('HomeRemoteDataSource: Starting to fetch carousel items...');
-    
-    return firestore.collection('carousel_items').snapshots().map((snapshot) {
-      debugPrint('HomeRemoteDataSource: Received ${snapshot.docs.length} documents');
-      
-      final items = snapshot.docs
-          .map((doc) {
-            try {
-              debugPrint('HomeRemoteDataSource: Parsing doc ${doc.id}: ${doc.data()}');
-              return CarouselItemModel.fromFirestore(doc);
-            } catch (e) {
-              debugPrint('Error parsing carousel document ${doc.id}: $e');
-              return null;
-            }
-          })
-          .where((item) =>
-              item != null &&
-              item.imageUrl.isNotEmpty &&
-              item.link.isNotEmpty)
-          .cast<CarouselItemModel>()
-          .toList();
-      
-      debugPrint('HomeRemoteDataSource: Returning ${items.length} valid items');
-      return items;
+
+    return _dataStore.streamQuery('carousel_items').map((result) {
+      return result.when(
+        success: (docs) {
+          debugPrint('HomeRemoteDataSource: Received ${docs.length} documents');
+
+          final items = docs
+              .map((doc) {
+                try {
+                  debugPrint('HomeRemoteDataSource: Parsing doc: $doc');
+                  return CarouselItemModel.fromMap(doc);
+                } catch (e) {
+                  debugPrint('Error parsing carousel document: $e');
+                  return null;
+                }
+              })
+              .where((item) =>
+                  item != null &&
+                  item.imageUrl.isNotEmpty &&
+                  item.link.isNotEmpty)
+              .cast<CarouselItemModel>()
+              .toList();
+
+          debugPrint(
+              'HomeRemoteDataSource: Returning ${items.length} valid items');
+          return items;
+        },
+        failure: (error) {
+          debugPrint(
+              'HomeRemoteDataSource: Error fetching items: ${error.message}');
+          return <CarouselItemModel>[];
+        },
+      );
     });
   }
 }

@@ -9,19 +9,22 @@ class QuizModel extends QuizEntity {
     required super.category,
     required super.questions,
     super.description,
+    super.imageUrl,
   });
 
   /// Create QuizModel from JSON/Map
   factory QuizModel.fromJson(Map<String, dynamic> json) {
     return QuizModel(
       id: json['id'] as String? ?? '',
-      title: json['title'] as String? ?? '',
+      title:
+          (json['title'] ?? json['name']) as String? ?? '', // Flexible mapping
       category: json['category'] as String? ?? '',
       questions: (json['questions'] as List<dynamic>?)
               ?.map((q) => QuestionModel.fromJson(q as Map<String, dynamic>))
               .toList() ??
           [],
       description: json['description'] as String?,
+      imageUrl: (json['thumbnail'] ?? json['imageUrl']) as String?,
     );
   }
 
@@ -31,10 +34,10 @@ class QuizModel extends QuizEntity {
       'id': id,
       'title': title,
       'category': category,
-      'questions': questions
-          .map((q) => QuestionModel.fromEntity(q).toJson())
-          .toList(),
+      'questions':
+          questions.map((q) => QuestionModel.fromEntity(q).toJson()).toList(),
       'description': description,
+      'thumbnail': imageUrl,
     };
   }
 
@@ -46,6 +49,7 @@ class QuizModel extends QuizEntity {
       category: entity.category,
       questions: entity.questions,
       description: entity.description,
+      imageUrl: entity.imageUrl,
     );
   }
 }

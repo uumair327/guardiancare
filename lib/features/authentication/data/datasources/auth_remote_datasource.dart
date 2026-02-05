@@ -1,10 +1,8 @@
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/services.dart';
-import 'package:google_sign_in/google_sign_in.dart';
+import 'package:guardiancare/core/backend/backend.dart';
 import 'package:guardiancare/core/constants/constants.dart';
 import 'package:guardiancare/core/error/exceptions.dart';
 import 'package:guardiancare/features/authentication/data/models/user_model.dart';
+import 'package:flutter/foundation.dart'; // Kept just in case, though unused currently
 
 /// Abstract class defining authentication remote data source operations
 abstract class AuthRemoteDataSource {
@@ -22,17 +20,19 @@ abstract class AuthRemoteDataSource {
   Future<void> updateUserProfile({String? displayName, String? photoURL});
 }
 
-/// Implementation of AuthRemoteDataSource using Firebase
+/// Implementation of AuthRemoteDataSource using IAuthService and IDataStore
+///
+/// This adapter class bridges the legacy AuthRemoteDataSource interface
+/// with the new Backend Abstraction Layer.
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
-  final FirebaseAuth firebaseAuth;
-  final FirebaseFirestore firestore;
-  final GoogleSignIn googleSignIn;
+  final IAuthService _authService;
+  final IDataStore _dataStore;
 
   AuthRemoteDataSourceImpl({
-    required this.firebaseAuth,
-    required this.firestore,
-    required this.googleSignIn,
-  });
+    required IAuthService authService,
+    required IDataStore dataStore,
+  })  : _authService = authService,
+        _dataStore = dataStore;
 
   @override
   Future<UserModel> signInWithEmailAndPassword(
@@ -40,44 +40,42 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     String password,
   ) async {
     try {
-      final credential = await firebaseAuth.signInWithEmailAndPassword(
+      final result = await _authService.signInWithEmail(
         email: email,
         password: password,
       );
 
-      if (credential.user == null) {
-        throw AuthException(ErrorStrings.withDetails(ErrorStrings.signInFailed, ErrorStrings.noUserReturned));
-      }
+      return await result.when(
+        success: (user) async {
+          // Check if email is verified
+          if (!user.emailVerified) {
+            throw AuthException(
+              ErrorStrings.emailNotVerified,
+              code: 'email-not-verified',
+            );
+          }
 
-      // Check if email is verified
-      if (!credential.user!.emailVerified) {
-        throw AuthException(
-          ErrorStrings.emailNotVerified,
-          code: 'email-not-verified',
-        );
-      }
+          // Get user role from Data Store
+          final userDocResult = await _dataStore.get('users', user.id);
 
-      // Get user role from Firestore
-      final userDoc = await firestore
-          .collection('users')
-          .doc(credential.user!.uid)
-          .get();
+          String? role;
+          if (userDocResult.isSuccess && userDocResult.dataOrNull != null) {
+            role = userDocResult.dataOrNull!['role'] as String?;
 
-      final role = userDoc.data()?['role'] as String?;
+            // Update email verified status in data store
+            await _dataStore.update('users', user.id, {'emailVerified': true});
+          }
 
-      // Update email verified status in Firestore
-      await firestore.collection('users').doc(credential.user!.uid).update({
-        'emailVerified': true,
-      });
-
-      return UserModel.fromFirebaseUser(credential.user!, role: role);
-    } on FirebaseAuthException catch (e) {
-      throw AuthException(
-        _getAuthErrorMessage(e.code),
-        code: e.code,
+          return UserModel.fromBackendUser(user, role: role);
+        },
+        failure: (error) {
+          throw _mapToAuthException(error);
+        },
       );
     } catch (e) {
-      throw AuthException(ErrorStrings.withDetails(ErrorStrings.signInFailed, e.toString()));
+      if (e is AuthException) rethrow;
+      throw AuthException(
+          ErrorStrings.withDetails(ErrorStrings.signInFailed, e.toString()));
     }
   }
 
@@ -89,221 +87,186 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     String role,
   ) async {
     try {
-      final credential = await firebaseAuth.createUserWithEmailAndPassword(
+      final result = await _authService.createUserWithEmail(
         email: email,
         password: password,
+        displayName: displayName,
       );
 
-      if (credential.user == null) {
-        throw AuthException(ErrorStrings.withDetails(ErrorStrings.signUpFailed, ErrorStrings.noUserReturned));
-      }
+      return await result.when(
+        success: (user) async {
+          // Send email verification
+          await _authService.sendEmailVerification();
 
-      // Update display name
-      await credential.user!.updateDisplayName(displayName);
+          // Store user data in Data Store
+          await _dataStore.set('users', user.id, {
+            'uid': user.id,
+            'email': email,
+            'displayName': displayName,
+            'role': role,
+            'createdAt': DateTime.now().toIso8601String(),
+            'photoURL': null,
+            'emailVerified': false,
+          });
 
-      // Send email verification
-      await credential.user!.sendEmailVerification();
-
-      // Store user data in Firestore
-      await firestore.collection('users').doc(credential.user!.uid).set({
-        'uid': credential.user!.uid,
-        'email': email,
-        'displayName': displayName,
-        'role': role,
-        'createdAt': FieldValue.serverTimestamp(),
-        'photoURL': null,
-        'emailVerified': false,
-      });
-
-      return UserModel.fromFirebaseUser(credential.user!, role: role);
-    } on FirebaseAuthException catch (e) {
-      throw AuthException(
-        _getAuthErrorMessage(e.code),
-        code: e.code,
+          return UserModel.fromBackendUser(user, role: role);
+        },
+        failure: (error) {
+          throw _mapToAuthException(error);
+        },
       );
     } catch (e) {
-      throw AuthException(ErrorStrings.withDetails(ErrorStrings.signUpFailed, e.toString()));
+      if (e is AuthException) rethrow;
+      throw AuthException(
+          ErrorStrings.withDetails(ErrorStrings.signUpFailed, e.toString()));
     }
   }
 
   @override
   Future<UserModel> signInWithGoogle() async {
     try {
-      // Trigger the authentication flow
-      final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
+      final result = await _authService.signInWithGoogle();
 
-      if (googleUser == null) {
-        throw AuthException(ErrorStrings.googleSignInCancelled);
-      }
+      return await result.when(
+        success: (user) async {
+          // Check if user exists in Data Store
+          final docResult = await _dataStore.get('users', user.id);
 
-      // Obtain the auth details from the request
-      final GoogleSignInAuthentication googleAuth =
-          await googleUser.authentication;
+          String? role;
+          if (docResult.isSuccess && docResult.dataOrNull != null) {
+            role = docResult.dataOrNull!['role'] as String?;
+          } else {
+            // New user
+            role = 'parent';
+            await _dataStore.set('users', user.id, {
+              'uid': user.id,
+              'email': user.email,
+              'displayName': user.displayName,
+              'photoURL': user.photoUrl,
+              'role': role,
+              'createdAt': DateTime.now().toIso8601String(),
+            });
+          }
 
-      // Create a new credential
-      final credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
-      );
-
-      // Sign in to Firebase with the Google credential
-      final userCredential = await firebaseAuth.signInWithCredential(credential);
-
-      if (userCredential.user == null) {
-        throw AuthException(ErrorStrings.withDetails(ErrorStrings.googleSignInFailed, ErrorStrings.noUserReturned));
-      }
-
-      // Check if user exists in Firestore
-      final userDoc = await firestore
-          .collection('users')
-          .doc(userCredential.user!.uid)
-          .get();
-
-      String? role;
-      if (!userDoc.exists) {
-        // New user - create Firestore document
-        role = 'parent'; // Default role for Google sign in
-        await firestore.collection('users').doc(userCredential.user!.uid).set({
-          'uid': userCredential.user!.uid,
-          'email': userCredential.user!.email,
-          'displayName': userCredential.user!.displayName,
-          'photoURL': userCredential.user!.photoURL,
-          'role': role,
-          'createdAt': FieldValue.serverTimestamp(),
-        });
-      } else {
-        role = userDoc.data()?['role'] as String?;
-      }
-
-      return UserModel.fromFirebaseUser(userCredential.user!, role: role);
-    } on FirebaseAuthException catch (e) {
-      throw AuthException(
-        _getAuthErrorMessage(e.code),
-        code: e.code,
-      );
-    } on PlatformException catch (e) {
-      // Handle Google Sign-In specific errors
-      if (e.code == 'sign_in_failed') {
-        throw AuthException(
-          'Google Sign-In failed. Please ensure:\n'
-          '1. SHA-1 certificate is added to Firebase Console\n'
-          '2. Google Sign-In is enabled in Firebase Authentication\n'
-          '3. You have internet connection',
-          code: e.code,
-        );
-      }
-      throw AuthException(
-        ErrorStrings.withDetails(ErrorStrings.googleSignInFailed, e.message ?? e.code),
-        code: e.code,
+          return UserModel.fromBackendUser(user, role: role);
+        },
+        failure: (error) {
+          // Handle Google specific failure messages if needed
+          if (error.message.contains('SHA-1')) {
+            throw AuthException(
+                'Google Sign-In failed. Please ensure SHA-1 certificate is configured.',
+                code: 'sign_in_failed');
+          }
+          throw _mapToAuthException(error);
+        },
       );
     } catch (e) {
-      throw AuthException(ErrorStrings.withDetails(ErrorStrings.googleSignInFailed, e.toString()));
+      if (e is AuthException) rethrow;
+      throw AuthException(ErrorStrings.withDetails(
+          ErrorStrings.googleSignInFailed, e.toString()));
     }
   }
 
   @override
   Future<void> signOut() async {
     try {
-      await Future.wait([
-        firebaseAuth.signOut(),
-        googleSignIn.signOut(),
-      ]);
+      await _authService.signOut();
     } catch (e) {
-      throw AuthException(ErrorStrings.withDetails(ErrorStrings.signOutFailed, e.toString()));
+      throw AuthException(
+          ErrorStrings.withDetails(ErrorStrings.signOutFailed, e.toString()));
     }
   }
 
   @override
   Future<UserModel?> getCurrentUser() async {
     try {
-      final user = firebaseAuth.currentUser;
+      final user = _authService.currentUser;
       if (user == null) return null;
 
-      // Get user role from Firestore
-      final userDoc = await firestore.collection('users').doc(user.uid).get();
-      final role = userDoc.data()?['role'] as String?;
+      final docResult = await _dataStore.get('users', user.id);
+      String? role;
+      if (docResult.isSuccess && docResult.dataOrNull != null) {
+        role = docResult.dataOrNull!['role'] as String?;
+      }
 
-      return UserModel.fromFirebaseUser(user, role: role);
+      return UserModel.fromBackendUser(user, role: role);
     } catch (e) {
-      throw AuthException(ErrorStrings.withDetails(ErrorStrings.getCurrentUserError, e.toString()));
+      throw AuthException(ErrorStrings.withDetails(
+          ErrorStrings.getCurrentUserError, e.toString()));
     }
   }
 
   @override
   Future<void> sendPasswordResetEmail(String email) async {
     try {
-      await firebaseAuth.sendPasswordResetEmail(email: email);
-    } on FirebaseAuthException catch (e) {
-      throw AuthException(
-        _getAuthErrorMessage(e.code),
-        code: e.code,
-      );
+      final result = await _authService.sendPasswordResetEmail(email: email);
+      if (result.isFailure) {
+        throw _mapToAuthException(result.errorOrNull!);
+      }
     } catch (e) {
-      throw AuthException(ErrorStrings.withDetails(ErrorStrings.sendPasswordResetError, e.toString()));
+      if (e is AuthException) rethrow;
+      throw AuthException(ErrorStrings.withDetails(
+          ErrorStrings.sendPasswordResetError, e.toString()));
     }
   }
 
   @override
-  Future<void> updateUserProfile({
-    String? displayName,
-    String? photoURL,
-  }) async {
+  Future<void> updateUserProfile(
+      {String? displayName, String? photoURL}) async {
     try {
-      final user = firebaseAuth.currentUser;
+      final user = _authService.currentUser;
       if (user == null) {
         throw AuthException(ErrorStrings.noUserSignedIn);
       }
 
-      if (displayName != null) {
-        await user.updateDisplayName(displayName);
-      }
-      if (photoURL != null) {
-        await user.updatePhotoURL(photoURL);
+      // Update Auth Profile
+      if (displayName != null || photoURL != null) {
+        final result = await _authService.updateProfile(
+          displayName: displayName,
+          photoUrl: photoURL,
+        );
+        if (result.isFailure) throw _mapToAuthException(result.errorOrNull!);
       }
 
-      // Update Firestore
+      // Update Data Store
       final updates = <String, dynamic>{};
       if (displayName != null) updates['displayName'] = displayName;
       if (photoURL != null) updates['photoURL'] = photoURL;
 
       if (updates.isNotEmpty) {
-        await firestore.collection('users').doc(user.uid).update(updates);
+        await _dataStore.update('users', user.id, updates);
       }
-    } on FirebaseAuthException catch (e) {
-      throw AuthException(
-        _getAuthErrorMessage(e.code),
-        code: e.code,
-      );
     } catch (e) {
-      throw AuthException(ErrorStrings.withDetails(ErrorStrings.updateProfileError, e.toString()));
+      if (e is AuthException) rethrow;
+      throw AuthException(ErrorStrings.withDetails(
+          ErrorStrings.updateProfileError, e.toString()));
     }
   }
 
-  /// Get user-friendly error messages for Firebase Auth error codes
-  String _getAuthErrorMessage(String code) {
-    switch (code) {
-      case 'user-not-found':
-        return 'No user found with this email address';
-      case 'wrong-password':
-        return 'Incorrect password';
-      case 'email-already-in-use':
-        return 'An account already exists with this email';
-      case 'invalid-email':
-        return 'Invalid email address';
-      case 'weak-password':
-        return 'Password is too weak';
-      case 'user-disabled':
-        return 'This account has been disabled';
-      case 'too-many-requests':
-        return 'Too many attempts. Please try again later';
-      case 'operation-not-allowed':
-        return 'This sign-in method is not enabled';
-      case 'network-request-failed':
-        return 'Network error. Please check your connection';
-      case 'email-not-verified':
-        return 'Please verify your email address before signing in';
+  AuthException _mapToAuthException(BackendError error) {
+    // Map BackendErrorCode back to legacy string codes or friendly messages
+    String code = 'auth-error';
+    switch (error.code) {
+      case BackendErrorCode.userNotFound:
+        code = 'user-not-found';
+        break;
+      case BackendErrorCode.emailAlreadyInUse:
+        code = 'email-already-in-use';
+        break;
+      case BackendErrorCode.weakPassword:
+        code = 'weak-password';
+        break;
+      case BackendErrorCode.invalidCredentials:
+        code = 'wrong-password';
+        break;
+      case BackendErrorCode.networkError:
+        code = 'network-request-failed';
+        break;
       default:
-        return 'Authentication failed: $code';
+        code = error.code.name;
     }
+
+    // We can use the message from BackendError directly as it usually contains the mapped error message from the adapter
+    return AuthException(error.message, code: code);
   }
 }

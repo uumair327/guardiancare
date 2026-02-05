@@ -1,10 +1,11 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
-import 'package:guardiancare/core/core.dart';
-import 'package:guardiancare/core/constants/constants.dart';
-import 'package:crypto/crypto.dart';
 import 'dart:convert';
+import 'package:crypto/crypto.dart';
+import 'package:flutter/material.dart';
+import 'package:guardiancare/core/backend/backend.dart';
+import 'package:guardiancare/core/constants/constants.dart';
+import 'package:guardiancare/core/core.dart';
+import 'package:guardiancare/core/di/injection_container.dart';
+import 'package:guardiancare/features/consent/domain/repositories/consent_repository.dart';
 
 class ForgotParentalKeyDialog extends StatefulWidget {
   const ForgotParentalKeyDialog({super.key});
@@ -26,6 +27,7 @@ class _ForgotParentalKeyDialogState extends State<ForgotParentalKeyDialog> {
   bool _obscureConfirmKey = true;
   int _step = 1; // 1: Answer question, 2: Set new key
   String? _securityQuestion;
+  String? _storedAnswerHash;
 
   @override
   void initState() {
@@ -47,19 +49,21 @@ class _ForgotParentalKeyDialogState extends State<ForgotParentalKeyDialog> {
 
   Future<void> _loadSecurityQuestion() async {
     try {
-      final user = FirebaseAuth.instance.currentUser;
+      final user = sl<IAuthService>().currentUser;
       if (user == null) return;
 
-      final doc = await FirebaseFirestore.instance
-          .collection('consents')
-          .doc(user.uid)
-          .get();
+      final result = await sl<ConsentRepository>().getConsent(user.id);
 
-      if (doc.exists) {
+      if (!mounted) return;
+
+      result.fold((failure) {
+        debugPrint('Error loading security question: ${failure.message}');
+      }, (consent) {
         setState(() {
-          _securityQuestion = doc.data()?['securityQuestion'] as String?;
+          _securityQuestion = consent.securityQuestion;
+          _storedAnswerHash = consent.securityAnswerHash;
         });
-      }
+      });
     } catch (e) {
       debugPrint('Error loading security question: $e');
     }
@@ -70,39 +74,33 @@ class _ForgotParentalKeyDialogState extends State<ForgotParentalKeyDialog> {
       return;
     }
 
+    if (_storedAnswerHash == null) {
+      _loadSecurityQuestion();
+      return;
+    }
+
     setState(() {
       _isLoading = true;
     });
 
     try {
-      final user = FirebaseAuth.instance.currentUser;
-      if (user == null) {
-        throw Exception('No user logged in');
-      }
-
-      final doc = await FirebaseFirestore.instance
-          .collection('consents')
-          .doc(user.uid)
-          .get();
-
-      if (!doc.exists) {
-        throw Exception('No consent data found');
-      }
-
-      final storedAnswerHash = doc.data()?['securityAnswer'] as String?;
       final enteredAnswerHash =
           _hashString(_answerController.text.toLowerCase().trim());
 
-      if (storedAnswerHash == enteredAnswerHash) {
+      // Simulate network delay for UX
+      await Future.delayed(const Duration(milliseconds: 500));
+
+      if (_storedAnswerHash == enteredAnswerHash) {
+        if (!mounted) return;
         setState(() {
           _step = 2;
           _isLoading = false;
         });
       } else {
+        if (!mounted) return;
         setState(() {
           _isLoading = false;
         });
-        if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(FeedbackStrings.incorrectAnswer),
@@ -111,10 +109,10 @@ class _ForgotParentalKeyDialogState extends State<ForgotParentalKeyDialog> {
         );
       }
     } catch (e) {
+      if (!mounted) return;
       setState(() {
         _isLoading = false;
       });
-      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(FeedbackStrings.errorWith(e.toString())),
@@ -134,38 +132,43 @@ class _ForgotParentalKeyDialogState extends State<ForgotParentalKeyDialog> {
     });
 
     try {
-      final user = FirebaseAuth.instance.currentUser;
+      final user = sl<IAuthService>().currentUser;
       if (user == null) {
         throw Exception('No user logged in');
       }
 
-      // Update parental key in Firestore
-      await FirebaseFirestore.instance
-          .collection('consents')
-          .doc(user.uid)
-          .update({
-        'parentalKey': _hashString(_newKeyController.text),
-        'lastUpdated': FieldValue.serverTimestamp(),
-      });
-
-      setState(() {
-        _isLoading = false;
-      });
-
-      if (!mounted) return;
-      Navigator.of(context).pop(true); // Return true to indicate success
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(FeedbackStrings.parentalKeyReset),
-          backgroundColor: context.colors.success,
-        ),
+      final result = await sl<ConsentRepository>().resetParentalKey(
+        user.id,
+        _hashString(_answerController.text.toLowerCase().trim()),
+        _hashString(_newKeyController.text),
       );
+
+      if (!mounted) return;
+
+      result.fold((failure) {
+        setState(() => _isLoading = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(FeedbackStrings.errorWith(failure.message)),
+            backgroundColor: context.colors.error,
+          ),
+        );
+      }, (_) {
+        setState(() => _isLoading = false);
+        Navigator.of(context).pop(true); // Return true to indicate success
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(FeedbackStrings.parentalKeyReset),
+            backgroundColor: context.colors.success,
+          ),
+        );
+      });
     } catch (e) {
+      if (!mounted) return;
       setState(() {
         _isLoading = false;
       });
-      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(FeedbackStrings.errorWith(e.toString())),

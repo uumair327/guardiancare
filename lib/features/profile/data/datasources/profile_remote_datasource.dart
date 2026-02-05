@@ -1,5 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:guardiancare/core/backend/backend.dart';
 import 'package:guardiancare/core/constants/constants.dart';
 import 'package:guardiancare/core/error/exceptions.dart';
 import 'package:guardiancare/features/profile/data/models/profile_model.dart';
@@ -7,10 +6,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 /// Remote data source for profile operations
 abstract class ProfileRemoteDataSource {
-  /// Get user profile from Firestore
+  /// Get user profile from DataStore
   Future<ProfileModel> getProfile(String uid);
 
-  /// Update user profile in Firestore
+  /// Update user profile in DataStore
   Future<void> updateProfile(ProfileModel profile);
 
   /// Delete user account and all associated data
@@ -20,120 +19,108 @@ abstract class ProfileRemoteDataSource {
   Future<void> clearUserPreferences();
 }
 
+/// Implementation of ProfileRemoteDataSource using IDataStore and IAuthService
 class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
-  final FirebaseFirestore firestore;
-  final FirebaseAuth auth;
-  final SharedPreferences sharedPreferences;
+  final IDataStore _dataStore;
+  final IAuthService _authService;
+  final SharedPreferences _sharedPreferences;
 
   ProfileRemoteDataSourceImpl({
-    required this.firestore,
-    required this.auth,
-    required this.sharedPreferences,
-  });
+    required IDataStore dataStore,
+    required IAuthService authService,
+    required SharedPreferences sharedPreferences,
+  })  : _dataStore = dataStore,
+        _authService = authService,
+        _sharedPreferences = sharedPreferences;
 
   @override
   Future<ProfileModel> getProfile(String uid) async {
     try {
-      final doc = await firestore.collection('users').doc(uid).get();
+      final result = await _dataStore.get('users', uid);
 
-      if (!doc.exists) {
-        throw ServerException(ErrorStrings.userNotFound);
-      }
-
-      final data = doc.data();
-      if (data == null) {
-        throw ServerException(ErrorStrings.invalidData);
-      }
-
-      return ProfileModel.fromJson(data);
+      return result.when(
+        success: (data) {
+          if (data == null) {
+            throw ServerException(ErrorStrings.userNotFound);
+          }
+          return ProfileModel.fromJson(data);
+        },
+        failure: (error) {
+          throw ServerException(ErrorStrings.withDetails(
+              ErrorStrings.getProfileError, error.message));
+        },
+      );
     } catch (e) {
-      throw ServerException(ErrorStrings.withDetails(ErrorStrings.getProfileError, e.toString()));
+      if (e is ServerException) rethrow;
+      throw ServerException(
+          ErrorStrings.withDetails(ErrorStrings.getProfileError, e.toString()));
     }
   }
 
   @override
   Future<void> updateProfile(ProfileModel profile) async {
     try {
-      await firestore.collection('users').doc(profile.uid).update(
-            profile.toJson(),
-          );
+      final result =
+          await _dataStore.update('users', profile.uid, profile.toJson());
+
+      if (result.isFailure) {
+        throw ServerException(ErrorStrings.withDetails(
+            ErrorStrings.updateProfileError, result.errorOrNull!.message));
+      }
     } catch (e) {
-      throw ServerException(ErrorStrings.withDetails(ErrorStrings.updateProfileError, e.toString()));
+      if (e is ServerException) rethrow;
+      throw ServerException(ErrorStrings.withDetails(
+          ErrorStrings.updateProfileError, e.toString()));
     }
   }
 
   @override
   Future<void> deleteAccount(String uid) async {
     try {
-      final user = auth.currentUser;
+      final user = _authService.currentUser;
       if (user == null) {
         throw ServerException(ErrorStrings.userNotFound);
       }
 
       // Delete user's recommendations
-      await _deleteUserRecommendations(uid);
+      // Logic: query recommendations where userId == uid, then delete each
+      final queryOptions =
+          QueryOptions(filters: [QueryFilter.equals('userId', uid)]);
+      final recsResult =
+          await _dataStore.query('recommendations', options: queryOptions);
 
-      // Delete user document from Firestore
-      await firestore.collection('users').doc(uid).delete();
+      if (recsResult.isSuccess && recsResult.dataOrNull != null) {
+        for (var doc in recsResult.dataOrNull!) {
+          final docId = doc['id'] as String;
+          await _dataStore.delete('recommendations', docId);
+        }
+      }
 
-      // Reauthenticate if needed and delete Firebase Auth account
-      await _deleteFirebaseAuthAccount(user);
+      // Delete user document from Data Store
+      await _dataStore.delete('users', uid);
+
+      // Delete account (handled by AuthService including re-auth for Google if possible)
+      final deleteResult = await _authService.deleteAccount();
+
+      if (deleteResult.isFailure) {
+        throw ServerException(ErrorStrings.withDetails(
+            ErrorStrings.deleteAccountError,
+            deleteResult.errorOrNull!.message));
+      }
     } catch (e) {
-      throw ServerException(ErrorStrings.withDetails(ErrorStrings.deleteAccountError, e.toString()));
+      if (e is ServerException) rethrow;
+      throw ServerException(ErrorStrings.withDetails(
+          ErrorStrings.deleteAccountError, e.toString()));
     }
   }
 
   @override
   Future<void> clearUserPreferences() async {
     try {
-      await sharedPreferences.remove('has_seen_forum_guidelines');
+      await _sharedPreferences.remove('has_seen_forum_guidelines');
     } catch (e) {
-      throw CacheException(ErrorStrings.withDetails(ErrorStrings.clearPreferencesError, e.toString()));
-    }
-  }
-
-  /// Delete user recommendations from Firestore
-  Future<void> _deleteUserRecommendations(String uid) async {
-    try {
-      final recommendations = await firestore
-          .collection('recommendations')
-          .where('userId', isEqualTo: uid)
-          .get();
-
-      for (var doc in recommendations.docs) {
-        await doc.reference.delete();
-      }
-    } catch (e) {
-      // Log error but don't throw - recommendations deletion is not critical
-      print('Error deleting recommendations: $e');
-    }
-  }
-
-  /// Delete Firebase Auth account with reauthentication if needed
-  Future<void> _deleteFirebaseAuthAccount(User user) async {
-    try {
-      await user.delete();
-    } on FirebaseAuthException catch (e) {
-      if (e.code == "requires-recent-login") {
-        await _reauthenticateAndDelete(user);
-      } else {
-        throw ServerException(ErrorStrings.withDetails(ErrorStrings.deleteAccountError, e.message ?? ''));
-      }
-    }
-  }
-
-  /// Reauthenticate user and delete account
-  Future<void> _reauthenticateAndDelete(User user) async {
-    try {
-      final providerData = user.providerData.first;
-
-      if (GoogleAuthProvider().providerId == providerData.providerId) {
-        await user.reauthenticateWithProvider(GoogleAuthProvider());
-      }
-
-      await user.delete();
-    } catch (e) {
-      throw ServerException(ErrorStrings.withDetails(ErrorStrings.deleteAccountError, e.toString()));
+      throw CacheException(ErrorStrings.withDetails(
+          ErrorStrings.clearPreferencesError, e.toString()));
     }
   }
 }

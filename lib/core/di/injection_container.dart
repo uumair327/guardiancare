@@ -7,6 +7,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:guardiancare/core/core.dart';
 import 'package:guardiancare/features/features.dart';
 
+// Backend Abstraction Layer (Hexagonal Architecture)
+import 'package:guardiancare/core/backend/backend.dart';
+
 // Quiz feature service imports - Clean Architecture compliant
 // Domain layer abstract interfaces (Requirements: 4.1, 4.2)
 import 'package:guardiancare/features/quiz/domain/services/gemini_ai_service.dart';
@@ -14,28 +17,42 @@ import 'package:guardiancare/features/quiz/domain/services/youtube_search_servic
 // Data layer concrete implementations (Requirements: 4.1, 4.2)
 import 'package:guardiancare/features/quiz/data/services/gemini_ai_service_impl.dart';
 import 'package:guardiancare/features/quiz/data/services/youtube_search_service_impl.dart';
+import 'package:guardiancare/features/quiz/domain/usecases/get_all_quizzes.dart';
+import 'package:guardiancare/features/quiz/domain/usecases/save_quiz_history.dart';
 
 final sl = GetIt.instance;
 
 /// Initialize all dependencies
 Future<void> init() async {
   // ============================================================================
+  // Backend Abstraction Layer (Hexagonal Architecture - Ports & Adapters)
+  // These are the ONLY Firebase dependencies that should exist in the app.
+  // All other code should depend on the abstract interfaces (IAuthService, etc.)
+  // To switch to a different backend (Supabase, Appwrite), change the provider here.
+  // ============================================================================
+  _initBackendServices();
+
+  // ============================================================================
   // Core
   // ============================================================================
   sl.registerLazySingleton<NetworkInfo>(() => NetworkInfoImpl());
 
   // ============================================================================
-  // External
+  // External (Legacy - kept for gradual migration, will be removed)
+  // TODO: Remove these once all features are migrated to use abstraction layer
   // ============================================================================
   final sharedPreferences = await SharedPreferences.getInstance();
   sl.registerLazySingleton(() => sharedPreferences);
+
+  // Legacy Firebase registrations - kept temporarily for backward compatibility
+  // These will be removed as features migrate to IAuthService and IDataStore
   sl.registerLazySingleton(() => FirebaseAuth.instance);
   sl.registerLazySingleton(() => FirebaseFirestore.instance);
   sl.registerLazySingleton(() => GoogleSignIn(
-    scopes: ['email', 'profile'],
-    // If Google Sign-In still fails, add your Web Client ID here:
-    // serverClientId: 'YOUR_WEB_CLIENT_ID.apps.googleusercontent.com',
-  ));
+        scopes: ['email', 'profile'],
+        // If Google Sign-In still fails, add your Web Client ID here:
+        // serverClientId: 'YOUR_WEB_CLIENT_ID.apps.googleusercontent.com',
+      ));
 
   // Initialize Storage Manager (SQLite + Hive)
   final storageManager = StorageManager.instance;
@@ -88,6 +105,27 @@ Future<void> init() async {
   _initConsentFeature();
 }
 
+/// Initialize backend abstraction layer services
+///
+/// This is the central place where the backend provider is configured.
+/// To switch to a different backend (Supabase, Appwrite, etc.):
+/// 1. Change `BackendProvider.firebase` to `BackendProvider.supabase`
+/// 2. No other code changes required!
+///
+/// Following: Dependency Inversion Principle (DIP), Open/Closed Principle (OCP)
+void _initBackendServices() {
+  const factory = BackendFactory(BackendProvider.firebase);
+
+  // Register abstract interfaces with concrete implementations
+  // The rest of the app should ONLY depend on these interfaces
+  sl.registerLazySingleton<IAuthService>(() => factory.createAuthService());
+  sl.registerLazySingleton<IDataStore>(() => factory.createDataStore());
+  sl.registerLazySingleton<IStorageService>(
+      () => factory.createStorageService());
+  sl.registerLazySingleton<IAnalyticsService>(
+      () => factory.createAnalyticsService());
+}
+
 /// Initialize manager dependencies for SRP compliance
 void _initManagers() {
   // ============================================================================
@@ -132,9 +170,10 @@ void _initManagers() {
   // Requirements: 1.1, 1.2, 1.3
   // ============================================================================
 
-  // AuthStateManager - manages authentication state
+  // AuthStateManager - manages authentication state using IAuthService abstraction
+  // Following: DIP (Dependency Inversion Principle)
   sl.registerLazySingleton<AuthStateManager>(
-    () => AuthStateManagerImpl(auth: sl()),
+    () => AuthStateManagerImpl(authService: sl<IAuthService>()),
   );
 
   // LocaleManager - manages application locale
@@ -161,9 +200,8 @@ void _initAuthFeature() {
   // Data sources
   sl.registerLazySingleton<AuthRemoteDataSource>(
     () => AuthRemoteDataSourceImpl(
-      firebaseAuth: sl(),
-      firestore: sl(),
-      googleSignIn: sl(),
+      authService: sl<IAuthService>(),
+      dataStore: sl<IDataStore>(),
     ),
   );
 
@@ -200,7 +238,7 @@ void _initAuthFeature() {
 void _initForumFeature() {
   // Data sources
   sl.registerLazySingleton<ForumRemoteDataSource>(
-    () => ForumRemoteDataSourceImpl(firestore: sl()),
+    () => ForumRemoteDataSourceImpl(dataStore: sl<IDataStore>()),
   );
 
   // Repositories
@@ -232,7 +270,7 @@ void _initForumFeature() {
 void _initHomeFeature() {
   // Data sources
   sl.registerLazySingleton<HomeRemoteDataSource>(
-    () => HomeRemoteDataSourceImpl(firestore: sl()),
+    () => HomeRemoteDataSourceImpl(dataStore: sl<IDataStore>()),
   );
 
   // Repositories
@@ -254,8 +292,8 @@ void _initProfileFeature() {
   // Data sources
   sl.registerLazySingleton<ProfileRemoteDataSource>(
     () => ProfileRemoteDataSourceImpl(
-      firestore: sl(),
-      auth: sl(),
+      dataStore: sl<IDataStore>(),
+      authService: sl<IAuthService>(),
       sharedPreferences: sl(),
     ),
   );
@@ -313,7 +351,7 @@ void _initProfileFeature() {
 void _initLearnFeature() {
   // Data sources
   sl.registerLazySingleton<LearnRemoteDataSource>(
-    () => LearnRemoteDataSourceImpl(firestore: sl()),
+    () => LearnRemoteDataSourceImpl(dataStore: sl<IDataStore>()),
   );
 
   // Repositories
@@ -356,11 +394,12 @@ void _initQuizFeature() {
 
   // Repositories
   sl.registerLazySingleton<QuizRepository>(
-    () => QuizRepositoryImpl(localDataSource: sl()),
+    () =>
+        QuizRepositoryImpl(localDataSource: sl(), dataStore: sl<IDataStore>()),
   );
 
   sl.registerLazySingleton<RecommendationRepository>(
-    () => RecommendationRepositoryImpl(firestore: sl()),
+    () => RecommendationRepositoryImpl(dataStore: sl<IDataStore>()),
   );
 
   // Use cases
@@ -368,6 +407,8 @@ void _initQuizFeature() {
   sl.registerLazySingleton(() => GetQuestions(sl()));
   sl.registerLazySingleton(() => SubmitQuiz(sl()));
   sl.registerLazySingleton(() => ValidateQuiz(sl()));
+  sl.registerLazySingleton(() => SaveQuizHistory(sl()));
+  sl.registerLazySingleton(() => GetAllQuizzes(sl())); // Added
   sl.registerLazySingleton(() => RecommendationUseCase(
         geminiService: sl(),
         youtubeService: sl(),
@@ -382,6 +423,8 @@ void _initQuizFeature() {
       submitQuiz: sl(),
       validateQuiz: sl(),
       generateRecommendations: sl(),
+      saveQuizHistory: sl(),
+      authService: sl<IAuthService>(),
     ),
   );
 }
@@ -448,7 +491,7 @@ void _initReportFeature() {
 void _initExploreFeature() {
   // Data sources
   sl.registerLazySingleton<ExploreRemoteDataSource>(
-    () => ExploreRemoteDataSourceImpl(firestore: sl()),
+    () => ExploreRemoteDataSourceImpl(dataStore: sl<IDataStore>()),
   );
 
   // Repositories
@@ -473,7 +516,7 @@ void _initExploreFeature() {
 void _initConsentFeature() {
   // Data sources
   sl.registerLazySingleton<ConsentRemoteDataSource>(
-    () => ConsentRemoteDataSourceImpl(firestore: sl()),
+    () => ConsentRemoteDataSourceImpl(dataStore: sl<IDataStore>()),
   );
 
   sl.registerLazySingleton<ConsentLocalDataSource>(

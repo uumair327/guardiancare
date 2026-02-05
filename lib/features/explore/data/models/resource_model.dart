@@ -14,14 +14,23 @@ class ResourceModel extends Resource {
 
   factory ResourceModel.fromFirestore(DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>;
+    data['id'] = doc.id;
+    return ResourceModel.fromMap(data);
+  }
+
+  factory ResourceModel.fromMap(Map<String, dynamic> map) {
     return ResourceModel(
-      id: doc.id,
-      title: data['title'] ?? '',
-      description: data['description'],
-      url: data['url'],
-      type: data['type'],
-      category: data['category'],
-      timestamp: (data['timestamp'] as Timestamp?)?.toDate(),
+      id: map['id'] ?? '',
+      title: map['title'] ?? '',
+      description: map['description'],
+      url: map['url'],
+      type: map['type'],
+      category: map['category'],
+      timestamp: (map['timestamp'] is Timestamp)
+          ? (map['timestamp'] as Timestamp).toDate()
+          : (map['timestamp'] is String
+              ? DateTime.tryParse(map['timestamp'])
+              : null),
     );
   }
 

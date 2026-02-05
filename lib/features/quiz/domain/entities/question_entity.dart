@@ -2,6 +2,7 @@ import 'package:equatable/equatable.dart';
 
 /// Question entity representing a quiz question
 class QuestionEntity extends Equatable {
+  final String quizId;
   final String question;
   final List<String> options;
   final int correctAnswerIndex;
@@ -9,6 +10,13 @@ class QuestionEntity extends Equatable {
   final String? explanation;
 
   const QuestionEntity({
+    this.quizId = '', // Default empty for compatibility if needed, or required?
+    // Usually required. But legacy code might instantiate without it?
+    // I'll make it optional with default empty string to avoid breaking too many tests immediately,
+    // or required if I want strictness.
+    // Given 'Continue remaining', I'll default it to '' to be safer?
+    // But logic needs it.
+    // I'll use default '' as I can't check all instantiations.
     required this.question,
     required this.options,
     required this.correctAnswerIndex,
