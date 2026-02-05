@@ -255,7 +255,11 @@ test-results/
 # =============================================================================
 # 📁 PROJECT SPECIFIC (DO NOT TRACK)
 # =============================================================================
-old_lib/
+old_lib
+node_modules/
+seed_firestore.js
+package.json
+package-lock.json/
 deprecated/
 backup/
 temp/
@@ -342,3 +346,4 @@ android/app/google-services_old.json
 .agent/workflows
 .kiro
 .idx
+serviceAccountKey.json
