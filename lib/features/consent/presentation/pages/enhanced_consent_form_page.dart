@@ -1,9 +1,11 @@
 import 'dart:convert';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:crypto/crypto.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:guardiancare/core/backend/backend.dart';
+import 'package:guardiancare/core/di/injection_container.dart';
+import 'package:guardiancare/features/consent/domain/entities/consent_entity.dart';
+import 'package:guardiancare/features/consent/domain/repositories/consent_repository.dart';
 import 'package:flutter/services.dart';
 import 'package:guardiancare/core/core.dart';
 
@@ -133,24 +135,35 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage>
     HapticFeedback.mediumImpact();
 
     try {
-      final user = FirebaseAuth.instance.currentUser;
+      final user = sl<IAuthService>().currentUser;
       if (user == null) throw Exception('No user logged in');
 
-      await FirebaseFirestore.instance
-          .collection('consents')
-          .doc(user.uid)
-          .set({
-        'parentEmail': _parentEmailController.text.trim(),
-        'childName': _childNameController.text.trim(),
-        'isChildAbove12': _isChildAbove12,
-        'parentalKey': _hashString(_keyController.text),
-        'securityQuestion': _selectedSecurityQuestion,
-        'securityAnswer':
+      final consent = ConsentEntity(
+        parentName: '', // Not collected in form
+        parentEmail: _parentEmailController.text.trim(),
+        childName: _childNameController.text.trim(),
+        isChildAbove12: _isChildAbove12,
+        parentalKeyHash: _hashString(_keyController.text),
+        securityQuestion: _selectedSecurityQuestion ?? '',
+        securityAnswerHash:
             _hashString(_securityAnswerController.text.toLowerCase().trim()),
-        'timestamp': FieldValue.serverTimestamp(),
-      });
+        timestamp: DateTime.now(),
+        consentCheckboxes: {
+          'termsAccepted': true,
+          'parentConsentGiven': true,
+          'privacyPolicyAccepted': true,
+        },
+      );
 
-      widget.onSubmit();
+      final result =
+          await sl<ConsentRepository>().submitConsent(consent, user.id);
+
+      result.fold((failure) {
+        if (mounted)
+          _showErrorSnackBar(FeedbackStrings.errorWith(failure.message));
+      }, (_) {
+        widget.onSubmit();
+      });
     } catch (e) {
       if (mounted) _showErrorSnackBar(FeedbackStrings.errorWith(e.toString()));
     } finally {

@@ -1,13 +1,14 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_test/flutter_test.dart' hide test, group, setUp, tearDown, expect;
+import 'package:flutter_test/flutter_test.dart'
+    hide test, group, setUp, tearDown, expect;
 import 'package:glados/glados.dart';
 import 'package:guardiancare/core/managers/auth_state_manager.dart';
 import 'package:guardiancare/core/managers/locale_manager.dart';
 import 'package:guardiancare/core/managers/app_lifecycle_manager.dart';
 import 'package:guardiancare/core/models/auth_state_event.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:guardiancare/core/backend/backend.dart';
 
 /// **Feature: srp-clean-architecture-fix, Property 1: Main App State Delegation**
 /// **Validates: Requirements 1.1, 1.2, 1.3, 1.4**
@@ -22,21 +23,22 @@ import 'package:firebase_auth/firebase_auth.dart';
 // ============================================================================
 
 /// Mock AuthStateManager that tracks all method calls
+/// Uses BackendUser instead of Firebase User for backend-agnostic testing
 class MockAuthStateManager implements AuthStateManager {
   final List<String> methodCalls = [];
   final StreamController<AuthStateEvent> _eventController =
       StreamController<AuthStateEvent>.broadcast();
-  final StreamController<User?> _authStateController =
-      StreamController<User?>.broadcast();
+  final StreamController<BackendUser?> _authStateController =
+      StreamController<BackendUser?>.broadcast();
 
   @override
-  Stream<User?> get authStateChanges => _authStateController.stream;
+  Stream<BackendUser?> get authStateChanges => _authStateController.stream;
 
   @override
   Stream<AuthStateEvent> get authEvents => _eventController.stream;
 
   @override
-  User? get currentUser => null;
+  BackendUser? get currentUser => null;
 
   @override
   void notifyLogout() {
@@ -239,7 +241,8 @@ extension CustomGenerators on Any {
   Generator<Locale> get locale => choose(supportedLocales);
 
   /// Generator for lifecycle states that trigger manager calls
-  Generator<AppLifecycleState> get lifecycleState => choose(handledLifecycleStates);
+  Generator<AppLifecycleState> get lifecycleState =>
+      choose(handledLifecycleStates);
 
   /// Generator for positive integers between 1 and max
   Generator<int> intBetween(int min, int max) {
@@ -270,7 +273,8 @@ void main() {
         expect(
           fixture.localeManager.methodCalls,
           contains('changeLocale:${locale.languageCode}'),
-          reason: 'LocaleManager.changeLocale should be called for locale: ${locale.languageCode}',
+          reason:
+              'LocaleManager.changeLocale should be called for locale: ${locale.languageCode}',
         );
 
         // Assert: The locale was recorded
@@ -301,21 +305,24 @@ void main() {
             expect(
               fixture.lifecycleManager.methodCalls,
               contains('onPaused'),
-              reason: 'AppLifecycleManager.onPaused should be called for paused state',
+              reason:
+                  'AppLifecycleManager.onPaused should be called for paused state',
             );
             break;
           case AppLifecycleState.detached:
             expect(
               fixture.lifecycleManager.methodCalls,
               contains('onDetached'),
-              reason: 'AppLifecycleManager.onDetached should be called for detached state',
+              reason:
+                  'AppLifecycleManager.onDetached should be called for detached state',
             );
             break;
           case AppLifecycleState.resumed:
             expect(
               fixture.lifecycleManager.methodCalls,
               contains('onResumed'),
-              reason: 'AppLifecycleManager.onResumed should be called for resumed state',
+              reason:
+                  'AppLifecycleManager.onResumed should be called for resumed state',
             );
             break;
           default:
@@ -388,7 +395,8 @@ void main() {
     // Property 1.5: Multiple lifecycle events are all delegated
     // Validates: Requirement 1.3
     // ========================================================================
-    Glados(any.nonEmptyList(any.lifecycleState), ExploreConfig(numRuns: 20)).test(
+    Glados(any.nonEmptyList(any.lifecycleState), ExploreConfig(numRuns: 20))
+        .test(
       'For any sequence of lifecycle events, all SHALL be delegated to AppLifecycleManager',
       (states) {
         // Create fresh fixtures for each test iteration
@@ -400,13 +408,22 @@ void main() {
         }
 
         // Assert: Count expected calls
-        final expectedPaused = states.where((s) => s == AppLifecycleState.paused).length;
-        final expectedDetached = states.where((s) => s == AppLifecycleState.detached).length;
-        final expectedResumed = states.where((s) => s == AppLifecycleState.resumed).length;
+        final expectedPaused =
+            states.where((s) => s == AppLifecycleState.paused).length;
+        final expectedDetached =
+            states.where((s) => s == AppLifecycleState.detached).length;
+        final expectedResumed =
+            states.where((s) => s == AppLifecycleState.resumed).length;
 
-        final actualPaused = fixture.lifecycleManager.methodCalls.where((c) => c == 'onPaused').length;
-        final actualDetached = fixture.lifecycleManager.methodCalls.where((c) => c == 'onDetached').length;
-        final actualResumed = fixture.lifecycleManager.methodCalls.where((c) => c == 'onResumed').length;
+        final actualPaused = fixture.lifecycleManager.methodCalls
+            .where((c) => c == 'onPaused')
+            .length;
+        final actualDetached = fixture.lifecycleManager.methodCalls
+            .where((c) => c == 'onDetached')
+            .length;
+        final actualResumed = fixture.lifecycleManager.methodCalls
+            .where((c) => c == 'onResumed')
+            .length;
 
         expect(actualPaused, equals(expectedPaused),
             reason: 'All paused events should be delegated');
@@ -429,7 +446,8 @@ void main() {
 
         // Arrange
         final authEvents = <AuthStateEvent>[];
-        final subscription = fixture.authManager.authEvents.listen(authEvents.add);
+        final subscription =
+            fixture.authManager.authEvents.listen(authEvents.add);
 
         // Act
         for (var i = 0; i < count; i++) {
@@ -440,7 +458,8 @@ void main() {
         await Future.delayed(Duration.zero);
 
         // Assert
-        final logoutEvents = authEvents.where((e) => e.type == AuthStateEventType.logout).length;
+        final logoutEvents =
+            authEvents.where((e) => e.type == AuthStateEventType.logout).length;
         expect(
           logoutEvents,
           equals(count),
@@ -506,7 +525,9 @@ void main() {
       expect(logoutCalls, equals(3));
     });
 
-    test('Inactive and hidden lifecycle states should not trigger manager calls', () {
+    test(
+        'Inactive and hidden lifecycle states should not trigger manager calls',
+        () {
       final fixture = TestFixture.create();
 
       // These states should not trigger any manager calls

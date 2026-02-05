@@ -1,4 +1,6 @@
 export 'animations/animations.dart';
+export 'backend/backend.dart';
+export 'config/config.dart';
 export 'constants/constants.dart';
 export 'database/database.dart';
 export 'di/di.dart';

@@ -13,13 +13,22 @@ class RecommendationModel extends Recommendation {
 
   factory RecommendationModel.fromFirestore(DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>;
+    data['id'] = doc.id;
+    return RecommendationModel.fromMap(data);
+  }
+
+  factory RecommendationModel.fromMap(Map<String, dynamic> map) {
     return RecommendationModel(
-      id: doc.id,
-      userId: data['UID'] ?? '',
-      title: data['title'] ?? 'Untitled',
-      thumbnail: data['thumbnail'],
-      videoUrl: data['video'],
-      timestamp: (data['timestamp'] as Timestamp?)?.toDate(),
+      id: map['id'] ?? '',
+      userId: map['UID'] ?? '',
+      title: map['title'] ?? 'Untitled',
+      thumbnail: map['thumbnail'],
+      videoUrl: map['video'],
+      timestamp: (map['timestamp'] is Timestamp)
+          ? (map['timestamp'] as Timestamp).toDate()
+          : (map['timestamp'] is String
+              ? DateTime.tryParse(map['timestamp'])
+              : null),
     );
   }
 

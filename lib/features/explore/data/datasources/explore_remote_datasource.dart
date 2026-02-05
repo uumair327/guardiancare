@@ -1,4 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:guardiancare/core/backend/backend.dart';
 import 'package:guardiancare/features/explore/data/models/recommendation_model.dart';
 import 'package:guardiancare/features/explore/data/models/resource_model.dart';
 
@@ -8,36 +8,40 @@ abstract class ExploreRemoteDataSource {
 }
 
 class ExploreRemoteDataSourceImpl implements ExploreRemoteDataSource {
-  final FirebaseFirestore firestore;
+  final IDataStore _dataStore;
 
-  ExploreRemoteDataSourceImpl({required this.firestore});
+  ExploreRemoteDataSourceImpl({required IDataStore dataStore})
+      : _dataStore = dataStore;
 
   @override
   Stream<List<RecommendationModel>> getRecommendations(String userId) {
-    return firestore
-        .collection('recommendations')
-        .where('UID', isEqualTo: userId)
-        .orderBy('timestamp', descending: true)
-        .snapshots()
-        .map((snapshot) {
-      return snapshot.docs
-          .map((doc) => RecommendationModel.fromFirestore(doc))
-          .toList();
+    final options = QueryOptions(
+      filters: [QueryFilter.equals('UID', userId)],
+      orderBy: [const OrderBy('timestamp', descending: true)],
+    );
+
+    return _dataStore
+        .streamQuery('recommendations', options: options)
+        .map((result) {
+      return result.when(
+        success: (docs) =>
+            docs.map((doc) => RecommendationModel.fromMap(doc)).toList(),
+        failure: (error) {
+          // Provide feedback or log error? Returning empty list for now matching safe stream behavior
+          return <RecommendationModel>[];
+        },
+      );
     });
   }
 
   @override
   Stream<List<ResourceModel>> getResources() {
-    return firestore
-        .collection('resources')
-        .snapshots()
-        .map((snapshot) {
-      return snapshot.docs
-          .map((doc) => ResourceModel.fromFirestore(doc))
-          .toList();
-    }).handleError((error) {
-      // Error will be handled by the repository layer
-      return <ResourceModel>[];
+    return _dataStore.streamQuery('resources').map((result) {
+      return result.when(
+        success: (docs) =>
+            docs.map((doc) => ResourceModel.fromMap(doc)).toList(),
+        failure: (error) => <ResourceModel>[],
+      );
     });
   }
 }

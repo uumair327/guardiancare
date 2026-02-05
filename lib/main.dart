@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:ui';
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart' show kIsWeb, debugPrint;
@@ -9,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:guardiancare/core/core.dart';
+import 'package:guardiancare/core/backend/backend.dart';
 import 'package:guardiancare/features/features.dart';
 import 'package:guardiancare/core/di/di.dart' as di;
 
@@ -16,10 +16,11 @@ import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   // Initialize Firebase only if not already initialized
   try {
-    await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+    await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform);
   } catch (e) {
     if (e.toString().contains('duplicate-app')) {
       debugPrint('Firebase already initialized, skipping...');
@@ -78,6 +79,10 @@ class Guardiancare extends StatefulWidget {
 /// - LocaleManager: handles locale/language changes
 /// - ThemeManager: handles theme/dark mode changes
 /// - AppLifecycleManager: handles app lifecycle events
+///
+/// Follows Dependency Inversion Principle:
+/// - Uses IAuthService abstraction instead of FirebaseAuth directly
+/// - Uses BackendUser instead of Firebase User
 class GuardiancareState extends State<Guardiancare>
     with WidgetsBindingObserver {
   // Managers injected via dependency injection
@@ -87,13 +92,13 @@ class GuardiancareState extends State<Guardiancare>
   late final AppLifecycleManager _lifecycleManager;
 
   // Subscriptions for cleanup
-  StreamSubscription<User?>? _authSubscription;
+  StreamSubscription<BackendUser?>? _authSubscription;
   StreamSubscription<AuthStateEvent>? _authEventSubscription;
   StreamSubscription<Locale>? _localeSubscription;
   StreamSubscription<ThemeMode>? _themeSubscription;
 
-  // Local state for UI updates
-  User? _user;
+  // Local state for UI updates (now using BackendUser)
+  BackendUser? _user;
   Locale _locale = const Locale('en');
   ThemeMode _themeMode = ThemeMode.system;
 
@@ -144,11 +149,13 @@ class GuardiancareState extends State<Guardiancare>
     });
 
     // Subscribe to auth state changes through AuthStateManager
-    _authSubscription = _authManager.authStateChanges.listen((User? user) {
+    // Now uses BackendUser instead of Firebase User (DIP compliance)
+    _authSubscription =
+        _authManager.authStateChanges.listen((BackendUser? user) {
       setState(() {
         _user = user;
       });
-      debugPrint("User state updated: ${_user?.uid}");
+      debugPrint("User state updated: ${_user?.id}");
     });
 
     // Subscribe to auth events for logout notifications

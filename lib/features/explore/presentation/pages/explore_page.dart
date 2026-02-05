@@ -1,10 +1,14 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:dartz/dartz.dart' as dartz;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:guardiancare/core/backend/backend.dart';
 import 'package:guardiancare/core/core.dart';
+import 'package:guardiancare/core/di/injection_container.dart';
+import 'package:guardiancare/features/explore/domain/entities/recommendation.dart';
+import 'package:guardiancare/features/explore/domain/entities/resource.dart';
+import 'package:guardiancare/features/explore/domain/usecases/get_recommendations.dart';
+import 'package:guardiancare/features/explore/domain/usecases/get_resources.dart';
 import 'package:guardiancare/features/explore/explore.dart';
 
 /// Modern, education-friendly Explore Page
@@ -33,37 +37,21 @@ class _ExplorePageState extends State<ExplorePage>
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) {
-        final dataSource = ExploreRemoteDataSourceImpl(
-          firestore: FirebaseFirestore.instance,
-        );
-        final repository = ExploreRepositoryImpl(
-          remoteDataSource: dataSource,
-        );
-        return ExploreCubit(
-          getRecommendations: GetRecommendations(repository),
-          getResources: GetResources(repository),
-        );
-      },
-      child: Builder(
-        builder: (context) => Scaffold(
-          backgroundColor: context.colors.background,
-          body: Column(
-            children: [
-              _ExploreHeader(tabController: _tabController),
-              Expanded(
-                child: TabBarView(
-                  controller: _tabController,
-                  children: const [
-                    _RecommendedTab(),
-                    _ResourcesTab(),
-                  ],
-                ),
-              ),
-            ],
+    return Scaffold(
+      backgroundColor: context.colors.background,
+      body: Column(
+        children: [
+          _ExploreHeader(tabController: _tabController),
+          Expanded(
+            child: TabBarView(
+              controller: _tabController,
+              children: const [
+                _RecommendedTab(),
+                _ResourcesTab(),
+              ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
@@ -298,7 +286,7 @@ class _RecommendedTabState extends State<_RecommendedTab> {
 
   @override
   Widget build(BuildContext context) {
-    final user = FirebaseAuth.instance.currentUser;
+    final user = sl<IAuthService>().currentUser;
     final l10n = AppLocalizations.of(context);
 
     if (user == null) {
@@ -308,12 +296,8 @@ class _RecommendedTabState extends State<_RecommendedTab> {
     return RefreshIndicator(
       onRefresh: _refreshRecommendations,
       color: AppColors.cardEmerald,
-      child: StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance
-            .collection('recommendations')
-            .where('UID', isEqualTo: user.uid)
-            .orderBy('timestamp', descending: true)
-            .snapshots(),
+      child: StreamBuilder<dartz.Either<Failure, List<Recommendation>>>(
+        stream: sl<GetRecommendations>()(user.id),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return _buildLoadingState();
@@ -323,49 +307,56 @@ class _RecommendedTabState extends State<_RecommendedTab> {
             return _buildErrorState(context, l10n, snapshot.error.toString());
           }
 
-          if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-            return _buildEmptyState(context, l10n);
+          if (snapshot.hasData) {
+            return snapshot.data!.fold(
+              (failure) => _buildErrorState(context, l10n, failure.message),
+              (recommendations) {
+                if (recommendations.isEmpty) {
+                  return _buildEmptyState(context, l10n);
+                }
+
+                // Remove duplicate videos
+                final videoSet = <String>{};
+                final videos = <Recommendation>[];
+
+                for (var rec in recommendations) {
+                  final videoUrl = rec.videoUrl;
+                  if (videoUrl != null &&
+                      videoUrl.isNotEmpty &&
+                      !videoSet.contains(videoUrl)) {
+                    videoSet.add(videoUrl);
+                    videos.add(rec);
+                  }
+                }
+
+                if (videos.isEmpty) {
+                  return _buildEmptyState(context, l10n);
+                }
+
+                return ListView.builder(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  padding: EdgeInsets.all(AppDimensions.screenPaddingH),
+                  itemCount: videos.length,
+                  itemBuilder: (context, index) {
+                    final video = videos[index];
+                    final delay = Duration(milliseconds: index * 100);
+
+                    return FadeSlideWidget(
+                      delay: delay,
+                      child: _RecommendedVideoCard(
+                        title: video.title,
+                        thumbnail: video.thumbnail ?? '',
+                        videoUrl: video.videoUrl ?? '',
+                        index: index,
+                      ),
+                    );
+                  },
+                );
+              },
+            );
           }
 
-          // Remove duplicate videos
-          final videoSet = <String>{};
-          final videos = <QueryDocumentSnapshot>[];
-
-          for (var video in snapshot.data!.docs) {
-            final data = video.data() as Map<String, dynamic>;
-            final videoUrl = data['video'] as String?;
-            if (videoUrl != null &&
-                videoUrl.isNotEmpty &&
-                !videoSet.contains(videoUrl)) {
-              videoSet.add(videoUrl);
-              videos.add(video);
-            }
-          }
-
-          if (videos.isEmpty) {
-            return _buildEmptyState(context, l10n);
-          }
-
-          return ListView.builder(
-            physics: const AlwaysScrollableScrollPhysics(),
-            padding: EdgeInsets.all(AppDimensions.screenPaddingH),
-            itemCount: videos.length,
-            itemBuilder: (context, index) {
-              final video = videos[index];
-              final data = video.data() as Map<String, dynamic>;
-              final delay = Duration(milliseconds: index * 100);
-
-              return FadeSlideWidget(
-                delay: delay,
-                child: _RecommendedVideoCard(
-                  title: data['title'] ?? 'Untitled',
-                  thumbnail: data['thumbnail'] ?? '',
-                  videoUrl: data['video'] ?? '',
-                  index: index,
-                ),
-              );
-            },
-          );
+          return _buildLoadingState();
         },
       ),
     );
@@ -790,8 +781,8 @@ class _ResourcesTab extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
 
-    return StreamBuilder<QuerySnapshot>(
-      stream: FirebaseFirestore.instance.collection('resources').snapshots(),
+    return StreamBuilder<dartz.Either<Failure, List<Resource>>>(
+      stream: sl<GetResources>()(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return _buildLoadingState();
@@ -801,41 +792,45 @@ class _ResourcesTab extends StatelessWidget {
           return _buildErrorState(context, l10n, snapshot.error.toString());
         }
 
-        if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-          return _buildEmptyState(context, l10n);
-        }
+        if (snapshot.hasData) {
+          return snapshot.data!.fold(
+            (failure) => _buildErrorState(context, l10n, failure.message),
+            (resources) {
+              if (resources.isEmpty) return _buildEmptyState(context, l10n);
 
-        final resources = snapshot.data!.docs;
+              return RefreshIndicator(
+                onRefresh: () async {
+                  HapticFeedback.lightImpact();
+                  await Future.delayed(AppDurations.animationMedium);
+                },
+                color: AppColors.cardEmerald,
+                child: ListView.builder(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  padding: EdgeInsets.all(AppDimensions.screenPaddingH),
+                  itemCount: resources.length,
+                  itemBuilder: (context, index) {
+                    final resource = resources[index];
+                    final delay = Duration(milliseconds: index * 80);
 
-        return RefreshIndicator(
-          onRefresh: () async {
-            HapticFeedback.lightImpact();
-            await Future.delayed(AppDurations.animationMedium);
-          },
-          color: AppColors.cardEmerald,
-          child: ListView.builder(
-            physics: const AlwaysScrollableScrollPhysics(),
-            padding: EdgeInsets.all(AppDimensions.screenPaddingH),
-            itemCount: resources.length,
-            itemBuilder: (context, index) {
-              final resource = resources[index];
-              final data = resource.data() as Map<String, dynamic>;
-              final delay = Duration(milliseconds: index * 80);
-
-              return FadeSlideWidget(
-                delay: delay,
-                child: _ResourceCard(
-                  title: data['title'] ?? 'Untitled',
-                  description: data['description'] ?? '',
-                  category: data['category'] ?? '',
-                  type: data['type'] ?? '',
-                  url: data['url'] ?? '',
-                  index: index,
+                    return FadeSlideWidget(
+                      delay: delay,
+                      child: _ResourceCard(
+                        title: resource.title,
+                        description: resource.description ?? '',
+                        category: resource.category ?? '',
+                        type: resource.type ?? '',
+                        url: resource.url ?? '',
+                        index: index,
+                      ),
+                    );
+                  },
                 ),
               );
             },
-          ),
-        );
+          );
+        }
+
+        return _buildLoadingState();
       },
     );
   }

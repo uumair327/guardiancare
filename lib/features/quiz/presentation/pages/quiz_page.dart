@@ -1,7 +1,10 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:guardiancare/core/core.dart';
+import 'package:guardiancare/core/di/di.dart' as di;
+import 'package:guardiancare/core/usecases/usecase.dart';
+import 'package:guardiancare/features/quiz/domain/entities/quiz_entity.dart';
+import 'package:guardiancare/features/quiz/domain/usecases/get_all_quizzes.dart';
 import 'package:guardiancare/features/quiz/presentation/widgets/widgets.dart';
 
 class QuizPage extends StatefulWidget {
@@ -12,81 +15,32 @@ class QuizPage extends StatefulWidget {
 }
 
 class _QuizPageState extends State<QuizPage> {
-  List<Map<String, dynamic>> questions = [];
-  List<Map<String, dynamic>> quizes = [];
+  List<QuizEntity> quizzes = [];
   bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    _loadData();
+    _loadQuizzes();
   }
 
-  Future<void> _loadData() async {
-    await Future.wait([
-      getQuizes(),
-      getQuestions(),
-    ]);
+  Future<void> _loadQuizzes() async {
+    final usecase = di.sl<GetAllQuizzes>();
+    final result = await usecase(NoParams());
+
     if (mounted) {
-      setState(() {
-        isLoading = false;
+      result.fold((failure) {
+        debugPrint('Error loading quizzes: ${failure.message}');
+        setState(() {
+          isLoading = false;
+        });
+      }, (data) {
+        setState(() {
+          quizzes = data;
+          isLoading = false;
+        });
       });
     }
-  }
-
-  Future<void> getQuizes() async {
-    try {
-      QuerySnapshot querySnapshot =
-          await FirebaseFirestore.instance.collection('quizes').get();
-      List<Map<String, dynamic>> loadedQuizes = [];
-      for (var doc in querySnapshot.docs) {
-        final data = doc.data() as Map<String, dynamic>;
-        if (data["name"] != null && (data["use"] ?? false)) {
-          loadedQuizes.add({
-            "name": data["name"],
-            "thumbnail": data["thumbnail"] ?? '',
-          });
-        }
-      }
-      if (mounted) {
-        setState(() {
-          quizes = loadedQuizes;
-        });
-      }
-    } catch (e) {
-      debugPrint('Error loading quizes: $e');
-    }
-  }
-
-  Future<void> getQuestions() async {
-    try {
-      QuerySnapshot querySnapshot =
-          await FirebaseFirestore.instance.collection('quiz_questions').get();
-      List<Map<String, dynamic>> ques = [];
-      for (var doc in querySnapshot.docs) {
-        final data = doc.data() as Map<String, dynamic>;
-        if (data["quiz"] != null) {
-          ques.add({
-            "quiz": data["quiz"],
-            "question": data["question"],
-            "options": data["options"],
-            "correctAnswerIndex": data["correctOptionIndex"],
-            "category": data["category"] ?? ''
-          });
-        }
-      }
-      if (mounted) {
-        setState(() {
-          questions = ques;
-        });
-      }
-    } catch (e) {
-      debugPrint('Error loading questions: $e');
-    }
-  }
-
-  int _getQuestionCount(String quizName) {
-    return questions.where((q) => q["quiz"] == quizName).length;
   }
 
   @override
@@ -98,12 +52,12 @@ class _QuizPageState extends State<QuizPage> {
       body: Column(
         children: [
           // Modern header
-          QuizHeader(),
+          const QuizHeader(),
           // Content
           Expanded(
             child: isLoading
                 ? _buildLoadingState()
-                : quizes.isEmpty
+                : quizzes.isEmpty
                     ? _buildEmptyState(l10n)
                     : _buildQuizGrid(),
           ),
@@ -180,7 +134,7 @@ class _QuizPageState extends State<QuizPage> {
 
   Widget _buildQuizGrid() {
     return RefreshIndicator(
-      onRefresh: _loadData,
+      onRefresh: _loadQuizzes,
       color: context.colors.primary,
       child: Padding(
         padding: EdgeInsets.all(AppDimensions.screenPaddingH),
@@ -191,9 +145,9 @@ class _QuizPageState extends State<QuizPage> {
             mainAxisSpacing: AppDimensions.spaceM,
             childAspectRatio: 0.8,
           ),
-          itemCount: quizes.length,
+          itemCount: quizzes.length,
           itemBuilder: (context, index) {
-            final quiz = quizes[index];
+            final quiz = quizzes[index];
             final row = index ~/ 2;
             final col = index % 2;
             final delay = Duration(milliseconds: (row * 100) + (col * 50));
@@ -201,15 +155,12 @@ class _QuizPageState extends State<QuizPage> {
             return FadeSlideWidget(
               delay: delay,
               child: QuizCard(
-                name: quiz["name"] ?? '',
-                thumbnail: quiz["thumbnail"],
+                name: quiz.title,
+                thumbnail: quiz.imageUrl,
                 index: index,
-                questionCount: _getQuestionCount(quiz["name"]),
+                questionCount: quiz.questions.length,
                 onTap: () {
-                  final quizQuestions = questions
-                      .where((question) => question["quiz"] == quiz["name"])
-                      .toList();
-                  context.push('/quiz-questions', extra: quizQuestions);
+                  context.push('/quiz-questions', extra: quiz.questions);
                 },
               ),
             );

@@ -17,7 +17,7 @@ class CarouselItemModel extends CarouselItemEntity {
   /// Create model from Firestore document
   factory CarouselItemModel.fromFirestore(DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>;
-    
+
     return CarouselItemModel(
       id: doc.id,
       type: data['type'] ?? 'image',
@@ -28,6 +28,11 @@ class CarouselItemModel extends CarouselItemEntity {
       order: data['order'] ?? 0,
       isActive: data['isActive'] ?? true,
     );
+  }
+
+  /// Create model from Map (alias for fromJson, used by IDataStore)
+  factory CarouselItemModel.fromMap(Map<String, dynamic> map) {
+    return CarouselItemModel.fromJson(map);
   }
 
   /// Create model from JSON

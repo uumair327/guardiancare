@@ -8,6 +8,7 @@ class QuizEntity extends Equatable {
   final String category;
   final List<QuestionEntity> questions;
   final String? description;
+  final String? imageUrl;
 
   const QuizEntity({
     required this.id,
@@ -15,6 +16,7 @@ class QuizEntity extends Equatable {
     required this.category,
     required this.questions,
     this.description,
+    this.imageUrl,
   });
 
   @override

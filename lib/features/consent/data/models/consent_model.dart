@@ -15,6 +15,17 @@ class ConsentModel extends ConsentEntity {
   });
 
   factory ConsentModel.fromFirestore(Map<String, dynamic> doc) {
+    return ConsentModel.fromMap(doc);
+  }
+
+  factory ConsentModel.fromMap(Map<String, dynamic> doc) {
+    DateTime? getTimestamp(dynamic val) {
+      if (val is Timestamp) return val.toDate();
+      if (val is String) return DateTime.tryParse(val);
+      if (val is DateTime) return val;
+      return null;
+    }
+
     return ConsentModel(
       parentName: doc['parentName'] as String? ?? '',
       parentEmail: doc['parentEmail'] as String? ?? '',
@@ -23,7 +34,7 @@ class ConsentModel extends ConsentEntity {
       parentalKeyHash: doc['parentalKey'] as String? ?? '',
       securityQuestion: doc['securityQuestion'] as String? ?? '',
       securityAnswerHash: doc['securityAnswer'] as String? ?? '',
-      timestamp: (doc['timestamp'] as Timestamp?)?.toDate() ?? DateTime.now(),
+      timestamp: getTimestamp(doc['timestamp']) ?? DateTime.now(),
       consentCheckboxes: Map<String, bool>.from(doc['consentCheckboxes'] ?? {}),
     );
   }
@@ -37,7 +48,8 @@ class ConsentModel extends ConsentEntity {
       'parentalKey': parentalKeyHash,
       'securityQuestion': securityQuestion,
       'securityAnswer': securityAnswerHash,
-      'timestamp': Timestamp.fromDate(timestamp),
+      'timestamp': timestamp
+          .toIso8601String(), // Changed to String for abstraction compatibility
       'consentCheckboxes': consentCheckboxes,
     };
   }

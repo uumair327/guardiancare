@@ -1,9 +1,9 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:guardiancare/core/core.dart';
+import 'package:guardiancare/core/backend/backend.dart';
 import 'package:guardiancare/core/di/di.dart' as di;
 import 'package:guardiancare/features/consent/consent.dart';
 import 'package:guardiancare/features/profile/profile.dart';
@@ -11,10 +11,15 @@ import 'package:guardiancare/main.dart' show Guardiancare;
 
 /// Account page with inline parental lock protection
 /// Uses the same modern UI pattern as ForumPage
+/// Account page with inline parental lock protection
+/// Uses the same modern UI pattern as ForumPage
+///
+/// Following: DIP (Dependency Inversion Principle) - uses BackendUser abstraction
 class AccountPage extends StatefulWidget {
-  final User? user;
+  /// The BackendUser to display (backend-agnostic)
+  final BackendUser? backendUser;
 
-  const AccountPage({super.key, this.user});
+  const AccountPage({super.key, this.backendUser});
 
   @override
   State<AccountPage> createState() => _AccountPageState();
@@ -73,7 +78,7 @@ class _AccountPageState extends State<AccountPage>
   @override
   Widget build(BuildContext context) {
     // Handle no user case without parental lock
-    if (widget.user == null) {
+    if (widget.backendUser == null) {
       return Scaffold(
         backgroundColor: context.colors.background,
         appBar: _buildAppBar(context),
@@ -90,7 +95,7 @@ class _AccountPageState extends State<AccountPage>
         child: _isUnlocked
             ? FadeTransition(
                 opacity: _fadeAnimation,
-                child: _AccountContent(user: widget.user!),
+                child: _AccountContent(user: widget.backendUser!),
               )
             : const _AccountPlaceholder(),
       ),
@@ -228,8 +233,9 @@ class _AccountPlaceholder extends StatelessWidget {
 }
 
 /// Account content widget - shown after parental verification
+/// Uses BackendUser for backend-agnostic user representation
 class _AccountContent extends StatelessWidget {
-  final User user;
+  final BackendUser user;
 
   const _AccountContent({required this.user});
 
@@ -283,7 +289,7 @@ class _AccountContent extends StatelessWidget {
     );
 
     if (shouldDelete) {
-      profileBloc.add(DeleteAccountRequested(user.uid));
+      profileBloc.add(DeleteAccountRequested(user.id));
     }
   }
 
@@ -354,10 +360,10 @@ class _AccountContent extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (context) => sl<ProfileBloc>()..add(LoadProfile(user.uid)),
+          create: (context) => sl<ProfileBloc>()..add(LoadProfile(user.id)),
         ),
         BlocProvider(
-          create: (context) => sl<UserStatsCubit>()..loadStats(user.uid),
+          create: (context) => sl<UserStatsCubit>()..loadStats(user.id),
         ),
       ],
       child: BlocConsumer<ProfileBloc, ProfileState>(
@@ -522,7 +528,7 @@ class _AccountContent extends StatelessWidget {
             ScaleTapWidget(
               onTap: () {
                 HapticFeedback.lightImpact();
-                context.read<ProfileBloc>().add(LoadProfile(user.uid));
+                context.read<ProfileBloc>().add(LoadProfile(user.id));
               },
               child: Container(
                 padding: EdgeInsets.symmetric(

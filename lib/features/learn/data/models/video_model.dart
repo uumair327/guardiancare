@@ -25,6 +25,18 @@ class VideoModel extends VideoEntity {
     );
   }
 
+  /// Create VideoModel from Map (for IDataStore)
+  factory VideoModel.fromMap(Map<String, dynamic> map) {
+    return VideoModel(
+      id: map['id'] ?? '',
+      title: map['title'] as String? ?? '',
+      videoUrl: map['videoUrl'] as String? ?? '',
+      thumbnailUrl: map['thumbnailUrl'] as String? ?? '',
+      category: map['category'] as String? ?? '',
+      description: map['description'] as String?,
+    );
+  }
+
   /// Convert VideoModel to JSON
   Map<String, dynamic> toJson() {
     return {
