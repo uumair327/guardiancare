@@ -201,3 +201,4 @@ flutter_log.txt
 !pubspec.lock
 !analysis_options.yaml
 !lib/main.dart
+seed_firebase_complete.js

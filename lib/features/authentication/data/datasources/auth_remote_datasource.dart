@@ -20,8 +20,8 @@ abstract class AuthRemoteDataSource {
   Future<void> updateUserProfile({String? displayName, String? photoURL});
 }
 
-/// Implementation of AuthRemoteDataSource using IAuthService and IDataStore
-///
+/// Implementation of AuthRemoteDataSource using IAuthService and IDataStore.
+///(firebase)
 /// This adapter class bridges the legacy AuthRemoteDataSource interface
 /// with the new Backend Abstraction Layer.
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
