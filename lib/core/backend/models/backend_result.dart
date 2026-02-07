@@ -188,6 +188,11 @@ enum BackendErrorCode {
   // Rate limiting
   rateLimited,
 
+  // Operation errors
+  operationNotAllowed,
+  invalidEmail,
+  unauthorized,
+
   // Unknown
   unknown,
 }

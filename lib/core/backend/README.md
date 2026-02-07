@@ -1,6 +1,6 @@
 # Backend Abstraction Layer
 
-This module provides a complete abstraction over backend services following the **Hexagonal Architecture (Ports & Adapters)** pattern.
+This module provides a complete abstraction over backend services following the **Hexagonal Architecture (Ports & Adapters)** pattern with **Flag-Driven Adapter Resolution**.
 
 ## Architecture Diagram
 
@@ -8,84 +8,53 @@ This module provides a complete abstraction over backend services following the 
 ┌─────────────────────────────────────────────────────────────────┐
 │                      APPLICATION CORE                          │
 │  ┌─────────────────────────────────────────────────────────┐   │
-│  │                   Domain Layer                           │   │
-│  │  • Entities (User, Forum, Consent, etc.)                │   │
-│  │  • Use Cases / Business Logic                           │   │
-│  │  • Repositories (abstractions)                          │   │
+│  │                    Domain Layer                          │   │
+│  │  • Business Logic    • Entities    • Use Cases          │   │
+│  │  ❌ NO Firebase/Supabase imports here!                  │   │
 │  └─────────────────────────────────────────────────────────┘   │
-│                           │                                     │
-│                           ▼                                     │
+│                              │                                  │
 │  ┌─────────────────────────────────────────────────────────┐   │
-│  │                   PORTS (Interfaces)                     │   │
-│  │  • IAuthService      - Authentication operations        │   │
-│  │  • IDataStore        - Database CRUD & queries          │   │
-│  │  • IStorageService   - File storage operations          │   │
-│  │  • IAnalyticsService - Event tracking                   │   │
-│  │  • IRealtimeService  - Real-time subscriptions          │   │
+│  │               Application Layer (BLoC/Cubit)            │   │
+│  │  • Commands/Queries  • Event Handlers   • State         │   │
+│  │  ❌ NO Firebase/Supabase imports here!                  │   │
 │  └─────────────────────────────────────────────────────────┘   │
 └─────────────────────────────────────────────────────────────────┘
-                            │
-                            ▼
+                              │
+                        Dependency Injection
+                    (Flag-Driven Resolution)
+                              │
 ┌─────────────────────────────────────────────────────────────────┐
-│                   ADAPTERS (Implementations)                    │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐         │
-│  │   Firebase   │  │   Supabase   │  │   Appwrite   │         │
-│  │   Adapter    │  │   Adapter    │  │   Adapter    │         │
-│  │  (Current)   │  │  (Future)    │  │  (Future)    │         │
-│  └──────────────┘  └──────────────┘  └──────────────┘         │
+│                      PORTS (Interfaces)                         │
+│  ┌─────────────────────────────────────────────────────────┐   │
+│  │  IAuthService │ IDataStore │ IStorage │ IAnalytics │   │   │
+│  │               IRealtimeService                          │   │
+│  └─────────────────────────────────────────────────────────┘   │
+└─────────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                     ADAPTERS (Implementations)                   │
+│  ┌──────────────────────┐  ┌──────────────────────┐            │
+│  │     Firebase         │  │     Supabase         │            │
+│  │  ├─ Auth Adapter     │  │  ├─ Auth Adapter     │            │
+│  │  ├─ Data Adapter     │  │  ├─ Data Adapter     │            │
+│  │  ├─ Storage Adapter  │  │  ├─ Storage Adapter  │            │
+│  │  └─ Analytics Adapter│  │  └─ Realtime Adapter │            │
+│  └──────────────────────┘  └──────────────────────┘            │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
-## Directory Structure
+## 🔀 Backend Polymorphism via Flag-Driven Adapter Resolution
 
-```
-lib/core/backend/
-├── backend.dart              # Barrel file (exports all)
-├── backend_factory.dart      # Factory for creating services
-│
-├── models/                   # Backend-agnostic models
-│   ├── backend_result.dart   # Type-safe result wrapper
-│   ├── backend_user.dart     # Universal user model
-│   └── query_options.dart    # Query filters & options
-│
-├── ports/                    # Interfaces (contracts)
-│   ├── auth_service_port.dart
-│   ├── data_store_port.dart
-│   ├── storage_service_port.dart
-│   ├── analytics_service_port.dart
-│   └── realtime_service_port.dart
-│
-└── adapters/                 # Implementations
-    └── firebase/
-        ├── firebase_auth_adapter.dart
-        ├── firebase_data_store_adapter.dart
-        ├── firebase_storage_adapter.dart
-        └── firebase_analytics_adapter.dart
-```
+This pattern enables runtime or build-time backend switching with **zero code changes** to domain/application layers.
 
-## SOLID Principles Applied
-
-| Principle | Application |
-|-----------|-------------|
-| **SRP** | Each port has a single responsibility (auth, data, storage, etc.) |
-| **OCP** | Add new providers without modifying existing code |
-| **LSP** | Any adapter can substitute for its port interface |
-| **ISP** | Ports are segregated by concern, not combined |
-| **DIP** | Application depends on port interfaces, not concrete implementations |
-
-## Usage Examples
-
-### 1. Setup in Dependency Injection
+### How It Works
 
 ```dart
-// lib/core/di/injection.dart
-import 'package:guardiancare/core/backend/backend.dart';
-
-void setupBackendServices(GetIt sl) {
-  // Choose your backend provider
-  const factory = BackendFactory(BackendProvider.firebase);
-
-  // Register services
+// DI Container - The ONLY place where backend is selected
+void _initBackendServices() {
+  const factory = BackendFactory(); // Reads from BackendConfig automatically
+  
   sl.registerLazySingleton<IAuthService>(() => factory.createAuthService());
   sl.registerLazySingleton<IDataStore>(() => factory.createDataStore());
   sl.registerLazySingleton<IStorageService>(() => factory.createStorageService());
@@ -93,248 +62,288 @@ void setupBackendServices(GetIt sl) {
 }
 ```
 
-### 2. Using in Repositories
+### Switching Backends
+
+#### Option 1: Global Switch (Recommended)
+
+```bash
+# Use Firebase (default)
+flutter run
+
+# Use Supabase
+flutter run --dart-define=BACKEND=supabase
+```
+
+#### Option 2: Granular Overrides (Mix & Match)
+
+```bash
+# Use Supabase for auth, Firebase for everything else
+flutter run --dart-define=USE_SUPABASE_AUTH=true
+
+# Use Supabase for database only
+flutter run --dart-define=USE_SUPABASE_DATABASE=true
+```
+
+## Directory Structure
+
+```
+backend/
+├── config/                     # 🔑 Feature Flags & Secrets
+│   ├── backend_config.dart     # Flag-driven provider selection
+│   └── backend_secrets.dart    # Environment-based secrets
+│
+├── ports/                      # 📋 Interfaces (Contracts)
+│   ├── auth_service_port.dart
+│   ├── data_store_port.dart
+│   ├── storage_service_port.dart
+│   ├── analytics_service_port.dart
+│   └── realtime_service_port.dart
+│
+├── adapters/                   # 🔌 Implementations
+│   ├── firebase/
+│   │   ├── firebase_auth_adapter.dart
+│   │   ├── firebase_data_store_adapter.dart
+│   │   ├── firebase_storage_adapter.dart
+│   │   └── firebase_analytics_adapter.dart
+│   │
+│   └── supabase/               # (Skeleton - Phase 2)
+│       ├── supabase_auth_adapter.dart
+│       ├── supabase_data_store_adapter.dart
+│       ├── supabase_storage_adapter.dart
+│       └── supabase_realtime_adapter.dart
+│
+├── models/                     # 📦 Shared Models
+│   ├── backend_result.dart     # Type-safe result wrapper
+│   ├── backend_user.dart       # Vendor-agnostic user model
+│   └── query_options.dart      # Vendor-agnostic query builder
+│
+├── backend_factory.dart        # 🏭 Factory with flag resolution
+└── backend.dart                # 📚 Barrel file (exports)
+```
+
+## Quick Start
+
+### 1. Using Backend Services
 
 ```dart
-// lib/features/forum/data/repositories/forum_repository.dart
-class ForumRepositoryImpl implements ForumRepository {
-  final IDataStore dataStore;
+// In your repository/service
+class UserRepository {
+  final IAuthService _auth;
+  final IDataStore _dataStore;
 
-  ForumRepositoryImpl(this.dataStore);
+  UserRepository({
+    required IAuthService auth,
+    required IDataStore dataStore,
+  })  : _auth = auth,
+        _dataStore = dataStore;
 
-  @override
-  Future<Either<Failure, List<Forum>>> getForums() async {
-    final result = await dataStore.query(
-      'forum',
-      options: QueryOptions(
-        orderBy: [OrderBy('createdAt', descending: true)],
-        limit: 20,
-      ),
-    );
-
+  Future<User?> getCurrentUser() async {
+    final backendUser = _auth.currentUser;
+    if (backendUser == null) return null;
+    
+    final result = await _dataStore.get('users', backendUser.id);
     return result.when(
-      success: (data) => Right(data.map(Forum.fromJson).toList()),
-      failure: (error) => Left(ServerFailure(error.message)),
+      success: (data) => data != null ? User.fromJson(data) : null,
+      failure: (error) => null,
     );
   }
 }
 ```
 
-### 3. Using in BLoCs
+### 2. Type-Safe Error Handling
 
 ```dart
-// lib/features/auth/presentation/bloc/auth_bloc.dart
-class AuthBloc extends Bloc<AuthEvent, AuthState> {
-  final IAuthService authService;
-
-  AuthBloc(this.authService) : super(AuthInitial()) {
-    on<SignInRequested>(_onSignIn);
-  }
-
-  Future<void> _onSignIn(
-    SignInRequested event,
-    Emitter<AuthState> emit,
-  ) async {
-    emit(AuthLoading());
-
-    final result = await authService.signInWithEmail(
-      email: event.email,
-      password: event.password,
-    );
-
-    result.when(
-      success: (user) => emit(Authenticated(user)),
-      failure: (error) => emit(AuthError(error.message)),
-    );
-  }
-}
-```
-
-### 4. Type-Safe Results
-
-```dart
-// Using BackendResult
 final result = await dataStore.get('users', userId);
-
-// Pattern matching
 result.when(
   success: (data) {
-    if (data != null) {
-      final user = User.fromJson(data);
-      print('Found user: ${user.name}');
-    } else {
-      print('User not found');
-    }
+    // Handle success
+    print('User: ${data?['name']}');
   },
   failure: (error) {
-    print('Error: ${error.message}');
-    // Handle specific error codes
-    if (error.code == BackendErrorCode.permissionDenied) {
-      // Show permission error
+    // Handle error with code
+    switch (error.code) {
+      case BackendErrorCode.notFound:
+        print('User not found');
+      case BackendErrorCode.permissionDenied:
+        print('Access denied');
+      default:
+        print('Error: ${error.message}');
     }
   },
 );
-
-// Or use convenience methods
-final user = result.getOrElse({'name': 'Guest'});
-final maybeUser = result.dataOrNull;
 ```
 
-### 5. Querying Data
+### 3. Stream-based Real-time Updates
 
 ```dart
-// Build queries with fluent API
-final options = QueryOptions()
-    .where('status', FilterOperator.equals, 'active')
-    .where('age', FilterOperator.greaterThan, 18)
-    .order('createdAt', descending: true)
-    .take(20);
-
-final result = await dataStore.query('users', options: options);
-
-// Or use pre-built filters
-final options = QueryOptions(
-  filters: [
-    QueryFilter.equals('category', 'parent'),
-    QueryFilter.greaterThan('votes', 10),
-  ],
-  orderBy: [OrderBy('createdAt', descending: true)],
-  limit: 50,
-);
+// Both Firebase and Supabase use the same interface
+dataStore.streamDocument('users', userId).listen((result) {
+  result.when(
+    success: (data) => updateUI(data),
+    failure: (error) => showError(error),
+  );
+});
 ```
 
-## Switching Backend Providers
+## Configuration
 
-### Current: Firebase
+### Environment Variables
 
-```dart
-const factory = BackendFactory(BackendProvider.firebase);
+Set these in your CI/CD or launch configuration:
+
+```bash
+# Global backend selection
+BACKEND=firebase|supabase
+
+# Granular feature flags
+USE_SUPABASE_AUTH=true|false
+USE_SUPABASE_DATABASE=true|false
+USE_SUPABASE_STORAGE=true|false
+USE_SUPABASE_REALTIME=true|false
+
+# Supabase credentials (required if using Supabase)
+SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_ANON_KEY=your-anon-key
+
+# Firebase credentials (required if using Firebase)
+# Usually provided via google-services.json / GoogleService-Info.plist
 ```
 
-### Future: Supabase
+### Flutter Launch Configuration
 
-1. Create adapter implementations:
-```dart
-// lib/core/backend/adapters/supabase/supabase_auth_adapter.dart
-class SupabaseAuthAdapter implements IAuthService {
-  final SupabaseClient _client;
-
-  @override
-  Future<BackendResult<BackendUser>> signInWithEmail({
-    required String email,
-    required String password,
-  }) async {
-    final response = await _client.auth.signInWithPassword(
-      email: email,
-      password: password,
-    );
-    // Map to BackendUser...
-  }
+```json
+// .vscode/launch.json
+{
+  "configurations": [
+    {
+      "name": "Dev (Firebase)",
+      "request": "launch",
+      "type": "dart",
+      "args": ["--dart-define=BACKEND=firebase"]
+    },
+    {
+      "name": "Dev (Supabase)",
+      "request": "launch",
+      "type": "dart",
+      "args": [
+        "--dart-define=BACKEND=supabase",
+        "--dart-define=SUPABASE_URL=${env:SUPABASE_URL}",
+        "--dart-define=SUPABASE_ANON_KEY=${env:SUPABASE_ANON_KEY}"
+      ]
+    }
+  ]
 }
 ```
 
-2. Update the factory:
+## Adding a New Backend
+
+1. **Create Adapter Directory**
+   ```
+   adapters/appwrite/
+   ├── appwrite_auth_adapter.dart
+   ├── appwrite_data_store_adapter.dart
+   └── ...
+   ```
+
+2. **Implement Each Port**
+   ```dart
+   class AppwriteAuthAdapter implements IAuthService {
+     // Implement all interface methods
+   }
+   ```
+
+3. **Add Provider to Enum**
+   ```dart
+   enum BackendProvider {
+     firebase,
+     supabase,
+     appwrite,  // ← Add new provider
+   }
+   ```
+
+4. **Update Backend Factory**
+   ```dart
+   IAuthService createAuthService() {
+     return switch (provider) {
+       BackendProvider.firebase => FirebaseAuthAdapter(),
+       BackendProvider.supabase => SupabaseAuthAdapter(),
+       BackendProvider.appwrite => AppwriteAuthAdapter(),  // ← Add case
+     };
+   }
+   ```
+
+5. **Update BackendConfig**
+   ```dart
+   static BackendProvider get provider {
+     return switch (_backendFlag) {
+       'supabase' => BackendProvider.supabase,
+       'appwrite' => BackendProvider.appwrite,  // ← Add case
+       _ => BackendProvider.firebase,
+     };
+   }
+   ```
+
+## Architecture Rules (NON-NEGOTIABLE)
+
+### ✅ Allowed
+
+- Multiple adapters implementing the same port
+- Feature flag evaluation in DI container
+- Adapter-level SDK usage
+- Parallel backend coexistence
+- Backend-specific optimizations in adapters
+
+### ❌ Forbidden
+
+- `if (firebase)` inside use cases
+- Backend conditionals inside repositories
+- SDK imports in domain layer
+- Flag checks in Flutter UI
+- Mixed Firebase + Supabase calls in same adapter
+
+## Testing Strategy
+
 ```dart
-const factory = BackendFactory(BackendProvider.supabase);
-```
-
-3. **No changes needed in repositories, BLoCs, or UI!**
-
-## Testing
-
-### Mock Adapters
-
-```dart
-class MockDataStore implements IDataStore {
-  final Map<String, Map<String, dynamic>> _data = {};
-
-  @override
-  Future<BackendResult<Map<String, dynamic>?>> get(
-    String collection,
-    String documentId,
-  ) async {
-    final key = '$collection/$documentId';
-    return BackendResult.success(_data[key]);
-  }
-
-  // ... other methods
-}
-
-// In tests
-final mockDataStore = MockDataStore();
-final repository = ForumRepositoryImpl(mockDataStore);
-```
-
-### Using Mocktail
-
-```dart
+// Unit test with mock backend
 class MockAuthService extends Mock implements IAuthService {}
 
 void main() {
   late MockAuthService mockAuth;
-  late AuthBloc bloc;
+  late UserRepository repository;
 
   setUp(() {
     mockAuth = MockAuthService();
-    bloc = AuthBloc(mockAuth);
+    repository = UserRepository(auth: mockAuth);
   });
 
-  test('emits Authenticated on successful login', () {
-    when(() => mockAuth.signInWithEmail(
-      email: any(named: 'email'),
-      password: any(named: 'password'),
-    )).thenAnswer((_) async => BackendResult.success(
-      BackendUser(id: '123', email: 'test@test.com'),
-    ));
-
-    // Test...
+  test('returns null when not signed in', () {
+    when(() => mockAuth.currentUser).thenReturn(null);
+    expect(repository.getCurrentUser(), isNull);
   });
 }
 ```
 
-## Benefits
+## Rollback Strategy
 
-| Benefit | Description |
-|---------|-------------|
-| **Backend Agnostic** | Switch providers without changing business logic |
-| **Testable** | Easy to mock for unit tests |
-| **Maintainable** | Clear separation of concerns |
-| **Scalable** | Add new providers without modifying existing code |
-| **Type-Safe** | Compile-time checks with sealed classes |
-| **Consistent API** | Same interface regardless of backend |
+If Supabase fails in production:
 
-## Migration Path
+```bash
+# Runtime flag change (if using remote config)
+USE_SUPABASE_BACKEND=false
 
-To migrate existing code to use the abstraction layer:
-
-1. **Replace direct Firestore calls** with `IDataStore` methods
-2. **Replace direct FirebaseAuth calls** with `IAuthService` methods
-3. **Inject interfaces** instead of concrete Firebase instances
-4. **Use BackendResult** instead of try-catch for error handling
-
-### Before
-
-```dart
-// Direct Firebase usage
-final doc = await FirebaseFirestore.instance
-    .collection('users')
-    .doc(userId)
-    .get();
-if (doc.exists) {
-  return User.fromJson(doc.data()!);
-}
-throw NotFoundException('User not found');
+# Or redeploy with Firebase
+flutter run --dart-define=BACKEND=firebase
 ```
 
-### After
+**Result**: Firebase resumes instantly, no data migration needed.
 
-```dart
-// Using abstraction
-final result = await dataStore.get('users', userId);
-return result.when(
-  success: (data) => data != null 
-    ? User.fromJson(data) 
-    : throw NotFoundException('User not found'),
-  failure: (error) => throw error.toException(),
-);
-```
+## Enterprise Success Criteria
+
+The implementation is correct ONLY IF:
+
+- [x] Firebase & Supabase coexist safely
+- [x] Backend switching is config-only
+- [x] Domain layer remains untouched
+- [x] Flutter app remains unchanged
+- [x] No feature duplication exists
+- [x] Architecture remains vendor-neutral
