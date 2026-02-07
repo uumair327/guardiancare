@@ -17,10 +17,21 @@ import 'firebase_options.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize Firebase only if not already initialized
+  // Log backend configuration
+  debugPrint('=== Backend Configuration ===');
+  debugPrint('Provider: ${BackendConfig.provider.name}');
+  debugPrint('Supabase Auth: ${BackendConfig.useSupabaseAuth}');
+  debugPrint('Supabase Database: ${BackendConfig.useSupabaseDatabase}');
+  debugPrint('Supabase Storage: ${BackendConfig.useSupabaseStorage}');
+  debugPrint('Supabase Realtime: ${BackendConfig.useSupabaseRealtime}');
+  debugPrint('=============================');
+
+  // Initialize Firebase (always - for Crashlytics, Analytics, Remote Config)
+  // Firebase is initialized even when using Supabase for data
   try {
     await Firebase.initializeApp(
         options: DefaultFirebaseOptions.currentPlatform);
+    debugPrint('Firebase initialized successfully');
   } catch (e) {
     if (e.toString().contains('duplicate-app')) {
       debugPrint('Firebase already initialized, skipping...');
@@ -29,7 +40,21 @@ void main() async {
     }
   }
 
+  // Initialize Supabase if any Supabase features are enabled
+  // This is conditional - won't initialize if only Firebase is used
+  try {
+    final supabaseInitialized = await SupabaseInitializer.initializeIfNeeded();
+    if (supabaseInitialized) {
+      debugPrint('Supabase initialized successfully');
+    }
+  } catch (e) {
+    debugPrint('Supabase initialization failed: $e');
+    // Don't rethrow - allow app to continue with Firebase fallback
+    // In production, you may want to handle this differently
+  }
+
   // Initialize dependency injection
+  // This will use BackendFactory which reads from BackendConfig
   await di.init();
 
   // Crashlytics is not supported on web

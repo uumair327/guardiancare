@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/foundation.dart' show kIsWeb, debugPrint;
 import 'package:get_it/get_it.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -105,16 +105,40 @@ Future<void> init() async {
   _initConsentFeature();
 }
 
-/// Initialize backend abstraction layer services
+/// Initialize backend abstraction layer services.
 ///
-/// This is the central place where the backend provider is configured.
-/// To switch to a different backend (Supabase, Appwrite, etc.):
-/// 1. Change `BackendProvider.firebase` to `BackendProvider.supabase`
-/// 2. No other code changes required!
+/// This is the **SINGLE LOCATION** where backend adapters are resolved.
+/// Uses "Backend Polymorphism via Flag-Driven Adapter Resolution" pattern.
 ///
-/// Following: Dependency Inversion Principle (DIP), Open/Closed Principle (OCP)
+/// ## How Backend Selection Works
+///
+/// 1. **Global Switch** (recommended):
+///    ```bash
+///    flutter run --dart-define=BACKEND=supabase
+///    ```
+///
+/// 2. **Granular Overrides** (mix providers):
+///    ```bash
+///    flutter run --dart-define=USE_SUPABASE_AUTH=true
+///    ```
+///
+/// ## Architecture Compliance
+/// - **DIP**: App depends on interfaces (IAuthService, IDataStore, etc.)
+/// - **OCP**: Add new backends without modifying existing code
+/// - **SRP**: Each adapter handles one backend's implementation
+///
+/// ## Critical Rule (NON-NEGOTIABLE)
+/// **Domain layer MUST NOT know which backend is active.**
 void _initBackendServices() {
-  const factory = BackendFactory(BackendProvider.firebase);
+  // Validate backend secrets before initializing services
+  // This will throw if required secrets are missing for the active backend
+  if (BackendConfig.hasSupabaseFeatures) {
+    BackendSecrets.validate();
+  }
+
+  // Create factory - automatically reads from BackendConfig
+  // No explicit provider needed! The factory uses feature flags internally.
+  const factory = BackendFactory();
 
   // Register abstract interfaces with concrete implementations
   // The rest of the app should ONLY depend on these interfaces
@@ -124,6 +148,11 @@ void _initBackendServices() {
       () => factory.createStorageService());
   sl.registerLazySingleton<IAnalyticsService>(
       () => factory.createAnalyticsService());
+  sl.registerLazySingleton<IRealtimeService>(
+      () => factory.createRealtimeService());
+
+  // Log active backend configuration for debugging
+  debugPrint('Backend initialized: ${BackendConfig.debugInfo}');
 }
 
 /// Initialize manager dependencies for SRP compliance

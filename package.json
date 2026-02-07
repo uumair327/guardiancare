@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@supabase/supabase-js": "^2.95.3",
     "firebase-admin": "^13.6.1"
   }
 }

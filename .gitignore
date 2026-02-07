@@ -113,6 +113,11 @@ doc/api/
 # IDX / Cloud Editors
 .idx/
 
+# AI Agent / Workflow Configs (project-specific)
+.agent/
+.kiro/
+.gemini/
+
 # OS
 .DS_Store
 .DS_Store?
@@ -201,4 +206,25 @@ flutter_log.txt
 !pubspec.lock
 !analysis_options.yaml
 !lib/main.dart
-seed_firebase_complete.js
+# Seed scripts (may contain credentials or reference them)
+seed_*.js
+
+# Firebase config (contains app IDs)
+firebase.json
+
+# -----------------------------------------------------------------------------
+# 10. INTERNAL DOCUMENTATION (Keep only root README & CONTRIBUTING)
+# -----------------------------------------------------------------------------
+# Ignore internal .md files (module-specific docs)
+**/lib/**/*.md
+**/ios/**/*.md
+**/android/**/*.md
+**/macos/**/*.md
+
+# Force-track essential root documentation
+!README.md
+!CONTRIBUTING.md
+!LICENSE.md
+!CHANGELOG.md
+!CODE_OF_CONDUCT.md
+!SECURITY.md
