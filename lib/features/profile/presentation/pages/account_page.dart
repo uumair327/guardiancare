@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:guardiancare/core/core.dart';
-import 'package:guardiancare/core/backend/backend.dart';
 import 'package:guardiancare/core/di/di.dart' as di;
 import 'package:guardiancare/features/consent/consent.dart';
 import 'package:guardiancare/features/profile/profile.dart';
@@ -16,10 +15,10 @@ import 'package:guardiancare/main.dart' show Guardiancare;
 ///
 /// Following: DIP (Dependency Inversion Principle) - uses BackendUser abstraction
 class AccountPage extends StatefulWidget {
-  /// The BackendUser to display (backend-agnostic)
-  final BackendUser? backendUser;
 
   const AccountPage({super.key, this.backendUser});
+  /// The BackendUser to display (backend-agnostic)
+  final BackendUser? backendUser;
 
   @override
   State<AccountPage> createState() => _AccountPageState();
@@ -39,7 +38,7 @@ class _AccountPageState extends State<AccountPage>
       vsync: this,
       duration: AppDurations.animationMedium,
     );
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+    _fadeAnimation = Tween<double>(begin: 0, end: 1).animate(
       CurvedAnimation(parent: _fadeController, curve: Curves.easeOut),
     );
   }
@@ -134,29 +133,29 @@ class _AccountPageState extends State<AccountPage>
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              padding: EdgeInsets.all(AppDimensions.spaceXL),
+              padding: const EdgeInsets.all(AppDimensions.spaceXL),
               decoration: BoxDecoration(
                 color: AppColors.primary.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
-              child: Icon(
+              child: const Icon(
                 Icons.person_off_rounded,
                 size: AppDimensions.iconXXL,
                 color: AppColors.primary,
               ),
             ),
-            SizedBox(height: AppDimensions.spaceL),
+            const SizedBox(height: AppDimensions.spaceL),
             Text(
               l10n.noUserSignedIn,
               style: AppTextStyles.h4.copyWith(
                 color: context.colors.textPrimary,
               ),
             ),
-            SizedBox(height: AppDimensions.spaceM),
+            const SizedBox(height: AppDimensions.spaceM),
             ScaleTapWidget(
               onTap: () => context.go('/login'),
               child: Container(
-                padding: EdgeInsets.symmetric(
+                padding: const EdgeInsets.symmetric(
                   horizontal: AppDimensions.spaceXL,
                   vertical: AppDimensions.spaceM,
                 ),
@@ -193,7 +192,7 @@ class _AccountPlaceholder extends StatelessWidget {
         // Header placeholder
         Container(
           height: 200,
-          margin: EdgeInsets.all(AppDimensions.screenPaddingH),
+          margin: const EdgeInsets.all(AppDimensions.screenPaddingH),
           decoration: BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topLeft,
@@ -206,16 +205,16 @@ class _AccountPlaceholder extends StatelessWidget {
             borderRadius: AppDimensions.borderRadiusXL,
           ),
         ),
-        SizedBox(height: AppDimensions.spaceL),
+        const SizedBox(height: AppDimensions.spaceL),
         // Content placeholder
         Expanded(
           child: ListView.builder(
             padding:
-                EdgeInsets.symmetric(horizontal: AppDimensions.screenPaddingH),
+                const EdgeInsets.symmetric(horizontal: AppDimensions.screenPaddingH),
             itemCount: 3,
             itemBuilder: (context, index) {
               return Padding(
-                padding: EdgeInsets.only(bottom: AppDimensions.spaceM),
+                padding: const EdgeInsets.only(bottom: AppDimensions.spaceM),
                 child: Container(
                   height: 100,
                   decoration: BoxDecoration(
@@ -235,14 +234,14 @@ class _AccountPlaceholder extends StatelessWidget {
 /// Account content widget - shown after parental verification
 /// Uses BackendUser for backend-agnostic user representation
 class _AccountContent extends StatelessWidget {
-  final BackendUser user;
 
   const _AccountContent({required this.user});
+  final BackendUser user;
 
   Future<void> _confirmAndDeleteAccount(
       BuildContext context, ProfileBloc profileBloc) async {
     final l10n = AppLocalizations.of(context);
-    bool shouldDelete = await showDialog(
+    final bool shouldDelete = await showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
@@ -252,8 +251,8 @@ class _AccountContent extends StatelessWidget {
           ),
           title: Row(
             children: [
-              Icon(Icons.warning_rounded, color: AppColors.error),
-              SizedBox(width: AppDimensions.spaceS),
+              const Icon(Icons.warning_rounded, color: AppColors.error),
+              const SizedBox(width: AppDimensions.spaceS),
               Text(
                 l10n.deleteAccount,
                 style: AppTextStyles.dialogTitle.copyWith(
@@ -281,7 +280,7 @@ class _AccountContent extends StatelessWidget {
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.error,
               ),
-              child: Text(l10n.yes, style: TextStyle(color: AppColors.white)),
+              child: Text(l10n.yes, style: const TextStyle(color: AppColors.white)),
             ),
           ],
         );
@@ -306,8 +305,8 @@ class _AccountContent extends StatelessWidget {
               ),
               title: Row(
                 children: [
-                  Icon(Icons.logout_rounded, color: AppColors.primary),
-                  SizedBox(width: AppDimensions.spaceS),
+                  const Icon(Icons.logout_rounded, color: AppColors.primary),
+                  const SizedBox(width: AppDimensions.spaceS),
                   Text(
                     l10n.logout,
                     style: AppTextStyles.dialogTitle.copyWith(
@@ -337,7 +336,7 @@ class _AccountContent extends StatelessWidget {
                   ),
                   child: Text(
                     dialogL10n.logout,
-                    style: TextStyle(color: AppColors.white),
+                    style: const TextStyle(color: AppColors.white),
                   ),
                 ),
               ],
@@ -367,12 +366,8 @@ class _AccountContent extends StatelessWidget {
         ),
       ],
       child: BlocConsumer<ProfileBloc, ProfileState>(
-        listener: (context, state) {
-          _handleStateChanges(context, state);
-        },
-        builder: (context, state) {
-          return _buildContent(context, state);
-        },
+        listener: _handleStateChanges,
+        builder: _buildContent,
       ),
     );
   }
@@ -408,8 +403,8 @@ class _AccountContent extends StatelessWidget {
       SnackBar(
         content: Row(
           children: [
-            Icon(Icons.check_circle_rounded, color: AppColors.white, size: 20),
-            SizedBox(width: AppDimensions.spaceS),
+            const Icon(Icons.check_circle_rounded, color: AppColors.white, size: 20),
+            const SizedBox(width: AppDimensions.spaceS),
             Text(
               state.localeName,
               style: AppTextStyles.body2.copyWith(color: AppColors.onPrimary),
@@ -455,21 +450,21 @@ class _AccountContent extends StatelessWidget {
         ShimmerLoading(
           child: Container(
             height: 200,
-            margin: EdgeInsets.all(AppDimensions.screenPaddingH),
+            margin: const EdgeInsets.all(AppDimensions.screenPaddingH),
             decoration: BoxDecoration(
               color: AppColors.shimmerBase,
               borderRadius: AppDimensions.borderRadiusXL,
             ),
           ),
         ),
-        SizedBox(height: AppDimensions.spaceL),
+        const SizedBox(height: AppDimensions.spaceL),
         Padding(
           padding:
-              EdgeInsets.symmetric(horizontal: AppDimensions.screenPaddingH),
+              const EdgeInsets.symmetric(horizontal: AppDimensions.screenPaddingH),
           child: Column(
             children: List.generate(4, (index) {
               return Padding(
-                padding: EdgeInsets.only(bottom: AppDimensions.spaceM),
+                padding: const EdgeInsets.only(bottom: AppDimensions.spaceM),
                 child: ShimmerLoading(
                   child: Container(
                     height: 70,
@@ -495,27 +490,27 @@ class _AccountContent extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              padding: EdgeInsets.all(AppDimensions.spaceXL),
+              padding: const EdgeInsets.all(AppDimensions.spaceXL),
               decoration: BoxDecoration(
                 color: AppColors.error.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
-              child: Icon(
+              child: const Icon(
                 Icons.error_outline_rounded,
                 size: AppDimensions.iconXXL,
                 color: AppColors.error,
               ),
             ),
-            SizedBox(height: AppDimensions.spaceL),
+            const SizedBox(height: AppDimensions.spaceL),
             Text(
               UIStrings.oopsSomethingWentWrong,
               style: AppTextStyles.h4.copyWith(
                 color: context.colors.textPrimary,
               ),
             ),
-            SizedBox(height: AppDimensions.spaceS),
+            const SizedBox(height: AppDimensions.spaceS),
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: AppDimensions.spaceXL),
+              padding: const EdgeInsets.symmetric(horizontal: AppDimensions.spaceXL),
               child: Text(
                 message,
                 style: AppTextStyles.body2.copyWith(
@@ -524,14 +519,14 @@ class _AccountContent extends StatelessWidget {
                 textAlign: TextAlign.center,
               ),
             ),
-            SizedBox(height: AppDimensions.spaceL),
+            const SizedBox(height: AppDimensions.spaceL),
             ScaleTapWidget(
               onTap: () {
                 HapticFeedback.lightImpact();
                 context.read<ProfileBloc>().add(LoadProfile(user.id));
               },
               child: Container(
-                padding: EdgeInsets.symmetric(
+                padding: const EdgeInsets.symmetric(
                   horizontal: AppDimensions.spaceL,
                   vertical: AppDimensions.spaceM,
                 ),
@@ -547,9 +542,9 @@ class _AccountContent extends StatelessWidget {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.refresh_rounded,
+                    const Icon(Icons.refresh_rounded,
                         color: AppColors.white, size: AppDimensions.iconS),
-                    SizedBox(width: AppDimensions.spaceS),
+                    const SizedBox(width: AppDimensions.spaceS),
                     Text(l10n.retry, style: AppTextStyles.button),
                   ],
                 ),
@@ -571,10 +566,10 @@ class _AccountContent extends StatelessWidget {
           // Profile header with proper horizontal margin
           Padding(
             padding:
-                EdgeInsets.symmetric(horizontal: AppDimensions.screenPaddingH),
+                const EdgeInsets.symmetric(horizontal: AppDimensions.screenPaddingH),
             child: ProfileHeader(profile: profile),
           ),
-          SizedBox(height: AppDimensions.spaceL),
+          const SizedBox(height: AppDimensions.spaceL),
 
           // TODO: Stats cards temporarily disabled - uncomment when stats tracking is fully implemented
           // _buildStatsRow(context),
@@ -596,7 +591,7 @@ class _AccountContent extends StatelessWidget {
               ],
             ),
           ),
-          SizedBox(height: AppDimensions.spaceL),
+          const SizedBox(height: AppDimensions.spaceL),
           FadeSlideWidget(
             delay: const Duration(milliseconds: 200),
             child: ProfileSection(
@@ -628,7 +623,7 @@ class _AccountContent extends StatelessWidget {
               ],
             ),
           ),
-          SizedBox(height: AppDimensions.spaceL),
+          const SizedBox(height: AppDimensions.spaceL),
           FadeSlideWidget(
             delay: const Duration(milliseconds: 300),
             child: ProfileSection(
@@ -651,7 +646,7 @@ class _AccountContent extends StatelessWidget {
               ],
             ),
           ),
-          SizedBox(height: AppDimensions.spaceXL),
+          const SizedBox(height: AppDimensions.spaceXL),
         ],
       ),
     );

@@ -7,9 +7,6 @@ import 'package:guardiancare/features/home/presentation/bloc/home_event.dart';
 import 'package:guardiancare/features/home/presentation/bloc/home_state.dart';
 
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
-  final GetCarouselItems getCarouselItems;
-
-  StreamSubscription? _carouselSubscription;
 
   HomeBloc({
     required this.getCarouselItems,
@@ -19,6 +16,9 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<CarouselItemsReceived>(_onCarouselItemsReceived);
     on<CarouselItemsError>(_onCarouselItemsError);
   }
+  final GetCarouselItems getCarouselItems;
+
+  StreamSubscription? _carouselSubscription;
 
   Future<void> _onLoadCarouselItems(
     LoadCarouselItems event,

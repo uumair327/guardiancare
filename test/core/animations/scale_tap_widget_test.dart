@@ -306,7 +306,7 @@ void main() {
           final config = AnimationConfig(
             duration: Duration(milliseconds: durationMs),
             curve: Curves.easeOutQuad,
-            begin: 1.0,
+            begin: 1,
             end: scaleDown,
           );
 

@@ -13,11 +13,6 @@ import 'package:intl/intl.dart';
 /// - Modern comment input
 /// - Pull to refresh
 class ForumDetailPage extends StatelessWidget {
-  final String forumId;
-  final String forumTitle;
-  final String? forumDescription;
-  final DateTime? createdAt;
-  final String? userId;
 
   const ForumDetailPage({
     super.key,
@@ -27,6 +22,11 @@ class ForumDetailPage extends StatelessWidget {
     this.createdAt,
     this.userId,
   });
+  final String forumId;
+  final String forumTitle;
+  final String? forumDescription;
+  final DateTime? createdAt;
+  final String? userId;
 
   @override
   Widget build(BuildContext context) {
@@ -63,10 +63,6 @@ class ForumDetailPage extends StatelessWidget {
 
 /// Forum detail header with gradient and info
 class _ForumDetailHeader extends StatefulWidget {
-  final String title;
-  final String? description;
-  final DateTime? createdAt;
-  final String? userId;
 
   const _ForumDetailHeader({
     required this.title,
@@ -74,6 +70,10 @@ class _ForumDetailHeader extends StatefulWidget {
     this.createdAt,
     this.userId,
   });
+  final String title;
+  final String? description;
+  final DateTime? createdAt;
+  final String? userId;
 
   @override
   State<_ForumDetailHeader> createState() => _ForumDetailHeaderState();
@@ -97,10 +97,10 @@ class _ForumDetailHeaderState extends State<_ForumDetailHeader>
       duration: AppDurations.animationLong,
     );
 
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+    _fadeAnimation = Tween<double>(begin: 0, end: 1).animate(
       CurvedAnimation(
         parent: _controller,
-        curve: const Interval(0.0, 0.6, curve: Curves.easeOut),
+        curve: const Interval(0, 0.6, curve: Curves.easeOut),
       ),
     );
 
@@ -151,7 +151,7 @@ class _ForumDetailHeaderState extends State<_ForumDetailHeader>
             end: Alignment.bottomRight,
             colors: [_primaryColor, _secondaryColor],
           ),
-          borderRadius: BorderRadius.only(
+          borderRadius: const BorderRadius.only(
             bottomLeft: Radius.circular(AppDimensions.radiusXL),
             bottomRight: Radius.circular(AppDimensions.radiusXL),
           ),
@@ -179,7 +179,7 @@ class _ForumDetailHeaderState extends State<_ForumDetailHeader>
             children: [
               // Top bar with back button
               Padding(
-                padding: EdgeInsets.fromLTRB(
+                padding: const EdgeInsets.fromLTRB(
                   AppDimensions.spaceS,
                   AppDimensions.spaceS,
                   AppDimensions.screenPaddingH,
@@ -193,19 +193,19 @@ class _ForumDetailHeaderState extends State<_ForumDetailHeader>
                         Navigator.of(context).pop();
                       },
                       child: Container(
-                        padding: EdgeInsets.all(AppDimensions.spaceS),
+                        padding: const EdgeInsets.all(AppDimensions.spaceS),
                         decoration: BoxDecoration(
                           color: AppColors.white.withValues(alpha: 0.15),
                           shape: BoxShape.circle,
                         ),
-                        child: Icon(
+                        child: const Icon(
                           Icons.arrow_back_rounded,
                           color: AppColors.white,
                           size: AppDimensions.iconM,
                         ),
                       ),
                     ),
-                    SizedBox(width: AppDimensions.spaceS),
+                    const SizedBox(width: AppDimensions.spaceS),
                     Expanded(
                       child: Text(
                         l10n.discussionTitle,
@@ -217,17 +217,14 @@ class _ForumDetailHeaderState extends State<_ForumDetailHeader>
                     ),
                     // Share button
                     ScaleTapWidget(
-                      onTap: () {
-                        HapticFeedback.lightImpact();
-                        // TODO: Implement share
-                      },
+                      onTap: HapticFeedback.lightImpact,
                       child: Container(
-                        padding: EdgeInsets.all(AppDimensions.spaceS),
+                        padding: const EdgeInsets.all(AppDimensions.spaceS),
                         decoration: BoxDecoration(
                           color: AppColors.white.withValues(alpha: 0.15),
                           shape: BoxShape.circle,
                         ),
-                        child: Icon(
+                        child: const Icon(
                           Icons.share_rounded,
                           color: AppColors.white,
                           size: 20,
@@ -239,7 +236,7 @@ class _ForumDetailHeaderState extends State<_ForumDetailHeader>
               ),
               // Content
               Padding(
-                padding: EdgeInsets.fromLTRB(
+                padding: const EdgeInsets.fromLTRB(
                   AppDimensions.screenPaddingH,
                   AppDimensions.spaceM,
                   AppDimensions.screenPaddingH,
@@ -250,7 +247,7 @@ class _ForumDetailHeaderState extends State<_ForumDetailHeader>
                   children: [
                     // Category badge
                     Container(
-                      padding: EdgeInsets.symmetric(
+                      padding: const EdgeInsets.symmetric(
                         horizontal: AppDimensions.spaceS,
                         vertical: 4,
                       ),
@@ -261,12 +258,12 @@ class _ForumDetailHeaderState extends State<_ForumDetailHeader>
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(
+                          const Icon(
                             Icons.forum_rounded,
                             size: 14,
                             color: AppColors.white,
                           ),
-                          SizedBox(width: 4),
+                          const SizedBox(width: 4),
                           Text(
                             l10n.communityDiscussion,
                             style: AppTextStyles.caption.copyWith(
@@ -277,7 +274,7 @@ class _ForumDetailHeaderState extends State<_ForumDetailHeader>
                         ],
                       ),
                     ),
-                    SizedBox(height: AppDimensions.spaceM),
+                    const SizedBox(height: AppDimensions.spaceM),
                     // Title
                     Text(
                       widget.title,
@@ -290,7 +287,7 @@ class _ForumDetailHeaderState extends State<_ForumDetailHeader>
                     // Description (expandable)
                     if (widget.description != null &&
                         widget.description!.isNotEmpty) ...[
-                      SizedBox(height: AppDimensions.spaceM),
+                      const SizedBox(height: AppDimensions.spaceM),
                       GestureDetector(
                         onTap: () {
                           HapticFeedback.selectionClick();
@@ -321,7 +318,7 @@ class _ForumDetailHeaderState extends State<_ForumDetailHeader>
                       ),
                       if (widget.description!.length > 100)
                         Padding(
-                          padding: EdgeInsets.only(top: AppDimensions.spaceXS),
+                          padding: const EdgeInsets.only(top: AppDimensions.spaceXS),
                           child: GestureDetector(
                             onTap: () {
                               HapticFeedback.selectionClick();
@@ -339,7 +336,7 @@ class _ForumDetailHeaderState extends State<_ForumDetailHeader>
                                     fontWeight: FontWeight.w600,
                                   ),
                                 ),
-                                SizedBox(width: 4),
+                                const SizedBox(width: 4),
                                 AnimatedRotation(
                                   turns: _isExpanded ? 0.5 : 0,
                                   duration: AppDurations.animationShort,
@@ -355,7 +352,7 @@ class _ForumDetailHeaderState extends State<_ForumDetailHeader>
                           ),
                         ),
                     ],
-                    SizedBox(height: AppDimensions.spaceM),
+                    const SizedBox(height: AppDimensions.spaceM),
                     // Meta info
                     Row(
                       children: [
@@ -365,7 +362,7 @@ class _ForumDetailHeaderState extends State<_ForumDetailHeader>
                             size: 14,
                             color: AppColors.white.withValues(alpha: 0.8),
                           ),
-                          SizedBox(width: 4),
+                          const SizedBox(width: 4),
                           Flexible(
                             child: Text(
                               widget.userId!,
@@ -377,7 +374,7 @@ class _ForumDetailHeaderState extends State<_ForumDetailHeader>
                             ),
                           ),
                           Container(
-                            margin: EdgeInsets.symmetric(horizontal: 8),
+                            margin: const EdgeInsets.symmetric(horizontal: 8),
                             width: 4,
                             height: 4,
                             decoration: BoxDecoration(
@@ -392,7 +389,7 @@ class _ForumDetailHeaderState extends State<_ForumDetailHeader>
                             size: 14,
                             color: AppColors.white.withValues(alpha: 0.8),
                           ),
-                          SizedBox(width: 4),
+                          const SizedBox(width: 4),
                           Text(
                             _getTimeAgo(widget.createdAt!),
                             style: AppTextStyles.caption.copyWith(
@@ -415,9 +412,9 @@ class _ForumDetailHeaderState extends State<_ForumDetailHeader>
 
 /// Comments section with list and states
 class _CommentsSection extends StatelessWidget {
-  final String forumId;
 
   const _CommentsSection({required this.forumId});
+  final String forumId;
 
   static Color get _primaryColor => AppColors.videoPrimary;
 
@@ -431,9 +428,9 @@ class _CommentsSection extends StatelessWidget {
             SnackBar(
               content: Row(
                 children: [
-                  Icon(Icons.error_outline_rounded,
+                  const Icon(Icons.error_outline_rounded,
                       color: AppColors.white, size: 20),
-                  SizedBox(width: AppDimensions.spaceS),
+                  const SizedBox(width: AppDimensions.spaceS),
                   Expanded(child: Text(state.message)),
                 ],
               ),
@@ -470,7 +467,7 @@ class _CommentsSection extends StatelessWidget {
             },
             color: _primaryColor,
             child: ListView.builder(
-              padding: EdgeInsets.all(AppDimensions.screenPaddingH),
+              padding: const EdgeInsets.all(AppDimensions.screenPaddingH),
               itemCount: state.comments.length + 1, // +1 for header
               itemBuilder: (context, index) {
                 if (index == 0) {
@@ -494,11 +491,11 @@ class _CommentsSection extends StatelessWidget {
   Widget _buildCommentsHeader(
       BuildContext context, int count, AppLocalizations l10n) {
     return Padding(
-      padding: EdgeInsets.only(bottom: AppDimensions.spaceM),
+      padding: const EdgeInsets.only(bottom: AppDimensions.spaceM),
       child: Row(
         children: [
           Container(
-            padding: EdgeInsets.all(AppDimensions.spaceS),
+            padding: const EdgeInsets.all(AppDimensions.spaceS),
             decoration: BoxDecoration(
               color: _primaryColor.withValues(alpha: 0.1),
               borderRadius: AppDimensions.borderRadiusS,
@@ -509,7 +506,7 @@ class _CommentsSection extends StatelessWidget {
               size: 18,
             ),
           ),
-          SizedBox(width: AppDimensions.spaceS),
+          const SizedBox(width: AppDimensions.spaceS),
           Text(
             l10n.commentsCount(count),
             style: AppTextStyles.h4.copyWith(
@@ -524,14 +521,14 @@ class _CommentsSection extends StatelessWidget {
 
   Widget _buildLoadingState() {
     return ListView.builder(
-      padding: EdgeInsets.all(AppDimensions.screenPaddingH),
+      padding: const EdgeInsets.all(AppDimensions.screenPaddingH),
       itemCount: 5,
       itemBuilder: (context, index) {
         return FadeSlideWidget(
           duration: AppDurations.animationShort,
           delay: Duration(milliseconds: 50 * index),
           child: Padding(
-            padding: EdgeInsets.only(bottom: AppDimensions.spaceM),
+            padding: const EdgeInsets.only(bottom: AppDimensions.spaceM),
             child: ShimmerLoading(
               child: Container(
                 height: 100,
@@ -555,7 +552,7 @@ class _CommentsSection extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              padding: EdgeInsets.all(AppDimensions.spaceXL),
+              padding: const EdgeInsets.all(AppDimensions.spaceXL),
               decoration: BoxDecoration(
                 color: _primaryColor.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
@@ -566,7 +563,7 @@ class _CommentsSection extends StatelessWidget {
                 color: _primaryColor,
               ),
             ),
-            SizedBox(height: AppDimensions.spaceL),
+            const SizedBox(height: AppDimensions.spaceL),
             Text(
               l10n.noCommentsYet,
               style: AppTextStyles.h4.copyWith(
@@ -574,16 +571,16 @@ class _CommentsSection extends StatelessWidget {
                 fontWeight: FontWeight.w600,
               ),
             ),
-            SizedBox(height: AppDimensions.spaceS),
+            const SizedBox(height: AppDimensions.spaceS),
             Text(
               l10n.beFirstToComment,
               style: AppTextStyles.body2.copyWith(
                 color: context.colors.textSecondary,
               ),
             ),
-            SizedBox(height: AppDimensions.spaceL),
+            const SizedBox(height: AppDimensions.spaceL),
             Container(
-              padding: EdgeInsets.symmetric(
+              padding: const EdgeInsets.symmetric(
                 horizontal: AppDimensions.spaceM,
                 vertical: AppDimensions.spaceS,
               ),
@@ -599,7 +596,7 @@ class _CommentsSection extends StatelessWidget {
                     color: _primaryColor,
                     size: 20,
                   ),
-                  SizedBox(width: 4),
+                  const SizedBox(width: 4),
                   Text(
                     l10n.startTypingBelow,
                     style: AppTextStyles.bodySmall.copyWith(

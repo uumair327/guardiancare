@@ -12,6 +12,18 @@ class VideoModel extends VideoEntity {
     super.description,
   });
 
+  /// Create VideoModel from VideoEntity
+  factory VideoModel.fromEntity(VideoEntity entity) {
+    return VideoModel(
+      id: entity.id,
+      title: entity.title,
+      videoUrl: entity.videoUrl,
+      thumbnailUrl: entity.thumbnailUrl,
+      category: entity.category,
+      description: entity.description,
+    );
+  }
+
   /// Create VideoModel from Firestore document
   factory VideoModel.fromFirestore(QueryDocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>;
@@ -47,17 +59,5 @@ class VideoModel extends VideoEntity {
       'category': category,
       'description': description,
     };
-  }
-
-  /// Create VideoModel from VideoEntity
-  factory VideoModel.fromEntity(VideoEntity entity) {
-    return VideoModel(
-      id: entity.id,
-      title: entity.title,
-      videoUrl: entity.videoUrl,
-      thumbnailUrl: entity.thumbnailUrl,
-      category: entity.category,
-      description: entity.description,
-    );
   }
 }

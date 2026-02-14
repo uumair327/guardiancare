@@ -7,13 +7,13 @@ import 'package:guardiancare/features/report/domain/repositories/report_reposito
 
 /// Parameters for creating a report
 class CreateReportParams extends Equatable {
-  final String caseName;
-  final List<String> questions;
 
   const CreateReportParams({
     required this.caseName,
     required this.questions,
   });
+  final String caseName;
+  final List<String> questions;
 
   @override
   List<Object> get props => [caseName, questions];
@@ -21,13 +21,13 @@ class CreateReportParams extends Equatable {
 
 /// Use case for creating a new report
 class CreateReport implements UseCase<ReportEntity, CreateReportParams> {
-  final ReportRepository repository;
 
   CreateReport(this.repository);
+  final ReportRepository repository;
 
   @override
   Future<Either<Failure, ReportEntity>> call(CreateReportParams params) async {
-    return await repository.createReport(
+    return repository.createReport(
       caseName: params.caseName,
       questions: params.questions,
     );

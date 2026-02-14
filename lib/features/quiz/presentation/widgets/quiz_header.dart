@@ -4,10 +4,6 @@ import 'package:guardiancare/core/core.dart';
 /// Modern header for quiz pages
 /// Features gradient background, animated icon, and motivational text
 class QuizHeader extends StatefulWidget {
-  final String? quizName;
-  final int? currentQuestion;
-  final int? totalQuestions;
-  final VoidCallback? onBackPressed;
 
   const QuizHeader({
     super.key,
@@ -16,6 +12,10 @@ class QuizHeader extends StatefulWidget {
     this.totalQuestions,
     this.onBackPressed,
   });
+  final String? quizName;
+  final int? currentQuestion;
+  final int? totalQuestions;
+  final VoidCallback? onBackPressed;
 
   @override
   State<QuizHeader> createState() => _QuizHeaderState();
@@ -36,10 +36,10 @@ class _QuizHeaderState extends State<QuizHeader>
       duration: AppDurations.animationLong,
     );
 
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+    _fadeAnimation = Tween<double>(begin: 0, end: 1).animate(
       CurvedAnimation(
         parent: _controller,
-        curve: const Interval(0.0, 0.6, curve: Curves.easeOut),
+        curve: const Interval(0, 0.6, curve: Curves.easeOut),
       ),
     );
 
@@ -53,10 +53,10 @@ class _QuizHeaderState extends State<QuizHeader>
       ),
     );
 
-    _iconAnimation = Tween<double>(begin: 0.8, end: 1.0).animate(
+    _iconAnimation = Tween<double>(begin: 0.8, end: 1).animate(
       CurvedAnimation(
         parent: _controller,
-        curve: const Interval(0.3, 1.0, curve: Curves.elasticOut),
+        curve: const Interval(0.3, 1, curve: Curves.elasticOut),
       ),
     );
 
@@ -76,7 +76,7 @@ class _QuizHeaderState extends State<QuizHeader>
 
     return RepaintBoundary(
       child: Container(
-        padding: EdgeInsets.fromLTRB(
+        padding: const EdgeInsets.fromLTRB(
           AppDimensions.screenPaddingH,
           AppDimensions.spaceM,
           AppDimensions.screenPaddingH,
@@ -93,7 +93,7 @@ class _QuizHeaderState extends State<QuizHeader>
             ],
             stops: const [0.0, 0.5, 1.0],
           ),
-          borderRadius: BorderRadius.only(
+          borderRadius: const BorderRadius.only(
             bottomLeft: Radius.circular(AppDimensions.radiusXL),
             bottomRight: Radius.circular(AppDimensions.radiusXL),
           ),
@@ -120,19 +120,19 @@ class _QuizHeaderState extends State<QuizHeader>
                       ScaleTapWidget(
                         onTap: widget.onBackPressed,
                         child: Container(
-                          padding: EdgeInsets.all(AppDimensions.spaceS),
+                          padding: const EdgeInsets.all(AppDimensions.spaceS),
                           decoration: BoxDecoration(
                             color: AppColors.white.withValues(alpha: 0.15),
                             borderRadius: AppDimensions.borderRadiusS,
                           ),
-                          child: Icon(
+                          child: const Icon(
                             Icons.arrow_back_rounded,
                             color: AppColors.white,
                             size: AppDimensions.iconM,
                           ),
                         ),
                       ),
-                      SizedBox(width: AppDimensions.spaceM),
+                      const SizedBox(width: AppDimensions.spaceM),
                     ],
                     Expanded(
                       child: Column(
@@ -145,7 +145,7 @@ class _QuizHeaderState extends State<QuizHeader>
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          SizedBox(height: AppDimensions.spaceXS),
+                          const SizedBox(height: AppDimensions.spaceXS),
                           Text(
                             isInQuiz
                                 ? 'Question ${widget.currentQuestion} of ${widget.totalQuestions}'
@@ -166,7 +166,7 @@ class _QuizHeaderState extends State<QuizHeader>
                         );
                       },
                       child: Container(
-                        padding: EdgeInsets.all(AppDimensions.spaceM),
+                        padding: const EdgeInsets.all(AppDimensions.spaceM),
                         decoration: BoxDecoration(
                           color: AppColors.white.withValues(alpha: 0.15),
                           shape: BoxShape.circle,
@@ -183,9 +183,9 @@ class _QuizHeaderState extends State<QuizHeader>
                   ],
                 ),
                 if (!isInQuiz) ...[
-                  SizedBox(height: AppDimensions.spaceM),
+                  const SizedBox(height: AppDimensions.spaceM),
                   Container(
-                    padding: EdgeInsets.symmetric(
+                    padding: const EdgeInsets.symmetric(
                       horizontal: AppDimensions.spaceM,
                       vertical: AppDimensions.spaceS,
                     ),
@@ -200,7 +200,7 @@ class _QuizHeaderState extends State<QuizHeader>
                           color: context.colors.warning,
                           size: AppDimensions.iconS,
                         ),
-                        SizedBox(width: AppDimensions.spaceS),
+                        const SizedBox(width: AppDimensions.spaceS),
                         Expanded(
                           child: Text(
                             'Challenge yourself and learn something new!',

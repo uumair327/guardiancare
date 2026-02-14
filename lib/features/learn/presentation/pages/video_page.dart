@@ -95,9 +95,9 @@ class _VideoPageContent extends StatelessWidget {
 
   Widget _buildCategoryLoadingState() {
     return Padding(
-      padding: EdgeInsets.all(AppDimensions.spaceM),
+      padding: const EdgeInsets.all(AppDimensions.spaceM),
       child: GridView.builder(
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
           crossAxisSpacing: AppDimensions.spaceM,
           mainAxisSpacing: AppDimensions.spaceM,
@@ -124,9 +124,9 @@ class _VideoPageContent extends StatelessWidget {
 
   Widget _buildVideoLoadingState() {
     return Padding(
-      padding: EdgeInsets.all(AppDimensions.spaceM),
+      padding: const EdgeInsets.all(AppDimensions.spaceM),
       child: GridView.builder(
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
           crossAxisSpacing: AppDimensions.spaceM,
           mainAxisSpacing: AppDimensions.spaceM,
@@ -157,23 +157,23 @@ class _VideoPageContent extends StatelessWidget {
       duration: AppDurations.animationMedium,
       child: Center(
         child: Padding(
-          padding: EdgeInsets.all(AppDimensions.spaceXL),
+          padding: const EdgeInsets.all(AppDimensions.spaceXL),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
-                padding: EdgeInsets.all(AppDimensions.spaceL),
+                padding: const EdgeInsets.all(AppDimensions.spaceL),
                 decoration: BoxDecoration(
                   color: AppColors.error.withValues(alpha: 0.1),
                   shape: BoxShape.circle,
                 ),
-                child: Icon(
+                child: const Icon(
                   Icons.error_outline_rounded,
                   size: AppDimensions.iconXXL,
                   color: AppColors.error,
                 ),
               ),
-              SizedBox(height: AppDimensions.spaceL),
+              const SizedBox(height: AppDimensions.spaceL),
               Text(
                 UIStrings.oopsSomethingWentWrong,
                 style: AppTextStyles.h3.copyWith(
@@ -181,7 +181,7 @@ class _VideoPageContent extends StatelessWidget {
                 ),
                 textAlign: TextAlign.center,
               ),
-              SizedBox(height: AppDimensions.spaceS),
+              const SizedBox(height: AppDimensions.spaceS),
               Text(
                 state.message,
                 style: AppTextStyles.body2.copyWith(
@@ -190,13 +190,13 @@ class _VideoPageContent extends StatelessWidget {
                 textAlign: TextAlign.center,
               ),
               if (state.canRetry) ...[
-                SizedBox(height: AppDimensions.spaceL),
+                const SizedBox(height: AppDimensions.spaceL),
                 ScaleTapWidget(
                   onTap: () {
                     context.read<LearnBloc>().add(RetryRequested());
                   },
                   child: Container(
-                    padding: EdgeInsets.symmetric(
+                    padding: const EdgeInsets.symmetric(
                       horizontal: AppDimensions.spaceXL,
                       vertical: AppDimensions.spaceM,
                     ),
@@ -214,12 +214,12 @@ class _VideoPageContent extends StatelessWidget {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(
+                        const Icon(
                           Icons.refresh_rounded,
                           color: AppColors.white,
                           size: AppDimensions.iconM,
                         ),
-                        SizedBox(width: AppDimensions.spaceS),
+                        const SizedBox(width: AppDimensions.spaceS),
                         Text(
                           l10n.retry,
                           style: AppTextStyles.button.copyWith(
@@ -241,9 +241,9 @@ class _VideoPageContent extends StatelessWidget {
 
 /// Category grid view with staggered animations
 class _CategoryGridView extends StatelessWidget {
-  final List<CategoryEntity> categories;
 
   const _CategoryGridView({required this.categories});
+  final List<CategoryEntity> categories;
 
   @override
   Widget build(BuildContext context) {
@@ -262,7 +262,7 @@ class _CategoryGridView extends StatelessWidget {
             duration: AppDurations.animationMedium,
             delay: const Duration(milliseconds: 100),
             child: Padding(
-              padding: EdgeInsets.fromLTRB(
+              padding: const EdgeInsets.fromLTRB(
                 AppDimensions.spaceM,
                 AppDimensions.spaceL,
                 AppDimensions.spaceM,
@@ -278,7 +278,7 @@ class _CategoryGridView extends StatelessWidget {
                       borderRadius: BorderRadius.circular(2),
                     ),
                   ),
-                  SizedBox(width: AppDimensions.spaceS),
+                  const SizedBox(width: AppDimensions.spaceS),
                   Text(
                     UIStrings.learningCategories,
                     style: AppTextStyles.h4.copyWith(
@@ -288,7 +288,7 @@ class _CategoryGridView extends StatelessWidget {
                   ),
                   const Spacer(),
                   Container(
-                    padding: EdgeInsets.symmetric(
+                    padding: const EdgeInsets.symmetric(
                       horizontal: AppDimensions.spaceS,
                       vertical: AppDimensions.spaceXXS,
                     ),
@@ -311,9 +311,9 @@ class _CategoryGridView extends StatelessWidget {
         ),
         // Category grid
         SliverPadding(
-          padding: EdgeInsets.symmetric(horizontal: AppDimensions.spaceM),
+          padding: const EdgeInsets.symmetric(horizontal: AppDimensions.spaceM),
           sliver: SliverGrid(
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
               crossAxisSpacing: AppDimensions.spaceM,
               mainAxisSpacing: AppDimensions.spaceM,
@@ -329,8 +329,6 @@ class _CategoryGridView extends StatelessWidget {
                 return FadeSlideWidget(
                   duration: AppDurations.animationMedium,
                   delay: Duration(milliseconds: 100 + (80 * staggerIndex)),
-                  direction: SlideDirection.up,
-                  slideOffset: 30,
                   child: CategoryCard(
                     category: category,
                     index: index,
@@ -347,7 +345,7 @@ class _CategoryGridView extends StatelessWidget {
           ),
         ),
         // Bottom padding
-        SliverToBoxAdapter(
+        const SliverToBoxAdapter(
           child: SizedBox(height: AppDimensions.spaceXXL),
         ),
       ],
@@ -362,25 +360,25 @@ class _CategoryGridView extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              padding: EdgeInsets.all(AppDimensions.spaceL),
+              padding: const EdgeInsets.all(AppDimensions.spaceL),
               decoration: BoxDecoration(
                 color: AppColors.secondary.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
-              child: Icon(
+              child: const Icon(
                 Icons.school_outlined,
                 size: AppDimensions.iconXXL,
                 color: AppColors.secondary,
               ),
             ),
-            SizedBox(height: AppDimensions.spaceL),
+            const SizedBox(height: AppDimensions.spaceL),
             Text(
               l10n.noCategoriesAvailable,
               style: AppTextStyles.h4.copyWith(
                 color: context.colors.textSecondary,
               ),
             ),
-            SizedBox(height: AppDimensions.spaceS),
+            const SizedBox(height: AppDimensions.spaceS),
             Text(
               UIStrings.checkBackLater,
               style: AppTextStyles.body2.copyWith(
@@ -396,13 +394,13 @@ class _CategoryGridView extends StatelessWidget {
 
 /// Video grid view with staggered animations
 class _VideoGridView extends StatelessWidget {
-  final String categoryName;
-  final List<VideoEntity> videos;
 
   const _VideoGridView({
     required this.categoryName,
     required this.videos,
   });
+  final String categoryName;
+  final List<VideoEntity> videos;
 
   @override
   Widget build(BuildContext context) {
@@ -421,7 +419,7 @@ class _VideoGridView extends StatelessWidget {
             duration: AppDurations.animationMedium,
             delay: const Duration(milliseconds: 100),
             child: Padding(
-              padding: EdgeInsets.fromLTRB(
+              padding: const EdgeInsets.fromLTRB(
                 AppDimensions.spaceM,
                 AppDimensions.spaceL,
                 AppDimensions.spaceM,
@@ -437,7 +435,7 @@ class _VideoGridView extends StatelessWidget {
                       borderRadius: BorderRadius.circular(2),
                     ),
                   ),
-                  SizedBox(width: AppDimensions.spaceS),
+                  const SizedBox(width: AppDimensions.spaceS),
                   Expanded(
                     child: Text(
                       UIStrings.videos,
@@ -448,7 +446,7 @@ class _VideoGridView extends StatelessWidget {
                     ),
                   ),
                   Container(
-                    padding: EdgeInsets.symmetric(
+                    padding: const EdgeInsets.symmetric(
                       horizontal: AppDimensions.spaceS,
                       vertical: AppDimensions.spaceXXS,
                     ),
@@ -471,9 +469,9 @@ class _VideoGridView extends StatelessWidget {
         ),
         // Video grid
         SliverPadding(
-          padding: EdgeInsets.symmetric(horizontal: AppDimensions.spaceM),
+          padding: const EdgeInsets.symmetric(horizontal: AppDimensions.spaceM),
           sliver: SliverGrid(
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
               crossAxisSpacing: AppDimensions.spaceM,
               mainAxisSpacing: AppDimensions.spaceM,
@@ -489,8 +487,6 @@ class _VideoGridView extends StatelessWidget {
                 return FadeSlideWidget(
                   duration: AppDurations.animationMedium,
                   delay: Duration(milliseconds: 100 + (80 * staggerIndex)),
-                  direction: SlideDirection.up,
-                  slideOffset: 30,
                   child: VideoCard(
                     video: video,
                     index: index,
@@ -505,7 +501,7 @@ class _VideoGridView extends StatelessWidget {
           ),
         ),
         // Bottom padding
-        SliverToBoxAdapter(
+        const SliverToBoxAdapter(
           child: SizedBox(height: AppDimensions.spaceXXL),
         ),
       ],
@@ -520,25 +516,25 @@ class _VideoGridView extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              padding: EdgeInsets.all(AppDimensions.spaceL),
+              padding: const EdgeInsets.all(AppDimensions.spaceL),
               decoration: BoxDecoration(
                 color: AppColors.primary.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
-              child: Icon(
+              child: const Icon(
                 Icons.video_library_outlined,
                 size: AppDimensions.iconXXL,
                 color: AppColors.primary,
               ),
             ),
-            SizedBox(height: AppDimensions.spaceL),
+            const SizedBox(height: AppDimensions.spaceL),
             Text(
               l10n.noVideosAvailable,
               style: AppTextStyles.h4.copyWith(
                 color: context.colors.textSecondary,
               ),
             ),
-            SizedBox(height: AppDimensions.spaceS),
+            const SizedBox(height: AppDimensions.spaceS),
             Text(
               UIStrings.newVideosComingSoon,
               style: AppTextStyles.body2.copyWith(

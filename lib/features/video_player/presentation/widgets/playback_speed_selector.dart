@@ -5,21 +5,21 @@ import 'package:guardiancare/features/video_player/presentation/constants/string
 
 /// Playback speed selector with education-friendly design
 class PlaybackSpeedSelector extends StatelessWidget {
-  final double currentSpeed;
-  final ValueChanged<double> onSpeedChanged;
 
   const PlaybackSpeedSelector({
     super.key,
     required this.currentSpeed,
     required this.onSpeedChanged,
   });
+  final double currentSpeed;
+  final ValueChanged<double> onSpeedChanged;
 
   static const List<double> _speeds = [0.5, 0.75, 1.0, 1.25, 1.5, 1.75, 2.0];
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(AppDimensions.spaceM),
+      padding: const EdgeInsets.all(AppDimensions.spaceM),
       decoration: BoxDecoration(
         color: AppColors.videoSurface,
         borderRadius: AppDimensions.borderRadiusL,
@@ -32,7 +32,7 @@ class PlaybackSpeedSelector extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: EdgeInsets.only(
+            padding: const EdgeInsets.only(
               left: AppDimensions.spaceS,
               bottom: AppDimensions.spaceM,
             ),
@@ -62,15 +62,15 @@ class PlaybackSpeedSelector extends StatelessWidget {
 }
 
 class _SpeedChip extends StatefulWidget {
-  final double speed;
-  final bool isSelected;
-  final VoidCallback onTap;
 
   const _SpeedChip({
     required this.speed,
     required this.isSelected,
     required this.onTap,
   });
+  final double speed;
+  final bool isSelected;
+  final VoidCallback onTap;
 
   @override
   State<_SpeedChip> createState() => _SpeedChipState();
@@ -88,7 +88,7 @@ class _SpeedChipState extends State<_SpeedChip>
       vsync: this,
       duration: AppDurations.animationShort,
     );
-    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.92).animate(
+    _scaleAnimation = Tween<double>(begin: 1, end: 0.92).animate(
       CurvedAnimation(parent: _controller, curve: AppCurves.tap),
     );
   }
@@ -126,7 +126,7 @@ class _SpeedChipState extends State<_SpeedChip>
           child: AnimatedContainer(
             duration: AppDurations.animationShort,
             curve: AppCurves.standard,
-            padding: EdgeInsets.symmetric(
+            padding: const EdgeInsets.symmetric(
               horizontal: AppDimensions.spaceM,
               vertical: AppDimensions.spaceS,
             ),
@@ -158,14 +158,14 @@ class _SpeedChipState extends State<_SpeedChip>
 
 /// Compact speed button for inline use
 class PlaybackSpeedButton extends StatefulWidget {
-  final double currentSpeed;
-  final VoidCallback onTap;
 
   const PlaybackSpeedButton({
     super.key,
     required this.currentSpeed,
     required this.onTap,
   });
+  final double currentSpeed;
+  final VoidCallback onTap;
 
   @override
   State<PlaybackSpeedButton> createState() => _PlaybackSpeedButtonState();
@@ -183,7 +183,7 @@ class _PlaybackSpeedButtonState extends State<PlaybackSpeedButton>
       vsync: this,
       duration: AppDurations.animationShort,
     );
-    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.9).animate(
+    _scaleAnimation = Tween<double>(begin: 1, end: 0.9).animate(
       CurvedAnimation(parent: _controller, curve: AppCurves.tap),
     );
   }
@@ -214,7 +214,7 @@ class _PlaybackSpeedButtonState extends State<PlaybackSpeedButton>
             );
           },
           child: Container(
-            padding: EdgeInsets.symmetric(
+            padding: const EdgeInsets.symmetric(
               horizontal: AppDimensions.spaceM,
               vertical: AppDimensions.spaceS,
             ),

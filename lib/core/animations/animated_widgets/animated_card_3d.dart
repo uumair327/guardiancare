@@ -11,16 +11,6 @@ import 'package:guardiancare/core/constants/app_dimensions.dart';
 /// - Touch-responsive
 /// - Performance optimized with RepaintBoundary
 class AnimatedCard3D extends StatefulWidget {
-  final Widget child;
-  final double maxTilt;
-  final Duration duration;
-  final Curve curve;
-  final Color? shadowColor;
-  final double elevation;
-  final BorderRadius? borderRadius;
-  final Color? backgroundColor;
-  final bool enableGlassmorphism;
-  final VoidCallback? onTap;
 
   const AnimatedCard3D({
     super.key,
@@ -35,6 +25,16 @@ class AnimatedCard3D extends StatefulWidget {
     this.enableGlassmorphism = false,
     this.onTap,
   });
+  final Widget child;
+  final double maxTilt;
+  final Duration duration;
+  final Curve curve;
+  final Color? shadowColor;
+  final double elevation;
+  final BorderRadius? borderRadius;
+  final Color? backgroundColor;
+  final bool enableGlassmorphism;
+  final VoidCallback? onTap;
 
   @override
   State<AnimatedCard3D> createState() => _AnimatedCard3DState();

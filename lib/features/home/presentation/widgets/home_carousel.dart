@@ -29,7 +29,7 @@ class _HomeCarouselState extends State<HomeCarousel>
       vsync: this,
       duration: AppDurations.animationMedium,
     );
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+    _fadeAnimation = Tween<double>(begin: 0, end: 1).animate(
       CurvedAnimation(parent: _controller, curve: Curves.easeOut),
     );
     _controller.forward();
@@ -64,15 +64,12 @@ class _HomeCarouselState extends State<HomeCarousel>
                   options: CarouselOptions(
                     height: carouselHeight,
                     viewportFraction: 0.85,
-                    initialPage: 0,
                     enableInfiniteScroll: items.length > 1,
                     autoPlay: items.length > 1,
                     autoPlayInterval: AppDurations.carouselAutoPlay,
-                    autoPlayAnimationDuration: AppDurations.animationSlow,
                     autoPlayCurve: Curves.easeInOutCubic,
                     enlargeCenterPage: true,
                     enlargeFactor: 0.2,
-                    scrollDirection: Axis.horizontal,
                     onPageChanged: (index, reason) {
                       setState(() => _currentIndex = index);
                     },
@@ -86,7 +83,7 @@ class _HomeCarouselState extends State<HomeCarousel>
                   },
                 ),
                 if (items.length > 1) ...[
-                  SizedBox(height: AppDimensions.spaceM),
+                  const SizedBox(height: AppDimensions.spaceM),
                   _buildIndicators(items.length),
                 ],
               ],
@@ -110,8 +107,8 @@ class _HomeCarouselState extends State<HomeCarousel>
           duration: AppDurations.animationShort,
           curve: AppCurves.standard,
           width: isActive ? 24.0 : 8.0,
-          height: 8.0,
-          margin: const EdgeInsets.symmetric(horizontal: 3.0),
+          height: 8,
+          margin: const EdgeInsets.symmetric(horizontal: 3),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(4),
             gradient: isActive
@@ -146,7 +143,6 @@ class _HomeCarouselState extends State<HomeCarousel>
           options: CarouselOptions(
             height: height,
             viewportFraction: 0.85,
-            enableInfiniteScroll: true,
             autoPlay: true,
             autoPlayInterval: AppDurations.carouselAutoPlay,
             enlargeCenterPage: true,
@@ -154,7 +150,7 @@ class _HomeCarouselState extends State<HomeCarousel>
           ),
           itemBuilder: (context, index, realIndex) {
             return Container(
-              margin: EdgeInsets.symmetric(horizontal: AppDimensions.spaceXS),
+              margin: const EdgeInsets.symmetric(horizontal: AppDimensions.spaceXS),
               child: ShimmerLoading(
                 child: Container(
                   decoration: BoxDecoration(
@@ -166,14 +162,14 @@ class _HomeCarouselState extends State<HomeCarousel>
             );
           },
         ),
-        SizedBox(height: AppDimensions.spaceM),
+        const SizedBox(height: AppDimensions.spaceM),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: List.generate(3, (index) {
             return Container(
               width: index == 0 ? 24.0 : 8.0,
-              height: 8.0,
-              margin: const EdgeInsets.symmetric(horizontal: 3.0),
+              height: 8,
+              margin: const EdgeInsets.symmetric(horizontal: 3),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(4),
                 color: AppColors.shimmerBase,
@@ -189,7 +185,7 @@ class _HomeCarouselState extends State<HomeCarousel>
     return FadeSlideWidget(
       child: Container(
         height: height,
-        margin: EdgeInsets.symmetric(horizontal: AppDimensions.screenPaddingH),
+        margin: const EdgeInsets.symmetric(horizontal: AppDimensions.screenPaddingH),
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
@@ -202,7 +198,6 @@ class _HomeCarouselState extends State<HomeCarousel>
           borderRadius: AppDimensions.borderRadiusXL,
           border: Border.all(
             color: AppColors.error.withValues(alpha: 0.3),
-            width: 1,
           ),
         ),
         child: Center(
@@ -210,18 +205,18 @@ class _HomeCarouselState extends State<HomeCarousel>
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
-                padding: EdgeInsets.all(AppDimensions.spaceM),
+                padding: const EdgeInsets.all(AppDimensions.spaceM),
                 decoration: BoxDecoration(
                   color: AppColors.error.withValues(alpha: 0.1),
                   shape: BoxShape.circle,
                 ),
-                child: Icon(
+                child: const Icon(
                   Icons.cloud_off_rounded,
                   color: AppColors.error,
                   size: AppDimensions.iconL,
                 ),
               ),
-              SizedBox(height: AppDimensions.spaceM),
+              const SizedBox(height: AppDimensions.spaceM),
               Text(
                 UIStrings.contentUnavailable,
                 style: AppTextStyles.h5.copyWith(
@@ -229,9 +224,9 @@ class _HomeCarouselState extends State<HomeCarousel>
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              SizedBox(height: AppDimensions.spaceXS),
+              const SizedBox(height: AppDimensions.spaceXS),
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: AppDimensions.spaceL),
+                padding: const EdgeInsets.symmetric(horizontal: AppDimensions.spaceL),
                 child: Text(
                   message,
                   style: AppTextStyles.bodySmall.copyWith(
@@ -266,9 +261,6 @@ class _HomeCarouselState extends State<HomeCarousel>
 
 /// Carousel card with 3D effects and animations
 class CarouselCard extends StatefulWidget {
-  final CarouselItemEntity item;
-  final bool isActive;
-  final VoidCallback onTap;
 
   const CarouselCard({
     super.key,
@@ -276,6 +268,9 @@ class CarouselCard extends StatefulWidget {
     required this.isActive,
     required this.onTap,
   });
+  final CarouselItemEntity item;
+  final bool isActive;
+  final VoidCallback onTap;
 
   @override
   State<CarouselCard> createState() => _CarouselCardState();
@@ -296,7 +291,7 @@ class _CarouselCardState extends State<CarouselCard>
       duration: AppDurations.animationShort,
     );
 
-    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.96).animate(
+    _scaleAnimation = Tween<double>(begin: 1, end: 0.96).animate(
       CurvedAnimation(parent: _controller, curve: AppCurves.tap),
     );
   }
@@ -361,7 +356,7 @@ class _CarouselCardState extends State<CarouselCard>
               child: AnimatedContainer(
                 duration: AppDurations.animationShort,
                 curve: AppCurves.standard,
-                margin: EdgeInsets.symmetric(horizontal: AppDimensions.spaceXS),
+                margin: const EdgeInsets.symmetric(horizontal: AppDimensions.spaceXS),
                 transform: Matrix4.identity()
                   ..setEntry(3, 2, 0.001)
                   ..rotateX(_tiltOffset.dx)
@@ -400,7 +395,7 @@ class _CarouselCardState extends State<CarouselCard>
                   fit: BoxFit.cover,
                   placeholder: (context, url) => Container(
                     color: AppColors.primary.withValues(alpha: 0.1),
-                    child: Center(
+                    child: const Center(
                       child: CircularProgressIndicator(
                         color: AppColors.primary,
                         strokeWidth: 2,
@@ -434,7 +429,7 @@ class _CarouselCardState extends State<CarouselCard>
                     children: [
                       // Play/View indicator
                       Container(
-                        padding: EdgeInsets.all(AppDimensions.spaceS),
+                        padding: const EdgeInsets.all(AppDimensions.spaceS),
                         decoration: BoxDecoration(
                           color: AppColors.white.withValues(alpha: 0.9),
                           shape: BoxShape.circle,
@@ -453,7 +448,7 @@ class _CarouselCardState extends State<CarouselCard>
                           size: AppDimensions.iconS,
                         ),
                       ),
-                      SizedBox(width: AppDimensions.spaceS),
+                      const SizedBox(width: AppDimensions.spaceS),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -478,7 +473,7 @@ class _CarouselCardState extends State<CarouselCard>
                       ),
                       // Source badge
                       Container(
-                        padding: EdgeInsets.symmetric(
+                        padding: const EdgeInsets.symmetric(
                           horizontal: AppDimensions.spaceS,
                           vertical: AppDimensions.spaceXXS,
                         ),
@@ -502,7 +497,7 @@ class _CarouselCardState extends State<CarouselCard>
                   top: AppDimensions.spaceM,
                   left: AppDimensions.spaceM,
                   child: Container(
-                    padding: EdgeInsets.symmetric(
+                    padding: const EdgeInsets.symmetric(
                       horizontal: AppDimensions.spaceS,
                       vertical: AppDimensions.spaceXXS,
                     ),
@@ -525,12 +520,12 @@ class _CarouselCardState extends State<CarouselCard>
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(
+                        const Icon(
                           Icons.school_rounded,
                           color: AppColors.white,
                           size: 12,
                         ),
-                        SizedBox(width: 4),
+                        const SizedBox(width: 4),
                         Text(
                           UIStrings.learn,
                           style: AppTextStyles.caption.copyWith(
@@ -572,7 +567,7 @@ class _CarouselCardState extends State<CarouselCard>
               color: AppColors.primary.withValues(alpha: 0.5),
               size: AppDimensions.iconXL,
             ),
-            SizedBox(height: AppDimensions.spaceS),
+            const SizedBox(height: AppDimensions.spaceS),
             Text(
               UIStrings.imageUnavailable,
               style: AppTextStyles.bodySmall.copyWith(

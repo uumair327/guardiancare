@@ -20,6 +20,14 @@ import 'package:flutter/material.dart';
 /// ```
 @immutable
 class AnimationConfig {
+
+  /// Creates an immutable animation configuration.
+  const AnimationConfig({
+    required this.duration,
+    required this.curve,
+    required this.begin,
+    required this.end,
+  });
   /// The duration of the animation.
   final Duration duration;
 
@@ -31,14 +39,6 @@ class AnimationConfig {
 
   /// The ending value of the animation.
   final double end;
-
-  /// Creates an immutable animation configuration.
-  const AnimationConfig({
-    required this.duration,
-    required this.curve,
-    required this.begin,
-    required this.end,
-  });
 
   /// Creates a copy of this config with the given fields replaced.
   ///

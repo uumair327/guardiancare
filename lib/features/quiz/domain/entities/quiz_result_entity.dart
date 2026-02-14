@@ -2,12 +2,6 @@ import 'package:equatable/equatable.dart';
 
 /// Quiz result entity representing quiz completion results
 class QuizResultEntity extends Equatable {
-  final int totalQuestions;
-  final int correctAnswers;
-  final int incorrectAnswers;
-  final double scorePercentage;
-  final Map<int, String> selectedAnswers;
-  final List<String> incorrectCategories;
 
   const QuizResultEntity({
     required this.totalQuestions,
@@ -17,6 +11,12 @@ class QuizResultEntity extends Equatable {
     required this.selectedAnswers,
     required this.incorrectCategories,
   });
+  final int totalQuestions;
+  final int correctAnswers;
+  final int incorrectAnswers;
+  final double scorePercentage;
+  final Map<int, String> selectedAnswers;
+  final List<String> incorrectCategories;
 
   @override
   List<Object> get props => [

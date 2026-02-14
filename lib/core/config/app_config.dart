@@ -81,7 +81,7 @@ abstract final class AppConfig {
   static const int retryDelayMs = 1000;
 
   /// Retry delay multiplier for exponential backoff
-  static const double retryDelayMultiplier = 2.0;
+  static const double retryDelayMultiplier = 2;
 
   // ==================== Cache Configuration ====================
   /// Maximum cache entries

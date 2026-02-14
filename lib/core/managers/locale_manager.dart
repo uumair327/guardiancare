@@ -25,11 +25,6 @@ abstract class LocaleManager {
 /// Implementation of LocaleManager
 /// Manages application locale and delegates persistence to LocaleService
 class LocaleManagerImpl implements LocaleManager {
-  final LocaleService _localeService;
-  final StreamController<Locale> _localeController =
-      StreamController<Locale>.broadcast();
-
-  Locale _currentLocale;
 
   LocaleManagerImpl({
     required LocaleService localeService,
@@ -38,6 +33,11 @@ class LocaleManagerImpl implements LocaleManager {
         _currentLocale = defaultLocale {
     debugPrint('LocaleManager initialized with default locale: ${_currentLocale.languageCode}');
   }
+  final LocaleService _localeService;
+  final StreamController<Locale> _localeController =
+      StreamController<Locale>.broadcast();
+
+  Locale _currentLocale;
 
   @override
   Locale get currentLocale => _currentLocale;

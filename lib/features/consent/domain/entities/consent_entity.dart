@@ -2,15 +2,6 @@ import 'package:equatable/equatable.dart';
 
 /// Consent entity representing parental consent information
 class ConsentEntity extends Equatable {
-  final String parentName;
-  final String parentEmail;
-  final String childName;
-  final bool isChildAbove12;
-  final String parentalKeyHash;
-  final String securityQuestion;
-  final String securityAnswerHash;
-  final DateTime timestamp;
-  final Map<String, bool> consentCheckboxes;
 
   const ConsentEntity({
     required this.parentName,
@@ -23,6 +14,15 @@ class ConsentEntity extends Equatable {
     required this.timestamp,
     required this.consentCheckboxes,
   });
+  final String parentName;
+  final String parentEmail;
+  final String childName;
+  final bool isChildAbove12;
+  final String parentalKeyHash;
+  final String securityQuestion;
+  final String securityAnswerHash;
+  final DateTime timestamp;
+  final Map<String, bool> consentCheckboxes;
 
   @override
   List<Object> get props => [

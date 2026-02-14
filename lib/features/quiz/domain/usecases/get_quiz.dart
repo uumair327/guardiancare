@@ -6,12 +6,12 @@ import 'package:guardiancare/features/quiz/domain/repositories/quiz_repository.d
 
 /// Use case for getting a quiz
 class GetQuiz implements UseCase<QuizEntity, String> {
-  final QuizRepository repository;
 
   GetQuiz(this.repository);
+  final QuizRepository repository;
 
   @override
   Future<Either<Failure, QuizEntity>> call(String quizId) async {
-    return await repository.getQuiz(quizId);
+    return repository.getQuiz(quizId);
   }
 }

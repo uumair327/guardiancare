@@ -38,7 +38,7 @@ class _PasswordResetPageState extends State<PasswordResetPage> {
           backgroundColor: AppColors.background,
           elevation: AppDimensions.elevation0,
           leading: IconButton(
-            icon: Icon(Icons.arrow_back, color: AppColors.primary),
+            icon: const Icon(Icons.arrow_back, color: AppColors.primary),
             onPressed: () => Navigator.pop(context),
           ),
         ),
@@ -54,8 +54,8 @@ class _PasswordResetPageState extends State<PasswordResetPage> {
               );
             } else if (state is PasswordResetEmailSent) {
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: const Text(
+                const SnackBar(
+                  content: Text(
                     'Password reset email sent! Check your inbox.',
                   ),
                   backgroundColor: AppColors.success,
@@ -74,7 +74,7 @@ class _PasswordResetPageState extends State<PasswordResetPage> {
           },
           builder: (context, state) {
             if (state is AuthLoading) {
-              return Center(
+              return const Center(
                 child: CircularProgressIndicator(
                   valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
                 ),
@@ -93,13 +93,13 @@ class _PasswordResetPageState extends State<PasswordResetPage> {
                       style:
                           AppTextStyles.h1.copyWith(color: AppColors.primary),
                     ),
-                    SizedBox(height: AppDimensions.spaceS),
+                    const SizedBox(height: AppDimensions.spaceS),
                     Text(
                       'Enter your email address and we\'ll send you a link to reset your password.',
                       style: AppTextStyles.bodyLarge
                           .copyWith(color: AppColors.textSecondary),
                     ),
-                    SizedBox(height: AppDimensions.spaceXL),
+                    const SizedBox(height: AppDimensions.spaceXL),
 
                     // Email Field
                     TextFormField(
@@ -127,7 +127,7 @@ class _PasswordResetPageState extends State<PasswordResetPage> {
                       onTapOutside: (_) =>
                           FocusManager.instance.primaryFocus?.unfocus(),
                     ),
-                    SizedBox(height: AppDimensions.spaceL),
+                    const SizedBox(height: AppDimensions.spaceL),
 
                     // Reset Password Button
                     SizedBox(
@@ -147,7 +147,7 @@ class _PasswordResetPageState extends State<PasswordResetPage> {
                         ),
                       ),
                     ),
-                    SizedBox(height: AppDimensions.spaceM),
+                    const SizedBox(height: AppDimensions.spaceM),
 
                     // Back to Login Link
                     Center(
@@ -158,7 +158,7 @@ class _PasswordResetPageState extends State<PasswordResetPage> {
                             text: 'Remember your password? ',
                             style: AppTextStyles.bodyMedium
                                 .copyWith(color: AppColors.textSecondary),
-                            children: [
+                            children: const [
                               TextSpan(
                                 text: 'Login',
                                 style: TextStyle(

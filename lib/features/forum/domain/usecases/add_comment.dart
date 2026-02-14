@@ -5,13 +5,13 @@ import 'package:guardiancare/core/usecases/usecase.dart';
 import 'package:guardiancare/features/forum/domain/repositories/forum_repository.dart';
 
 class AddComment extends UseCase<void, AddCommentParams> {
-  final ForumRepository repository;
 
   AddComment(this.repository);
+  final ForumRepository repository;
 
   @override
   Future<Either<Failure, void>> call(AddCommentParams params) async {
-    return await repository.addComment(
+    return repository.addComment(
       forumId: params.forumId,
       text: params.text,
       userId: params.userId,
@@ -20,15 +20,15 @@ class AddComment extends UseCase<void, AddCommentParams> {
 }
 
 class AddCommentParams extends Equatable {
-  final String forumId;
-  final String text;
-  final String userId;
 
   const AddCommentParams({
     required this.forumId,
     required this.text,
     required this.userId,
   });
+  final String forumId;
+  final String text;
+  final String userId;
 
   @override
   List<Object> get props => [forumId, text, userId];

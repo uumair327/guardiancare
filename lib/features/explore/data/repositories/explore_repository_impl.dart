@@ -6,20 +6,18 @@ import 'package:guardiancare/features/explore/domain/entities/resource.dart';
 import 'package:guardiancare/features/explore/domain/repositories/explore_repository.dart';
 
 class ExploreRepositoryImpl implements ExploreRepository {
-  final ExploreRemoteDataSource remoteDataSource;
 
   ExploreRepositoryImpl({required this.remoteDataSource});
+  final ExploreRemoteDataSource remoteDataSource;
 
   @override
   Stream<Either<Failure, List<Recommendation>>> getRecommendations(
       String userId) {
     try {
       return remoteDataSource.getRecommendations(userId).map(
-            (recommendations) => Right<Failure, List<Recommendation>>(
-              recommendations,
-            ),
+            Right<Failure, List<Recommendation>>.new,
           );
-    } catch (e) {
+    } on Object catch (e) {
       return Stream.value(
         Left(ServerFailure(e.toString())),
       );
@@ -29,7 +27,7 @@ class ExploreRepositoryImpl implements ExploreRepository {
   @override
   Stream<Either<Failure, List<Resource>>> getResources() {
     return remoteDataSource.getResources().map(
-      (resources) => Right<Failure, List<Resource>>(resources),
+      Right<Failure, List<Resource>>.new,
     ).handleError((error) {
       return Left<Failure, List<Resource>>(
         ServerFailure(error.toString()),

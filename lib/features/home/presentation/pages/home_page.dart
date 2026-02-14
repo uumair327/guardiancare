@@ -62,23 +62,22 @@ class HomePage extends StatelessWidget {
                 ),
                 slivers: [
                   // Welcome Header with animations
-                  SliverToBoxAdapter(
-                    child: const WelcomeHeader(),
+                  const SliverToBoxAdapter(
+                    child: WelcomeHeader(),
                   ),
 
                   // Carousel Section with fade-in
-                  SliverToBoxAdapter(
+                  const SliverToBoxAdapter(
                     child: FadeSlideWidget(
-                      delay: const Duration(milliseconds: 200),
-                      direction: SlideDirection.up,
+                      delay: Duration(milliseconds: 200),
                       child: Padding(
                         padding: EdgeInsets.only(top: AppDimensions.spaceM),
-                        child: const HomeCarousel(),
+                        child: HomeCarousel(),
                       ),
                     ),
                   ),
 
-                  SliverToBoxAdapter(
+                  const SliverToBoxAdapter(
                     child: SizedBox(height: AppDimensions.spaceL),
                   ),
 
@@ -88,7 +87,7 @@ class HomePage extends StatelessWidget {
                       delay: const Duration(milliseconds: 300),
                       direction: SlideDirection.left,
                       child: Padding(
-                        padding: EdgeInsets.symmetric(
+                        padding: const EdgeInsets.symmetric(
                           horizontal: AppDimensions.screenPaddingH,
                         ),
                         child: Row(
@@ -101,7 +100,7 @@ class HomePage extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(2),
                               ),
                             ),
-                            SizedBox(width: AppDimensions.spaceS),
+                            const SizedBox(width: AppDimensions.spaceS),
                             Expanded(
                               child: Text(
                                 l10n.quickActions,
@@ -119,7 +118,7 @@ class HomePage extends StatelessWidget {
                     ),
                   ),
 
-                  SliverToBoxAdapter(
+                  const SliverToBoxAdapter(
                     child: SizedBox(height: AppDimensions.spaceM),
                   ),
 
@@ -146,7 +145,7 @@ class HomePage extends StatelessWidget {
                   ),
 
                   // Bottom spacing for navigation bar
-                  SliverToBoxAdapter(
+                  const SliverToBoxAdapter(
                     child: SizedBox(height: AppDimensions.spaceXXL * 2),
                   ),
                 ],
@@ -196,7 +195,7 @@ class HomePage extends StatelessWidget {
       if (!launched && context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(ErrorStrings.emailClientError),
+            content: const Text(ErrorStrings.emailClientError),
             duration: AppDurations.snackbarMedium,
             backgroundColor: AppColors.error,
             behavior: SnackBarBehavior.floating,
@@ -206,7 +205,7 @@ class HomePage extends StatelessWidget {
           ),
         );
       }
-    } catch (e) {
+    } on Object catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(

@@ -1,22 +1,23 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:youtube_player_flutter/youtube_player_flutter.dart'
-    hide PlaybackSpeedButton, PlayPauseButton;
 import 'package:guardiancare/core/core.dart';
 import 'package:guardiancare/features/video_player/domain/entities/video_entity.dart';
 import 'package:guardiancare/features/video_player/presentation/constants/strings.dart';
 import 'package:guardiancare/features/video_player/presentation/cubit/video_player_cubit.dart';
 import 'package:guardiancare/features/video_player/presentation/cubit/video_player_state.dart';
 import 'package:guardiancare/features/video_player/presentation/widgets/widgets.dart';
+import 'package:youtube_player_flutter/youtube_player_flutter.dart'
+    hide PlaybackSpeedButton, PlayPauseButton;
 
 /// Education-friendly video player page with clean architecture
 /// Supports fullscreen, landscape mode, and smooth transitions
 class VideoPlayerPage extends StatefulWidget {
-  final String videoUrl;
 
   const VideoPlayerPage({super.key, required this.videoUrl});
+  final String videoUrl;
 
   @override
   State<VideoPlayerPage> createState() => _VideoPlayerPageState();
@@ -74,12 +75,7 @@ class _VideoPlayerPageState extends State<VideoPlayerPage>
       _ytController = YoutubePlayerController(
         initialVideoId: videoId,
         flags: const YoutubePlayerFlags(
-          autoPlay: true,
-          mute: false,
-          enableCaption: true,
-          controlsVisibleAtStart: false,
           hideControls: true,
-          forceHD: false,
         ),
       )..addListener(_onPlayerStateChanged);
     }
@@ -300,7 +296,7 @@ class _VideoPlayerPageState extends State<VideoPlayerPage>
         builder: (context, state) {
           return SafeArea(
             child: Container(
-              margin: EdgeInsets.all(AppDimensions.spaceM),
+              margin: const EdgeInsets.all(AppDimensions.spaceM),
               child: PlaybackSpeedSelector(
                 currentSpeed: state.playbackSpeed,
                 onSpeedChanged: (speed) {
@@ -367,7 +363,6 @@ class _VideoPlayerPageState extends State<VideoPlayerPage>
               body: YoutubePlayerBuilder(
                 player: YoutubePlayer(
                   controller: _ytController,
-                  showVideoProgressIndicator: false,
                   onReady: () {
                     _cubit.setPlaybackState(PlaybackState.playing);
                     _startHideControlsTimer();
@@ -462,7 +457,7 @@ class _VideoPlayerPageState extends State<VideoPlayerPage>
 
   Widget _buildAppBar(VideoPlayerState state) {
     return Container(
-      padding: EdgeInsets.symmetric(
+      padding: const EdgeInsets.symmetric(
         horizontal: AppDimensions.spaceS,
         vertical: AppDimensions.spaceXS,
       ),
@@ -551,7 +546,7 @@ class _VideoPlayerPageState extends State<VideoPlayerPage>
 
   Widget _buildFullScreenTopBar(VideoPlayerState state) {
     return Padding(
-      padding: EdgeInsets.symmetric(
+      padding: const EdgeInsets.symmetric(
         horizontal: AppDimensions.spaceM,
         vertical: AppDimensions.spaceS,
       ),
@@ -561,7 +556,7 @@ class _VideoPlayerPageState extends State<VideoPlayerPage>
             icon: Icons.arrow_back_rounded,
             onTap: _exitFullScreen,
           ),
-          SizedBox(width: AppDimensions.spaceM),
+          const SizedBox(width: AppDimensions.spaceM),
           Expanded(
             child: Text(
               state.videoTitle ?? '',
@@ -595,12 +590,12 @@ class _VideoPlayerPageState extends State<VideoPlayerPage>
           icon: Icons.replay_10_rounded,
           onTap: _seekBackward,
         ),
-        SizedBox(width: AppDimensions.spaceXL),
+        const SizedBox(width: AppDimensions.spaceXL),
         if (isLoading)
           _buildLoadingIndicator()
         else
           _buildPlayPauseButton(isPlaying),
-        SizedBox(width: AppDimensions.spaceXL),
+        const SizedBox(width: AppDimensions.spaceXL),
         _buildSeekButton(
           icon: Icons.forward_10_rounded,
           onTap: _seekForward,
@@ -613,7 +608,7 @@ class _VideoPlayerPageState extends State<VideoPlayerPage>
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: EdgeInsets.all(AppDimensions.spaceM),
+        padding: const EdgeInsets.all(AppDimensions.spaceM),
         decoration: BoxDecoration(
           color: AppColors.white.withValues(alpha: 0.15),
           shape: BoxShape.circle,
@@ -633,14 +628,14 @@ class _VideoPlayerPageState extends State<VideoPlayerPage>
       child: Container(
         width: 64,
         height: 64,
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           gradient: AppColors.videoGradient,
           shape: BoxShape.circle,
           boxShadow: [
             BoxShadow(
               color: AppColors.videoPrimarySubtle50,
               blurRadius: 20,
-              offset: const Offset(0, 4),
+              offset: Offset(0, 4),
             ),
           ],
         ),
@@ -658,7 +653,7 @@ class _VideoPlayerPageState extends State<VideoPlayerPage>
   }
 
   Widget _buildLoadingIndicator() {
-    return SizedBox(
+    return const SizedBox(
       width: 64,
       height: 64,
       child: CircularProgressIndicator(
@@ -672,7 +667,7 @@ class _VideoPlayerPageState extends State<VideoPlayerPage>
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: EdgeInsets.all(AppDimensions.spaceS),
+        padding: const EdgeInsets.all(AppDimensions.spaceS),
         decoration: BoxDecoration(
           color: AppColors.white.withValues(alpha: 0.1),
           shape: BoxShape.circle,
@@ -695,7 +690,7 @@ class _VideoPlayerPageState extends State<VideoPlayerPage>
         children: [
           // Progress bar
           _buildProgressBar(state),
-          SizedBox(height: AppDimensions.spaceS),
+          const SizedBox(height: AppDimensions.spaceS),
           // Bottom row
           Row(
             children: [
@@ -704,7 +699,7 @@ class _VideoPlayerPageState extends State<VideoPlayerPage>
               const Spacer(),
               // Control buttons
               _buildMuteButton(state),
-              SizedBox(width: AppDimensions.spaceS),
+              const SizedBox(width: AppDimensions.spaceS),
               _buildFullScreenButton(isFullScreen),
             ],
           ),
@@ -761,7 +756,7 @@ class _VideoPlayerPageState extends State<VideoPlayerPage>
                 decoration: BoxDecoration(
                   gradient: AppColors.videoGradient,
                   borderRadius: BorderRadius.circular(2),
-                  boxShadow: [
+                  boxShadow: const [
                     BoxShadow(
                       color: AppColors.videoPrimarySubtle50,
                       blurRadius: 6,
@@ -777,7 +772,7 @@ class _VideoPlayerPageState extends State<VideoPlayerPage>
               child: Container(
                 width: 12,
                 height: 12,
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   color: AppColors.white,
                   shape: BoxShape.circle,
                   boxShadow: [
@@ -817,7 +812,7 @@ class _VideoPlayerPageState extends State<VideoPlayerPage>
         }
       },
       child: Container(
-        padding: EdgeInsets.all(AppDimensions.spaceS),
+        padding: const EdgeInsets.all(AppDimensions.spaceS),
         child: Icon(
           state.isMuted ? Icons.volume_off_rounded : Icons.volume_up_rounded,
           color: AppColors.white,
@@ -831,7 +826,7 @@ class _VideoPlayerPageState extends State<VideoPlayerPage>
     return GestureDetector(
       onTap: _toggleFullScreen,
       child: Container(
-        padding: EdgeInsets.all(AppDimensions.spaceS),
+        padding: const EdgeInsets.all(AppDimensions.spaceS),
         child: Icon(
           isFullScreen ? Icons.fullscreen_exit_rounded : Icons.fullscreen_rounded,
           color: AppColors.white,
@@ -847,7 +842,7 @@ class _VideoPlayerPageState extends State<VideoPlayerPage>
     return Container(
       color: AppColors.videoBackground,
       child: SingleChildScrollView(
-        padding: EdgeInsets.all(AppDimensions.spaceL),
+        padding: const EdgeInsets.all(AppDimensions.spaceL),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -859,10 +854,10 @@ class _VideoPlayerPageState extends State<VideoPlayerPage>
                 fontWeight: FontWeight.bold,
               ),
             ),
-            SizedBox(height: AppDimensions.spaceL),
+            const SizedBox(height: AppDimensions.spaceL),
             // Progress card
             _buildProgressCard(state),
-            SizedBox(height: AppDimensions.spaceL),
+            const SizedBox(height: AppDimensions.spaceL),
             // Quick actions
             _buildQuickActions(),
           ],
@@ -880,9 +875,9 @@ class _VideoPlayerPageState extends State<VideoPlayerPage>
         : 0;
 
     return Container(
-      padding: EdgeInsets.all(AppDimensions.spaceM),
+      padding: const EdgeInsets.all(AppDimensions.spaceM),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
+        gradient: const LinearGradient(
           colors: [
             AppColors.videoPrimarySubtle15,
             AppColors.videoPrimarySubtle10,
@@ -906,7 +901,7 @@ class _VideoPlayerPageState extends State<VideoPlayerPage>
                   value: progressPercent / 100,
                   strokeWidth: 5,
                   backgroundColor: AppColors.white.withValues(alpha: 0.1),
-                  valueColor: AlwaysStoppedAnimation<Color>(
+                  valueColor: const AlwaysStoppedAnimation<Color>(
                     AppColors.videoPrimary,
                   ),
                 ),
@@ -920,7 +915,7 @@ class _VideoPlayerPageState extends State<VideoPlayerPage>
               ],
             ),
           ),
-          SizedBox(width: AppDimensions.spaceM),
+          const SizedBox(width: AppDimensions.spaceM),
           // Time info
           Expanded(
             child: Column(
@@ -932,7 +927,7 @@ class _VideoPlayerPageState extends State<VideoPlayerPage>
                     color: AppColors.white.withValues(alpha: 0.6),
                   ),
                 ),
-                SizedBox(height: AppDimensions.spaceXS),
+                const SizedBox(height: AppDimensions.spaceXS),
                 Text(
                   VideoPlayerStrings.watched(_formatDuration(state.progress.position)),
                   style: AppTextStyles.body1.copyWith(
@@ -945,7 +940,7 @@ class _VideoPlayerPageState extends State<VideoPlayerPage>
           ),
           // Remaining time
           Container(
-            padding: EdgeInsets.symmetric(
+            padding: const EdgeInsets.symmetric(
               horizontal: AppDimensions.spaceM,
               vertical: AppDimensions.spaceS,
             ),
@@ -979,7 +974,7 @@ class _VideoPlayerPageState extends State<VideoPlayerPage>
             },
           ),
         ),
-        SizedBox(width: AppDimensions.spaceM),
+        const SizedBox(width: AppDimensions.spaceM),
         Expanded(
           child: _QuickActionButton(
             icon: Icons.speed_rounded,
@@ -987,7 +982,7 @@ class _VideoPlayerPageState extends State<VideoPlayerPage>
             onTap: _showSpeedSelector,
           ),
         ),
-        SizedBox(width: AppDimensions.spaceM),
+        const SizedBox(width: AppDimensions.spaceM),
         Expanded(
           child: _QuickActionButton(
             icon: Icons.fullscreen_rounded,
@@ -1019,23 +1014,23 @@ class _VideoPlayerPageState extends State<VideoPlayerPage>
       ),
       body: Center(
         child: Padding(
-          padding: EdgeInsets.all(AppDimensions.spaceXL),
+          padding: const EdgeInsets.all(AppDimensions.spaceXL),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
-                padding: EdgeInsets.all(AppDimensions.spaceXL),
-                decoration: BoxDecoration(
+                padding: const EdgeInsets.all(AppDimensions.spaceXL),
+                decoration: const BoxDecoration(
                   color: AppColors.videoPrimarySubtle10,
                   shape: BoxShape.circle,
                 ),
-                child: Icon(
+                child: const Icon(
                   Icons.error_outline_rounded,
                   color: AppColors.videoPrimary,
                   size: 64,
                 ),
               ),
-              SizedBox(height: AppDimensions.spaceXL),
+              const SizedBox(height: AppDimensions.spaceXL),
               Text(
                 VideoPlayerStrings.invalidVideoUrl,
                 style: AppTextStyles.h2.copyWith(
@@ -1043,7 +1038,7 @@ class _VideoPlayerPageState extends State<VideoPlayerPage>
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              SizedBox(height: AppDimensions.spaceM),
+              const SizedBox(height: AppDimensions.spaceM),
               Text(
                 VideoPlayerStrings.invalidVideoUrlDescription,
                 textAlign: TextAlign.center,
@@ -1052,7 +1047,7 @@ class _VideoPlayerPageState extends State<VideoPlayerPage>
                   height: 1.5,
                 ),
               ),
-              SizedBox(height: AppDimensions.spaceXL),
+              const SizedBox(height: AppDimensions.spaceXL),
               _QuickActionButton(
                 icon: Icons.arrow_back_rounded,
                 label: UIStrings.goBack,
@@ -1117,10 +1112,6 @@ class _VideoPlayerPageState extends State<VideoPlayerPage>
 /// Uses [AnimatedButton] for scale-tap animation,
 /// eliminating duplicate animation code.
 class _QuickActionButton extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final VoidCallback onTap;
-  final bool isPrimary;
 
   const _QuickActionButton({
     required this.icon,
@@ -1128,14 +1119,16 @@ class _QuickActionButton extends StatelessWidget {
     required this.onTap,
     this.isPrimary = false,
   });
+  final IconData icon;
+  final String label;
+  final VoidCallback onTap;
+  final bool isPrimary;
 
   @override
   Widget build(BuildContext context) {
     return AnimatedButton(
       onTap: onTap,
       config: AnimationPresets.scaleButton, // 0.95 scale, same as original
-      enableHaptic: true,
-      hapticType: HapticFeedbackType.light,
       decoration: BoxDecoration(
         gradient: isPrimary ? AppColors.videoGradient : null,
         color: isPrimary ? null : AppColors.white.withValues(alpha: 0.08),
@@ -1146,7 +1139,7 @@ class _QuickActionButton extends StatelessWidget {
                 color: AppColors.white.withValues(alpha: 0.15),
               ),
       ),
-      padding: EdgeInsets.symmetric(
+      padding: const EdgeInsets.symmetric(
         vertical: AppDimensions.spaceM,
       ),
       child: Row(
@@ -1157,7 +1150,7 @@ class _QuickActionButton extends StatelessWidget {
             color: AppColors.white,
             size: AppDimensions.iconS,
           ),
-          SizedBox(width: AppDimensions.spaceS),
+          const SizedBox(width: AppDimensions.spaceS),
           Text(
             label,
             style: AppTextStyles.button.copyWith(
@@ -1172,13 +1165,13 @@ class _QuickActionButton extends StatelessWidget {
 
 /// Video ended dialog
 class _VideoEndedDialog extends StatelessWidget {
-  final VoidCallback onReplay;
-  final VoidCallback onClose;
 
   const _VideoEndedDialog({
     required this.onReplay,
     required this.onClose,
   });
+  final VoidCallback onReplay;
+  final VoidCallback onClose;
 
   @override
   Widget build(BuildContext context) {
@@ -1188,23 +1181,23 @@ class _VideoEndedDialog extends StatelessWidget {
         borderRadius: AppDimensions.borderRadiusL,
       ),
       child: Padding(
-        padding: EdgeInsets.all(AppDimensions.spaceXL),
+        padding: const EdgeInsets.all(AppDimensions.spaceXL),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              padding: EdgeInsets.all(AppDimensions.spaceL),
-              decoration: BoxDecoration(
+              padding: const EdgeInsets.all(AppDimensions.spaceL),
+              decoration: const BoxDecoration(
                 color: AppColors.videoPrimarySubtle15,
                 shape: BoxShape.circle,
               ),
-              child: Icon(
+              child: const Icon(
                 Icons.check_circle_rounded,
                 color: AppColors.videoPrimary,
                 size: 48,
               ),
             ),
-            SizedBox(height: AppDimensions.spaceL),
+            const SizedBox(height: AppDimensions.spaceL),
             Text(
               VideoPlayerStrings.videoComplete,
               style: AppTextStyles.h3.copyWith(
@@ -1212,21 +1205,21 @@ class _VideoEndedDialog extends StatelessWidget {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            SizedBox(height: AppDimensions.spaceS),
+            const SizedBox(height: AppDimensions.spaceS),
             Text(
               VideoPlayerStrings.watchAgainPrompt,
               style: AppTextStyles.body1.copyWith(
                 color: AppColors.white.withValues(alpha: 0.7),
               ),
             ),
-            SizedBox(height: AppDimensions.spaceXL),
+            const SizedBox(height: AppDimensions.spaceXL),
             Row(
               children: [
                 Expanded(
                   child: TextButton(
                     onPressed: onClose,
                     style: TextButton.styleFrom(
-                      padding: EdgeInsets.symmetric(
+                      padding: const EdgeInsets.symmetric(
                         vertical: AppDimensions.spaceM,
                       ),
                     ),
@@ -1238,13 +1231,13 @@ class _VideoEndedDialog extends StatelessWidget {
                     ),
                   ),
                 ),
-                SizedBox(width: AppDimensions.spaceM),
+                const SizedBox(width: AppDimensions.spaceM),
                 Expanded(
                   child: ElevatedButton(
                     onPressed: onReplay,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.videoPrimary,
-                      padding: EdgeInsets.symmetric(
+                      padding: const EdgeInsets.symmetric(
                         vertical: AppDimensions.spaceM,
                       ),
                       shape: RoundedRectangleBorder(

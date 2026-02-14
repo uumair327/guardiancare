@@ -5,9 +5,9 @@ import 'package:guardiancare/features/learn/domain/repositories/learn_repository
 
 /// Use case for getting videos by category as a stream
 class GetVideosStream {
-  final LearnRepository repository;
 
   GetVideosStream(this.repository);
+  final LearnRepository repository;
 
   Stream<Either<Failure, List<VideoEntity>>> call(String category) {
     return repository.getVideosByCategoryStream(category);

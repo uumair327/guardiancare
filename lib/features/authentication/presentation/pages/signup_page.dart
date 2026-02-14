@@ -54,7 +54,7 @@ class _SignupPageState extends State<SignupPage> {
           backgroundColor: AppColors.background,
           elevation: AppDimensions.elevation0,
           leading: IconButton(
-            icon: Icon(Icons.arrow_back, color: AppColors.primary),
+            icon: const Icon(Icons.arrow_back, color: AppColors.primary),
             onPressed: () => Navigator.pop(context),
           ),
         ),
@@ -72,8 +72,8 @@ class _SignupPageState extends State<SignupPage> {
               } else if (state is AuthAuthenticated) {
                 // Show email verification message
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: const Text(
+                  const SnackBar(
+                    content: Text(
                       'Account created! Please check your email to verify your account before signing in.',
                     ),
                     backgroundColor: AppColors.success,
@@ -81,7 +81,7 @@ class _SignupPageState extends State<SignupPage> {
                   ),
                 );
                 // Sign out the user so they must verify email first
-                context.read<AuthBloc>().add(SignOutRequested());
+                context.read<AuthBloc>().add(const SignOutRequested());
                 // Navigate to login
                 Future.delayed(AppDurations.navigationDelay, () {
                   if (context.mounted) {
@@ -92,7 +92,7 @@ class _SignupPageState extends State<SignupPage> {
             },
             builder: (context, state) {
               if (state is AuthLoading) {
-                return Center(
+                return const Center(
                   child: CircularProgressIndicator(
                     valueColor:
                         AlwaysStoppedAnimation<Color>(AppColors.primary),
@@ -112,13 +112,13 @@ class _SignupPageState extends State<SignupPage> {
                         style:
                             AppTextStyles.h1.copyWith(color: AppColors.primary),
                       ),
-                      SizedBox(height: AppDimensions.spaceS),
+                      const SizedBox(height: AppDimensions.spaceS),
                       Text(
                         'Sign up to get started',
                         style: AppTextStyles.bodyLarge
                             .copyWith(color: AppColors.textSecondary),
                       ),
-                      SizedBox(height: AppDimensions.spaceXL),
+                      const SizedBox(height: AppDimensions.spaceXL),
 
                       // Full Name Field
                       TextFormField(
@@ -144,7 +144,7 @@ class _SignupPageState extends State<SignupPage> {
                         onTapOutside: (_) =>
                             FocusManager.instance.primaryFocus?.unfocus(),
                       ),
-                      SizedBox(height: AppDimensions.spaceM),
+                      const SizedBox(height: AppDimensions.spaceM),
 
                       // Email Field
                       TextFormField(
@@ -172,7 +172,7 @@ class _SignupPageState extends State<SignupPage> {
                         onTapOutside: (_) =>
                             FocusManager.instance.primaryFocus?.unfocus(),
                       ),
-                      SizedBox(height: AppDimensions.spaceM),
+                      const SizedBox(height: AppDimensions.spaceM),
 
                       // Role Selection - Using RadioGroup for Flutter 3.32+ compatibility
                       Container(
@@ -201,14 +201,14 @@ class _SignupPageState extends State<SignupPage> {
                                   });
                                 }
                               },
-                              child: Column(
+                              child: const Column(
                                 children: [
                                   RadioListTile<String>(
-                                    title: const Text(UIStrings.parentGuardian),
+                                    title: Text(UIStrings.parentGuardian),
                                     value: 'parent',
                                   ),
                                   RadioListTile<String>(
-                                    title: const Text(UIStrings.child),
+                                    title: Text(UIStrings.child),
                                     value: 'child',
                                   ),
                                 ],
@@ -217,7 +217,7 @@ class _SignupPageState extends State<SignupPage> {
                           ],
                         ),
                       ),
-                      SizedBox(height: AppDimensions.spaceM),
+                      const SizedBox(height: AppDimensions.spaceM),
 
                       // Password Field
                       TextFormField(
@@ -256,7 +256,7 @@ class _SignupPageState extends State<SignupPage> {
                         onTapOutside: (_) =>
                             FocusManager.instance.primaryFocus?.unfocus(),
                       ),
-                      SizedBox(height: AppDimensions.spaceM),
+                      const SizedBox(height: AppDimensions.spaceM),
 
                       // Confirm Password Field
                       TextFormField(
@@ -296,7 +296,7 @@ class _SignupPageState extends State<SignupPage> {
                         onTapOutside: (_) =>
                             FocusManager.instance.primaryFocus?.unfocus(),
                       ),
-                      SizedBox(height: AppDimensions.spaceL),
+                      const SizedBox(height: AppDimensions.spaceL),
 
                       // Sign Up Button
                       SizedBox(
@@ -316,7 +316,7 @@ class _SignupPageState extends State<SignupPage> {
                           ),
                         ),
                       ),
-                      SizedBox(height: AppDimensions.spaceM),
+                      const SizedBox(height: AppDimensions.spaceM),
 
                       // Login Link
                       Center(
@@ -327,7 +327,7 @@ class _SignupPageState extends State<SignupPage> {
                               text: 'Already have an account? ',
                               style: AppTextStyles.bodyMedium
                                   .copyWith(color: AppColors.textSecondary),
-                              children: [
+                              children: const [
                                 TextSpan(
                                   text: 'Login',
                                   style: TextStyle(

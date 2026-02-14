@@ -26,8 +26,12 @@ class FirebaseAuthAdapter implements IAuthService {
     fb.FirebaseAuth? auth,
     GoogleSignIn? googleSignIn,
   })  : _auth = auth ?? fb.FirebaseAuth.instance,
-        _googleSignIn =
-            googleSignIn ?? GoogleSignIn(scopes: ['email', 'profile']);
+        _googleSignIn = googleSignIn ??
+            GoogleSignIn(
+              scopes: ['email', 'profile'],
+              serverClientId:
+                  '480855529488-809q7ih0n0vhoqrj47pgk986u4kobt1h.apps.googleusercontent.com',
+            );
 
   final fb.FirebaseAuth _auth;
   final GoogleSignIn _googleSignIn;
@@ -61,7 +65,7 @@ class FirebaseAuthAdapter implements IAuthService {
       return BackendResult.success(_mapFirebaseUser(credential.user)!);
     } on fb.FirebaseAuthException catch (e) {
       return BackendResult.failure(_mapAuthError(e));
-    } catch (e, st) {
+    } on Exception catch (e, st) {
       return BackendResult.failure(BackendError.fromException(e, st));
     }
   }
@@ -85,7 +89,7 @@ class FirebaseAuthAdapter implements IAuthService {
       return BackendResult.success(_mapFirebaseUser(credential.user)!);
     } on fb.FirebaseAuthException catch (e) {
       return BackendResult.failure(_mapAuthError(e));
-    } catch (e, st) {
+    } on Exception catch (e, st) {
       return BackendResult.failure(BackendError.fromException(e, st));
     }
   }
@@ -99,7 +103,7 @@ class FirebaseAuthAdapter implements IAuthService {
       return const BackendResult.success(null);
     } on fb.FirebaseAuthException catch (e) {
       return BackendResult.failure(_mapAuthError(e));
-    } catch (e, st) {
+    } on Exception catch (e, st) {
       return BackendResult.failure(BackendError.fromException(e, st));
     }
   }
@@ -114,7 +118,7 @@ class FirebaseAuthAdapter implements IAuthService {
       return const BackendResult.success(null);
     } on fb.FirebaseAuthException catch (e) {
       return BackendResult.failure(_mapAuthError(e));
-    } catch (e, st) {
+    } on Exception catch (e, st) {
       return BackendResult.failure(BackendError.fromException(e, st));
     }
   }
@@ -125,7 +129,7 @@ class FirebaseAuthAdapter implements IAuthService {
     try {
       final googleUser = await _googleSignIn.signIn();
       if (googleUser == null) {
-        return BackendResult.failure(const BackendError(
+        return const BackendResult.failure(BackendError(
           code: BackendErrorCode.authError,
           message: 'Google sign-in was cancelled',
         ));
@@ -141,7 +145,7 @@ class FirebaseAuthAdapter implements IAuthService {
       return BackendResult.success(_mapFirebaseUser(userCredential.user)!);
     } on fb.FirebaseAuthException catch (e) {
       return BackendResult.failure(_mapAuthError(e));
-    } catch (e, st) {
+    } on Exception catch (e, st) {
       return BackendResult.failure(BackendError.fromException(e, st));
     }
   }
@@ -154,7 +158,7 @@ class FirebaseAuthAdapter implements IAuthService {
       return BackendResult.success(_mapFirebaseUser(credential.user)!);
     } on fb.FirebaseAuthException catch (e) {
       return BackendResult.failure(_mapAuthError(e));
-    } catch (e, st) {
+    } on Exception catch (e, st) {
       return BackendResult.failure(BackendError.fromException(e, st));
     }
   }
@@ -181,7 +185,7 @@ class FirebaseAuthAdapter implements IAuthService {
       return BackendResult.success(_mapFirebaseUser(credential.user)!);
     } on fb.FirebaseAuthException catch (e) {
       return BackendResult.failure(_mapAuthError(e));
-    } catch (e, st) {
+    } on Exception catch (e, st) {
       return BackendResult.failure(BackendError.fromException(e, st));
     }
   }
@@ -194,7 +198,7 @@ class FirebaseAuthAdapter implements IAuthService {
     try {
       final user = _auth.currentUser;
       if (user == null) {
-        return BackendResult.failure(const BackendError(
+        return const BackendResult.failure(BackendError(
           code: BackendErrorCode.authError,
           message: 'No user signed in',
         ));
@@ -208,7 +212,7 @@ class FirebaseAuthAdapter implements IAuthService {
       return BackendResult.success(_mapFirebaseUser(result.user)!);
     } on fb.FirebaseAuthException catch (e) {
       return BackendResult.failure(_mapAuthError(e));
-    } catch (e, st) {
+    } on Exception catch (e, st) {
       return BackendResult.failure(BackendError.fromException(e, st));
     }
   }
@@ -218,7 +222,7 @@ class FirebaseAuthAdapter implements IAuthService {
     OAuthProvider provider,
   ) async {
     // Implementation depends on provider
-    return BackendResult.failure(const BackendError(
+    return const BackendResult.failure(BackendError(
       code: BackendErrorCode.authError,
       message: 'Not implemented',
     ));
@@ -233,7 +237,7 @@ class FirebaseAuthAdapter implements IAuthService {
     try {
       final user = _auth.currentUser;
       if (user == null) {
-        return BackendResult.failure(const BackendError(
+        return const BackendResult.failure(BackendError(
           code: BackendErrorCode.authError,
           message: 'No user signed in',
         ));
@@ -249,7 +253,7 @@ class FirebaseAuthAdapter implements IAuthService {
       return const BackendResult.success(null);
     } on fb.FirebaseAuthException catch (e) {
       return BackendResult.failure(_mapAuthError(e));
-    } catch (e, st) {
+    } on Exception catch (e, st) {
       return BackendResult.failure(BackendError.fromException(e, st));
     }
   }
@@ -262,7 +266,7 @@ class FirebaseAuthAdapter implements IAuthService {
     try {
       final user = _auth.currentUser;
       if (user == null || user.email == null) {
-        return BackendResult.failure(const BackendError(
+        return const BackendResult.failure(BackendError(
           code: BackendErrorCode.authError,
           message: 'No user signed in',
         ));
@@ -279,7 +283,7 @@ class FirebaseAuthAdapter implements IAuthService {
       return const BackendResult.success(null);
     } on fb.FirebaseAuthException catch (e) {
       return BackendResult.failure(_mapAuthError(e));
-    } catch (e, st) {
+    } on Exception catch (e, st) {
       return BackendResult.failure(BackendError.fromException(e, st));
     }
   }
@@ -292,7 +296,7 @@ class FirebaseAuthAdapter implements IAuthService {
     try {
       final user = _auth.currentUser;
       if (user == null || user.email == null) {
-        return BackendResult.failure(const BackendError(
+        return const BackendResult.failure(BackendError(
           code: BackendErrorCode.authError,
           message: 'No user signed in',
         ));
@@ -308,7 +312,7 @@ class FirebaseAuthAdapter implements IAuthService {
       return const BackendResult.success(null);
     } on fb.FirebaseAuthException catch (e) {
       return BackendResult.failure(_mapAuthError(e));
-    } catch (e, st) {
+    } on Exception catch (e, st) {
       return BackendResult.failure(BackendError.fromException(e, st));
     }
   }
@@ -318,7 +322,7 @@ class FirebaseAuthAdapter implements IAuthService {
     try {
       final user = _auth.currentUser;
       if (user == null) {
-        return BackendResult.failure(const BackendError(
+        return const BackendResult.failure(BackendError(
           code: BackendErrorCode.authError,
           message: 'No user signed in',
         ));
@@ -328,7 +332,7 @@ class FirebaseAuthAdapter implements IAuthService {
       return const BackendResult.success(null);
     } on fb.FirebaseAuthException catch (e) {
       return BackendResult.failure(_mapAuthError(e));
-    } catch (e, st) {
+    } on Exception catch (e, st) {
       return BackendResult.failure(BackendError.fromException(e, st));
     }
   }
@@ -340,7 +344,7 @@ class FirebaseAuthAdapter implements IAuthService {
       return const BackendResult.success(null);
     } on fb.FirebaseAuthException catch (e) {
       return BackendResult.failure(_mapAuthError(e));
-    } catch (e, st) {
+    } on Exception catch (e, st) {
       return BackendResult.failure(BackendError.fromException(e, st));
     }
   }
@@ -352,7 +356,7 @@ class FirebaseAuthAdapter implements IAuthService {
       await _googleSignIn.signOut();
       await _auth.signOut();
       return const BackendResult.success(null);
-    } catch (e, st) {
+    } on Exception catch (e, st) {
       return BackendResult.failure(BackendError.fromException(e, st));
     }
   }
@@ -362,7 +366,7 @@ class FirebaseAuthAdapter implements IAuthService {
     try {
       final user = _auth.currentUser;
       if (user == null) {
-        return BackendResult.failure(const BackendError(
+        return const BackendResult.failure(BackendError(
           code: BackendErrorCode.authError,
           message: 'No user signed in',
         ));
@@ -391,7 +395,7 @@ class FirebaseAuthAdapter implements IAuthService {
               );
               await user.reauthenticateWithCredential(credential);
             }
-          } catch (_) {
+          } on Object catch (_) {
             // Ignore google re-auth errors, proceed to try delete
           }
         }
@@ -402,7 +406,7 @@ class FirebaseAuthAdapter implements IAuthService {
       return const BackendResult.success(null);
     } on fb.FirebaseAuthException catch (e) {
       return BackendResult.failure(_mapAuthError(e));
-    } catch (e, st) {
+    } on Exception catch (e, st) {
       return BackendResult.failure(BackendError.fromException(e, st));
     }
   }
@@ -412,7 +416,7 @@ class FirebaseAuthAdapter implements IAuthService {
     try {
       final user = _auth.currentUser;
       if (user == null) {
-        return BackendResult.failure(const BackendError(
+        return const BackendResult.failure(BackendError(
           code: BackendErrorCode.authError,
           message: 'No user signed in',
         ));
@@ -420,7 +424,7 @@ class FirebaseAuthAdapter implements IAuthService {
 
       final token = await user.getIdToken(true);
       return BackendResult.success(token ?? '');
-    } catch (e, st) {
+    } on Exception catch (e, st) {
       return BackendResult.failure(BackendError.fromException(e, st));
     }
   }
@@ -439,7 +443,7 @@ class FirebaseAuthAdapter implements IAuthService {
     try {
       final user = _auth.currentUser;
       if (user == null) {
-        return BackendResult.failure(const BackendError(
+        return const BackendResult.failure(BackendError(
           code: BackendErrorCode.authError,
           message: 'No user signed in',
         ));
@@ -454,7 +458,27 @@ class FirebaseAuthAdapter implements IAuthService {
       return const BackendResult.success(null);
     } on fb.FirebaseAuthException catch (e) {
       return BackendResult.failure(_mapAuthError(e));
-    } catch (e, st) {
+    } on Exception catch (e, st) {
+      return BackendResult.failure(BackendError.fromException(e, st));
+    }
+  }
+
+  @override
+  Future<BackendResult<void>> reload() async {
+    try {
+      final user = _auth.currentUser;
+      if (user == null) {
+        return const BackendResult.failure(BackendError(
+          code: BackendErrorCode.authError,
+          message: 'No user signed in',
+        ));
+      }
+
+      await user.reload();
+      return const BackendResult.success(null);
+    } on fb.FirebaseAuthException catch (e) {
+      return BackendResult.failure(_mapAuthError(e));
+    } on Exception catch (e, st) {
       return BackendResult.failure(BackendError.fromException(e, st));
     }
   }
@@ -463,7 +487,7 @@ class FirebaseAuthAdapter implements IAuthService {
   Future<BackendResult<void>> reauthenticateWithOAuth(
     OAuthProvider provider,
   ) async {
-    return BackendResult.failure(const BackendError(
+    return const BackendResult.failure(BackendError(
       code: BackendErrorCode.authError,
       message: 'Not implemented',
     ));

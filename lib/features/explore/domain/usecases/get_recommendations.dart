@@ -4,9 +4,9 @@ import 'package:guardiancare/features/explore/domain/entities/recommendation.dar
 import 'package:guardiancare/features/explore/domain/repositories/explore_repository.dart';
 
 class GetRecommendations {
-  final ExploreRepository repository;
 
   GetRecommendations(this.repository);
+  final ExploreRepository repository;
 
   Stream<Either<Failure, List<Recommendation>>> call(String userId) {
     return repository.getRecommendations(userId);

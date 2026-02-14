@@ -1,8 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+
+import '../../backend_factory.dart';
 import '../../config/backend_config.dart';
 import '../../config/backend_secrets.dart';
-import '../../backend_factory.dart';
 
 /// Conditional Supabase initializer.
 ///

@@ -9,9 +9,9 @@ import 'package:guardiancare/features/home/domain/repositories/home_repository.d
 
 /// Implementation of HomeRepository
 class HomeRepositoryImpl implements HomeRepository {
-  final HomeRemoteDataSource remoteDataSource;
 
   HomeRepositoryImpl({required this.remoteDataSource});
+  final HomeRemoteDataSource remoteDataSource;
 
   @override
   Stream<Either<Failure, List<CarouselItemEntity>>> getCarouselItems() {

@@ -1,5 +1,5 @@
-import 'package:sqflite/sqflite.dart';
 import 'package:guardiancare/core/database/database_service.dart';
+import 'package:sqflite/sqflite.dart';
 
 /// Data Access Object for Video operations
 /// Tracks video watch history and progress
@@ -31,7 +31,7 @@ class VideoDao {
       'completed': completed ? 1 : 0,
     };
 
-    return await db.insert(
+    return db.insert(
       'video_history',
       data,
       conflictAlgorithm: ConflictAlgorithm.replace,
@@ -45,7 +45,7 @@ class VideoDao {
   }) async {
     final db = await _dbService.database;
     
-    return await db.query(
+    return db.query(
       'video_history',
       where: 'user_id = ?',
       whereArgs: [userId],
@@ -115,7 +115,7 @@ class VideoDao {
   ) async {
     final db = await _dbService.database;
     
-    return await db.query(
+    return db.query(
       'video_history',
       where: 'user_id = ? AND category = ?',
       whereArgs: [userId, category],
@@ -146,7 +146,7 @@ class VideoDao {
   Future<int> clearHistory(String userId) async {
     final db = await _dbService.database;
     
-    return await db.delete(
+    return db.delete(
       'video_history',
       where: 'user_id = ?',
       whereArgs: [userId],
@@ -160,7 +160,7 @@ class VideoDao {
         .subtract(Duration(days: daysToKeep))
         .millisecondsSinceEpoch;
     
-    return await db.delete(
+    return db.delete(
       'video_history',
       where: 'user_id = ? AND last_watched_at < ?',
       whereArgs: [userId, cutoffTime],

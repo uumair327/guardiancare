@@ -6,22 +6,22 @@ import 'package:guardiancare/features/consent/domain/entities/consent_entity.dar
 import 'package:guardiancare/features/consent/domain/repositories/consent_repository.dart';
 
 class SubmitConsentParams extends Equatable {
-  final ConsentEntity consent;
-  final String uid;
 
   const SubmitConsentParams({required this.consent, required this.uid});
+  final ConsentEntity consent;
+  final String uid;
 
   @override
   List<Object> get props => [consent, uid];
 }
 
 class SubmitConsent implements UseCase<void, SubmitConsentParams> {
-  final ConsentRepository repository;
 
   SubmitConsent(this.repository);
+  final ConsentRepository repository;
 
   @override
   Future<Either<Failure, void>> call(SubmitConsentParams params) async {
-    return await repository.submitConsent(params.consent, params.uid);
+    return repository.submitConsent(params.consent, params.uid);
   }
 }

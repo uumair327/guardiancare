@@ -2,10 +2,6 @@ import 'package:equatable/equatable.dart';
 
 /// Emergency contact entity representing an emergency contact
 class EmergencyContactEntity extends Equatable {
-  final String name;
-  final String number;
-  final String category;
-  final String? description;
 
   const EmergencyContactEntity({
     required this.name,
@@ -13,6 +9,10 @@ class EmergencyContactEntity extends Equatable {
     required this.category,
     this.description,
   });
+  final String name;
+  final String number;
+  final String category;
+  final String? description;
 
   @override
   List<Object?> get props => [name, number, category, description];

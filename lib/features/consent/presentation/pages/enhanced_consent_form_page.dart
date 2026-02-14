@@ -2,12 +2,10 @@ import 'dart:convert';
 
 import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
-import 'package:guardiancare/core/backend/backend.dart';
-import 'package:guardiancare/core/di/injection_container.dart';
-import 'package:guardiancare/features/consent/domain/entities/consent_entity.dart';
-import 'package:guardiancare/features/consent/domain/repositories/consent_repository.dart';
 import 'package:flutter/services.dart';
 import 'package:guardiancare/core/core.dart';
+import 'package:guardiancare/features/consent/domain/entities/consent_entity.dart';
+import 'package:guardiancare/features/consent/domain/repositories/consent_repository.dart';
 
 /// Modern, educational-friendly Parental Consent Setup Form
 ///
@@ -23,12 +21,12 @@ import 'package:guardiancare/core/core.dart';
 /// - Open/Closed: Extensible step system
 /// - Dependency Inversion: Uses abstractions for data operations
 class EnhancedConsentFormPage extends StatefulWidget {
-  final VoidCallback onSubmit;
 
   const EnhancedConsentFormPage({
     super.key,
     required this.onSubmit,
   });
+  final VoidCallback onSubmit;
 
   @override
   State<EnhancedConsentFormPage> createState() =>
@@ -81,7 +79,7 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage>
       vsync: this,
       duration: AppDurations.animationMedium,
     );
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+    _fadeAnimation = Tween<double>(begin: 0, end: 1).animate(
       CurvedAnimation(parent: _animController, curve: Curves.easeOut),
     );
     _slideAnimation = Tween<Offset>(
@@ -148,7 +146,7 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage>
         securityAnswerHash:
             _hashString(_securityAnswerController.text.toLowerCase().trim()),
         timestamp: DateTime.now(),
-        consentCheckboxes: {
+        consentCheckboxes: const {
           'termsAccepted': true,
           'parentConsentGiven': true,
           'privacyPolicyAccepted': true,
@@ -159,12 +157,13 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage>
           await sl<ConsentRepository>().submitConsent(consent, user.id);
 
       result.fold((failure) {
-        if (mounted)
+        if (mounted) {
           _showErrorSnackBar(FeedbackStrings.errorWith(failure.message));
+        }
       }, (_) {
         widget.onSubmit();
       });
-    } catch (e) {
+    } on Object catch (e) {
       if (mounted) _showErrorSnackBar(FeedbackStrings.errorWith(e.toString()));
     } finally {
       if (mounted) setState(() => _isSubmitting = false);
@@ -197,7 +196,7 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage>
                   children: [
                     _buildHeader(),
                     Padding(
-                      padding: EdgeInsets.all(AppDimensions.screenPaddingH),
+                      padding: const EdgeInsets.all(AppDimensions.screenPaddingH),
                       child: Form(
                         key: _formKey,
                         child: FadeTransition(
@@ -222,8 +221,8 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage>
 
   Widget _buildHeader() {
     return Container(
-      padding: EdgeInsets.all(AppDimensions.spaceL),
-      decoration: BoxDecoration(
+      padding: const EdgeInsets.all(AppDimensions.spaceL),
+      decoration: const BoxDecoration(
         gradient: LinearGradient(
           colors: [AppColors.primary, AppColors.primaryDark],
           begin: Alignment.topLeft,
@@ -238,18 +237,18 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage>
         children: [
           // Icon with friendly design
           Container(
-            padding: EdgeInsets.all(AppDimensions.spaceM),
+            padding: const EdgeInsets.all(AppDimensions.spaceM),
             decoration: BoxDecoration(
               color: AppColors.white.withValues(alpha: 0.2),
               shape: BoxShape.circle,
             ),
-            child: Icon(
+            child: const Icon(
               Icons.family_restroom_rounded,
               size: AppDimensions.iconXL,
               color: AppColors.white,
             ),
           ),
-          SizedBox(height: AppDimensions.spaceM),
+          const SizedBox(height: AppDimensions.spaceM),
           Text(
             UIStrings.parentalConsentSetup,
             style: AppTextStyles.h3.copyWith(
@@ -258,7 +257,7 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage>
             ),
             textAlign: TextAlign.center,
           ),
-          SizedBox(height: AppDimensions.spaceXS),
+          const SizedBox(height: AppDimensions.spaceXS),
           Text(
             UIStrings.protectYourChild,
             style: AppTextStyles.body2.copyWith(
@@ -266,7 +265,7 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage>
             ),
             textAlign: TextAlign.center,
           ),
-          SizedBox(height: AppDimensions.spaceL),
+          const SizedBox(height: AppDimensions.spaceL),
           _buildStepIndicator(),
         ],
       ),
@@ -302,7 +301,7 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage>
               ),
               child: Center(
                 child: isCompleted
-                    ? Icon(Icons.check_rounded,
+                    ? const Icon(Icons.check_rounded,
                         color: AppColors.primary, size: 20)
                     : Text(
                         '${index + 1}',
@@ -318,7 +317,7 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage>
                 duration: AppDurations.animationShort,
                 width: 40,
                 height: 3,
-                margin: EdgeInsets.symmetric(horizontal: AppDimensions.spaceXS),
+                margin: const EdgeInsets.symmetric(horizontal: AppDimensions.spaceXS),
                 decoration: BoxDecoration(
                   color: index < _currentStep
                       ? AppColors.white
@@ -354,7 +353,7 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage>
           title: UIStrings.parentInformation,
           subtitle: 'Help us keep your family safe',
         ),
-        SizedBox(height: AppDimensions.spaceL),
+        const SizedBox(height: AppDimensions.spaceL),
         _buildModernTextField(
           controller: _parentEmailController,
           label: UIStrings.parentEmail,
@@ -362,25 +361,27 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage>
           icon: Icons.email_rounded,
           keyboardType: TextInputType.emailAddress,
           validator: (value) {
-            if (value == null || value.isEmpty)
+            if (value == null || value.isEmpty) {
               return ValidationStrings.parentEmailRequired;
+            }
             if (!value.contains('@')) return ValidationStrings.emailInvalid;
             return null;
           },
         ),
-        SizedBox(height: AppDimensions.spaceM),
+        const SizedBox(height: AppDimensions.spaceM),
         _buildModernTextField(
           controller: _childNameController,
           label: UIStrings.childName,
           hint: UIStrings.childNameHint,
           icon: Icons.child_care_rounded,
           validator: (value) {
-            if (value == null || value.isEmpty)
+            if (value == null || value.isEmpty) {
               return ValidationStrings.childNameRequired;
+            }
             return null;
           },
         ),
-        SizedBox(height: AppDimensions.spaceL),
+        const SizedBox(height: AppDimensions.spaceL),
         _buildAgeToggle(),
       ],
     );
@@ -395,7 +396,7 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage>
           title: UIStrings.setParentalKey,
           subtitle: UIStrings.parentalKeyDescription,
         ),
-        SizedBox(height: AppDimensions.spaceL),
+        const SizedBox(height: AppDimensions.spaceL),
         _buildModernTextField(
           controller: _keyController,
           label: UIStrings.parentalKey,
@@ -409,13 +410,14 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage>
             onPressed: () => setState(() => _obscureKey = !_obscureKey),
           ),
           validator: (value) {
-            if (value == null || value.isEmpty)
+            if (value == null || value.isEmpty) {
               return ValidationStrings.parentalKeyRequired;
+            }
             if (value.length < 4) return ValidationStrings.parentalKeyMinLength;
             return null;
           },
         ),
-        SizedBox(height: AppDimensions.spaceM),
+        const SizedBox(height: AppDimensions.spaceM),
         _buildModernTextField(
           controller: _confirmKeyController,
           label: UIStrings.confirmParentalKey,
@@ -430,14 +432,16 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage>
                 setState(() => _obscureConfirmKey = !_obscureConfirmKey),
           ),
           validator: (value) {
-            if (value == null || value.isEmpty)
+            if (value == null || value.isEmpty) {
               return ValidationStrings.confirmParentalKeyRequired;
-            if (value != _keyController.text)
+            }
+            if (value != _keyController.text) {
               return ValidationStrings.keysDoNotMatch;
+            }
             return null;
           },
         ),
-        SizedBox(height: AppDimensions.spaceL),
+        const SizedBox(height: AppDimensions.spaceL),
         _buildInfoCard(
           icon: Icons.info_outline_rounded,
           text:
@@ -457,9 +461,9 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage>
           title: UIStrings.securityQuestion,
           subtitle: UIStrings.securityQuestionDescription,
         ),
-        SizedBox(height: AppDimensions.spaceL),
+        const SizedBox(height: AppDimensions.spaceL),
         _buildModernDropdown(),
-        SizedBox(height: AppDimensions.spaceM),
+        const SizedBox(height: AppDimensions.spaceM),
         _buildModernTextField(
           controller: _securityAnswerController,
           label: UIStrings.yourAnswer,
@@ -473,15 +477,16 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage>
             onPressed: () => setState(() => _obscureAnswer = !_obscureAnswer),
           ),
           validator: (value) {
-            if (value == null || value.isEmpty)
+            if (value == null || value.isEmpty) {
               return ValidationStrings.answerRequired;
+            }
             if (value.length < 2) return ValidationStrings.answerMinLength;
             return null;
           },
         ),
-        SizedBox(height: AppDimensions.spaceL),
+        const SizedBox(height: AppDimensions.spaceL),
         _buildTermsCheckbox(),
-        SizedBox(height: AppDimensions.spaceM),
+        const SizedBox(height: AppDimensions.spaceM),
         _buildInfoCard(
           icon: Icons.shield_rounded,
           text:
@@ -498,7 +503,7 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage>
     required String subtitle,
   }) {
     return Container(
-      padding: EdgeInsets.all(AppDimensions.spaceM),
+      padding: const EdgeInsets.all(AppDimensions.spaceM),
       decoration: BoxDecoration(
         color: AppColors.primary.withValues(alpha: 0.08),
         borderRadius: AppDimensions.borderRadiusL,
@@ -506,7 +511,7 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage>
       child: Row(
         children: [
           Container(
-            padding: EdgeInsets.all(AppDimensions.spaceS),
+            padding: const EdgeInsets.all(AppDimensions.spaceS),
             decoration: BoxDecoration(
               color: AppColors.primary.withValues(alpha: 0.15),
               borderRadius: AppDimensions.borderRadiusM,
@@ -514,7 +519,7 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage>
             child:
                 Icon(icon, color: AppColors.primary, size: AppDimensions.iconM),
           ),
-          SizedBox(width: AppDimensions.spaceM),
+          const SizedBox(width: AppDimensions.spaceM),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -526,7 +531,7 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage>
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                SizedBox(height: AppDimensions.spaceXXS),
+                const SizedBox(height: AppDimensions.spaceXXS),
                 Text(
                   subtitle,
                   style: AppTextStyles.caption
@@ -582,23 +587,23 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage>
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: AppDimensions.borderRadiusL,
-            borderSide: BorderSide(color: context.colors.border, width: 1),
+            borderSide: BorderSide(color: context.colors.border),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: AppDimensions.borderRadiusL,
-            borderSide: BorderSide(color: AppColors.primary, width: 2),
+            borderSide: const BorderSide(color: AppColors.primary, width: 2),
           ),
           errorBorder: OutlineInputBorder(
             borderRadius: AppDimensions.borderRadiusL,
-            borderSide: BorderSide(color: AppColors.error, width: 1),
+            borderSide: const BorderSide(color: AppColors.error),
           ),
           focusedErrorBorder: OutlineInputBorder(
             borderRadius: AppDimensions.borderRadiusL,
-            borderSide: BorderSide(color: AppColors.error, width: 2),
+            borderSide: const BorderSide(color: AppColors.error, width: 2),
           ),
           filled: true,
           fillColor: context.colors.surface,
-          contentPadding: EdgeInsets.all(AppDimensions.spaceM),
+          contentPadding: const EdgeInsets.all(AppDimensions.spaceM),
         ),
         validator: validator,
         onTapOutside: (_) => FocusManager.instance.primaryFocus?.unfocus(),
@@ -620,29 +625,29 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage>
         ],
       ),
       child: DropdownButtonFormField<String>(
-        value: _selectedSecurityQuestion,
+        initialValue: _selectedSecurityQuestion,
         isExpanded: true,
         decoration: InputDecoration(
           labelText: UIStrings.selectSecurityQuestion,
           labelStyle:
               AppTextStyles.label.copyWith(color: context.colors.textSecondary),
           prefixIcon:
-              Icon(Icons.help_outline_rounded, color: AppColors.primary),
+              const Icon(Icons.help_outline_rounded, color: AppColors.primary),
           border: OutlineInputBorder(
             borderRadius: AppDimensions.borderRadiusL,
             borderSide: BorderSide.none,
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: AppDimensions.borderRadiusL,
-            borderSide: BorderSide(color: context.colors.border, width: 1),
+            borderSide: BorderSide(color: context.colors.border),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: AppDimensions.borderRadiusL,
-            borderSide: BorderSide(color: AppColors.primary, width: 2),
+            borderSide: const BorderSide(color: AppColors.primary, width: 2),
           ),
           filled: true,
           fillColor: context.colors.surface,
-          contentPadding: EdgeInsets.all(AppDimensions.spaceM),
+          contentPadding: const EdgeInsets.all(AppDimensions.spaceM),
         ),
         items: _securityQuestions.map((question) {
           return DropdownMenuItem(
@@ -658,8 +663,9 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage>
         }).toList(),
         onChanged: (value) => setState(() => _selectedSecurityQuestion = value),
         validator: (value) {
-          if (value == null || value.isEmpty)
+          if (value == null || value.isEmpty) {
             return ValidationStrings.securityQuestionRequired;
+          }
           return null;
         },
       ),
@@ -668,7 +674,7 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage>
 
   Widget _buildAgeToggle() {
     return Container(
-      padding: EdgeInsets.all(AppDimensions.spaceM),
+      padding: const EdgeInsets.all(AppDimensions.spaceM),
       decoration: BoxDecoration(
         color: context.colors.surface,
         borderRadius: AppDimensions.borderRadiusL,
@@ -693,7 +699,7 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage>
         child: Row(
           children: [
             Container(
-              padding: EdgeInsets.all(AppDimensions.spaceS),
+              padding: const EdgeInsets.all(AppDimensions.spaceS),
               decoration: BoxDecoration(
                 color: _isChildAbove12
                     ? AppColors.primary.withValues(alpha: 0.15)
@@ -707,7 +713,7 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage>
                     : context.colors.textSecondary,
               ),
             ),
-            SizedBox(width: AppDimensions.spaceM),
+            const SizedBox(width: AppDimensions.spaceM),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -749,7 +755,7 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage>
 
   Widget _buildTermsCheckbox() {
     return Container(
-      padding: EdgeInsets.all(AppDimensions.spaceM),
+      padding: const EdgeInsets.all(AppDimensions.spaceM),
       decoration: BoxDecoration(
         color: _agreedToTerms
             ? AppColors.success.withValues(alpha: 0.08)
@@ -782,10 +788,10 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage>
                 ),
               ),
               child: _agreedToTerms
-                  ? Icon(Icons.check_rounded, color: AppColors.white, size: 18)
+                  ? const Icon(Icons.check_rounded, color: AppColors.white, size: 18)
                   : null,
             ),
-            SizedBox(width: AppDimensions.spaceM),
+            const SizedBox(width: AppDimensions.spaceM),
             Expanded(
               child: Text(
                 UIStrings.agreeToTerms,
@@ -810,7 +816,7 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage>
     required Color color,
   }) {
     return Container(
-      padding: EdgeInsets.all(AppDimensions.spaceM),
+      padding: const EdgeInsets.all(AppDimensions.spaceM),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.08),
         borderRadius: AppDimensions.borderRadiusM,
@@ -819,7 +825,7 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage>
       child: Row(
         children: [
           Icon(icon, color: color, size: AppDimensions.iconS),
-          SizedBox(width: AppDimensions.spaceS),
+          const SizedBox(width: AppDimensions.spaceS),
           Expanded(
             child: Text(
               text,
@@ -833,14 +839,14 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage>
 
   Widget _buildNavigationButtons() {
     return Container(
-      padding: EdgeInsets.all(AppDimensions.screenPaddingH),
+      padding: const EdgeInsets.all(AppDimensions.screenPaddingH),
       decoration: BoxDecoration(
         color: context.colors.surface,
-        boxShadow: [
+        boxShadow: const [
           BoxShadow(
             color: AppColors.shadowMedium,
             blurRadius: 16,
-            offset: const Offset(0, -4),
+            offset: Offset(0, -4),
           ),
         ],
       ),
@@ -855,7 +861,7 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage>
                   onTap: _previousStep,
                   child: Container(
                     padding:
-                        EdgeInsets.symmetric(vertical: AppDimensions.spaceM),
+                        const EdgeInsets.symmetric(vertical: AppDimensions.spaceM),
                     decoration: BoxDecoration(
                       color: context.colors.surfaceVariant,
                       borderRadius: AppDimensions.borderRadiusM,
@@ -872,7 +878,7 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage>
               )
             else
               const Spacer(),
-            SizedBox(width: AppDimensions.spaceM),
+            const SizedBox(width: AppDimensions.spaceM),
             // Next/Submit button
             Expanded(
               flex: 2,
@@ -883,9 +889,9 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage>
                         ? _nextStep
                         : _submitConsent),
                 child: Container(
-                  padding: EdgeInsets.symmetric(vertical: AppDimensions.spaceM),
+                  padding: const EdgeInsets.symmetric(vertical: AppDimensions.spaceM),
                   decoration: BoxDecoration(
-                    gradient: LinearGradient(
+                    gradient: const LinearGradient(
                       colors: [AppColors.primary, AppColors.primaryDark],
                     ),
                     borderRadius: AppDimensions.borderRadiusM,
@@ -899,7 +905,7 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage>
                   ),
                   child: Center(
                     child: _isSubmitting
-                        ? SizedBox(
+                        ? const SizedBox(
                             width: 24,
                             height: 24,
                             child: CircularProgressIndicator(
@@ -918,8 +924,8 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage>
                                 style: AppTextStyles.button,
                               ),
                               if (_currentStep < _totalSteps - 1) ...[
-                                SizedBox(width: AppDimensions.spaceXS),
-                                Icon(Icons.arrow_forward_rounded,
+                                const SizedBox(width: AppDimensions.spaceXS),
+                                const Icon(Icons.arrow_forward_rounded,
                                     color: AppColors.white, size: 18),
                               ],
                             ],

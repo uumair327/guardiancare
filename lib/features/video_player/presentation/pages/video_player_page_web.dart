@@ -3,18 +3,19 @@
 
 // ignore_for_file: avoid_web_libraries_in_flutter, deprecated_member_use
 
-import 'package:flutter/material.dart';
 import 'dart:html' as html;
 import 'dart:ui_web' as ui_web;
+
+import 'package:flutter/material.dart';
 import 'package:guardiancare/core/core.dart';
 import 'package:guardiancare/features/video_player/presentation/constants/strings.dart';
 
 /// Education-friendly video player page for web platform
 /// Uses YouTube iframe embed since youtube_player_flutter doesn't support web
 class VideoPlayerPage extends StatefulWidget {
-  final String videoUrl;
 
   const VideoPlayerPage({super.key, required this.videoUrl});
+  final String videoUrl;
 
   @override
   State<VideoPlayerPage> createState() => _VideoPlayerPageState();
@@ -113,7 +114,7 @@ class _VideoPlayerPageState extends State<VideoPlayerPage> {
 
   Widget _buildAppBar() {
     return Container(
-      padding: EdgeInsets.symmetric(
+      padding: const EdgeInsets.symmetric(
         horizontal: AppDimensions.spaceS,
         vertical: AppDimensions.spaceXS,
       ),
@@ -144,7 +145,7 @@ class _VideoPlayerPageState extends State<VideoPlayerPage> {
     return Container(
       color: AppColors.videoBackground,
       child: SingleChildScrollView(
-        padding: EdgeInsets.all(AppDimensions.spaceL),
+        padding: const EdgeInsets.all(AppDimensions.spaceL),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -156,17 +157,17 @@ class _VideoPlayerPageState extends State<VideoPlayerPage> {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            SizedBox(height: AppDimensions.spaceM),
+            const SizedBox(height: AppDimensions.spaceM),
             Text(
               VideoPlayerStrings.webPlayerInstructions,
               style: AppTextStyles.body1.copyWith(
                 color: AppColors.white.withValues(alpha: 0.7),
               ),
             ),
-            SizedBox(height: AppDimensions.spaceL),
+            const SizedBox(height: AppDimensions.spaceL),
             // Info card
             _buildInfoCard(),
-            SizedBox(height: AppDimensions.spaceL),
+            const SizedBox(height: AppDimensions.spaceL),
             // Quick actions
             _buildQuickActions(),
           ],
@@ -177,9 +178,9 @@ class _VideoPlayerPageState extends State<VideoPlayerPage> {
 
   Widget _buildInfoCard() {
     return Container(
-      padding: EdgeInsets.all(AppDimensions.spaceM),
+      padding: const EdgeInsets.all(AppDimensions.spaceM),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
+        gradient: const LinearGradient(
           colors: [
             AppColors.videoPrimarySubtle15,
             AppColors.videoPrimarySubtle10,
@@ -193,18 +194,18 @@ class _VideoPlayerPageState extends State<VideoPlayerPage> {
       child: Row(
         children: [
           Container(
-            padding: EdgeInsets.all(AppDimensions.spaceM),
-            decoration: BoxDecoration(
+            padding: const EdgeInsets.all(AppDimensions.spaceM),
+            decoration: const BoxDecoration(
               color: AppColors.videoPrimarySubtle20,
               shape: BoxShape.circle,
             ),
-            child: Icon(
+            child: const Icon(
               Icons.play_circle_outline_rounded,
               color: AppColors.videoPrimary,
               size: 32,
             ),
           ),
-          SizedBox(width: AppDimensions.spaceM),
+          const SizedBox(width: AppDimensions.spaceM),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -215,7 +216,7 @@ class _VideoPlayerPageState extends State<VideoPlayerPage> {
                     color: AppColors.white.withValues(alpha: 0.6),
                   ),
                 ),
-                SizedBox(height: AppDimensions.spaceXS),
+                const SizedBox(height: AppDimensions.spaceXS),
                 Text(
                   VideoPlayerStrings.usingYoutubeEmbedded,
                   style: AppTextStyles.body1.copyWith(
@@ -243,7 +244,7 @@ class _VideoPlayerPageState extends State<VideoPlayerPage> {
               // Show hint that fullscreen is available in the player
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text(FeedbackStrings.fullscreenHint),
+                  content: const Text(FeedbackStrings.fullscreenHint),
                   backgroundColor: AppColors.videoPrimary,
                   behavior: SnackBarBehavior.floating,
                   shape: RoundedRectangleBorder(
@@ -254,7 +255,7 @@ class _VideoPlayerPageState extends State<VideoPlayerPage> {
             },
           ),
         ),
-        SizedBox(width: AppDimensions.spaceM),
+        const SizedBox(width: AppDimensions.spaceM),
         Expanded(
           child: _QuickActionButton(
             icon: Icons.arrow_back_rounded,
@@ -285,23 +286,23 @@ class _VideoPlayerPageState extends State<VideoPlayerPage> {
       ),
       body: Center(
         child: Padding(
-          padding: EdgeInsets.all(AppDimensions.spaceXL),
+          padding: const EdgeInsets.all(AppDimensions.spaceXL),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
-                padding: EdgeInsets.all(AppDimensions.spaceXL),
-                decoration: BoxDecoration(
+                padding: const EdgeInsets.all(AppDimensions.spaceXL),
+                decoration: const BoxDecoration(
                   color: AppColors.videoPrimarySubtle10,
                   shape: BoxShape.circle,
                 ),
-                child: Icon(
+                child: const Icon(
                   Icons.error_outline_rounded,
                   color: AppColors.videoPrimary,
                   size: 64,
                 ),
               ),
-              SizedBox(height: AppDimensions.spaceXL),
+              const SizedBox(height: AppDimensions.spaceXL),
               Text(
                 VideoPlayerStrings.invalidVideoUrl,
                 style: AppTextStyles.h2.copyWith(
@@ -309,7 +310,7 @@ class _VideoPlayerPageState extends State<VideoPlayerPage> {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              SizedBox(height: AppDimensions.spaceM),
+              const SizedBox(height: AppDimensions.spaceM),
               Text(
                 VideoPlayerStrings.invalidVideoUrlDescription,
                 textAlign: TextAlign.center,
@@ -318,15 +319,15 @@ class _VideoPlayerPageState extends State<VideoPlayerPage> {
                   height: 1.5,
                 ),
               ),
-              SizedBox(height: AppDimensions.spaceXL),
+              const SizedBox(height: AppDimensions.spaceXL),
               ElevatedButton.icon(
                 onPressed: () => Navigator.pop(context),
                 icon: const Icon(Icons.arrow_back_rounded),
-                label: Text(UIStrings.goBack),
+                label: const Text(UIStrings.goBack),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.videoPrimary,
                   foregroundColor: AppColors.white,
-                  padding: EdgeInsets.symmetric(
+                  padding: const EdgeInsets.symmetric(
                     horizontal: AppDimensions.spaceXL,
                     vertical: AppDimensions.spaceM,
                   ),
@@ -348,11 +349,6 @@ class _VideoPlayerPageState extends State<VideoPlayerPage> {
 /// Uses [AnimatedButton] for scale-tap animation,
 /// eliminating duplicate animation code.
 class _QuickActionButton extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final String hint;
-  final VoidCallback onTap;
-  final bool isPrimary;
 
   const _QuickActionButton({
     required this.icon,
@@ -361,6 +357,11 @@ class _QuickActionButton extends StatelessWidget {
     required this.onTap,
     this.isPrimary = false,
   });
+  final IconData icon;
+  final String label;
+  final String hint;
+  final VoidCallback onTap;
+  final bool isPrimary;
 
   @override
   Widget build(BuildContext context) {
@@ -369,8 +370,6 @@ class _QuickActionButton extends StatelessWidget {
       child: AnimatedButton(
         onTap: onTap,
         config: AnimationPresets.scaleButton, // 0.95 scale
-        enableHaptic: true,
-        hapticType: HapticFeedbackType.light,
         decoration: BoxDecoration(
           gradient: isPrimary ? AppColors.videoGradient : null,
           color: isPrimary ? null : AppColors.white.withValues(alpha: 0.08),
@@ -381,7 +380,7 @@ class _QuickActionButton extends StatelessWidget {
                   color: AppColors.white.withValues(alpha: 0.15),
                 ),
         ),
-        padding: EdgeInsets.symmetric(
+        padding: const EdgeInsets.symmetric(
           vertical: AppDimensions.spaceM,
         ),
         child: Row(
@@ -392,7 +391,7 @@ class _QuickActionButton extends StatelessWidget {
               color: AppColors.white,
               size: AppDimensions.iconS,
             ),
-            SizedBox(width: AppDimensions.spaceS),
+            const SizedBox(width: AppDimensions.spaceS),
             Text(
               label,
               style: AppTextStyles.button.copyWith(

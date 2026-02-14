@@ -3,12 +3,6 @@ import 'package:guardiancare/core/core.dart';
 
 /// Modern video info card with education-friendly design
 class VideoInfoCard extends StatelessWidget {
-  final String title;
-  final String? description;
-  final Duration? duration;
-  final Duration? position;
-  final VoidCallback? onReplay;
-  final VoidCallback? onShare;
 
   const VideoInfoCard({
     super.key,
@@ -19,12 +13,18 @@ class VideoInfoCard extends StatelessWidget {
     this.onReplay,
     this.onShare,
   });
+  final String title;
+  final String? description;
+  final Duration? duration;
+  final Duration? position;
+  final VoidCallback? onReplay;
+  final VoidCallback? onShare;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(AppDimensions.spaceL),
-      decoration: BoxDecoration(
+      padding: const EdgeInsets.all(AppDimensions.spaceL),
+      decoration: const BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
@@ -52,7 +52,7 @@ class VideoInfoCard extends StatelessWidget {
               ),
             ),
           ),
-          SizedBox(height: AppDimensions.spaceL),
+          const SizedBox(height: AppDimensions.spaceL),
           // Title
           Text(
             title,
@@ -63,17 +63,17 @@ class VideoInfoCard extends StatelessWidget {
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
           ),
-          SizedBox(height: AppDimensions.spaceM),
+          const SizedBox(height: AppDimensions.spaceM),
           // Duration info
           if (duration != null && position != null)
             _buildProgressInfo(),
-          SizedBox(height: AppDimensions.spaceL),
+          const SizedBox(height: AppDimensions.spaceL),
           // Action buttons
           _buildActionButtons(),
           if (description != null) ...[
-            SizedBox(height: AppDimensions.spaceL),
+            const SizedBox(height: AppDimensions.spaceL),
             Divider(color: AppColors.white.withValues(alpha: 0.1)),
-            SizedBox(height: AppDimensions.spaceM),
+            const SizedBox(height: AppDimensions.spaceM),
             Text(
               'About this video',
               style: AppTextStyles.body1.copyWith(
@@ -81,7 +81,7 @@ class VideoInfoCard extends StatelessWidget {
                 fontWeight: FontWeight.w600,
               ),
             ),
-            SizedBox(height: AppDimensions.spaceS),
+            const SizedBox(height: AppDimensions.spaceS),
             Text(
               description!,
               style: AppTextStyles.bodySmall.copyWith(
@@ -101,7 +101,7 @@ class VideoInfoCard extends StatelessWidget {
         : 0;
 
     return Container(
-      padding: EdgeInsets.all(AppDimensions.spaceM),
+      padding: const EdgeInsets.all(AppDimensions.spaceM),
       decoration: BoxDecoration(
         color: AppColors.white.withValues(alpha: 0.05),
         borderRadius: AppDimensions.borderRadiusM,
@@ -122,7 +122,7 @@ class VideoInfoCard extends StatelessWidget {
                   value: progressPercent / 100,
                   strokeWidth: 4,
                   backgroundColor: AppColors.white.withValues(alpha: 0.1),
-                  valueColor: AlwaysStoppedAnimation<Color>(
+                  valueColor: const AlwaysStoppedAnimation<Color>(
                   AppColors.videoPrimary,
                 ),
                 ),
@@ -137,7 +137,7 @@ class VideoInfoCard extends StatelessWidget {
               ],
             ),
           ),
-          SizedBox(width: AppDimensions.spaceM),
+          const SizedBox(width: AppDimensions.spaceM),
           // Time info
           Expanded(
             child: Column(
@@ -149,7 +149,7 @@ class VideoInfoCard extends StatelessWidget {
                     color: AppColors.white.withValues(alpha: 0.6),
                   ),
                 ),
-                SizedBox(height: AppDimensions.spaceXS),
+                const SizedBox(height: AppDimensions.spaceXS),
                 Text(
                   '${_formatDuration(position!)} / ${_formatDuration(duration!)}',
                   style: AppTextStyles.body1.copyWith(
@@ -163,7 +163,7 @@ class VideoInfoCard extends StatelessWidget {
           ),
           // Remaining time
           Container(
-            padding: EdgeInsets.symmetric(
+            padding: const EdgeInsets.symmetric(
               horizontal: AppDimensions.spaceM,
               vertical: AppDimensions.spaceS,
             ),
@@ -197,7 +197,7 @@ class VideoInfoCard extends StatelessWidget {
             ),
           ),
         if (onReplay != null && onShare != null)
-          SizedBox(width: AppDimensions.spaceM),
+          const SizedBox(width: AppDimensions.spaceM),
         if (onShare != null)
           Expanded(
             child: _ActionButton(
@@ -229,10 +229,6 @@ class VideoInfoCard extends StatelessWidget {
 /// Uses [AnimatedButton] for scale-tap animation,
 /// eliminating duplicate animation code.
 class _ActionButton extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final VoidCallback onTap;
-  final bool isPrimary;
 
   const _ActionButton({
     required this.icon,
@@ -240,14 +236,16 @@ class _ActionButton extends StatelessWidget {
     required this.onTap,
     this.isPrimary = false,
   });
+  final IconData icon;
+  final String label;
+  final VoidCallback onTap;
+  final bool isPrimary;
 
   @override
   Widget build(BuildContext context) {
     return AnimatedButton(
       onTap: onTap,
       config: AnimationPresets.scaleButton, // 0.95 scale, same as original
-      enableHaptic: true,
-      hapticType: HapticFeedbackType.light,
       decoration: BoxDecoration(
         gradient: isPrimary
             ? AppColors.videoGradient
@@ -260,7 +258,7 @@ class _ActionButton extends StatelessWidget {
                 color: AppColors.white.withValues(alpha: 0.2),
               ),
       ),
-      padding: EdgeInsets.symmetric(
+      padding: const EdgeInsets.symmetric(
         vertical: AppDimensions.spaceM,
       ),
       child: Row(
@@ -271,7 +269,7 @@ class _ActionButton extends StatelessWidget {
             color: AppColors.white,
             size: AppDimensions.iconS,
           ),
-          SizedBox(width: AppDimensions.spaceS),
+          const SizedBox(width: AppDimensions.spaceS),
           Text(
             label,
             style: AppTextStyles.button.copyWith(

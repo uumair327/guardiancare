@@ -1,15 +1,16 @@
 // Web-specific implementation of VideoPlayerPage using YouTube iframe embed
 // This file is used on web platform where youtube_player_flutter is not supported
 
-import 'package:flutter/material.dart';
 import 'dart:html' as html;
 import 'dart:ui_web' as ui_web;
+
+import 'package:flutter/material.dart';
 import 'package:guardiancare/core/core.dart';
 
 class VideoPlayerPage extends StatefulWidget {
-  final String videoUrl;
 
   const VideoPlayerPage({super.key, required this.videoUrl});
+  final String videoUrl;
 
   @override
   State<VideoPlayerPage> createState() => _VideoPlayerPageState();
@@ -79,7 +80,7 @@ class _VideoPlayerPageState extends State<VideoPlayerPage> {
         backgroundColor: AppColors.secondary,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: AppColors.white),
+          icon: const Icon(Icons.arrow_back, color: AppColors.white),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
@@ -111,17 +112,17 @@ class _VideoPlayerPageState extends State<VideoPlayerPage> {
                                 color: AppColors.white,
                               ),
                             ),
-                            SizedBox(height: AppDimensions.spaceM),
+                            const SizedBox(height: AppDimensions.spaceM),
                             Text(
                               'Use the YouTube player controls to play, pause, and seek through the video.',
                               style: AppTextStyles.bodySmall.copyWith(
                                 color: AppColors.white70,
                               ),
                             ),
-                            SizedBox(height: AppDimensions.spaceL),
+                            const SizedBox(height: AppDimensions.spaceL),
                             // Fullscreen hint
                             Container(
-                              padding: EdgeInsets.all(AppDimensions.spaceM),
+                              padding: const EdgeInsets.all(AppDimensions.spaceM),
                               decoration: BoxDecoration(
                                 color: AppColors.primary.withValues(alpha: 0.1),
                                 borderRadius: AppDimensions.borderRadiusM,
@@ -131,12 +132,12 @@ class _VideoPlayerPageState extends State<VideoPlayerPage> {
                               ),
                               child: Row(
                                 children: [
-                                  Icon(
+                                  const Icon(
                                     Icons.fullscreen,
                                     color: AppColors.primary,
                                     size: AppDimensions.iconM,
                                   ),
-                                  SizedBox(width: AppDimensions.spaceM),
+                                  const SizedBox(width: AppDimensions.spaceM),
                                   Expanded(
                                     child: Text(
                                       'Click the fullscreen button in the video player for a better viewing experience.',
@@ -165,27 +166,27 @@ class _VideoPlayerPageState extends State<VideoPlayerPage> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
+          const Icon(
             Icons.error_outline,
             color: AppColors.primary,
             size: AppDimensions.iconXXL,
           ),
-          SizedBox(height: AppDimensions.spaceM),
+          const SizedBox(height: AppDimensions.spaceM),
           Text(
             'Invalid YouTube URL',
             style: AppTextStyles.h3.copyWith(color: AppColors.white),
           ),
-          SizedBox(height: AppDimensions.spaceS),
+          const SizedBox(height: AppDimensions.spaceS),
           Text(
             'Please check the video link and try again',
             style: AppTextStyles.bodySmall.copyWith(color: AppColors.white70),
           ),
-          SizedBox(height: AppDimensions.spaceL),
+          const SizedBox(height: AppDimensions.spaceL),
           ElevatedButton(
             onPressed: () => Navigator.of(context).pop(),
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.primary,
-              padding: EdgeInsets.symmetric(
+              padding: const EdgeInsets.symmetric(
                 horizontal: AppDimensions.spaceXL,
                 vertical: AppDimensions.spaceM,
               ),

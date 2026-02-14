@@ -1,9 +1,9 @@
 /// Stub implementation of DatabaseService for web platform
 /// SQLite is not available on web, so this provides a no-op implementation
 class DatabaseService {
-  static final DatabaseService instance = DatabaseService._internal();
   
   DatabaseService._internal();
+  static final DatabaseService instance = DatabaseService._internal();
 
   /// Get database instance - throws on web
   Future<dynamic> get database async {

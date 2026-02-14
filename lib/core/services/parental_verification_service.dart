@@ -1,18 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:guardiancare/core/services/parental_session_manager.dart';
 import 'package:guardiancare/core/services/parental_key_verifier.dart';
+import 'package:guardiancare/core/services/parental_session_manager.dart';
 
 /// Service to manage parental verification state for the current session
 /// Orchestrates ParentalSessionManager, ParentalKeyVerifier, and CryptoService
 /// without containing implementation details
 /// Requirements: 9.1, 9.2, 9.3, 9.4
 class ParentalVerificationService {
-  final ParentalSessionManager _sessionManager;
-  final ParentalKeyVerifier _keyVerifier;
-  final FirebaseAuth _auth;
-
-  // Singleton pattern for backward compatibility
-  static ParentalVerificationService? _instance;
 
   /// Factory constructor for singleton access (backward compatibility)
   factory ParentalVerificationService() {
@@ -23,19 +17,6 @@ class ParentalVerificationService {
       );
     }
     return _instance!;
-  }
-
-  /// Initialize the singleton instance with dependencies
-  static void initialize({
-    required ParentalSessionManager sessionManager,
-    required ParentalKeyVerifier keyVerifier,
-    FirebaseAuth? auth,
-  }) {
-    _instance = ParentalVerificationService._internal(
-      sessionManager: sessionManager,
-      keyVerifier: keyVerifier,
-      auth: auth ?? FirebaseAuth.instance,
-    );
   }
 
   /// Internal constructor
@@ -55,6 +36,25 @@ class ParentalVerificationService {
   })  : _sessionManager = sessionManager,
         _keyVerifier = keyVerifier,
         _auth = auth ?? FirebaseAuth.instance;
+  final ParentalSessionManager _sessionManager;
+  final ParentalKeyVerifier _keyVerifier;
+  final FirebaseAuth _auth;
+
+  // Singleton pattern for backward compatibility
+  static ParentalVerificationService? _instance;
+
+  /// Initialize the singleton instance with dependencies
+  static void initialize({
+    required ParentalSessionManager sessionManager,
+    required ParentalKeyVerifier keyVerifier,
+    FirebaseAuth? auth,
+  }) {
+    _instance = ParentalVerificationService._internal(
+      sessionManager: sessionManager,
+      keyVerifier: keyVerifier,
+      auth: auth ?? FirebaseAuth.instance,
+    );
+  }
 
   /// Check if parental key has been verified in this session
   /// Delegates to ParentalSessionManager

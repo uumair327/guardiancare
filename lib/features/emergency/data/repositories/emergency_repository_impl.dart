@@ -7,9 +7,9 @@ import 'package:guardiancare/features/emergency/domain/repositories/emergency_re
 
 /// Implementation of EmergencyRepository
 class EmergencyRepositoryImpl implements EmergencyRepository {
-  final EmergencyLocalDataSource localDataSource;
 
   EmergencyRepositoryImpl({required this.localDataSource});
+  final EmergencyLocalDataSource localDataSource;
 
   @override
   Future<Either<Failure, List<EmergencyContactEntity>>>
@@ -19,7 +19,7 @@ class EmergencyRepositoryImpl implements EmergencyRepository {
       return Right(contacts);
     } on CacheException catch (e) {
       return Left(CacheFailure(e.message));
-    } catch (e) {
+    } on Object catch (e) {
       return Left(
           CacheFailure(ErrorStrings.withDetails(ErrorStrings.getEmergencyContactsError, e.toString())));
     }
@@ -33,7 +33,7 @@ class EmergencyRepositoryImpl implements EmergencyRepository {
       return Right(contacts);
     } on CacheException catch (e) {
       return Left(CacheFailure(e.message));
-    } catch (e) {
+    } on Object catch (e) {
       return Left(
           CacheFailure(ErrorStrings.withDetails(ErrorStrings.getContactsByCategoryError, e.toString())));
     }
@@ -46,7 +46,7 @@ class EmergencyRepositoryImpl implements EmergencyRepository {
       return const Right(null);
     } on CacheException catch (e) {
       return Left(CacheFailure(e.message));
-    } catch (e) {
+    } on Object catch (e) {
       return Left(CacheFailure(ErrorStrings.withDetails(ErrorStrings.makeEmergencyCallError, e.toString())));
     }
   }

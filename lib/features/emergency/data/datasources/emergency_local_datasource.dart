@@ -49,9 +49,9 @@ class EmergencyLocalDataSourceImpl implements EmergencyLocalDataSource {
     try {
       final allContacts = [..._emergencyServices, ..._childSafety];
       return allContacts
-          .map((contact) => EmergencyContactModel.fromJson(contact))
+          .map(EmergencyContactModel.fromJson)
           .toList();
-    } catch (e) {
+    } on Object catch (e) {
       throw CacheException(ErrorStrings.withDetails(ErrorStrings.getEmergencyContactsError, e.toString()));
     }
   }
@@ -71,9 +71,9 @@ class EmergencyLocalDataSourceImpl implements EmergencyLocalDataSource {
       }
 
       return contacts
-          .map((contact) => EmergencyContactModel.fromJson(contact))
+          .map(EmergencyContactModel.fromJson)
           .toList();
-    } catch (e) {
+    } on Object catch (e) {
       throw CacheException(
           ErrorStrings.withDetails(ErrorStrings.getContactsByCategoryError, e.toString()));
     }
@@ -97,7 +97,7 @@ class EmergencyLocalDataSourceImpl implements EmergencyLocalDataSource {
       if (!launched) {
         throw CacheException(ErrorStrings.withDetails(ErrorStrings.phoneDialerError, phoneNumber));
       }
-    } catch (e) {
+    } on Object catch (e) {
       print('Error making phone call: $e');
       throw CacheException(ErrorStrings.withDetails(ErrorStrings.makePhoneCallError, e.toString()));
     }

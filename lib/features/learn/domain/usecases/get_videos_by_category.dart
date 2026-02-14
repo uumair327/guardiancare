@@ -6,12 +6,12 @@ import 'package:guardiancare/features/learn/domain/repositories/learn_repository
 
 /// Use case for getting videos by category
 class GetVideosByCategory implements UseCase<List<VideoEntity>, String> {
-  final LearnRepository repository;
 
   GetVideosByCategory(this.repository);
+  final LearnRepository repository;
 
   @override
   Future<Either<Failure, List<VideoEntity>>> call(String category) async {
-    return await repository.getVideosByCategory(category);
+    return repository.getVideosByCategory(category);
   }
 }

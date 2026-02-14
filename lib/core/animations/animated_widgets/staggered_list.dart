@@ -24,6 +24,21 @@ enum StaggerAnimationType {
 /// 
 /// Follows Single Responsibility Principle - handles staggered animations only
 class StaggeredListWidget extends StatefulWidget {
+
+  const StaggeredListWidget({
+    super.key,
+    required this.children,
+    this.itemDuration = const Duration(milliseconds: 300),
+    this.staggerDelay = const Duration(milliseconds: 50),
+    this.curve = Curves.easeOutCubic,
+    this.animationType = StaggerAnimationType.fadeSlide,
+    this.direction = Axis.vertical,
+    this.animate = true,
+    this.slideOffset = 30.0,
+    this.mainAxisAlignment = MainAxisAlignment.start,
+    this.crossAxisAlignment = CrossAxisAlignment.center,
+    this.mainAxisSize = MainAxisSize.max,
+  });
   /// The children widgets to animate
   final List<Widget> children;
   
@@ -57,21 +72,6 @@ class StaggeredListWidget extends StatefulWidget {
   /// Main axis size for the layout
   final MainAxisSize mainAxisSize;
 
-  const StaggeredListWidget({
-    super.key,
-    required this.children,
-    this.itemDuration = const Duration(milliseconds: 300),
-    this.staggerDelay = const Duration(milliseconds: 50),
-    this.curve = Curves.easeOutCubic,
-    this.animationType = StaggerAnimationType.fadeSlide,
-    this.direction = Axis.vertical,
-    this.animate = true,
-    this.slideOffset = 30.0,
-    this.mainAxisAlignment = MainAxisAlignment.start,
-    this.crossAxisAlignment = CrossAxisAlignment.center,
-    this.mainAxisSize = MainAxisSize.max,
-  });
-
   @override
   State<StaggeredListWidget> createState() => _StaggeredListWidgetState();
 }
@@ -102,7 +102,7 @@ class _StaggeredListWidgetState extends State<StaggeredListWidget>
     );
 
     _fadeAnimations = _controllers.map((controller) {
-      return Tween<double>(begin: 0.0, end: 1.0).animate(
+      return Tween<double>(begin: 0, end: 1).animate(
         CurvedAnimation(parent: controller, curve: widget.curve),
       );
     }).toList();
@@ -115,7 +115,7 @@ class _StaggeredListWidgetState extends State<StaggeredListWidget>
     }).toList();
 
     _scaleAnimations = _controllers.map((controller) {
-      return Tween<double>(begin: 0.0, end: 1.0).animate(
+      return Tween<double>(begin: 0, end: 1).animate(
         CurvedAnimation(parent: controller, curve: widget.curve),
       );
     }).toList();
@@ -231,7 +231,7 @@ class _StaggeredListWidgetState extends State<StaggeredListWidget>
   Widget build(BuildContext context) {
     final animatedChildren = List.generate(
       widget.children.length,
-      (index) => _buildAnimatedChild(index),
+      _buildAnimatedChild,
     );
 
     if (widget.direction == Axis.vertical) {
@@ -260,17 +260,6 @@ class _StaggeredListWidgetState extends State<StaggeredListWidget>
 /// - Performance optimized with RepaintBoundary
 /// - Supports both ListView and GridView
 class StaggeredAnimationList extends StatelessWidget {
-  final int itemCount;
-  final Widget Function(BuildContext context, int index) itemBuilder;
-  final Duration itemDuration;
-  final Duration staggerDelay;
-  final SlideDirection direction;
-  final double slideOffset;
-  final Curve curve;
-  final EdgeInsets? padding;
-  final ScrollPhysics? physics;
-  final bool shrinkWrap;
-  final ScrollController? controller;
 
   const StaggeredAnimationList({
     super.key,
@@ -286,6 +275,17 @@ class StaggeredAnimationList extends StatelessWidget {
     this.shrinkWrap = false,
     this.controller,
   });
+  final int itemCount;
+  final Widget Function(BuildContext context, int index) itemBuilder;
+  final Duration itemDuration;
+  final Duration staggerDelay;
+  final SlideDirection direction;
+  final double slideOffset;
+  final Curve curve;
+  final EdgeInsets? padding;
+  final ScrollPhysics? physics;
+  final bool shrinkWrap;
+  final ScrollController? controller;
 
   @override
   Widget build(BuildContext context) {
@@ -311,20 +311,6 @@ class StaggeredAnimationList extends StatelessWidget {
 
 /// Staggered animation grid for smooth grid item entrance
 class StaggeredAnimationGrid extends StatelessWidget {
-  final int itemCount;
-  final int crossAxisCount;
-  final Widget Function(BuildContext context, int index) itemBuilder;
-  final Duration itemDuration;
-  final Duration staggerDelay;
-  final SlideDirection direction;
-  final double slideOffset;
-  final Curve curve;
-  final EdgeInsets? padding;
-  final ScrollPhysics? physics;
-  final bool shrinkWrap;
-  final double mainAxisSpacing;
-  final double crossAxisSpacing;
-  final double childAspectRatio;
 
   const StaggeredAnimationGrid({
     super.key,
@@ -343,6 +329,20 @@ class StaggeredAnimationGrid extends StatelessWidget {
     this.crossAxisSpacing = 16.0,
     this.childAspectRatio = 1.0,
   });
+  final int itemCount;
+  final int crossAxisCount;
+  final Widget Function(BuildContext context, int index) itemBuilder;
+  final Duration itemDuration;
+  final Duration staggerDelay;
+  final SlideDirection direction;
+  final double slideOffset;
+  final Curve curve;
+  final EdgeInsets? padding;
+  final ScrollPhysics? physics;
+  final bool shrinkWrap;
+  final double mainAxisSpacing;
+  final double crossAxisSpacing;
+  final double childAspectRatio;
 
   @override
   Widget build(BuildContext context) {

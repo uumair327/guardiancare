@@ -4,14 +4,14 @@ import 'package:guardiancare/core/core.dart';
 /// Dialog for selecting app language
 /// Clean, user-friendly UI following Material Design
 class LanguageSelectorDialog extends StatelessWidget {
-  final Locale? currentLocale;
-  final Function(Locale) onLocaleSelected;
 
   const LanguageSelectorDialog({
     super.key,
     required this.currentLocale,
     required this.onLocaleSelected,
   });
+  final Locale? currentLocale;
+  final Function(Locale) onLocaleSelected;
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +24,7 @@ class LanguageSelectorDialog extends StatelessWidget {
         borderRadius: AppDimensions.borderRadiusL,
       ),
       child: Container(
-        constraints: BoxConstraints(maxHeight: AppDimensions.dialogMaxHeight),
+        constraints: const BoxConstraints(maxHeight: AppDimensions.dialogMaxHeight),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -33,19 +33,19 @@ class LanguageSelectorDialog extends StatelessWidget {
               padding: AppDimensions.paddingAllL,
               decoration: BoxDecoration(
                 color: context.colors.primary,
-                borderRadius: BorderRadius.only(
+                borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(AppDimensions.radiusL),
                   topRight: Radius.circular(AppDimensions.radiusL),
                 ),
               ),
               child: Row(
                 children: [
-                  Icon(
+                  const Icon(
                     Icons.language,
                     color: AppColors.white,
                     size: AppDimensions.iconL,
                   ),
-                  SizedBox(width: AppDimensions.spaceM),
+                  const SizedBox(width: AppDimensions.spaceM),
                   Expanded(
                     child: Text(
                       'Select Language',
@@ -53,7 +53,7 @@ class LanguageSelectorDialog extends StatelessWidget {
                     ),
                   ),
                   IconButton(
-                    icon: Icon(Icons.close, color: AppColors.white),
+                    icon: const Icon(Icons.close, color: AppColors.white),
                     onPressed: () => Navigator.of(context).pop(),
                   ),
                 ],
@@ -73,7 +73,7 @@ class LanguageSelectorDialog extends StatelessWidget {
                   return ListTile(
                     leading: Text(
                       localeInfo.flag,
-                      style: TextStyle(fontSize: AppDimensions.iconXL),
+                      style: const TextStyle(fontSize: AppDimensions.iconXL),
                     ),
                     title: Text(
                       localeInfo.nativeName,

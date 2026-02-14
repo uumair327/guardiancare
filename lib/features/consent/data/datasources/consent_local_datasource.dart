@@ -17,11 +17,11 @@ abstract class ConsentLocalDataSource {
 }
 
 class ConsentLocalDataSourceImpl implements ConsentLocalDataSource {
+
+  ConsentLocalDataSourceImpl({required this.sharedPreferences});
   static const String _parentalKeyKey = 'parental_key';
 
   final SharedPreferences sharedPreferences;
-
-  ConsentLocalDataSourceImpl({required this.sharedPreferences});
 
   @override
   Future<void> saveParentalKey(String key) async {

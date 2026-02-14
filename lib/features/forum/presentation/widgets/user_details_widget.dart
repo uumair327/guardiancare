@@ -3,9 +3,9 @@ import 'package:guardiancare/core/core.dart';
 import 'package:guardiancare/features/forum/forum.dart';
 
 class UserDetailsWidget extends StatelessWidget {
-  final String userId;
 
   const UserDetailsWidget({super.key, required this.userId});
+  final String userId;
 
   @override
   Widget build(BuildContext context) {
@@ -18,9 +18,9 @@ class UserDetailsWidget extends StatelessWidget {
               CircleAvatar(
                 radius: AppDimensions.iconXS,
                 backgroundColor: context.colors.border,
-                child: Icon(Icons.person, size: AppDimensions.iconXS),
+                child: const Icon(Icons.person, size: AppDimensions.iconXS),
               ),
-              SizedBox(width: AppDimensions.spaceS),
+              const SizedBox(width: AppDimensions.spaceS),
               Text(
                 'Loading...',
                 style: AppTextStyles.caption.copyWith(
@@ -37,9 +37,9 @@ class UserDetailsWidget extends StatelessWidget {
               CircleAvatar(
                 radius: AppDimensions.iconXS,
                 backgroundColor: context.colors.border,
-                child: Icon(Icons.person, size: AppDimensions.iconXS),
+                child: const Icon(Icons.person, size: AppDimensions.iconXS),
               ),
-              SizedBox(width: AppDimensions.spaceS),
+              const SizedBox(width: AppDimensions.spaceS),
               Text(
                 'Unknown User',
                 style: AppTextStyles.caption.copyWith(
@@ -57,10 +57,10 @@ class UserDetailsWidget extends StatelessWidget {
                     : null,
                 backgroundColor: context.colors.border,
                 child: userDetails.userImage.isEmpty
-                    ? Icon(Icons.person, size: AppDimensions.iconXS)
+                    ? const Icon(Icons.person, size: AppDimensions.iconXS)
                     : null,
               ),
-              SizedBox(width: AppDimensions.spaceS),
+              const SizedBox(width: AppDimensions.spaceS),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,

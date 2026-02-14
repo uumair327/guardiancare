@@ -6,12 +6,12 @@ import 'package:guardiancare/features/report/domain/repositories/report_reposito
 
 /// Use case for loading a saved report
 class LoadReport implements UseCase<ReportEntity, String> {
-  final ReportRepository repository;
 
   LoadReport(this.repository);
+  final ReportRepository repository;
 
   @override
   Future<Either<Failure, ReportEntity>> call(String caseName) async {
-    return await repository.loadReport(caseName);
+    return repository.loadReport(caseName);
   }
 }

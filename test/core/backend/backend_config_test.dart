@@ -111,7 +111,7 @@ void main() {
     });
 
     test('providers are distinct', () {
-      final values = BackendProvider.values;
+      const values = BackendProvider.values;
       final uniqueNames = values.map((e) => e.name).toSet();
       expect(uniqueNames.length, equals(values.length));
     });

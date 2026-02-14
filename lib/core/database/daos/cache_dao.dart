@@ -1,6 +1,7 @@
 import 'dart:convert';
-import 'package:sqflite/sqflite.dart';
+
 import 'package:guardiancare/core/database/database_service.dart';
+import 'package:sqflite/sqflite.dart';
 
 /// Data Access Object for Cache operations
 /// Handles offline caching with expiration
@@ -27,7 +28,7 @@ class CacheDao {
       'created_at': now,
     };
 
-    return await db.insert(
+    return db.insert(
       'cache_data',
       data,
       conflictAlgorithm: ConflictAlgorithm.replace,
@@ -70,7 +71,7 @@ class CacheDao {
   Future<int> deleteCache(String key) async {
     final db = await _dbService.database;
     
-    return await db.delete(
+    return db.delete(
       'cache_data',
       where: 'cache_key = ?',
       whereArgs: [key],
@@ -81,7 +82,7 @@ class CacheDao {
   Future<int> deleteCacheByType(String type) async {
     final db = await _dbService.database;
     
-    return await db.delete(
+    return db.delete(
       'cache_data',
       where: 'cache_type = ?',
       whereArgs: [type],
@@ -93,7 +94,7 @@ class CacheDao {
     final db = await _dbService.database;
     final now = DateTime.now().millisecondsSinceEpoch;
     
-    return await db.delete(
+    return db.delete(
       'cache_data',
       where: 'expires_at < ?',
       whereArgs: [now],
@@ -103,7 +104,7 @@ class CacheDao {
   /// Clear all cache
   Future<int> clearAllCache() async {
     final db = await _dbService.database;
-    return await db.delete('cache_data');
+    return db.delete('cache_data');
   }
 
   /// Get cache statistics

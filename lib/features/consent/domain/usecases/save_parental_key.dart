@@ -5,9 +5,9 @@ import 'package:guardiancare/core/usecases/usecase.dart';
 import 'package:guardiancare/features/consent/domain/repositories/consent_repository.dart';
 
 class SaveParentalKeyParams extends Equatable {
-  final String key;
 
   const SaveParentalKeyParams({required this.key});
+  final String key;
 
   @override
   List<Object> get props => [key];
@@ -16,12 +16,12 @@ class SaveParentalKeyParams extends Equatable {
 /// Use case for saving parental key locally
 /// Requirements: 5.2
 class SaveParentalKey implements UseCase<void, SaveParentalKeyParams> {
-  final ConsentRepository repository;
 
   SaveParentalKey(this.repository);
+  final ConsentRepository repository;
 
   @override
   Future<Either<Failure, void>> call(SaveParentalKeyParams params) async {
-    return await repository.saveParentalKeyLocally(params.key);
+    return repository.saveParentalKeyLocally(params.key);
   }
 }

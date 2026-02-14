@@ -79,12 +79,12 @@ class SupabaseStorageAdapter implements IStorageService {
 
       // Get public URL
       final url = _storage.from(bucket).getPublicUrl(filePath);
-      onProgress?.call(1.0);
+      onProgress?.call(1);
 
       return BackendResult.success(url);
     } on StorageException catch (e) {
       return BackendResult.failure(_mapStorageError(e));
-    } catch (e) {
+    } on Object catch (e) {
       return BackendResult.failure(
         BackendError(message: e.toString(), code: BackendErrorCode.unknown),
       );
@@ -128,7 +128,7 @@ class SupabaseStorageAdapter implements IStorageService {
         metadata: metadata,
         onProgress: onProgress,
       );
-    } catch (e) {
+    } on Object catch (e) {
       return BackendResult.failure(
         BackendError(message: e.toString(), code: BackendErrorCode.unknown),
       );
@@ -155,7 +155,7 @@ class SupabaseStorageAdapter implements IStorageService {
       return BackendResult.success(data);
     } on StorageException catch (e) {
       return BackendResult.failure(_mapStorageError(e));
-    } catch (e) {
+    } on Object catch (e) {
       return BackendResult.failure(
         BackendError(message: e.toString(), code: BackendErrorCode.unknown),
       );
@@ -171,7 +171,7 @@ class SupabaseStorageAdapter implements IStorageService {
       // For private buckets, create signed URL
       final url = _storage.from(bucket).getPublicUrl(filePath);
       return BackendResult.success(url);
-    } catch (e) {
+    } on Object catch (e) {
       return BackendResult.failure(
         BackendError(message: e.toString(), code: BackendErrorCode.unknown),
       );
@@ -191,7 +191,7 @@ class SupabaseStorageAdapter implements IStorageService {
       return BackendResult.success(url);
     } on StorageException catch (e) {
       return BackendResult.failure(_mapStorageError(e));
-    } catch (e) {
+    } on Object catch (e) {
       return BackendResult.failure(
         BackendError(message: e.toString(), code: BackendErrorCode.unknown),
       );
@@ -217,7 +217,7 @@ class SupabaseStorageAdapter implements IStorageService {
         totalBytes: data.length,
         data: data,
       );
-    } catch (e) {
+    } on Object {
       // Yield an empty progress to indicate error
       yield const DownloadProgress(
         bytesDownloaded: 0,
@@ -238,7 +238,7 @@ class SupabaseStorageAdapter implements IStorageService {
       return const BackendResult.success(null);
     } on StorageException catch (e) {
       return BackendResult.failure(_mapStorageError(e));
-    } catch (e) {
+    } on Object catch (e) {
       return BackendResult.failure(
         BackendError(message: e.toString(), code: BackendErrorCode.unknown),
       );
@@ -266,7 +266,7 @@ class SupabaseStorageAdapter implements IStorageService {
       return const BackendResult.success(null);
     } on StorageException catch (e) {
       return BackendResult.failure(_mapStorageError(e));
-    } catch (e) {
+    } on Object catch (e) {
       return BackendResult.failure(
         BackendError(message: e.toString(), code: BackendErrorCode.unknown),
       );
@@ -293,7 +293,7 @@ class SupabaseStorageAdapter implements IStorageService {
       return const BackendResult.success(null);
     } on StorageException catch (e) {
       return BackendResult.failure(_mapStorageError(e));
-    } catch (e) {
+    } on Object catch (e) {
       return BackendResult.failure(
         BackendError(message: e.toString(), code: BackendErrorCode.unknown),
       );
@@ -313,7 +313,7 @@ class SupabaseStorageAdapter implements IStorageService {
       final exists = files.any((f) => f.name == fileName);
 
       return BackendResult.success(exists);
-    } catch (e) {
+    } on Object {
       return const BackendResult.success(false);
     }
   }
@@ -346,7 +346,7 @@ class SupabaseStorageAdapter implements IStorageService {
       ));
     } on StorageException catch (e) {
       return BackendResult.failure(_mapStorageError(e));
-    } catch (e) {
+    } on Object catch (e) {
       return BackendResult.failure(
         BackendError(message: e.toString(), code: BackendErrorCode.notFound),
       );
@@ -401,7 +401,7 @@ class SupabaseStorageAdapter implements IStorageService {
       return BackendResult.success(items);
     } on StorageException catch (e) {
       return BackendResult.failure(_mapStorageError(e));
-    } catch (e) {
+    } on Object catch (e) {
       return BackendResult.failure(
         BackendError(message: e.toString(), code: BackendErrorCode.unknown),
       );

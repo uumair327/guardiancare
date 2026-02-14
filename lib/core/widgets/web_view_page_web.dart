@@ -1,21 +1,22 @@
 // ignore_for_file: avoid_web_libraries_in_flutter, deprecated_member_use
+import 'dart:html' as html;
+import 'dart:ui_web' as ui_web;
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:guardiancare/core/core.dart';
-import 'dart:html' as html;
-import 'dart:ui_web' as ui_web;
 
 /// Web-specific WebView implementation using iframe
 /// This is used on web platform where webview_flutter is not available
 class WebViewPage extends StatefulWidget {
-  final String url;
-  final String? title;
 
   const WebViewPage({
     super.key,
     required this.url,
     this.title,
   });
+  final String url;
+  final String? title;
 
   @override
   State<WebViewPage> createState() => _WebViewPageState();
@@ -127,21 +128,21 @@ class _WebViewPageState extends State<WebViewPage>
       child: FadeTransition(
         opacity: _headerFadeAnimation,
         child: Container(
-          padding: EdgeInsets.all(AppDimensions.spaceM),
-          decoration: BoxDecoration(
+          padding: const EdgeInsets.all(AppDimensions.spaceM),
+          decoration: const BoxDecoration(
             color: AppColors.videoSurface,
             boxShadow: [
               BoxShadow(
                 color: AppColors.shadowMedium, // 0.2 approx
                 blurRadius: 8,
-                offset: const Offset(0, 2),
+                offset: Offset(0, 2),
               ),
             ],
           ),
           child: Row(
             children: [
               _buildBackButton(),
-              SizedBox(width: AppDimensions.spaceM),
+              const SizedBox(width: AppDimensions.spaceM),
               Expanded(child: _buildTitleSection()),
               _buildMenuButton(),
             ],
@@ -158,7 +159,7 @@ class _WebViewPageState extends State<WebViewPage>
         Navigator.pop(context);
       },
       child: Container(
-        padding: EdgeInsets.all(AppDimensions.spaceS),
+        padding: const EdgeInsets.all(AppDimensions.spaceS),
         decoration: BoxDecoration(
           color: AppColors.white.withValues(alpha: 0.1),
           borderRadius: AppDimensions.borderRadiusM,
@@ -185,7 +186,7 @@ class _WebViewPageState extends State<WebViewPage>
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
         ),
-        SizedBox(height: 2),
+        const SizedBox(height: 2),
         Row(
           children: [
             Icon(
@@ -197,7 +198,7 @@ class _WebViewPageState extends State<WebViewPage>
                   : AppColors.error,
               size: 12,
             ),
-            SizedBox(width: 4),
+            const SizedBox(width: 4),
             Expanded(
               child: Text(
                 _getDomainFromUrl(_currentUrl),
@@ -221,7 +222,7 @@ class _WebViewPageState extends State<WebViewPage>
         _showOptionsMenu();
       },
       child: Container(
-        padding: EdgeInsets.all(AppDimensions.spaceS),
+        padding: const EdgeInsets.all(AppDimensions.spaceS),
         decoration: BoxDecoration(
           color: AppColors.white.withValues(alpha: 0.1),
           borderRadius: AppDimensions.borderRadiusM,
@@ -256,7 +257,7 @@ class _WebViewPageState extends State<WebViewPage>
 
   Widget _buildBottomNavigation() {
     return Container(
-      padding: EdgeInsets.symmetric(
+      padding: const EdgeInsets.symmetric(
         horizontal: AppDimensions.spaceL,
         vertical: AppDimensions.spaceM,
       ),
@@ -314,7 +315,7 @@ class _WebViewPageState extends State<WebViewPage>
       onTap: enabled ? onTap : null,
       enabled: enabled,
       child: Container(
-        padding: EdgeInsets.all(AppDimensions.spaceM),
+        padding: const EdgeInsets.all(AppDimensions.spaceM),
         decoration: BoxDecoration(
           color: enabled
               ? AppColors.white.withValues(alpha: 0.1)
@@ -378,7 +379,7 @@ class _WebViewPageState extends State<WebViewPage>
     try {
       final uri = Uri.parse(url);
       return uri.host;
-    } catch (e) {
+    } on Object {
       return url;
     }
   }
@@ -386,11 +387,6 @@ class _WebViewPageState extends State<WebViewPage>
 
 /// Options bottom sheet for webview
 class _WebViewOptionsSheet extends StatelessWidget {
-  final String currentUrl;
-  final String pageTitle;
-  final VoidCallback onRefresh;
-  final VoidCallback onCopyLink;
-  final VoidCallback onOpenInBrowser;
 
   const _WebViewOptionsSheet({
     required this.currentUrl,
@@ -399,12 +395,17 @@ class _WebViewOptionsSheet extends StatelessWidget {
     required this.onCopyLink,
     required this.onOpenInBrowser,
   });
+  final String currentUrl;
+  final String pageTitle;
+  final VoidCallback onRefresh;
+  final VoidCallback onCopyLink;
+  final VoidCallback onOpenInBrowser;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.all(AppDimensions.spaceM),
-      padding: EdgeInsets.all(AppDimensions.spaceL),
+      margin: const EdgeInsets.all(AppDimensions.spaceM),
+      padding: const EdgeInsets.all(AppDimensions.spaceL),
       decoration: BoxDecoration(
         color: AppColors.videoSurface,
         borderRadius: AppDimensions.borderRadiusXL,
@@ -421,9 +422,9 @@ class _WebViewOptionsSheet extends StatelessWidget {
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
-            SizedBox(height: AppDimensions.spaceL),
+            const SizedBox(height: AppDimensions.spaceL),
             Container(
-              padding: EdgeInsets.all(AppDimensions.spaceM),
+              padding: const EdgeInsets.all(AppDimensions.spaceM),
               decoration: BoxDecoration(
                 color: AppColors.white.withValues(alpha: 0.05),
                 borderRadius: AppDimensions.borderRadiusM,
@@ -431,7 +432,7 @@ class _WebViewOptionsSheet extends StatelessWidget {
               child: Row(
                 children: [
                   Container(
-                    padding: EdgeInsets.all(AppDimensions.spaceS),
+                    padding: const EdgeInsets.all(AppDimensions.spaceS),
                     decoration: BoxDecoration(
                       gradient: const LinearGradient(
                         colors: [
@@ -447,7 +448,7 @@ class _WebViewOptionsSheet extends StatelessWidget {
                       size: 20,
                     ),
                   ),
-                  SizedBox(width: AppDimensions.spaceM),
+                  const SizedBox(width: AppDimensions.spaceM),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -461,7 +462,7 @@ class _WebViewOptionsSheet extends StatelessWidget {
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
-                        SizedBox(height: 2),
+                        const SizedBox(height: 2),
                         Text(
                           currentUrl,
                           style: AppTextStyles.caption.copyWith(
@@ -476,7 +477,7 @@ class _WebViewOptionsSheet extends StatelessWidget {
                 ],
               ),
             ),
-            SizedBox(height: AppDimensions.spaceL),
+            const SizedBox(height: AppDimensions.spaceL),
             _buildOptionItem(
               icon: Icons.refresh_rounded,
               title: 'Refresh page',
@@ -504,14 +505,14 @@ class _WebViewOptionsSheet extends StatelessWidget {
     required VoidCallback onTap,
   }) {
     return Padding(
-      padding: EdgeInsets.only(bottom: AppDimensions.spaceS),
+      padding: const EdgeInsets.only(bottom: AppDimensions.spaceS),
       child: ScaleTapWidget(
         onTap: () {
           HapticFeedback.lightImpact();
           onTap();
         },
         child: Container(
-          padding: EdgeInsets.all(AppDimensions.spaceM),
+          padding: const EdgeInsets.all(AppDimensions.spaceM),
           decoration: BoxDecoration(
             color: AppColors.white.withValues(alpha: 0.05),
             borderRadius: AppDimensions.borderRadiusM,
@@ -523,7 +524,7 @@ class _WebViewOptionsSheet extends StatelessWidget {
                 color: AppColors.white.withValues(alpha: 0.7),
                 size: 22,
               ),
-              SizedBox(width: AppDimensions.spaceM),
+              const SizedBox(width: AppDimensions.spaceM),
               Text(
                 title,
                 style: AppTextStyles.body1.copyWith(

@@ -2,10 +2,6 @@ import 'package:equatable/equatable.dart';
 
 /// Domain entity representing user details for forum display
 class UserDetailsEntity extends Equatable {
-  final String userName;
-  final String userImage;
-  final String userEmail;
-  final String role;
 
   const UserDetailsEntity({
     required this.userName,
@@ -13,6 +9,10 @@ class UserDetailsEntity extends Equatable {
     required this.userEmail,
     required this.role,
   });
+  final String userName;
+  final String userImage;
+  final String userEmail;
+  final String role;
 
   @override
   List<Object?> get props => [userName, userImage, userEmail, role];

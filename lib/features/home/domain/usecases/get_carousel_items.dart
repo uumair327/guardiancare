@@ -7,9 +7,9 @@ import 'package:guardiancare/features/home/domain/repositories/home_repository.d
 /// Use case for getting carousel items
 /// Returns a stream for real-time updates from Firestore
 class GetCarouselItems extends StreamUseCase<List<CarouselItemEntity>, NoParams> {
-  final HomeRepository repository;
 
   GetCarouselItems(this.repository);
+  final HomeRepository repository;
 
   @override
   Stream<Either<Failure, List<CarouselItemEntity>>> call(NoParams params) {

@@ -8,9 +8,9 @@ import 'package:guardiancare/features/report/domain/repositories/report_reposito
 
 /// Implementation of ReportRepository
 class ReportRepositoryImpl implements ReportRepository {
-  final ReportLocalDataSource localDataSource;
 
   ReportRepositoryImpl({required this.localDataSource});
+  final ReportLocalDataSource localDataSource;
 
   @override
   Future<Either<Failure, ReportEntity>> createReport({
@@ -28,11 +28,10 @@ class ReportRepositoryImpl implements ReportRepository {
         caseName: caseName,
         questions: questions,
         answers: answers,
-        isDirty: false,
       );
 
       return Right(report);
-    } catch (e) {
+    } on Object catch (e) {
       return Left(CacheFailure(ErrorStrings.withDetails(ErrorStrings.createReportError, e.toString())));
     }
   }
@@ -47,7 +46,7 @@ class ReportRepositoryImpl implements ReportRepository {
       return Right(report);
     } on CacheException catch (e) {
       return Left(CacheFailure(e.message));
-    } catch (e) {
+    } on Object catch (e) {
       return Left(CacheFailure(ErrorStrings.withDetails(ErrorStrings.loadReportError, e.toString())));
     }
   }
@@ -60,7 +59,7 @@ class ReportRepositoryImpl implements ReportRepository {
       return const Right(null);
     } on CacheException catch (e) {
       return Left(CacheFailure(e.message));
-    } catch (e) {
+    } on Object catch (e) {
       return Left(CacheFailure(ErrorStrings.withDetails(ErrorStrings.saveReportError, e.toString())));
     }
   }
@@ -72,7 +71,7 @@ class ReportRepositoryImpl implements ReportRepository {
       return const Right(null);
     } on CacheException catch (e) {
       return Left(CacheFailure(e.message));
-    } catch (e) {
+    } on Object catch (e) {
       return Left(CacheFailure(ErrorStrings.withDetails(ErrorStrings.deleteReportError, e.toString())));
     }
   }
@@ -84,7 +83,7 @@ class ReportRepositoryImpl implements ReportRepository {
       return Right(reports);
     } on CacheException catch (e) {
       return Left(CacheFailure(e.message));
-    } catch (e) {
+    } on Object catch (e) {
       return Left(CacheFailure(ErrorStrings.withDetails(ErrorStrings.getSavedReportsError, e.toString())));
     }
   }
@@ -96,7 +95,7 @@ class ReportRepositoryImpl implements ReportRepository {
       return Right(exists);
     } on CacheException catch (e) {
       return Left(CacheFailure(e.message));
-    } catch (e) {
+    } on Object catch (e) {
       return Left(
           CacheFailure(ErrorStrings.withDetails(ErrorStrings.checkReportExistenceError, e.toString())));
     }

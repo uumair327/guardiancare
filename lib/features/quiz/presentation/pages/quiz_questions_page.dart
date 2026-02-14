@@ -14,9 +14,9 @@ import 'package:guardiancare/features/quiz/presentation/widgets/widgets.dart';
 /// - Only rendering UI and dispatching events to QuizBloc
 /// - Not containing business logic (scoring, Firestore access, recommendation calls)
 class QuizQuestionsPage extends StatefulWidget {
-  final List<QuestionEntity> questions;
 
   const QuizQuestionsPage({super.key, required this.questions});
+  final List<QuestionEntity> questions;
 
   @override
   State<QuizQuestionsPage> createState() => _QuizQuestionsPageState();
@@ -40,7 +40,7 @@ class _QuizQuestionsPageState extends State<QuizQuestionsPage>
       vsync: this,
       duration: AppDurations.animationMedium,
     );
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+    _fadeAnimation = Tween<double>(begin: 0, end: 1).animate(
       CurvedAnimation(parent: _pageController, curve: Curves.easeOut),
     );
     _pageController.forward();
@@ -89,7 +89,7 @@ class _QuizQuestionsPageState extends State<QuizQuestionsPage>
     return FadeTransition(
       opacity: _fadeAnimation,
       child: SingleChildScrollView(
-        padding: EdgeInsets.all(AppDimensions.screenPaddingH),
+        padding: const EdgeInsets.all(AppDimensions.screenPaddingH),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -98,20 +98,20 @@ class _QuizQuestionsPageState extends State<QuizQuestionsPage>
               currentQuestion: currentQuestionIndex + 1,
               totalQuestions: widget.questions.length,
             ),
-            SizedBox(height: AppDimensions.spaceL),
+            const SizedBox(height: AppDimensions.spaceL),
             // Question card
             QuestionCard(
               question: question.question,
               questionNumber: currentQuestionIndex + 1,
               totalQuestions: widget.questions.length,
             ),
-            SizedBox(height: AppDimensions.spaceL),
+            const SizedBox(height: AppDimensions.spaceL),
             // Options
             ..._buildOptions(question),
-            SizedBox(height: AppDimensions.spaceXL),
+            const SizedBox(height: AppDimensions.spaceXL),
             // Navigation buttons
             _buildNavigationButtons(isLastQuestion, l10n),
-            SizedBox(height: AppDimensions.spaceL),
+            const SizedBox(height: AppDimensions.spaceL),
           ],
         ),
       ),
@@ -125,7 +125,7 @@ class _QuizQuestionsPageState extends State<QuizQuestionsPage>
     return List.generate(options.length, (index) {
       final delay = Duration(milliseconds: 100 + (index * 50));
       return Padding(
-        padding: EdgeInsets.only(bottom: AppDimensions.spaceM),
+        padding: const EdgeInsets.only(bottom: AppDimensions.spaceM),
         child: FadeSlideWidget(
           delay: delay,
           child: OptionCard(
@@ -155,7 +155,7 @@ class _QuizQuestionsPageState extends State<QuizQuestionsPage>
             child: ScaleTapWidget(
               onTap: _goToPreviousQuestion,
               child: Container(
-                padding: EdgeInsets.symmetric(vertical: AppDimensions.spaceM),
+                padding: const EdgeInsets.symmetric(vertical: AppDimensions.spaceM),
                 decoration: BoxDecoration(
                   border: Border.all(
                     color: context.colors.primary,
@@ -172,7 +172,7 @@ class _QuizQuestionsPageState extends State<QuizQuestionsPage>
                         color: context.colors.primary,
                         size: AppDimensions.iconS,
                       ),
-                      SizedBox(width: AppDimensions.spaceS),
+                      const SizedBox(width: AppDimensions.spaceS),
                       Text(
                         l10n.previous,
                         style: AppTextStyles.button.copyWith(
@@ -186,7 +186,7 @@ class _QuizQuestionsPageState extends State<QuizQuestionsPage>
             ),
           ),
         if (currentQuestionIndex > 0 && !showFeedback)
-          SizedBox(width: AppDimensions.spaceM),
+          const SizedBox(width: AppDimensions.spaceM),
         // Submit/Next button
         Expanded(
           flex: currentQuestionIndex > 0 && !showFeedback ? 1 : 2,
@@ -200,7 +200,7 @@ class _QuizQuestionsPageState extends State<QuizQuestionsPage>
                       ? _goToNextQuestion
                       : _submitAnswer,
               child: Container(
-                padding: EdgeInsets.symmetric(vertical: AppDimensions.spaceM),
+                padding: const EdgeInsets.symmetric(vertical: AppDimensions.spaceM),
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
@@ -230,7 +230,7 @@ class _QuizQuestionsPageState extends State<QuizQuestionsPage>
                             : l10n.submit,
                         style: AppTextStyles.button,
                       ),
-                      SizedBox(width: AppDimensions.spaceS),
+                      const SizedBox(width: AppDimensions.spaceS),
                       Icon(
                         showFeedback
                             ? (isLastQuestion
@@ -324,20 +324,20 @@ class _QuizQuestionsPageState extends State<QuizQuestionsPage>
     return BlocBuilder<QuizBloc, QuizState>(
       builder: (context, state) {
         return SingleChildScrollView(
-          padding: EdgeInsets.all(AppDimensions.screenPaddingH),
+          padding: const EdgeInsets.all(AppDimensions.screenPaddingH),
           child: Column(
             children: [
-              SizedBox(height: AppDimensions.spaceL),
+              const SizedBox(height: AppDimensions.spaceL),
               // Result card
               ResultCard(
                 correctAnswers: correctAnswers,
                 totalQuestions: widget.questions.length,
                 onBack: () => Navigator.pop(context),
               ),
-              SizedBox(height: AppDimensions.spaceL),
+              const SizedBox(height: AppDimensions.spaceL),
               // Recommendations status
               _buildRecommendationsStatus(state),
-              SizedBox(height: AppDimensions.spaceL),
+              const SizedBox(height: AppDimensions.spaceL),
             ],
           ),
         );
@@ -382,7 +382,7 @@ class _QuizQuestionsPageState extends State<QuizQuestionsPage>
     return FadeSlideWidget(
       delay: const Duration(milliseconds: 300),
       child: Container(
-        padding: EdgeInsets.all(AppDimensions.spaceL),
+        padding: const EdgeInsets.all(AppDimensions.spaceL),
         decoration: BoxDecoration(
           color: context.colors.surface,
           borderRadius: AppDimensions.borderRadiusL,
@@ -393,7 +393,7 @@ class _QuizQuestionsPageState extends State<QuizQuestionsPage>
         child: Row(
           children: [
             Container(
-              padding: EdgeInsets.all(AppDimensions.spaceM),
+              padding: const EdgeInsets.all(AppDimensions.spaceM),
               decoration: BoxDecoration(
                 color: iconColor.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
@@ -410,7 +410,7 @@ class _QuizQuestionsPageState extends State<QuizQuestionsPage>
                     )
                   : Icon(icon, color: iconColor, size: AppDimensions.iconM),
             ),
-            SizedBox(width: AppDimensions.spaceM),
+            const SizedBox(width: AppDimensions.spaceM),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -422,7 +422,7 @@ class _QuizQuestionsPageState extends State<QuizQuestionsPage>
                       color: context.colors.textPrimary,
                     ),
                   ),
-                  SizedBox(height: AppDimensions.spaceXS),
+                  const SizedBox(height: AppDimensions.spaceXS),
                   Text(
                     subtitle,
                     style: AppTextStyles.bodySmall.copyWith(

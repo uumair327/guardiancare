@@ -47,7 +47,7 @@ class FirebaseStorageAdapter implements IStorageService {
       return BackendResult.success(downloadUrl);
     } on fbs.FirebaseException catch (e) {
       return BackendResult.failure(_mapStorageError(e));
-    } catch (e, st) {
+    } on Exception catch (e, st) {
       return BackendResult.failure(BackendError.fromException(e, st));
     }
   }
@@ -62,7 +62,7 @@ class FirebaseStorageAdapter implements IStorageService {
   }) async {
     // This requires dart:io which is not available on web
     // For cross-platform, use upload() with Uint8List instead
-    return BackendResult.failure(const BackendError(
+    return const BackendResult.failure(BackendError(
       code: BackendErrorCode.invalidData,
       message:
           'uploadFile not supported on this platform. Use upload() instead.',
@@ -96,7 +96,7 @@ class FirebaseStorageAdapter implements IStorageService {
       return BackendResult.success(downloadUrl);
     } on fbs.FirebaseException catch (e) {
       return BackendResult.failure(_mapStorageError(e));
-    } catch (e, st) {
+    } on Exception catch (e, st) {
       return BackendResult.failure(BackendError.fromException(e, st));
     }
   }
@@ -117,7 +117,7 @@ class FirebaseStorageAdapter implements IStorageService {
       final ref = _storage.ref(path);
       final data = await ref.getData();
       if (data == null) {
-        return BackendResult.failure(const BackendError(
+        return const BackendResult.failure(BackendError(
           code: BackendErrorCode.notFound,
           message: 'File not found',
         ));
@@ -125,7 +125,7 @@ class FirebaseStorageAdapter implements IStorageService {
       return BackendResult.success(data);
     } on fbs.FirebaseException catch (e) {
       return BackendResult.failure(_mapStorageError(e));
-    } catch (e, st) {
+    } on Exception catch (e, st) {
       return BackendResult.failure(BackendError.fromException(e, st));
     }
   }
@@ -138,7 +138,7 @@ class FirebaseStorageAdapter implements IStorageService {
       return BackendResult.success(url);
     } on fbs.FirebaseException catch (e) {
       return BackendResult.failure(_mapStorageError(e));
-    } catch (e, st) {
+    } on Exception catch (e, st) {
       return BackendResult.failure(BackendError.fromException(e, st));
     }
   }
@@ -156,8 +156,8 @@ class FirebaseStorageAdapter implements IStorageService {
         totalBytes: totalBytes,
         data: data,
       );
-    } catch (e) {
-      yield DownloadProgress(
+    } on Object {
+      yield const DownloadProgress(
         bytesDownloaded: 0,
         totalBytes: -1,
       );
@@ -172,7 +172,7 @@ class FirebaseStorageAdapter implements IStorageService {
       return const BackendResult.success(null);
     } on fbs.FirebaseException catch (e) {
       return BackendResult.failure(_mapStorageError(e));
-    } catch (e, st) {
+    } on Exception catch (e, st) {
       return BackendResult.failure(BackendError.fromException(e, st));
     }
   }
@@ -186,7 +186,7 @@ class FirebaseStorageAdapter implements IStorageService {
       // Firebase Storage doesn't have native move, so copy then delete
       final data = await _storage.ref(fromPath).getData();
       if (data == null) {
-        return BackendResult.failure(const BackendError(
+        return const BackendResult.failure(BackendError(
           code: BackendErrorCode.notFound,
           message: 'Source file not found',
         ));
@@ -198,7 +198,7 @@ class FirebaseStorageAdapter implements IStorageService {
       return const BackendResult.success(null);
     } on fbs.FirebaseException catch (e) {
       return BackendResult.failure(_mapStorageError(e));
-    } catch (e, st) {
+    } on Exception catch (e, st) {
       return BackendResult.failure(BackendError.fromException(e, st));
     }
   }
@@ -211,7 +211,7 @@ class FirebaseStorageAdapter implements IStorageService {
     try {
       final data = await _storage.ref(fromPath).getData();
       if (data == null) {
-        return BackendResult.failure(const BackendError(
+        return const BackendResult.failure(BackendError(
           code: BackendErrorCode.notFound,
           message: 'Source file not found',
         ));
@@ -221,7 +221,7 @@ class FirebaseStorageAdapter implements IStorageService {
       return const BackendResult.success(null);
     } on fbs.FirebaseException catch (e) {
       return BackendResult.failure(_mapStorageError(e));
-    } catch (e, st) {
+    } on Exception catch (e, st) {
       return BackendResult.failure(BackendError.fromException(e, st));
     }
   }
@@ -236,7 +236,7 @@ class FirebaseStorageAdapter implements IStorageService {
         return const BackendResult.success(false);
       }
       return BackendResult.failure(_mapStorageError(e));
-    } catch (e, st) {
+    } on Exception catch (e, st) {
       return BackendResult.failure(BackendError.fromException(e, st));
     }
   }
@@ -261,7 +261,7 @@ class FirebaseStorageAdapter implements IStorageService {
       ));
     } on fbs.FirebaseException catch (e) {
       return BackendResult.failure(_mapStorageError(e));
-    } catch (e, st) {
+    } on Exception catch (e, st) {
       return BackendResult.failure(BackendError.fromException(e, st));
     }
   }
@@ -278,7 +278,7 @@ class FirebaseStorageAdapter implements IStorageService {
       return const BackendResult.success(null);
     } on fbs.FirebaseException catch (e) {
       return BackendResult.failure(_mapStorageError(e));
-    } catch (e, st) {
+    } on Exception catch (e, st) {
       return BackendResult.failure(BackendError.fromException(e, st));
     }
   }
@@ -322,7 +322,7 @@ class FirebaseStorageAdapter implements IStorageService {
       return BackendResult.success(items);
     } on fbs.FirebaseException catch (e) {
       return BackendResult.failure(_mapStorageError(e));
-    } catch (e, st) {
+    } on Exception catch (e, st) {
       return BackendResult.failure(BackendError.fromException(e, st));
     }
   }
@@ -356,7 +356,7 @@ class FirebaseStorageAdapter implements IStorageService {
       return BackendResult.success(items);
     } on fbs.FirebaseException catch (e) {
       return BackendResult.failure(_mapStorageError(e));
-    } catch (e, st) {
+    } on Exception catch (e, st) {
       return BackendResult.failure(BackendError.fromException(e, st));
     }
   }

@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:flutter_test/flutter_test.dart' hide test, group, setUp, tearDown, expect;
 import 'package:glados/glados.dart';
 
 /// **Feature: clean-architecture-audit-fix, Property 2: Import Path Correctness**
@@ -17,38 +16,38 @@ import 'package:glados/glados.dart';
 
 /// Represents a Dart file with its path and imports
 class DartFile {
-  final String path;
-  final String content;
-  final List<String> imports;
 
   DartFile({
     required this.path,
     required this.content,
     required this.imports,
   });
+  final String path;
+  final String content;
+  final List<String> imports;
 
   /// Checks if any import references the old services folder
   /// Old services folder pattern: 'features/quiz/services/' but NOT
   /// 'features/quiz/domain/services/' or 'features/quiz/data/services/'
   bool get hasOldServicesImport {
-    return imports.any((import) => _isOldServicesImport(import));
+    return imports.any(_isOldServicesImport);
   }
 
   /// Returns list of imports that reference the old services folder
   List<String> get oldServicesImports {
-    return imports.where((import) => _isOldServicesImport(import)).toList();
+    return imports.where(_isOldServicesImport).toList();
   }
 
   /// Checks if an import references the old services folder
   static bool _isOldServicesImport(String import) {
     // Normalize path separators for cross-platform compatibility
-    final normalizedImport = import.replaceAll('\\', '/');
+    final normalizedImport = import.replaceAll(r'\', '/');
     
     // Pattern for old services folder: features/quiz/services/
     // This should NOT match: features/quiz/domain/services/ or features/quiz/data/services/
-    final oldServicesPattern = RegExp(r'features/quiz/services/');
-    final domainServicesPattern = RegExp(r'features/quiz/domain/services/');
-    final dataServicesPattern = RegExp(r'features/quiz/data/services/');
+    final oldServicesPattern = RegExp('features/quiz/services/');
+    final domainServicesPattern = RegExp('features/quiz/domain/services/');
+    final dataServicesPattern = RegExp('features/quiz/data/services/');
 
     // Check if it matches old services but NOT domain or data services
     return oldServicesPattern.hasMatch(normalizedImport) &&
@@ -127,7 +126,7 @@ void main() {
     // Validates: Requirements 1.5, 4.4
     // ========================================================================
     if (allDartFiles.isNotEmpty) {
-      Glados(any.dartFileIndex(allDartFiles.length), ExploreConfig(numRuns: 100))
+      Glados(any.dartFileIndex(allDartFiles.length), ExploreConfig())
           .test(
         'For any Dart file, it SHALL NOT import from old quiz services folder',
         (index) {
@@ -148,7 +147,7 @@ void main() {
     // Validates: Requirements 1.5, 4.4
     // ========================================================================
     if (filesWithQuizImports.isNotEmpty) {
-      Glados(any.dartFileIndex(filesWithQuizImports.length), ExploreConfig(numRuns: 100))
+      Glados(any.dartFileIndex(filesWithQuizImports.length), ExploreConfig())
           .test(
         'For any file importing quiz services, imports SHALL use domain or data layer paths',
         (index) {
@@ -193,7 +192,7 @@ void main() {
       for (final file in filesWithQuizImports) {
         for (final import in file.imports) {
           if (import.contains('quiz') && import.contains('services')) {
-            final normalizedImport = import.replaceAll('\\', '/');
+            final normalizedImport = import.replaceAll(r'\', '/');
             
             // If it's a quiz services import, it must be from domain or data
             final isValidPath = 
@@ -215,7 +214,7 @@ void main() {
 
     test('Injection container should import services from correct locations', () {
       final injectionContainerFiles = allDartFiles
-          .where((f) => f.path.replaceAll('\\', '/').contains('injection_container'))
+          .where((f) => f.path.replaceAll(r'\', '/').contains('injection_container'))
           .toList();
 
       for (final file in injectionContainerFiles) {
@@ -236,7 +235,7 @@ void main() {
   // ==========================================================================
   group('Import Path Correctness - Edge Cases', () {
     test('Empty lib directory should not cause errors', () {
-      expect(() => collectAllDartFiles(), returnsNormally);
+      expect(collectAllDartFiles, returnsNormally);
     });
 
     test('Dart files count should be greater than zero', () {

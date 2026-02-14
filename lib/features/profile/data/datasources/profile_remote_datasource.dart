@@ -21,9 +21,6 @@ abstract class ProfileRemoteDataSource {
 
 /// Implementation of ProfileRemoteDataSource using IDataStore and IAuthService
 class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
-  final IDataStore _dataStore;
-  final IAuthService _authService;
-  final SharedPreferences _sharedPreferences;
 
   ProfileRemoteDataSourceImpl({
     required IDataStore dataStore,
@@ -32,6 +29,9 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
   })  : _dataStore = dataStore,
         _authService = authService,
         _sharedPreferences = sharedPreferences;
+  final IDataStore _dataStore;
+  final IAuthService _authService;
+  final SharedPreferences _sharedPreferences;
 
   @override
   Future<ProfileModel> getProfile(String uid) async {
@@ -41,7 +41,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
       return result.when(
         success: (data) {
           if (data == null) {
-            throw ServerException(ErrorStrings.userNotFound);
+            throw const ServerException(ErrorStrings.userNotFound);
           }
           return ProfileModel.fromJson(data);
         },
@@ -50,7 +50,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
               ErrorStrings.getProfileError, error.message));
         },
       );
-    } catch (e) {
+    } on Object catch (e) {
       if (e is ServerException) rethrow;
       throw ServerException(
           ErrorStrings.withDetails(ErrorStrings.getProfileError, e.toString()));
@@ -67,7 +67,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
         throw ServerException(ErrorStrings.withDetails(
             ErrorStrings.updateProfileError, result.errorOrNull!.message));
       }
-    } catch (e) {
+    } on Object catch (e) {
       if (e is ServerException) rethrow;
       throw ServerException(ErrorStrings.withDetails(
           ErrorStrings.updateProfileError, e.toString()));
@@ -79,7 +79,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
     try {
       final user = _authService.currentUser;
       if (user == null) {
-        throw ServerException(ErrorStrings.userNotFound);
+        throw const ServerException(ErrorStrings.userNotFound);
       }
 
       // Delete user's recommendations
@@ -90,7 +90,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
           await _dataStore.query('recommendations', options: queryOptions);
 
       if (recsResult.isSuccess && recsResult.dataOrNull != null) {
-        for (var doc in recsResult.dataOrNull!) {
+        for (final doc in recsResult.dataOrNull!) {
           final docId = doc['id'] as String;
           await _dataStore.delete('recommendations', docId);
         }
@@ -107,7 +107,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
             ErrorStrings.deleteAccountError,
             deleteResult.errorOrNull!.message));
       }
-    } catch (e) {
+    } on Object catch (e) {
       if (e is ServerException) rethrow;
       throw ServerException(ErrorStrings.withDetails(
           ErrorStrings.deleteAccountError, e.toString()));
@@ -118,7 +118,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
   Future<void> clearUserPreferences() async {
     try {
       await _sharedPreferences.remove('has_seen_forum_guidelines');
-    } catch (e) {
+    } on Object catch (e) {
       throw CacheException(ErrorStrings.withDetails(
           ErrorStrings.clearPreferencesError, e.toString()));
     }

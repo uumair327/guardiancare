@@ -24,7 +24,7 @@ class AppPageTransitions {
       reverseTransitionDuration: duration,
       pageBuilder: (context, animation, secondaryAnimation) => page,
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
-        final fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+        final fadeAnimation = Tween<double>(begin: 0, end: 1).animate(
           CurvedAnimation(parent: animation, curve: AppCurves.pageEnter),
         );
         
@@ -56,11 +56,11 @@ class AppPageTransitions {
       reverseTransitionDuration: duration,
       pageBuilder: (context, animation, secondaryAnimation) => page,
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
-        final fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+        final fadeAnimation = Tween<double>(begin: 0, end: 1).animate(
           CurvedAnimation(parent: animation, curve: AppCurves.pageEnter),
         );
         
-        final scaleAnimation = Tween<double>(begin: 0.95, end: 1.0).animate(
+        final scaleAnimation = Tween<double>(begin: 0.95, end: 1).animate(
           CurvedAnimation(parent: animation, curve: AppCurves.pageEnter),
         );
 
@@ -88,11 +88,11 @@ class AppPageTransitions {
       pageBuilder: (context, animation, secondaryAnimation) => page,
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
         final slideAnimation = Tween<Offset>(
-          begin: const Offset(1.0, 0),
+          begin: const Offset(1, 0),
           end: Offset.zero,
         ).animate(CurvedAnimation(parent: animation, curve: AppCurves.pageEnter));
 
-        final fadeAnimation = Tween<double>(begin: 0.5, end: 1.0).animate(
+        final fadeAnimation = Tween<double>(begin: 0.5, end: 1).animate(
           CurvedAnimation(parent: animation, curve: AppCurves.pageEnter),
         );
 
@@ -119,14 +119,14 @@ class AppPageTransitions {
       reverseTransitionDuration: duration,
       pageBuilder: (context, animation, secondaryAnimation) => page,
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
-        final rotateAnimation = Tween<double>(begin: 0.5, end: 0.0).animate(
+        final rotateAnimation = Tween<double>(begin: 0.5, end: 0).animate(
           CurvedAnimation(parent: animation, curve: AppCurves.rotate3D),
         );
 
-        final fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+        final fadeAnimation = Tween<double>(begin: 0, end: 1).animate(
           CurvedAnimation(
             parent: animation,
-            curve: const Interval(0.5, 1.0, curve: Curves.easeOut),
+            curve: const Interval(0.5, 1, curve: Curves.easeOut),
           ),
         );
 
@@ -162,10 +162,10 @@ class AppPageTransitions {
       reverseTransitionDuration: duration,
       pageBuilder: (context, animation, secondaryAnimation) => page,
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
-        final fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+        final fadeAnimation = Tween<double>(begin: 0, end: 1).animate(
           CurvedAnimation(
             parent: animation,
-            curve: const Interval(0.0, 0.5, curve: Curves.easeOut),
+            curve: const Interval(0, 0.5, curve: Curves.easeOut),
           ),
         );
 
@@ -181,7 +181,7 @@ class AppPageTransitions {
             return FadeTransition(
               opacity: fadeAnimation,
               child: ScaleTransition(
-                scale: Tween<double>(begin: 0.8, end: 1.0).animate(
+                scale: Tween<double>(begin: 0.8, end: 1).animate(
                   CurvedAnimation(parent: animation, curve: AppCurves.pageEnter),
                 ),
                 child: child,
@@ -210,14 +210,14 @@ enum SharedAxisDirection { horizontal, vertical, scaled }
 
 /// Custom page route with hero animation support
 class HeroPageRoute<T> extends PageRoute<T> {
-  final Widget page;
-  final String? heroTag;
 
   HeroPageRoute({
     required this.page,
     this.heroTag,
     super.settings,
   });
+  final Widget page;
+  final String? heroTag;
 
   @override
   Color? get barrierColor => null;

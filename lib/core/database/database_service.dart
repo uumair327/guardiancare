@@ -1,13 +1,13 @@
-import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
+import 'package:sqflite/sqflite.dart';
 
 /// Industrial-grade SQLite database service
 /// Handles all SQL database operations with proper error handling and migrations
 class DatabaseService {
-  static final DatabaseService instance = DatabaseService._internal();
-  static Database? _database;
 
   DatabaseService._internal();
+  static final DatabaseService instance = DatabaseService._internal();
+  static Database? _database;
 
   /// Get database instance (singleton pattern)
   Future<Database> get database async {
@@ -33,7 +33,7 @@ class DatabaseService {
     try {
       await db.rawQuery('PRAGMA journal_mode = WAL');
       await db.rawQuery('PRAGMA synchronous = NORMAL');
-    } catch (e) {
+    } on Object catch (e) {
       print('Warning: Could not set WAL mode: $e');
     }
     

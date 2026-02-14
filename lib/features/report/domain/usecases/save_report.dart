@@ -6,12 +6,12 @@ import 'package:guardiancare/features/report/domain/repositories/report_reposito
 
 /// Use case for saving a report
 class SaveReport implements UseCase<void, ReportEntity> {
-  final ReportRepository repository;
 
   SaveReport(this.repository);
+  final ReportRepository repository;
 
   @override
   Future<Either<Failure, void>> call(ReportEntity report) async {
-    return await repository.saveReport(report);
+    return repository.saveReport(report);
   }
 }

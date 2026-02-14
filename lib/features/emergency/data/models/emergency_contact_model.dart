@@ -9,6 +9,16 @@ class EmergencyContactModel extends EmergencyContactEntity {
     super.description,
   });
 
+  /// Create EmergencyContactModel from EmergencyContactEntity
+  factory EmergencyContactModel.fromEntity(EmergencyContactEntity entity) {
+    return EmergencyContactModel(
+      name: entity.name,
+      number: entity.number,
+      category: entity.category,
+      description: entity.description,
+    );
+  }
+
   /// Create EmergencyContactModel from JSON
   factory EmergencyContactModel.fromJson(Map<String, dynamic> json) {
     return EmergencyContactModel(
@@ -27,15 +37,5 @@ class EmergencyContactModel extends EmergencyContactEntity {
       'category': category,
       'description': description,
     };
-  }
-
-  /// Create EmergencyContactModel from EmergencyContactEntity
-  factory EmergencyContactModel.fromEntity(EmergencyContactEntity entity) {
-    return EmergencyContactModel(
-      name: entity.name,
-      number: entity.number,
-      category: entity.category,
-      description: entity.description,
-    );
   }
 }

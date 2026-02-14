@@ -137,6 +137,9 @@ abstract interface class IAuthService {
     required String password,
   });
 
+  /// Reload user data (e.g. email verification status)
+  Future<BackendResult<void>> reload();
+
   /// Re-authenticate with OAuth
   Future<BackendResult<void>> reauthenticateWithOAuth(OAuthProvider provider);
 }

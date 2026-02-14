@@ -17,9 +17,9 @@ class AuthLoading extends AuthState {
 }
 
 class AuthAuthenticated extends AuthState {
-  final UserEntity user;
 
   const AuthAuthenticated(this.user);
+  final UserEntity user;
 
   @override
   List<Object> get props => [user];
@@ -30,10 +30,10 @@ class AuthUnauthenticated extends AuthState {
 }
 
 class AuthError extends AuthState {
-  final String message;
-  final String? code;
 
   const AuthError(this.message, {this.code});
+  final String message;
+  final String? code;
 
   @override
   List<Object?> get props => [message, code];
@@ -41,4 +41,8 @@ class AuthError extends AuthState {
 
 class PasswordResetEmailSent extends AuthState {
   const PasswordResetEmailSent();
+}
+
+class EmailVerificationSent extends AuthState {
+  const EmailVerificationSent();
 }

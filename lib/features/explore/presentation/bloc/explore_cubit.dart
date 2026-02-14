@@ -5,16 +5,16 @@ import 'package:guardiancare/features/explore/domain/usecases/get_resources.dart
 import 'package:guardiancare/features/explore/presentation/bloc/explore_state.dart';
 
 class ExploreCubit extends Cubit<ExploreState> {
-  final GetRecommendations getRecommendations;
-  final GetResources getResources;
-
-  StreamSubscription? _recommendationsSubscription;
-  StreamSubscription? _resourcesSubscription;
 
   ExploreCubit({
     required this.getRecommendations,
     required this.getResources,
   }) : super(ExploreInitial());
+  final GetRecommendations getRecommendations;
+  final GetResources getResources;
+
+  StreamSubscription? _recommendationsSubscription;
+  StreamSubscription? _resourcesSubscription;
 
   void loadRecommendations(String userId) {
     emit(ExploreLoading());

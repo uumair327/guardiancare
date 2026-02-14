@@ -1,13 +1,6 @@
 import 'package:equatable/equatable.dart';
 
 class Resource extends Equatable {
-  final String id;
-  final String title;
-  final String? description;
-  final String? url;
-  final String? type;
-  final String? category;
-  final DateTime? timestamp;
 
   const Resource({
     required this.id,
@@ -18,6 +11,13 @@ class Resource extends Equatable {
     this.category,
     this.timestamp,
   });
+  final String id;
+  final String title;
+  final String? description;
+  final String? url;
+  final String? type;
+  final String? category;
+  final DateTime? timestamp;
 
   @override
   List<Object?> get props => [

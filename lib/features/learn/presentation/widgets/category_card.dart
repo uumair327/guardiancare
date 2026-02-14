@@ -7,9 +7,6 @@ import 'package:guardiancare/features/learn/domain/entities/category_entity.dart
 /// Modern category card with 3D effect and animations
 /// Education-friendly design with vibrant colors and clear typography
 class CategoryCard extends StatefulWidget {
-  final CategoryEntity category;
-  final VoidCallback onTap;
-  final int index;
 
   const CategoryCard({
     super.key,
@@ -17,6 +14,9 @@ class CategoryCard extends StatefulWidget {
     required this.onTap,
     this.index = 0,
   });
+  final CategoryEntity category;
+  final VoidCallback onTap;
+  final int index;
 
   @override
   State<CategoryCard> createState() => _CategoryCardState();
@@ -39,7 +39,7 @@ class _CategoryCardState extends State<CategoryCard>
       duration: AppDurations.animationShort,
     );
 
-    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.95).animate(
+    _scaleAnimation = Tween<double>(begin: 1, end: 0.95).animate(
       CurvedAnimation(parent: _controller, curve: AppCurves.tap),
     );
   }
@@ -180,7 +180,7 @@ class _CategoryCardState extends State<CategoryCard>
                     children: [
                       // Category icon
                       Container(
-                        padding: EdgeInsets.all(AppDimensions.spaceS),
+                        padding: const EdgeInsets.all(AppDimensions.spaceS),
                         decoration: BoxDecoration(
                           color: AppColors.white.withValues(alpha: 0.2),
                           borderRadius: AppDimensions.borderRadiusS,
@@ -191,7 +191,7 @@ class _CategoryCardState extends State<CategoryCard>
                           size: AppDimensions.iconM,
                         ),
                       ),
-                      SizedBox(height: AppDimensions.spaceS),
+                      const SizedBox(height: AppDimensions.spaceS),
                       // Category name
                       Text(
                         widget.category.name,
@@ -208,7 +208,7 @@ class _CategoryCardState extends State<CategoryCard>
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
-                      SizedBox(height: AppDimensions.spaceXS),
+                      const SizedBox(height: AppDimensions.spaceXS),
                       // Tap to explore hint
                       Row(
                         children: [
@@ -218,7 +218,7 @@ class _CategoryCardState extends State<CategoryCard>
                               color: AppColors.white.withValues(alpha: 0.8),
                             ),
                           ),
-                          SizedBox(width: AppDimensions.spaceXS),
+                          const SizedBox(width: AppDimensions.spaceXS),
                           Icon(
                             Icons.arrow_forward_rounded,
                             color: AppColors.white.withValues(alpha: 0.8),
@@ -237,7 +237,7 @@ class _CategoryCardState extends State<CategoryCard>
                     duration: AppDurations.animationShort,
                     opacity: _isPressed ? 0.6 : 1.0,
                     child: Container(
-                      padding: EdgeInsets.all(AppDimensions.spaceS),
+                      padding: const EdgeInsets.all(AppDimensions.spaceS),
                       decoration: BoxDecoration(
                         color: AppColors.white.withValues(alpha: 0.9),
                         shape: BoxShape.circle,

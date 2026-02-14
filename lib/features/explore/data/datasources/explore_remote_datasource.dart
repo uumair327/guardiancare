@@ -8,10 +8,10 @@ abstract class ExploreRemoteDataSource {
 }
 
 class ExploreRemoteDataSourceImpl implements ExploreRemoteDataSource {
-  final IDataStore _dataStore;
 
   ExploreRemoteDataSourceImpl({required IDataStore dataStore})
       : _dataStore = dataStore;
+  final IDataStore _dataStore;
 
   @override
   Stream<List<RecommendationModel>> getRecommendations(String userId) {
@@ -25,7 +25,7 @@ class ExploreRemoteDataSourceImpl implements ExploreRemoteDataSource {
         .map((result) {
       return result.when(
         success: (docs) =>
-            docs.map((doc) => RecommendationModel.fromMap(doc)).toList(),
+            docs.map(RecommendationModel.fromMap).toList(),
         failure: (error) {
           // Provide feedback or log error? Returning empty list for now matching safe stream behavior
           return <RecommendationModel>[];
@@ -39,7 +39,7 @@ class ExploreRemoteDataSourceImpl implements ExploreRemoteDataSource {
     return _dataStore.streamQuery('resources').map((result) {
       return result.when(
         success: (docs) =>
-            docs.map((doc) => ResourceModel.fromMap(doc)).toList(),
+            docs.map(ResourceModel.fromMap).toList(),
         failure: (error) => <ResourceModel>[],
       );
     });

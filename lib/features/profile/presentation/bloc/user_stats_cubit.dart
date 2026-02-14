@@ -1,5 +1,5 @@
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:guardiancare/features/profile/domain/entities/user_stats_entity.dart';
 import 'package:guardiancare/features/profile/domain/usecases/get_user_stats.dart';
 
@@ -8,9 +8,9 @@ import 'package:guardiancare/features/profile/domain/usecases/get_user_stats.dar
 /// Separated from ProfileBloc following Single Responsibility Principle.
 /// Handles quiz, video, and badge statistics independently.
 class UserStatsCubit extends Cubit<UserStatsState> {
-  final GetUserStats? getUserStats;
 
   UserStatsCubit({this.getUserStats}) : super(UserStatsInitial());
+  final GetUserStats? getUserStats;
 
   /// Load user statistics for the given user ID
   Future<void> loadStats(String userId) async {
@@ -50,9 +50,9 @@ class UserStatsLoading extends UserStatsState {}
 
 /// Stats loaded successfully
 class UserStatsLoaded extends UserStatsState {
-  final UserStatsEntity stats;
 
   const UserStatsLoaded(this.stats);
+  final UserStatsEntity stats;
 
   @override
   List<Object?> get props => [stats];
@@ -60,9 +60,9 @@ class UserStatsLoaded extends UserStatsState {
 
 /// Error state when loading fails
 class UserStatsError extends UserStatsState {
-  final String message;
 
   const UserStatsError(this.message);
+  final String message;
 
   @override
   List<Object?> get props => [message];

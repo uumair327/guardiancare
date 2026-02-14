@@ -1,8 +1,8 @@
 import 'package:flutter/foundation.dart' show debugPrint;
-import 'package:guardiancare/core/database/preferences_storage_service.dart';
-import 'package:guardiancare/core/database/hive_storage_service.dart';
-import 'package:guardiancare/core/database/sqlite_storage_service.dart';
 import 'package:guardiancare/core/database/daos/daos.dart';
+import 'package:guardiancare/core/database/hive_storage_service.dart';
+import 'package:guardiancare/core/database/preferences_storage_service.dart';
+import 'package:guardiancare/core/database/sqlite_storage_service.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 /// Unified Storage Manager
@@ -18,9 +18,9 @@ import 'package:hive_flutter/hive_flutter.dart';
 /// Follows Single Responsibility Principle by only orchestrating
 /// storage services without implementing storage logic directly.
 class StorageManager {
-  static final StorageManager instance = StorageManager._internal();
   
   StorageManager._internal();
+  static final StorageManager instance = StorageManager._internal();
 
   // Storage Services
   final PreferencesStorageServiceImpl _prefsService = PreferencesStorageServiceImpl();
@@ -57,7 +57,7 @@ class StorageManager {
 
       _initialized = true;
       debugPrint('✅ Storage Manager initialized successfully');
-    } catch (e) {
+    } on Object catch (e) {
       debugPrint('❌ Storage Manager initialization failed: $e');
       rethrow;
     }
@@ -69,7 +69,7 @@ class StorageManager {
 
   /// Save simple setting
   Future<bool> saveSetting(String key, dynamic value) async {
-    return await _prefsService.saveSetting(key, value);
+    return _prefsService.saveSetting(key, value);
   }
 
   /// Get simple setting
@@ -79,7 +79,7 @@ class StorageManager {
 
   /// Remove setting
   Future<bool> removeSetting(String key) async {
-    return await _prefsService.removeSetting(key);
+    return _prefsService.removeSetting(key);
   }
 
   // ============================================================================
@@ -162,7 +162,7 @@ class StorageManager {
   
   /// Get video watch statistics (helper method)
   Future<Map<String, dynamic>> getVideoWatchStatistics(String userId) async {
-    return await _sqliteService.getVideoWatchStatistics(userId);
+    return _sqliteService.getVideoWatchStatistics(userId);
   }
 
   /// Watch for changes in a Hive box

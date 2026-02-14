@@ -4,14 +4,6 @@ import 'package:guardiancare/core/core.dart';
 
 /// Modern animated menu item for profile settings
 class ProfileMenuItem extends StatefulWidget {
-  final IconData icon;
-  final String title;
-  final String? subtitle;
-  final VoidCallback? onTap;
-  final Color? iconColor;
-  final bool showArrow;
-  final bool isDanger;
-  final Widget? trailing;
 
   const ProfileMenuItem({
     super.key,
@@ -24,6 +16,14 @@ class ProfileMenuItem extends StatefulWidget {
     this.isDanger = false,
     this.trailing,
   });
+  final IconData icon;
+  final String title;
+  final String? subtitle;
+  final VoidCallback? onTap;
+  final Color? iconColor;
+  final bool showArrow;
+  final bool isDanger;
+  final Widget? trailing;
 
   @override
   State<ProfileMenuItem> createState() => _ProfileMenuItemState();
@@ -43,7 +43,7 @@ class _ProfileMenuItemState extends State<ProfileMenuItem>
       duration: AppDurations.animationShort,
     );
 
-    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.98).animate(
+    _scaleAnimation = Tween<double>(begin: 1, end: 0.98).animate(
       CurvedAnimation(parent: _controller, curve: AppCurves.tap),
     );
   }
@@ -94,7 +94,7 @@ class _ProfileMenuItemState extends State<ProfileMenuItem>
           },
           child: AnimatedContainer(
             duration: AppDurations.animationShort,
-            padding: EdgeInsets.symmetric(
+            padding: const EdgeInsets.symmetric(
               horizontal: AppDimensions.spaceM,
               vertical: AppDimensions.spaceM,
             ),
@@ -107,14 +107,13 @@ class _ProfileMenuItemState extends State<ProfileMenuItem>
                 color: _isPressed
                     ? _iconColor.withValues(alpha: 0.2)
                     : context.colors.divider.withValues(alpha: 0.5),
-                width: 1,
               ),
             ),
             child: Row(
               children: [
                 // Icon container
                 Container(
-                  padding: EdgeInsets.all(AppDimensions.spaceS),
+                  padding: const EdgeInsets.all(AppDimensions.spaceS),
                   decoration: BoxDecoration(
                     color: _iconColor.withValues(alpha: 0.1),
                     borderRadius: AppDimensions.borderRadiusS,
@@ -125,7 +124,7 @@ class _ProfileMenuItemState extends State<ProfileMenuItem>
                     size: AppDimensions.iconM,
                   ),
                 ),
-                SizedBox(width: AppDimensions.spaceM),
+                const SizedBox(width: AppDimensions.spaceM),
                 // Title and subtitle
                 Expanded(
                   child: Column(
@@ -141,7 +140,7 @@ class _ProfileMenuItemState extends State<ProfileMenuItem>
                         ),
                       ),
                       if (widget.subtitle != null) ...[
-                        SizedBox(height: AppDimensions.spaceXXS),
+                        const SizedBox(height: AppDimensions.spaceXXS),
                         Text(
                           widget.subtitle!,
                           style: AppTextStyles.bodySmall.copyWith(

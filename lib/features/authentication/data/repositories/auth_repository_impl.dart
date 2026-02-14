@@ -8,13 +8,13 @@ import 'package:guardiancare/features/authentication/domain/repositories/auth_re
 
 /// Implementation of AuthRepository
 class AuthRepositoryImpl implements AuthRepository {
-  final AuthRemoteDataSource remoteDataSource;
-  final NetworkInfo networkInfo;
 
   AuthRepositoryImpl({
     required this.remoteDataSource,
     required this.networkInfo,
   });
+  final AuthRemoteDataSource remoteDataSource;
+  final NetworkInfo networkInfo;
 
   @override
   Future<Either<Failure, UserEntity>> signInWithEmailAndPassword({
@@ -30,11 +30,12 @@ class AuthRepositoryImpl implements AuthRepository {
         return Right(user);
       } on AuthException catch (e) {
         return Left(AuthFailure(e.message, code: e.code));
-      } catch (e) {
-        return Left(AuthFailure(ErrorStrings.withDetails(ErrorStrings.unexpectedError, e.toString())));
+      } on Object catch (e) {
+        return Left(AuthFailure(ErrorStrings.withDetails(
+            ErrorStrings.unexpectedError, e.toString())));
       }
     } else {
-      return Left(NetworkFailure(ErrorStrings.noInternet));
+      return const Left(NetworkFailure(ErrorStrings.noInternet));
     }
   }
 
@@ -56,11 +57,12 @@ class AuthRepositoryImpl implements AuthRepository {
         return Right(user);
       } on AuthException catch (e) {
         return Left(AuthFailure(e.message, code: e.code));
-      } catch (e) {
-        return Left(AuthFailure(ErrorStrings.withDetails(ErrorStrings.unexpectedError, e.toString())));
+      } on Object catch (e) {
+        return Left(AuthFailure(ErrorStrings.withDetails(
+            ErrorStrings.unexpectedError, e.toString())));
       }
     } else {
-      return Left(NetworkFailure(ErrorStrings.noInternet));
+      return const Left(NetworkFailure(ErrorStrings.noInternet));
     }
   }
 
@@ -72,11 +74,12 @@ class AuthRepositoryImpl implements AuthRepository {
         return Right(user);
       } on AuthException catch (e) {
         return Left(AuthFailure(e.message, code: e.code));
-      } catch (e) {
-        return Left(AuthFailure(ErrorStrings.withDetails(ErrorStrings.unexpectedError, e.toString())));
+      } on Object catch (e) {
+        return Left(AuthFailure(ErrorStrings.withDetails(
+            ErrorStrings.unexpectedError, e.toString())));
       }
     } else {
-      return Left(NetworkFailure(ErrorStrings.noInternet));
+      return const Left(NetworkFailure(ErrorStrings.noInternet));
     }
   }
 
@@ -87,8 +90,9 @@ class AuthRepositoryImpl implements AuthRepository {
       return const Right(null);
     } on AuthException catch (e) {
       return Left(AuthFailure(e.message, code: e.code));
-    } catch (e) {
-      return Left(AuthFailure(ErrorStrings.withDetails(ErrorStrings.unexpectedError, e.toString())));
+    } on Object catch (e) {
+      return Left(AuthFailure(ErrorStrings.withDetails(
+          ErrorStrings.unexpectedError, e.toString())));
     }
   }
 
@@ -99,8 +103,9 @@ class AuthRepositoryImpl implements AuthRepository {
       return Right(user);
     } on AuthException catch (e) {
       return Left(AuthFailure(e.message, code: e.code));
-    } catch (e) {
-      return Left(AuthFailure(ErrorStrings.withDetails(ErrorStrings.unexpectedError, e.toString())));
+    } on Object catch (e) {
+      return Left(AuthFailure(ErrorStrings.withDetails(
+          ErrorStrings.unexpectedError, e.toString())));
     }
   }
 
@@ -109,7 +114,7 @@ class AuthRepositoryImpl implements AuthRepository {
     try {
       final user = await remoteDataSource.getCurrentUser();
       return Right(user != null);
-    } catch (e) {
+    } on Object {
       return const Right(false);
     }
   }
@@ -122,11 +127,46 @@ class AuthRepositoryImpl implements AuthRepository {
         return const Right(null);
       } on AuthException catch (e) {
         return Left(AuthFailure(e.message, code: e.code));
-      } catch (e) {
-        return Left(AuthFailure(ErrorStrings.withDetails(ErrorStrings.unexpectedError, e.toString())));
+      } on Object catch (e) {
+        return Left(AuthFailure(ErrorStrings.withDetails(
+            ErrorStrings.unexpectedError, e.toString())));
       }
     } else {
-      return Left(NetworkFailure(ErrorStrings.noInternet));
+      return const Left(NetworkFailure(ErrorStrings.noInternet));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> sendEmailVerification() async {
+    if (await networkInfo.isConnected) {
+      try {
+        await remoteDataSource.sendEmailVerification();
+        return const Right(null);
+      } on AuthException catch (e) {
+        return Left(AuthFailure(e.message, code: e.code));
+      } on Object catch (e) {
+        return Left(AuthFailure(ErrorStrings.withDetails(
+            ErrorStrings.unexpectedError, e.toString())));
+      }
+    } else {
+      return const Left(NetworkFailure(ErrorStrings.noInternet));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> reloadUser() async {
+    if (await networkInfo.isConnected) {
+      try {
+        await remoteDataSource.reloadUser();
+        return const Right(null);
+      } on AuthException catch (e) {
+        return Left(AuthFailure(e.message, code: e.code));
+      } on Object catch (e) {
+        return Left(AuthFailure(ErrorStrings.withDetails(
+            ErrorStrings.unexpectedError, e.toString())));
+      }
+    } else {
+      return const Left(NetworkFailure(ErrorStrings.noInternet));
     }
   }
 
@@ -144,11 +184,12 @@ class AuthRepositoryImpl implements AuthRepository {
         return const Right(null);
       } on AuthException catch (e) {
         return Left(AuthFailure(e.message, code: e.code));
-      } catch (e) {
-        return Left(AuthFailure(ErrorStrings.withDetails(ErrorStrings.unexpectedError, e.toString())));
+      } on Object catch (e) {
+        return Left(AuthFailure(ErrorStrings.withDetails(
+            ErrorStrings.unexpectedError, e.toString())));
       }
     } else {
-      return Left(NetworkFailure(ErrorStrings.noInternet));
+      return const Left(NetworkFailure(ErrorStrings.noInternet));
     }
   }
 }

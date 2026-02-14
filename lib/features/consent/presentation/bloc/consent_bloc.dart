@@ -6,12 +6,6 @@ import 'package:guardiancare/features/consent/presentation/bloc/consent_event.da
 import 'package:guardiancare/features/consent/presentation/bloc/consent_state.dart';
 
 class ConsentBloc extends Bloc<ConsentEvent, ConsentState> {
-  final SubmitConsent submitConsent;
-  final VerifyParentalKey verifyParentalKey;
-  final SaveParentalKey saveParentalKey;
-
-  /// Minimum length for parental key validation
-  static const int minKeyLength = 4;
 
   ConsentBloc({
     required this.submitConsent,
@@ -23,6 +17,12 @@ class ConsentBloc extends Bloc<ConsentEvent, ConsentState> {
     on<ValidateParentalKey>(_onValidateParentalKey);
     on<SubmitParentalKey>(_onSubmitParentalKey);
   }
+  final SubmitConsent submitConsent;
+  final VerifyParentalKey verifyParentalKey;
+  final SaveParentalKey saveParentalKey;
+
+  /// Minimum length for parental key validation
+  static const int minKeyLength = 4;
 
   Future<void> _onSubmitConsent(
     SubmitConsentRequested event,
@@ -73,7 +73,7 @@ class ConsentBloc extends Bloc<ConsentEvent, ConsentState> {
     }
 
     if (key.length < minKeyLength) {
-      emit(ParentalKeyValidated(
+      emit(const ParentalKeyValidated(
         isValid: false,
         errorMessage: 'Parental key must be at least $minKeyLength characters',
       ));
@@ -91,7 +91,7 @@ class ConsentBloc extends Bloc<ConsentEvent, ConsentState> {
   ) async {
     // First validate the key
     if (event.key.length < minKeyLength) {
-      emit(ParentalKeyValidated(
+      emit(const ParentalKeyValidated(
         isValid: false,
         errorMessage: 'Parental key must be at least $minKeyLength characters',
       ));

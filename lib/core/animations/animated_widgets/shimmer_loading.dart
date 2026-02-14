@@ -11,11 +11,6 @@ import 'package:guardiancare/core/constants/theme_colors.dart';
 /// - Multiple preset shapes
 /// - Performance optimized
 class ShimmerLoading extends StatefulWidget {
-  final Widget child;
-  final Color? baseColor;
-  final Color? highlightColor;
-  final Duration duration;
-  final bool enabled;
 
   const ShimmerLoading({
     super.key,
@@ -25,6 +20,11 @@ class ShimmerLoading extends StatefulWidget {
     this.duration = const Duration(milliseconds: 1500),
     this.enabled = true,
   });
+  final Widget child;
+  final Color? baseColor;
+  final Color? highlightColor;
+  final Duration duration;
+  final bool enabled;
 
   @override
   State<ShimmerLoading> createState() => _ShimmerLoadingState();
@@ -96,7 +96,7 @@ class _ShimmerLoadingState extends State<ShimmerLoading>
                   effectiveHighlightColor,
                   effectiveBaseColor,
                 ],
-                stops: [
+                stops: const [
                   0.0,
                   0.5,
                   1.0,
@@ -114,13 +114,13 @@ class _ShimmerLoadingState extends State<ShimmerLoading>
 }
 
 class _SlidingGradientTransform extends GradientTransform {
-  final double slidePercent;
 
   const _SlidingGradientTransform(this.slidePercent);
+  final double slidePercent;
 
   @override
   Matrix4? transform(Rect bounds, {TextDirection? textDirection}) {
-    return Matrix4.translationValues(bounds.width * slidePercent, 0.0, 0.0);
+    return Matrix4.translationValues(bounds.width * slidePercent, 0, 0);
   }
 }
 
@@ -170,7 +170,7 @@ class ShimmerPresets {
       child: Container(
         width: size,
         height: size,
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           color: AppColors.shimmerBase,
           shape: BoxShape.circle,
         ),
@@ -193,7 +193,7 @@ class ShimmerPresets {
                 borderRadius: AppDimensions.borderRadiusS,
               ),
             ),
-            SizedBox(width: AppDimensions.spaceM),
+            const SizedBox(width: AppDimensions.spaceM),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -207,7 +207,7 @@ class ShimmerPresets {
                       borderRadius: BorderRadius.circular(4),
                     ),
                   ),
-                  SizedBox(height: AppDimensions.spaceS),
+                  const SizedBox(height: AppDimensions.spaceS),
                   Container(
                     height: 12,
                     width: 150,

@@ -30,10 +30,10 @@ class _WelcomeHeaderState extends State<WelcomeHeader>
       duration: AppDurations.animationLong,
     );
 
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+    _fadeAnimation = Tween<double>(begin: 0, end: 1).animate(
       CurvedAnimation(
         parent: _controller,
-        curve: const Interval(0.0, 0.6, curve: Curves.easeOut),
+        curve: const Interval(0, 0.6, curve: Curves.easeOut),
       ),
     );
 
@@ -65,7 +65,7 @@ class _WelcomeHeaderState extends State<WelcomeHeader>
 
     return RepaintBoundary(
       child: Container(
-        padding: EdgeInsets.all(AppDimensions.screenPaddingH),
+        padding: const EdgeInsets.all(AppDimensions.screenPaddingH),
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
@@ -114,7 +114,7 @@ class _WelcomeHeaderState extends State<WelcomeHeader>
                         color: AppColors.white.withValues(alpha: 0.9),
                         size: AppDimensions.iconS,
                       ),
-                      SizedBox(width: AppDimensions.spaceXS),
+                      const SizedBox(width: AppDimensions.spaceXS),
                       Text(
                         greeting,
                         style: AppTextStyles.body1.copyWith(
@@ -124,7 +124,7 @@ class _WelcomeHeaderState extends State<WelcomeHeader>
                       ),
                     ],
                   ),
-                  SizedBox(height: AppDimensions.spaceXS),
+                  const SizedBox(height: AppDimensions.spaceXS),
                   // Name with gradient text effect
                   ShaderMask(
                     blendMode: BlendMode.srcIn,
@@ -145,13 +145,13 @@ class _WelcomeHeaderState extends State<WelcomeHeader>
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
-                  SizedBox(height: AppDimensions.spaceS),
+                  const SizedBox(height: AppDimensions.spaceS),
                   // Welcome message with glassmorphic container
                   GlassmorphicContainer(
                     blur: 5,
                     opacity: 0.1,
                     borderRadius: AppDimensions.borderRadiusS,
-                    padding: EdgeInsets.symmetric(
+                    padding: const EdgeInsets.symmetric(
                       horizontal: AppDimensions.spaceM,
                       vertical: AppDimensions.spaceS,
                     ),

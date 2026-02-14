@@ -7,6 +7,16 @@ import 'package:guardiancare/core/core.dart';
 /// Uses centralized [ScaleTapWidget] for scale-tap animation,
 /// eliminating duplicate animation code.
 class OptionCard extends StatelessWidget {
+
+  const OptionCard({
+    super.key,
+    required this.option,
+    required this.index,
+    required this.isSelected,
+    this.showFeedback = false,
+    this.isCorrect = false,
+    this.onTap,
+  });
   final String option;
   final int index;
   final bool isSelected;
@@ -18,22 +28,12 @@ class OptionCard extends StatelessWidget {
   static const _optionCardConfig = AnimationConfig(
     duration: AppDurations.animationShort,
     curve: AppCurves.tap,
-    begin: 1.0,
+    begin: 1,
     end: 0.97,
   );
 
   // Option labels
   static const List<String> _optionLabels = ['A', 'B', 'C', 'D', 'E', 'F'];
-
-  const OptionCard({
-    super.key,
-    required this.option,
-    required this.index,
-    required this.isSelected,
-    this.showFeedback = false,
-    this.isCorrect = false,
-    this.onTap,
-  });
 
   Color _backgroundColor(BuildContext context, bool isSelected,
       bool showFeedback, bool isCorrect) {
@@ -94,10 +94,8 @@ class OptionCard extends StatelessWidget {
       config: _optionCardConfig,
       onTap: onTap,
       enabled: isEnabled,
-      enableHaptic: true,
-      hapticType: HapticFeedbackType.light,
       child: AppAnimatedContainer(
-        padding: EdgeInsets.all(AppDimensions.spaceM),
+        padding: const EdgeInsets.all(AppDimensions.spaceM),
         decoration: BoxDecoration(
           color: backgroundColor,
           borderRadius: AppDimensions.borderRadiusM,
@@ -136,7 +134,7 @@ class OptionCard extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(width: AppDimensions.spaceM),
+            const SizedBox(width: AppDimensions.spaceM),
             // Option text
             Expanded(
               child: Text(
@@ -149,9 +147,9 @@ class OptionCard extends StatelessWidget {
             ),
             // Feedback icon
             if (showFeedback) ...[
-              SizedBox(width: AppDimensions.spaceS),
+              const SizedBox(width: AppDimensions.spaceS),
               AnimatedScale(
-                scale: 1.0,
+                scale: 1,
                 duration: AppDurations.animationShort,
                 child: Icon(
                   isCorrect
@@ -162,8 +160,8 @@ class OptionCard extends StatelessWidget {
                 ),
               ),
             ] else if (isSelected) ...[
-              SizedBox(width: AppDimensions.spaceS),
-              Icon(
+              const SizedBox(width: AppDimensions.spaceS),
+              const Icon(
                 Icons.radio_button_checked_rounded,
                 color: AppColors.primary,
                 size: AppDimensions.iconM,

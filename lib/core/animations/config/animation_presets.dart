@@ -31,7 +31,7 @@ class AnimationPresets {
   static const AnimationConfig scaleButton = AnimationConfig(
     duration: AppDurations.animationShort,
     curve: AppCurves.tap,
-    begin: 1.0,
+    begin: 1,
     end: 0.95,
   );
 
@@ -42,7 +42,7 @@ class AnimationPresets {
   static const AnimationConfig scaleLarge = AnimationConfig(
     duration: AppDurations.animationShort,
     curve: AppCurves.tap,
-    begin: 1.0,
+    begin: 1,
     end: 0.9,
   );
 
@@ -53,8 +53,8 @@ class AnimationPresets {
   static const AnimationConfig fadeIn = AnimationConfig(
     duration: AppDurations.animationMedium,
     curve: AppCurves.standardDecelerate,
-    begin: 0.0,
-    end: 1.0,
+    begin: 0,
+    end: 1,
   );
 
   /// Slide up animation preset.
@@ -64,7 +64,7 @@ class AnimationPresets {
   static const AnimationConfig slideUp = AnimationConfig(
     duration: AppDurations.animationMedium,
     curve: AppCurves.standardDecelerate,
-    begin: 30.0,
-    end: 0.0,
+    begin: 30,
+    end: 0,
   );
 }

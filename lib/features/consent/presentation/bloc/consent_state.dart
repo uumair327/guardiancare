@@ -22,13 +22,13 @@ class ParentalKeyInvalid extends ConsentState {}
 /// State indicating parental key format validation result
 /// Requirements: 5.1
 class ParentalKeyValidated extends ConsentState {
-  final bool isValid;
-  final String? errorMessage;
 
   const ParentalKeyValidated({
     required this.isValid,
     this.errorMessage,
   });
+  final bool isValid;
+  final String? errorMessage;
 
   @override
   List<Object?> get props => [isValid, errorMessage];
@@ -46,9 +46,9 @@ class ParentalKeySubmitting extends ConsentState {
 }
 
 class ConsentError extends ConsentState {
-  final String message;
 
   const ConsentError(this.message);
+  final String message;
 
   @override
   List<Object?> get props => [message];

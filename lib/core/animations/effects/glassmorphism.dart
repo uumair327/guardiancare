@@ -11,16 +11,6 @@ import 'package:guardiancare/core/constants/app_dimensions.dart';
 /// - Border glow effect
 /// - Performance optimized with RepaintBoundary
 class GlassmorphicContainer extends StatelessWidget {
-  final Widget child;
-  final double blur;
-  final double opacity;
-  final Color? backgroundColor;
-  final Color? borderColor;
-  final double borderWidth;
-  final BorderRadius? borderRadius;
-  final EdgeInsets? padding;
-  final double? width;
-  final double? height;
 
   const GlassmorphicContainer({
     super.key,
@@ -35,6 +25,16 @@ class GlassmorphicContainer extends StatelessWidget {
     this.width,
     this.height,
   });
+  final Widget child;
+  final double blur;
+  final double opacity;
+  final Color? backgroundColor;
+  final Color? borderColor;
+  final double borderWidth;
+  final BorderRadius? borderRadius;
+  final EdgeInsets? padding;
+  final double? width;
+  final double? height;
 
   @override
   Widget build(BuildContext context) {
@@ -76,14 +76,6 @@ class GlassmorphicContainer extends StatelessWidget {
 
 /// Glassmorphic card with elevation effect
 class GlassmorphicCard extends StatelessWidget {
-  final Widget child;
-  final double blur;
-  final double opacity;
-  final Color? tintColor;
-  final BorderRadius? borderRadius;
-  final EdgeInsets? padding;
-  final EdgeInsets? margin;
-  final VoidCallback? onTap;
 
   const GlassmorphicCard({
     super.key,
@@ -96,6 +88,14 @@ class GlassmorphicCard extends StatelessWidget {
     this.margin,
     this.onTap,
   });
+  final Widget child;
+  final double blur;
+  final double opacity;
+  final Color? tintColor;
+  final BorderRadius? borderRadius;
+  final EdgeInsets? padding;
+  final EdgeInsets? margin;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -154,10 +154,6 @@ class GlassmorphicCard extends StatelessWidget {
 
 /// Frosted glass overlay for modals and dialogs
 class FrostedGlassOverlay extends StatelessWidget {
-  final Widget child;
-  final double blur;
-  final Color overlayColor;
-  final double overlayOpacity;
 
   const FrostedGlassOverlay({
     super.key,
@@ -166,6 +162,10 @@ class FrostedGlassOverlay extends StatelessWidget {
     this.overlayColor = Colors.black,
     this.overlayOpacity = 0.3,
   });
+  final Widget child;
+  final double blur;
+  final Color overlayColor;
+  final double overlayOpacity;
 
   @override
   Widget build(BuildContext context) {

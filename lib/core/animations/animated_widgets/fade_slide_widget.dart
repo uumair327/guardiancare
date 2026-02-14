@@ -11,13 +11,6 @@ enum SlideDirection { up, down, left, right }
 /// - Optional delay for staggered effects
 /// - Performance optimized with RepaintBoundary
 class FadeSlideWidget extends StatefulWidget {
-  final Widget child;
-  final Duration duration;
-  final Duration delay;
-  final Curve curve;
-  final SlideDirection direction;
-  final double slideOffset;
-  final bool animate;
 
   const FadeSlideWidget({
     super.key,
@@ -29,6 +22,13 @@ class FadeSlideWidget extends StatefulWidget {
     this.slideOffset = 30.0,
     this.animate = true,
   });
+  final Widget child;
+  final Duration duration;
+  final Duration delay;
+  final Curve curve;
+  final SlideDirection direction;
+  final double slideOffset;
+  final bool animate;
 
   @override
   State<FadeSlideWidget> createState() => _FadeSlideWidgetState();
@@ -48,7 +48,7 @@ class _FadeSlideWidgetState extends State<FadeSlideWidget>
       duration: widget.duration,
     );
 
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+    _fadeAnimation = Tween<double>(begin: 0, end: 1).animate(
       CurvedAnimation(parent: _controller, curve: widget.curve),
     );
 
@@ -81,7 +81,7 @@ class _FadeSlideWidgetState extends State<FadeSlideWidget>
       await Future.delayed(widget.delay);
     }
     if (mounted) {
-      _controller.forward();
+      await _controller.forward();
     }
   }
 

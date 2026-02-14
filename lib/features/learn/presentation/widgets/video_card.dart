@@ -7,9 +7,6 @@ import 'package:guardiancare/features/learn/domain/entities/video_entity.dart';
 /// Modern video card with animations and education-friendly design
 /// Features thumbnail preview, title, and play button overlay
 class VideoCard extends StatefulWidget {
-  final VideoEntity video;
-  final VoidCallback onTap;
-  final int index;
 
   const VideoCard({
     super.key,
@@ -17,6 +14,9 @@ class VideoCard extends StatefulWidget {
     required this.onTap,
     this.index = 0,
   });
+  final VideoEntity video;
+  final VoidCallback onTap;
+  final int index;
 
   @override
   State<VideoCard> createState() => _VideoCardState();
@@ -37,7 +37,7 @@ class _VideoCardState extends State<VideoCard>
       duration: AppDurations.animationShort,
     );
 
-    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.96).animate(
+    _scaleAnimation = Tween<double>(begin: 1, end: 0.96).animate(
       CurvedAnimation(parent: _controller, curve: AppCurves.tap),
     );
   }
@@ -127,7 +127,7 @@ class _VideoCardState extends State<VideoCard>
                             ),
                             errorWidget: (context, url, error) => Container(
                               color: AppColors.secondary.withValues(alpha: 0.1),
-                              child: Icon(
+                              child: const Icon(
                                 Icons.video_library_rounded,
                                 size: AppDimensions.iconXL,
                                 color: AppColors.secondary,
@@ -163,7 +163,7 @@ class _VideoCardState extends State<VideoCard>
                                 duration: AppDurations.animationShort,
                                 opacity: _isPressed ? 0.7 : 1.0,
                                 child: Container(
-                                  padding: EdgeInsets.all(AppDimensions.spaceM),
+                                  padding: const EdgeInsets.all(AppDimensions.spaceM),
                                   decoration: BoxDecoration(
                                     color:
                                         AppColors.white.withValues(alpha: 0.95),
@@ -177,7 +177,7 @@ class _VideoCardState extends State<VideoCard>
                                       ),
                                     ],
                                   ),
-                                  child: Icon(
+                                  child: const Icon(
                                     Icons.play_arrow_rounded,
                                     color: AppColors.primary,
                                     size: AppDimensions.iconL,
@@ -191,7 +191,7 @@ class _VideoCardState extends State<VideoCard>
                             bottom: AppDimensions.spaceS,
                             right: AppDimensions.spaceS,
                             child: Container(
-                              padding: EdgeInsets.symmetric(
+                              padding: const EdgeInsets.symmetric(
                                 horizontal: AppDimensions.spaceS,
                                 vertical: AppDimensions.spaceXXS,
                               ),
@@ -202,12 +202,12 @@ class _VideoCardState extends State<VideoCard>
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  Icon(
+                                  const Icon(
                                     Icons.play_circle_outline_rounded,
                                     color: AppColors.white,
                                     size: AppDimensions.iconXS,
                                   ),
-                                  SizedBox(width: AppDimensions.spaceXXS),
+                                  const SizedBox(width: AppDimensions.spaceXXS),
                                   Text(
                                     'Video',
                                     style: AppTextStyles.caption.copyWith(
@@ -224,7 +224,7 @@ class _VideoCardState extends State<VideoCard>
                     ),
                     // Title section
                     Padding(
-                      padding: EdgeInsets.all(AppDimensions.spaceS),
+                      padding: const EdgeInsets.all(AppDimensions.spaceS),
                       child: Text(
                         widget.video.title,
                         style: AppTextStyles.bodySmall.copyWith(
@@ -249,9 +249,6 @@ class _VideoCardState extends State<VideoCard>
 
 /// Horizontal video card for list view
 class VideoListCard extends StatefulWidget {
-  final VideoEntity video;
-  final VoidCallback onTap;
-  final int index;
 
   const VideoListCard({
     super.key,
@@ -259,6 +256,9 @@ class VideoListCard extends StatefulWidget {
     required this.onTap,
     this.index = 0,
   });
+  final VideoEntity video;
+  final VoidCallback onTap;
+  final int index;
 
   @override
   State<VideoListCard> createState() => _VideoListCardState();
@@ -278,7 +278,7 @@ class _VideoListCardState extends State<VideoListCard>
       duration: AppDurations.animationShort,
     );
 
-    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.98).animate(
+    _scaleAnimation = Tween<double>(begin: 1, end: 0.98).animate(
       CurvedAnimation(parent: _controller, curve: AppCurves.tap),
     );
   }
@@ -317,7 +317,7 @@ class _VideoListCardState extends State<VideoListCard>
           },
           child: AnimatedContainer(
             duration: AppDurations.animationShort,
-            margin: EdgeInsets.symmetric(
+            margin: const EdgeInsets.symmetric(
               horizontal: AppDimensions.spaceM,
               vertical: AppDimensions.spaceS,
             ),
@@ -353,7 +353,7 @@ class _VideoListCardState extends State<VideoListCard>
                           ),
                           errorWidget: (context, url, error) => Container(
                             color: AppColors.secondary.withValues(alpha: 0.1),
-                            child: Icon(
+                            child: const Icon(
                               Icons.video_library_rounded,
                               color: AppColors.secondary,
                             ),
@@ -362,12 +362,12 @@ class _VideoListCardState extends State<VideoListCard>
                         // Play icon overlay
                         Center(
                           child: Container(
-                            padding: EdgeInsets.all(AppDimensions.spaceS),
+                            padding: const EdgeInsets.all(AppDimensions.spaceS),
                             decoration: BoxDecoration(
                               color: AppColors.white.withValues(alpha: 0.9),
                               shape: BoxShape.circle,
                             ),
-                            child: Icon(
+                            child: const Icon(
                               Icons.play_arrow_rounded,
                               color: AppColors.primary,
                               size: AppDimensions.iconM,
@@ -380,7 +380,7 @@ class _VideoListCardState extends State<VideoListCard>
                   // Content
                   Expanded(
                     child: Padding(
-                      padding: EdgeInsets.all(AppDimensions.spaceM),
+                      padding: const EdgeInsets.all(AppDimensions.spaceM),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -394,15 +394,15 @@ class _VideoListCardState extends State<VideoListCard>
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                           ),
-                          SizedBox(height: AppDimensions.spaceXS),
+                          const SizedBox(height: AppDimensions.spaceXS),
                           Row(
                             children: [
-                              Icon(
+                              const Icon(
                                 Icons.play_circle_outline_rounded,
                                 size: AppDimensions.iconXS,
                                 color: AppColors.textSecondary,
                               ),
-                              SizedBox(width: AppDimensions.spaceXXS),
+                              const SizedBox(width: AppDimensions.spaceXXS),
                               Text(
                                 'Tap to watch',
                                 style: AppTextStyles.caption.copyWith(
@@ -416,7 +416,7 @@ class _VideoListCardState extends State<VideoListCard>
                     ),
                   ),
                   // Arrow
-                  Padding(
+                  const Padding(
                     padding: EdgeInsets.only(right: AppDimensions.spaceM),
                     child: Icon(
                       Icons.arrow_forward_ios_rounded,

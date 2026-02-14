@@ -14,14 +14,14 @@ abstract class ParentalKeyVerifier {
 /// Implementation of ParentalKeyVerifier
 /// Uses CryptoService for hashing and Firestore for stored hash retrieval
 class ParentalKeyVerifierImpl implements ParentalKeyVerifier {
-  final CryptoService _cryptoService;
-  final FirebaseFirestore _firestore;
 
   ParentalKeyVerifierImpl({
     required CryptoService cryptoService,
     required FirebaseFirestore firestore,
   })  : _cryptoService = cryptoService,
         _firestore = firestore;
+  final CryptoService _cryptoService;
+  final FirebaseFirestore _firestore;
 
   @override
   Future<Either<Failure, bool>> verify(String uid, String key) async {
@@ -39,7 +39,7 @@ class ParentalKeyVerifierImpl implements ParentalKeyVerifier {
 
       final isValid = _cryptoService.compareHash(key, storedHash);
       return Right(isValid);
-    } catch (e) {
+    } on Object catch (e) {
       return Left(AuthenticationFailure('Error verifying parental key: $e'));
     }
   }

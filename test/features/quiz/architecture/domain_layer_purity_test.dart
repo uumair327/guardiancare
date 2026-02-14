@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:flutter_test/flutter_test.dart' hide test, group, setUp, tearDown, expect;
 import 'package:glados/glados.dart';
 
 /// **Feature: clean-architecture-audit-fix, Property 1: Domain Layer Purity**
@@ -16,15 +15,15 @@ import 'package:glados/glados.dart';
 
 /// Represents a domain layer file with its path and content
 class DomainFile {
-  final String path;
-  final String content;
-  final List<String> imports;
 
   DomainFile({
     required this.path,
     required this.content,
     required this.imports,
   });
+  final String path;
+  final String content;
+  final List<String> imports;
 
   /// Checks if any import references the data layer
   bool get hasDataLayerImport {
@@ -146,7 +145,7 @@ void main() {
     // Validates: Requirements 1.3, 2.4
     // ========================================================================
     if (domainFiles.isNotEmpty) {
-      Glados(any.domainFileIndex(domainFiles.length), ExploreConfig(numRuns: 100))
+      Glados(any.domainFileIndex(domainFiles.length), ExploreConfig())
           .test(
         'For any domain layer file, it SHALL NOT import from data layer',
         (index) {
@@ -167,7 +166,7 @@ void main() {
     // Validates: Requirements 2.1, 2.2
     // ========================================================================
     if (domainFiles.isNotEmpty) {
-      Glados(any.domainFileIndex(domainFiles.length), ExploreConfig(numRuns: 100))
+      Glados(any.domainFileIndex(domainFiles.length), ExploreConfig())
           .test(
         'For any domain layer file, it SHALL NOT import from old services folder',
         (index) {
@@ -188,7 +187,7 @@ void main() {
     // Validates: Requirements 1.3, 2.1, 2.2, 2.4, 6.2
     // ========================================================================
     if (domainFiles.isNotEmpty) {
-      Glados(any.domainFileIndex(domainFiles.length), ExploreConfig(numRuns: 100))
+      Glados(any.domainFileIndex(domainFiles.length), ExploreConfig())
           .test(
         'For any domain layer file, it SHALL have no architectural violations',
         (index) {
@@ -232,7 +231,7 @@ void main() {
 
     test('Domain service interfaces should be abstract classes', () {
       final serviceFiles = domainFiles
-          .where((f) => f.path.replaceAll('\\', '/').contains('/domain/services/'))
+          .where((f) => f.path.replaceAll(r'\', '/').contains('/domain/services/'))
           .where((f) => !f.path.endsWith('services.dart')) // Skip barrel files
           .toList();
 
@@ -252,7 +251,7 @@ void main() {
 
     test('Domain layer should not have concrete service implementations', () {
       final serviceFiles = domainFiles
-          .where((f) => f.path.replaceAll('\\', '/').contains('/domain/services/'))
+          .where((f) => f.path.replaceAll(r'\', '/').contains('/domain/services/'))
           .where((f) => !f.path.endsWith('services.dart'))
           .toList();
 
@@ -277,7 +276,7 @@ void main() {
   group('Domain Layer Purity - Edge Cases', () {
     test('Empty domain directory should not cause errors', () {
       // This test verifies the test infrastructure handles edge cases
-      expect(() => collectDomainFiles(), returnsNormally);
+      expect(collectDomainFiles, returnsNormally);
     });
 
     test('Domain files count should be greater than zero', () {
@@ -290,7 +289,7 @@ void main() {
 
     test('Quiz domain should have service interfaces', () {
       final quizDomainServices = domainFiles
-          .where((f) => f.path.replaceAll('\\', '/').contains('quiz/domain/services'))
+          .where((f) => f.path.replaceAll(r'\', '/').contains('quiz/domain/services'))
           .where((f) => !f.path.endsWith('services.dart'))
           .toList();
 

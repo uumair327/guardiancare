@@ -24,11 +24,10 @@
 /// the BACKEND=supabase flag is set.
 library;
 
-// Initialization
-export 'supabase_initializer.dart';
-
 // Adapters
 export 'supabase_auth_adapter.dart';
 export 'supabase_data_store_adapter.dart';
-export 'supabase_storage_adapter.dart';
+// Initialization
+export 'supabase_initializer.dart';
 export 'supabase_realtime_adapter.dart';
+export 'supabase_storage_adapter.dart';

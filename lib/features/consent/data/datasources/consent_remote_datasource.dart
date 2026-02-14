@@ -15,10 +15,10 @@ abstract class ConsentRemoteDataSource {
 }
 
 class ConsentRemoteDataSourceImpl implements ConsentRemoteDataSource {
-  final IDataStore _dataStore;
 
   ConsentRemoteDataSourceImpl({required IDataStore dataStore})
       : _dataStore = dataStore;
+  final IDataStore _dataStore;
 
   String _hashKey(String key) {
     final bytes = utf8.encode(key);
@@ -33,7 +33,7 @@ class ConsentRemoteDataSourceImpl implements ConsentRemoteDataSource {
         throw ServerException(ErrorStrings.withDetails(
             ErrorStrings.submitConsentError, result.errorOrNull!.message));
       }
-    } catch (e) {
+    } on Object catch (e) {
       if (e is ServerException) rethrow;
       throw ServerException(ErrorStrings.withDetails(
           ErrorStrings.submitConsentError, e.toString()));
@@ -57,7 +57,7 @@ class ConsentRemoteDataSourceImpl implements ConsentRemoteDataSource {
               ErrorStrings.verifyKeyError, error.message));
         },
       );
-    } catch (e) {
+    } on Object catch (e) {
       if (e is ServerException) rethrow;
       throw ServerException(
           ErrorStrings.withDetails(ErrorStrings.verifyKeyError, e.toString()));
@@ -76,14 +76,14 @@ class ConsentRemoteDataSourceImpl implements ConsentRemoteDataSource {
       );
 
       if (currentData == null) {
-        throw ServerException(ErrorStrings.consentNotFound);
+        throw const ServerException(ErrorStrings.consentNotFound);
       }
 
       final storedAnswerHash = currentData['securityAnswer'] as String?;
       final providedAnswerHash = _hashKey(securityAnswer.toLowerCase());
 
       if (storedAnswerHash != providedAnswerHash) {
-        throw ServerException(ErrorStrings.incorrectSecurityAnswer);
+        throw const ServerException(ErrorStrings.incorrectSecurityAnswer);
       }
 
       final updateResult = await _dataStore.update('consents', uid, {
@@ -95,7 +95,7 @@ class ConsentRemoteDataSourceImpl implements ConsentRemoteDataSource {
         throw ServerException(ErrorStrings.withDetails(
             ErrorStrings.resetKeyError, updateResult.errorOrNull!.message));
       }
-    } catch (e) {
+    } on Object catch (e) {
       if (e is ServerException) rethrow;
       throw ServerException(
           ErrorStrings.withDetails(ErrorStrings.resetKeyError, e.toString()));
@@ -110,7 +110,7 @@ class ConsentRemoteDataSourceImpl implements ConsentRemoteDataSource {
       return result.when(
         success: (data) {
           if (data == null) {
-            throw ServerException(ErrorStrings.consentNotFound);
+            throw const ServerException(ErrorStrings.consentNotFound);
           }
           return ConsentModel.fromMap(data);
         },
@@ -119,7 +119,7 @@ class ConsentRemoteDataSourceImpl implements ConsentRemoteDataSource {
               ErrorStrings.getConsentError, error.message));
         },
       );
-    } catch (e) {
+    } on Object catch (e) {
       if (e is ServerException) rethrow;
       throw ServerException(
           ErrorStrings.withDetails(ErrorStrings.getConsentError, e.toString()));
@@ -131,7 +131,7 @@ class ConsentRemoteDataSourceImpl implements ConsentRemoteDataSource {
     try {
       final result = await _dataStore.get('consents', uid);
       return result.isSuccess && result.dataOrNull != null;
-    } catch (e) {
+    } on Object catch (e) {
       throw ServerException(ErrorStrings.withDetails(
           ErrorStrings.checkConsentError, e.toString()));
     }

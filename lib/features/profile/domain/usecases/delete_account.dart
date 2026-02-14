@@ -5,12 +5,12 @@ import 'package:guardiancare/features/profile/domain/repositories/profile_reposi
 
 /// Use case for deleting user account
 class DeleteAccount implements UseCase<void, String> {
-  final ProfileRepository repository;
 
   DeleteAccount(this.repository);
+  final ProfileRepository repository;
 
   @override
   Future<Either<Failure, void>> call(String uid) async {
-    return await repository.deleteAccount(uid);
+    return repository.deleteAccount(uid);
   }
 }

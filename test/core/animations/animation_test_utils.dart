@@ -360,7 +360,7 @@ class AnimationTestUtils {
     try {
       // Attempting to forward a disposed controller throws
       controller.forward();
-    } catch (e) {
+    } on Object {
       // FlutterError is thrown when controller is disposed
       isDisposed = true;
     }

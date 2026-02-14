@@ -1,7 +1,7 @@
 import 'package:guardiancare/core/constants/constants.dart';
+import 'package:guardiancare/core/database/hive_service.dart';
 import 'package:guardiancare/core/error/exceptions.dart';
 import 'package:guardiancare/features/report/data/models/report_model.dart';
-import 'package:guardiancare/core/database/hive_service.dart';
 
 /// Local data source for report operations
 /// Uses Hive for fast, efficient storage of report data
@@ -24,12 +24,12 @@ abstract class ReportLocalDataSource {
 }
 
 class ReportLocalDataSourceImpl implements ReportLocalDataSource {
-  final HiveService _hiveService;
-  static const String _boxName = 'reports';
-  static const String _keyPrefix = 'report_form_';
 
   ReportLocalDataSourceImpl({required HiveService hiveService})
       : _hiveService = hiveService;
+  final HiveService _hiveService;
+  static const String _boxName = 'reports';
+  static const String _keyPrefix = 'report_form_';
 
   @override
   Future<void> saveReport(ReportModel report) async {
@@ -39,7 +39,7 @@ class ReportLocalDataSourceImpl implements ReportLocalDataSource {
       json['version'] = 1;
 
       await _hiveService.put(_boxName, key, json);
-    } catch (e) {
+    } on Object catch (e) {
       throw CacheException(ErrorStrings.withDetails(ErrorStrings.saveReportError, e.toString()));
     }
   }
@@ -66,7 +66,7 @@ class ReportLocalDataSourceImpl implements ReportLocalDataSource {
         savedAt: model.savedAt,
         isDirty: model.isDirty,
       );
-    } catch (e) {
+    } on Object catch (e) {
       throw CacheException(ErrorStrings.withDetails(ErrorStrings.loadReportError, e.toString()));
     }
   }
@@ -76,7 +76,7 @@ class ReportLocalDataSourceImpl implements ReportLocalDataSource {
     try {
       final key = '$_keyPrefix$caseName';
       await _hiveService.delete(_boxName, key);
-    } catch (e) {
+    } on Object catch (e) {
       throw CacheException(ErrorStrings.withDetails(ErrorStrings.deleteReportError, e.toString()));
     }
   }
@@ -90,7 +90,7 @@ class ReportLocalDataSourceImpl implements ReportLocalDataSource {
           .where((key) => key.toString().startsWith(_keyPrefix))
           .map((key) => key.toString().replaceFirst(_keyPrefix, ''))
           .toList();
-    } catch (e) {
+    } on Object catch (e) {
       throw CacheException(ErrorStrings.withDetails(ErrorStrings.getSavedReportsError, e.toString()));
     }
   }
@@ -100,7 +100,7 @@ class ReportLocalDataSourceImpl implements ReportLocalDataSource {
     try {
       final key = '$_keyPrefix$caseName';
       return _hiveService.containsKey(_boxName, key);
-    } catch (e) {
+    } on Object catch (e) {
       throw CacheException(
           ErrorStrings.withDetails(ErrorStrings.checkReportExistenceError, e.toString()));
     }

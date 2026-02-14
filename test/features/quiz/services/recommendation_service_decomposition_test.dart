@@ -4,9 +4,9 @@ import 'package:glados/glados.dart';
 import 'package:guardiancare/core/error/failures.dart';
 import 'package:guardiancare/features/quiz/domain/entities/quiz_recommendation_entity.dart';
 import 'package:guardiancare/features/quiz/domain/repositories/recommendation_repository.dart';
-import 'package:guardiancare/features/quiz/domain/usecases/recommendation_use_case.dart';
 import 'package:guardiancare/features/quiz/domain/services/gemini_ai_service.dart';
 import 'package:guardiancare/features/quiz/domain/services/youtube_search_service.dart';
+import 'package:guardiancare/features/quiz/domain/usecases/recommendation_use_case.dart';
 
 /// **Feature: srp-clean-architecture-fix, Property 4: Recommendation Service Decomposition**
 /// **Validates: Requirements 4.1, 4.2, 4.3, 4.5**
@@ -57,7 +57,7 @@ class MockYoutubeSearchService implements YoutubeSearchService {
   final List<String> methodCalls = [];
   final List<String> searchTermRequests = [];
   
-  Either<Failure, VideoData> mockResult = Right(const VideoData(
+  Either<Failure, VideoData> mockResult = const Right(VideoData(
     videoId: 'test-video-id',
     title: 'Test Video Title',
     thumbnailUrl: 'https://img.youtube.com/vi/test/0.jpg',
@@ -161,10 +161,6 @@ class MockRecommendationRepository implements RecommendationRepository {
 // ============================================================================
 
 class RecommendationTestFixture {
-  final MockGeminiAIService geminiService;
-  final MockYoutubeSearchService youtubeService;
-  final MockRecommendationRepository repository;
-  final RecommendationUseCase useCase;
 
   RecommendationTestFixture._({
     required this.geminiService,
@@ -189,6 +185,10 @@ class RecommendationTestFixture {
       useCase: useCase,
     );
   }
+  final MockGeminiAIService geminiService;
+  final MockYoutubeSearchService youtubeService;
+  final MockRecommendationRepository repository;
+  final RecommendationUseCase useCase;
 
   void reset() {
     geminiService.reset();
@@ -282,7 +282,7 @@ void main() {
     // Property 4.1: GeminiAIService handles only Gemini API interactions
     // Validates: Requirement 4.1
     // ========================================================================
-    Glados(any.category, ExploreConfig(numRuns: 100)).test(
+    Glados(any.category, ExploreConfig()).test(
       'For any category, GeminiAIService SHALL handle only Gemini API interactions',
       (category) async {
         final fixture = RecommendationTestFixture.create();
@@ -321,7 +321,7 @@ void main() {
     // Property 4.2: YoutubeSearchService handles only YouTube API interactions
     // Validates: Requirement 4.2
     // ========================================================================
-    Glados(any.searchTerm, ExploreConfig(numRuns: 100)).test(
+    Glados(any.searchTerm, ExploreConfig()).test(
       'For any search term, YoutubeSearchService SHALL handle only YouTube API interactions',
       (searchTerm) async {
         final fixture = RecommendationTestFixture.create();
@@ -360,7 +360,7 @@ void main() {
     // Property 4.3: RecommendationRepository handles only persistence operations
     // Validates: Requirement 4.3
     // ========================================================================
-    Glados2(any.category, any.userId, ExploreConfig(numRuns: 100)).test(
+    Glados2(any.category, any.userId, ExploreConfig()).test(
       'For any recommendation save, RecommendationRepository SHALL handle only persistence operations',
       (category, userId) async {
         final fixture = RecommendationTestFixture.create();
@@ -401,7 +401,7 @@ void main() {
     // Property 4.4: GeminiAIService returns failure without fallback on error
     // Validates: Requirement 4.5
     // ========================================================================
-    Glados(any.category, ExploreConfig(numRuns: 100)).test(
+    Glados(any.category, ExploreConfig()).test(
       'For any Gemini API failure, GeminiAIService SHALL return failure without fallback',
       (category) async {
         final fixture = RecommendationTestFixture.create();
@@ -445,7 +445,7 @@ void main() {
     // Property 4.5: YoutubeSearchService returns failure on error
     // Validates: Requirement 4.2
     // ========================================================================
-    Glados(any.searchTerm, ExploreConfig(numRuns: 100)).test(
+    Glados(any.searchTerm, ExploreConfig()).test(
       'For any YouTube API failure, YoutubeSearchService SHALL return YoutubeApiFailure',
       (searchTerm) async {
         final fixture = RecommendationTestFixture.create();
@@ -484,7 +484,7 @@ void main() {
     // Property 4.6: RecommendationUseCase orchestrates services correctly
     // Validates: Requirements 4.1, 4.2, 4.3
     // ========================================================================
-    Glados2(any.categoryList, any.userId, ExploreConfig(numRuns: 100)).test(
+    Glados2(any.categoryList, any.userId, ExploreConfig()).test(
       'For any recommendation request, RecommendationUseCase SHALL orchestrate all services',
       (categories, userId) async {
         final fixture = RecommendationTestFixture.create();
@@ -549,7 +549,7 @@ void main() {
     // Property 4.7: Services maintain single responsibility during orchestration
     // Validates: Requirements 4.1, 4.2, 4.3
     // ========================================================================
-    Glados2(any.categoryList, any.userId, ExploreConfig(numRuns: 100)).test(
+    Glados2(any.categoryList, any.userId, ExploreConfig()).test(
       'During orchestration, each service SHALL maintain single responsibility',
       (categories, userId) async {
         final fixture = RecommendationTestFixture.create();
@@ -591,7 +591,7 @@ void main() {
     // Property 4.8: Saved recommendations contain correct data
     // Validates: Requirement 4.3
     // ========================================================================
-    Glados2(any.category, any.userId, ExploreConfig(numRuns: 100)).test(
+    Glados2(any.category, any.userId, ExploreConfig()).test(
       'For any saved recommendation, data SHALL be correctly persisted',
       (category, userId) async {
         final fixture = RecommendationTestFixture.create();
@@ -638,7 +638,7 @@ void main() {
     // Property 4.9: Multiple categories are all processed
     // Validates: Requirements 4.1, 4.4
     // ========================================================================
-    Glados(any.intBetween(1, 5), ExploreConfig(numRuns: 100)).test(
+    Glados(any.intBetween(1, 5), ExploreConfig()).test(
       'For any number of categories, all SHALL be processed by GeminiAIService',
       (count) async {
         final fixture = RecommendationTestFixture.create();
@@ -667,7 +667,7 @@ void main() {
     // Property 4.10: Gemini failure doesn't prevent other categories from processing
     // Validates: Requirement 4.5
     // ========================================================================
-    Glados(any.intBetween(2, 4), ExploreConfig(numRuns: 100)).test(
+    Glados(any.intBetween(2, 4), ExploreConfig()).test(
       'For any Gemini failure on one category, other categories SHALL still be processed',
       (count) async {
         final fixture = RecommendationTestFixture.create();

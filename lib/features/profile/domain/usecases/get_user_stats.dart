@@ -10,9 +10,9 @@ import 'package:guardiancare/features/profile/domain/repositories/user_stats_rep
 /// This use case combines quiz results, video history, and badge data
 /// into a unified [UserStatsEntity].
 class GetUserStats implements UseCase<UserStatsEntity, String> {
-  final UserStatsRepository repository;
 
   GetUserStats(this.repository);
+  final UserStatsRepository repository;
 
   @override
   Future<Either<Failure, UserStatsEntity>> call(String userId) {

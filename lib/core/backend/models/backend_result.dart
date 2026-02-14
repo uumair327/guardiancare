@@ -9,7 +9,7 @@
 ///   try {
 ///     final user = await dataStore.get('users', id);
 ///     return BackendResult.success(user);
-///   } catch (e) {
+///   } on Object catch (e) {
 ///     return BackendResult.failure(BackendError.fromException(e));
 ///   }
 /// }
@@ -117,18 +117,6 @@ class BackendError {
     this.stackTrace,
   });
 
-  /// Error code for programmatic handling
-  final BackendErrorCode code;
-
-  /// Human-readable error message
-  final String message;
-
-  /// Optional additional details
-  final Map<String, dynamic>? details;
-
-  /// Stack trace for debugging
-  final StackTrace? stackTrace;
-
   /// Create from exception
   factory BackendError.fromException(Object e, [StackTrace? stackTrace]) {
     if (e is BackendError) return e;
@@ -148,6 +136,18 @@ class BackendError {
       stackTrace: stackTrace,
     );
   }
+
+  /// Error code for programmatic handling
+  final BackendErrorCode code;
+
+  /// Human-readable error message
+  final String message;
+
+  /// Optional additional details
+  final Map<String, dynamic>? details;
+
+  /// Stack trace for debugging
+  final StackTrace? stackTrace;
 
   /// Convert to exception for throwing
   Exception toException() {

@@ -13,14 +13,14 @@ import 'package:intl/intl.dart';
 /// - Subtle interactions
 /// - Fetches user display name from Firestore
 class CommentItem extends StatefulWidget {
-  final CommentEntity comment;
-  final int index;
 
   const CommentItem({
     super.key,
     required this.comment,
     this.index = 0,
   });
+  final CommentEntity comment;
+  final int index;
 
   @override
   State<CommentItem> createState() => _CommentItemState();
@@ -62,7 +62,7 @@ class _CommentItemState extends State<CommentItem> {
           _isLoadingUser = false;
         });
       }
-    } catch (e) {
+    } on Object {
       if (mounted) {
         setState(() => _isLoadingUser = false);
       }
@@ -231,11 +231,10 @@ class _CommentItemState extends State<CommentItem> {
       child: FadeSlideWidget(
         duration: AppDurations.animationMedium,
         delay: Duration(milliseconds: 50 * widget.index),
-        direction: SlideDirection.up,
         slideOffset: 15,
         child: Container(
-          margin: EdgeInsets.only(bottom: AppDimensions.spaceM),
-          padding: EdgeInsets.all(AppDimensions.spaceM),
+          margin: const EdgeInsets.only(bottom: AppDimensions.spaceM),
+          padding: const EdgeInsets.all(AppDimensions.spaceM),
           decoration: BoxDecoration(
             color: context.colors.surface,
             borderRadius: AppDimensions.borderRadiusL,
@@ -257,7 +256,7 @@ class _CommentItemState extends State<CommentItem> {
                 children: [
                   // User Avatar - shows profile photo or initials
                   _buildAvatar(avatarColor, displayName),
-                  SizedBox(width: AppDimensions.spaceS),
+                  const SizedBox(width: AppDimensions.spaceS),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -280,7 +279,7 @@ class _CommentItemState extends State<CommentItem> {
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                               ),
-                        SizedBox(height: 2),
+                        const SizedBox(height: 2),
                         Row(
                           children: [
                             Icon(
@@ -288,7 +287,7 @@ class _CommentItemState extends State<CommentItem> {
                               size: 12,
                               color: context.colors.textSecondary,
                             ),
-                            SizedBox(width: 4),
+                            const SizedBox(width: 4),
                             Text(
                               _getTimeAgo(widget.comment.createdAt),
                               style: AppTextStyles.caption.copyWith(
@@ -301,7 +300,7 @@ class _CommentItemState extends State<CommentItem> {
                     ),
                   ),
                   Container(
-                    padding: EdgeInsets.symmetric(
+                    padding: const EdgeInsets.symmetric(
                       horizontal: AppDimensions.spaceS,
                       vertical: 4,
                     ),
@@ -317,7 +316,7 @@ class _CommentItemState extends State<CommentItem> {
                           size: 12,
                           color: _primaryColor,
                         ),
-                        SizedBox(width: 4),
+                        const SizedBox(width: 4),
                         Text(
                           ForumStrings.member,
                           style: AppTextStyles.caption.copyWith(
@@ -331,7 +330,7 @@ class _CommentItemState extends State<CommentItem> {
                   ),
                 ],
               ),
-              SizedBox(height: AppDimensions.spaceM),
+              const SizedBox(height: AppDimensions.spaceM),
               AnimatedCrossFade(
                 firstChild: Text(
                   widget.comment.text,
@@ -355,7 +354,7 @@ class _CommentItemState extends State<CommentItem> {
                 duration: AppDurations.animationShort,
               ),
               if (isLongComment) ...[
-                SizedBox(height: AppDimensions.spaceS),
+                const SizedBox(height: AppDimensions.spaceS),
                 ScaleTapWidget(
                   onTap: () {
                     HapticFeedback.selectionClick();
@@ -371,7 +370,7 @@ class _CommentItemState extends State<CommentItem> {
                           fontWeight: FontWeight.w600,
                         ),
                       ),
-                      SizedBox(width: 4),
+                      const SizedBox(width: 4),
                       AnimatedRotation(
                         turns: _isExpanded ? 0.5 : 0,
                         duration: AppDurations.animationShort,

@@ -17,19 +17,19 @@ class HomeLoading extends HomeState {
 }
 
 class CarouselItemsLoaded extends HomeState {
-  final List<CarouselItemEntity> items;
 
   const CarouselItemsLoaded(this.items);
+  final List<CarouselItemEntity> items;
 
   @override
   List<Object> get props => [items];
 }
 
 class HomeError extends HomeState {
-  final String message;
-  final String? code;
 
   const HomeError(this.message, {this.code});
+  final String message;
+  final String? code;
 
   @override
   List<Object?> get props => [message, code];

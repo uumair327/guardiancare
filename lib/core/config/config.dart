@@ -10,10 +10,10 @@
 /// final collection = FirebaseConfig.collections.users;
 /// final endpoint = ApiEndpoints.youtube.search;
 /// ```
-library config;
+library;
 
-export 'app_config.dart';
 export 'api_endpoints.dart';
+export 'app_config.dart';
 export 'environment_config.dart';
 export 'firebase_config.dart';
 export 'network_config.dart';

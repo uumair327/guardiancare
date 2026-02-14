@@ -89,7 +89,7 @@ class SupabaseAuthAdapter implements IAuthService {
       return BackendResult.success(_mapUser(response.user!));
     } on AuthException catch (e) {
       return BackendResult.failure(_mapAuthError(e));
-    } catch (e) {
+    } on Object catch (e) {
       return BackendResult.failure(
         BackendError(message: e.toString(), code: BackendErrorCode.unknown),
       );
@@ -119,7 +119,7 @@ class SupabaseAuthAdapter implements IAuthService {
       return BackendResult.success(_mapUser(response.user!));
     } on AuthException catch (e) {
       return BackendResult.failure(_mapAuthError(e));
-    } catch (e) {
+    } on Object catch (e) {
       return BackendResult.failure(
         BackendError(message: e.toString(), code: BackendErrorCode.unknown),
       );
@@ -135,7 +135,7 @@ class SupabaseAuthAdapter implements IAuthService {
       return const BackendResult.success(null);
     } on AuthException catch (e) {
       return BackendResult.failure(_mapAuthError(e));
-    } catch (e) {
+    } on Object catch (e) {
       return BackendResult.failure(
         BackendError(message: e.toString(), code: BackendErrorCode.unknown),
       );
@@ -153,7 +153,7 @@ class SupabaseAuthAdapter implements IAuthService {
       return const BackendResult.success(null);
     } on AuthException catch (e) {
       return BackendResult.failure(_mapAuthError(e));
-    } catch (e) {
+    } on Object catch (e) {
       return BackendResult.failure(
         BackendError(message: e.toString(), code: BackendErrorCode.unknown),
       );
@@ -185,7 +185,7 @@ class SupabaseAuthAdapter implements IAuthService {
       return BackendResult.success(_mapUser(user));
     } on AuthException catch (e) {
       return BackendResult.failure(_mapAuthError(e));
-    } catch (e) {
+    } on Object catch (e) {
       return BackendResult.failure(
         BackendError(message: e.toString(), code: BackendErrorCode.unknown),
       );
@@ -212,7 +212,7 @@ class SupabaseAuthAdapter implements IAuthService {
       return BackendResult.success(_mapUser(user));
     } on AuthException catch (e) {
       return BackendResult.failure(_mapAuthError(e));
-    } catch (e) {
+    } on Object catch (e) {
       return BackendResult.failure(
         BackendError(message: e.toString(), code: BackendErrorCode.unknown),
       );
@@ -241,7 +241,7 @@ class SupabaseAuthAdapter implements IAuthService {
       return BackendResult.success(_mapUser(user));
     } on AuthException catch (e) {
       return BackendResult.failure(_mapAuthError(e));
-    } catch (e) {
+    } on Object catch (e) {
       return BackendResult.failure(
         BackendError(message: e.toString(), code: BackendErrorCode.unknown),
       );
@@ -277,7 +277,7 @@ class SupabaseAuthAdapter implements IAuthService {
         );
       }
       return BackendResult.failure(_mapAuthError(e));
-    } catch (e) {
+    } on Object catch (e) {
       return BackendResult.failure(
         BackendError(message: e.toString(), code: BackendErrorCode.unknown),
       );
@@ -306,7 +306,7 @@ class SupabaseAuthAdapter implements IAuthService {
       return BackendResult.success(_mapUser(user));
     } on AuthException catch (e) {
       return BackendResult.failure(_mapAuthError(e));
-    } catch (e) {
+    } on Object catch (e) {
       return BackendResult.failure(
         BackendError(message: e.toString(), code: BackendErrorCode.unknown),
       );
@@ -332,7 +332,7 @@ class SupabaseAuthAdapter implements IAuthService {
       return BackendResult.success(_mapUser(user));
     } on AuthException catch (e) {
       return BackendResult.failure(_mapAuthError(e));
-    } catch (e) {
+    } on Object catch (e) {
       return BackendResult.failure(
         BackendError(message: e.toString(), code: BackendErrorCode.unknown),
       );
@@ -358,7 +358,7 @@ class SupabaseAuthAdapter implements IAuthService {
       return const BackendResult.success(null);
     } on AuthException catch (e) {
       return BackendResult.failure(_mapAuthError(e));
-    } catch (e) {
+    } on Object catch (e) {
       return BackendResult.failure(
         BackendError(message: e.toString(), code: BackendErrorCode.unknown),
       );
@@ -393,7 +393,7 @@ class SupabaseAuthAdapter implements IAuthService {
       return const BackendResult.success(null);
     } on AuthException catch (e) {
       return BackendResult.failure(_mapAuthError(e));
-    } catch (e) {
+    } on Object catch (e) {
       return BackendResult.failure(
         BackendError(message: e.toString(), code: BackendErrorCode.unknown),
       );
@@ -428,7 +428,7 @@ class SupabaseAuthAdapter implements IAuthService {
       return const BackendResult.success(null);
     } on AuthException catch (e) {
       return BackendResult.failure(_mapAuthError(e));
-    } catch (e) {
+    } on Object catch (e) {
       return BackendResult.failure(
         BackendError(message: e.toString(), code: BackendErrorCode.unknown),
       );
@@ -451,7 +451,7 @@ class SupabaseAuthAdapter implements IAuthService {
       return const BackendResult.success(null);
     } on AuthException catch (e) {
       return BackendResult.failure(_mapAuthError(e));
-    } catch (e) {
+    } on Object catch (e) {
       return BackendResult.failure(
         BackendError(message: e.toString(), code: BackendErrorCode.unknown),
       );
@@ -474,7 +474,7 @@ class SupabaseAuthAdapter implements IAuthService {
       return const BackendResult.success(null);
     } on AuthException catch (e) {
       return BackendResult.failure(_mapAuthError(e));
-    } catch (e) {
+    } on Object catch (e) {
       return BackendResult.failure(
         BackendError(message: e.toString(), code: BackendErrorCode.unknown),
       );
@@ -492,7 +492,7 @@ class SupabaseAuthAdapter implements IAuthService {
       return const BackendResult.success(null);
     } on AuthException catch (e) {
       return BackendResult.failure(_mapAuthError(e));
-    } catch (e) {
+    } on Object catch (e) {
       return BackendResult.failure(
         BackendError(message: e.toString(), code: BackendErrorCode.unknown),
       );
@@ -511,7 +511,7 @@ class SupabaseAuthAdapter implements IAuthService {
           code: BackendErrorCode.operationNotAllowed,
         ),
       );
-    } catch (e) {
+    } on Object catch (e) {
       return BackendResult.failure(
         BackendError(message: e.toString(), code: BackendErrorCode.unknown),
       );
@@ -534,7 +534,7 @@ class SupabaseAuthAdapter implements IAuthService {
       return BackendResult.success(token);
     } on AuthException catch (e) {
       return BackendResult.failure(_mapAuthError(e));
-    } catch (e) {
+    } on Object catch (e) {
       return BackendResult.failure(
         BackendError(message: e.toString(), code: BackendErrorCode.unknown),
       );
@@ -563,7 +563,21 @@ class SupabaseAuthAdapter implements IAuthService {
       return const BackendResult.success(null);
     } on AuthException catch (e) {
       return BackendResult.failure(_mapAuthError(e));
-    } catch (e) {
+    } on Object catch (e) {
+      return BackendResult.failure(
+        BackendError(message: e.toString(), code: BackendErrorCode.unknown),
+      );
+    }
+  }
+
+  @override
+  Future<BackendResult<void>> reload() async {
+    try {
+      await _auth.refreshSession();
+      return const BackendResult.success(null);
+    } on AuthException catch (e) {
+      return BackendResult.failure(_mapAuthError(e));
+    } on Object catch (e) {
       return BackendResult.failure(
         BackendError(message: e.toString(), code: BackendErrorCode.unknown),
       );
@@ -582,7 +596,7 @@ class SupabaseAuthAdapter implements IAuthService {
       return const BackendResult.success(null);
     } on AuthException catch (e) {
       return BackendResult.failure(_mapAuthError(e));
-    } catch (e) {
+    } on Object catch (e) {
       return BackendResult.failure(
         BackendError(message: e.toString(), code: BackendErrorCode.unknown),
       );

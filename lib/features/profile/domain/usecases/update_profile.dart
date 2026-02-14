@@ -6,12 +6,12 @@ import 'package:guardiancare/features/profile/domain/repositories/profile_reposi
 
 /// Use case for updating user profile
 class UpdateProfile implements UseCase<void, ProfileEntity> {
-  final ProfileRepository repository;
 
   UpdateProfile(this.repository);
+  final ProfileRepository repository;
 
   @override
   Future<Either<Failure, void>> call(ProfileEntity profile) async {
-    return await repository.updateProfile(profile);
+    return repository.updateProfile(profile);
   }
 }

@@ -12,23 +12,19 @@ class CheckAuthStatus extends AuthEvent {
 }
 
 class SignInWithEmailRequested extends AuthEvent {
-  final String email;
-  final String password;
 
   const SignInWithEmailRequested({
     required this.email,
     required this.password,
   });
+  final String email;
+  final String password;
 
   @override
   List<Object> get props => [email, password];
 }
 
 class SignUpWithEmailRequested extends AuthEvent {
-  final String email;
-  final String password;
-  final String displayName;
-  final String role;
 
   const SignUpWithEmailRequested({
     required this.email,
@@ -36,6 +32,10 @@ class SignUpWithEmailRequested extends AuthEvent {
     required this.displayName,
     required this.role,
   });
+  final String email;
+  final String password;
+  final String displayName;
+  final String role;
 
   @override
   List<Object> get props => [email, password, displayName, role];
@@ -50,10 +50,18 @@ class SignOutRequested extends AuthEvent {
 }
 
 class PasswordResetRequested extends AuthEvent {
-  final String email;
 
   const PasswordResetRequested({required this.email});
+  final String email;
 
   @override
   List<Object> get props => [email];
+}
+
+class SendEmailVerificationRequested extends AuthEvent {
+  const SendEmailVerificationRequested();
+}
+
+class ReloadUserRequested extends AuthEvent {
+  const ReloadUserRequested();
 }

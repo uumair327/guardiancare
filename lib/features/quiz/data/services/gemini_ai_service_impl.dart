@@ -14,8 +14,6 @@ import 'package:guardiancare/features/quiz/domain/services/gemini_ai_service.dar
 ///
 /// Requirements: 1.1, 5.1
 class GeminiAIServiceImpl implements GeminiAIService {
-  final Gemini _gemini;
-  final bool _useFallback;
 
   /// Creates a [GeminiAIServiceImpl] with the provided Gemini instance
   ///
@@ -29,11 +27,13 @@ class GeminiAIServiceImpl implements GeminiAIService {
     bool useFallback = true,
   })  : _gemini = gemini ?? _initGemini(),
         _useFallback = useFallback;
+  final Gemini _gemini;
+  final bool _useFallback;
 
   static Gemini _initGemini() {
     try {
       Gemini.init(apiKey: kGeminiApiKey);
-    } catch (_) {
+    } on Object catch (_) {
       // Gemini might already be initialized
     }
     return Gemini.instance;
@@ -43,7 +43,7 @@ class GeminiAIServiceImpl implements GeminiAIService {
   Future<Either<Failure, List<String>>> generateSearchTerms(
       String category) async {
     if (category.isEmpty) {
-      return Left(GeminiApiFailure(ErrorStrings.geminiCategoryEmpty));
+      return const Left(GeminiApiFailure(ErrorStrings.geminiCategoryEmpty));
     }
 
     try {
@@ -68,7 +68,7 @@ class GeminiAIServiceImpl implements GeminiAIService {
       debugPrint(
           '✅ Gemini generated ${searchTerms.length} search terms: $searchTerms');
       return Right(searchTerms);
-    } catch (e) {
+    } on Object catch (e) {
       debugPrint('❌ Gemini API error: $e');
       return _handleFallback(category, ErrorStrings.withDetails(ErrorStrings.geminiApiError, e.toString()));
     }

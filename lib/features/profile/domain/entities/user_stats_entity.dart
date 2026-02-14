@@ -5,6 +5,17 @@ import 'package:equatable/equatable.dart';
 /// This entity aggregates user activity data from multiple sources
 /// to provide a unified view of user achievements and progress.
 class UserStatsEntity extends Equatable {
+
+  const UserStatsEntity({
+    this.quizzesCompleted = 0,
+    this.averageQuizScore = 0.0,
+    this.bestQuizScore = 0.0,
+    this.videosWatched = 0,
+    this.videosCompleted = 0,
+    this.totalWatchTimeSeconds = 0,
+    this.badgesEarned = 0,
+    this.badges = const [],
+  });
   /// Total number of quizzes completed by the user
   final int quizzesCompleted;
   
@@ -29,17 +40,6 @@ class UserStatsEntity extends Equatable {
   /// List of earned badge identifiers
   final List<BadgeEntity> badges;
 
-  const UserStatsEntity({
-    this.quizzesCompleted = 0,
-    this.averageQuizScore = 0.0,
-    this.bestQuizScore = 0.0,
-    this.videosWatched = 0,
-    this.videosCompleted = 0,
-    this.totalWatchTimeSeconds = 0,
-    this.badgesEarned = 0,
-    this.badges = const [],
-  });
-
   /// Empty stats for new users or error states
   static const empty = UserStatsEntity();
 
@@ -61,11 +61,6 @@ class UserStatsEntity extends Equatable {
 /// Badges are awarded based on user activity milestones like
 /// completing quizzes, watching videos, or achieving high scores.
 class BadgeEntity extends Equatable {
-  final String id;
-  final String name;
-  final String description;
-  final BadgeType type;
-  final DateTime? earnedAt;
 
   const BadgeEntity({
     required this.id,
@@ -74,6 +69,11 @@ class BadgeEntity extends Equatable {
     required this.type,
     this.earnedAt,
   });
+  final String id;
+  final String name;
+  final String description;
+  final BadgeType type;
+  final DateTime? earnedAt;
 
   @override
   List<Object?> get props => [id, name, description, type, earnedAt];

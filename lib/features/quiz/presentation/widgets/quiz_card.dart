@@ -8,11 +8,6 @@ import 'package:guardiancare/core/core.dart';
 /// Uses centralized [ScaleTapWidget] for scale-tap animation,
 /// while maintaining the 3D tilt effect on pan gestures.
 class QuizCard extends StatefulWidget {
-  final String name;
-  final String? thumbnail;
-  final VoidCallback onTap;
-  final int index;
-  final int? questionCount;
 
   const QuizCard({
     super.key,
@@ -22,6 +17,11 @@ class QuizCard extends StatefulWidget {
     this.index = 0,
     this.questionCount,
   });
+  final String name;
+  final String? thumbnail;
+  final VoidCallback onTap;
+  final int index;
+  final int? questionCount;
 
   @override
   State<QuizCard> createState() => _QuizCardState();
@@ -35,7 +35,7 @@ class _QuizCardState extends State<QuizCard> {
   static const _quizCardConfig = AnimationConfig(
     duration: AppDurations.animationShort,
     curve: AppCurves.tap,
-    begin: 1.0,
+    begin: 1,
     end: 0.96,
   );
 
@@ -75,8 +75,6 @@ class _QuizCardState extends State<QuizCard> {
       child: _ScaleTapWithPressCallback(
         config: _quizCardConfig,
         onTap: widget.onTap,
-        enableHaptic: true,
-        hapticType: HapticFeedbackType.light,
         onPressStateChanged: _onPressStateChanged,
         child: AppAnimatedContainer(
           transform: Matrix4.identity()
@@ -147,18 +145,18 @@ class _QuizCardState extends State<QuizCard> {
                     children: [
                       // Quiz icon
                       Container(
-                        padding: EdgeInsets.all(AppDimensions.spaceS),
+                        padding: const EdgeInsets.all(AppDimensions.spaceS),
                         decoration: BoxDecoration(
                           color: AppColors.white.withValues(alpha: 0.2),
                           borderRadius: AppDimensions.borderRadiusS,
                         ),
-                        child: Icon(
+                        child: const Icon(
                           Icons.quiz_rounded,
                           color: AppColors.white,
                           size: AppDimensions.iconM,
                         ),
                       ),
-                      SizedBox(height: AppDimensions.spaceS),
+                      const SizedBox(height: AppDimensions.spaceS),
                       // Quiz name
                       Text(
                         _capitalizeEach(widget.name),
@@ -175,7 +173,7 @@ class _QuizCardState extends State<QuizCard> {
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
-                      SizedBox(height: AppDimensions.spaceXS),
+                      const SizedBox(height: AppDimensions.spaceXS),
                       // Start quiz hint
                       Row(
                         children: [
@@ -184,7 +182,7 @@ class _QuizCardState extends State<QuizCard> {
                             color: AppColors.white.withValues(alpha: 0.8),
                             size: AppDimensions.iconXS,
                           ),
-                          SizedBox(width: AppDimensions.spaceXS),
+                          const SizedBox(width: AppDimensions.spaceXS),
                           Text(
                             UIStrings.startQuiz,
                             style: AppTextStyles.caption.copyWith(
@@ -192,9 +190,9 @@ class _QuizCardState extends State<QuizCard> {
                             ),
                           ),
                           if (widget.questionCount != null) ...[
-                            SizedBox(width: AppDimensions.spaceS),
+                            const SizedBox(width: AppDimensions.spaceS),
                             Container(
-                              padding: EdgeInsets.symmetric(
+                              padding: const EdgeInsets.symmetric(
                                 horizontal: AppDimensions.spaceS,
                                 vertical: AppDimensions.spaceXXS,
                               ),
@@ -224,7 +222,7 @@ class _QuizCardState extends State<QuizCard> {
                     duration: AppDurations.animationShort,
                     opacity: _isPressed ? 0.6 : 1.0,
                     child: Container(
-                      padding: EdgeInsets.all(AppDimensions.spaceS),
+                      padding: const EdgeInsets.all(AppDimensions.spaceS),
                       decoration: BoxDecoration(
                         color: AppColors.white.withValues(alpha: 0.9),
                         shape: BoxShape.circle,
@@ -290,21 +288,17 @@ class _QuizCardState extends State<QuizCard> {
 /// (shadow changes, opacity changes) while using the centralized
 /// ScaleTapWidget for scale animation.
 class _ScaleTapWithPressCallback extends StatefulWidget {
-  final Widget child;
-  final VoidCallback? onTap;
-  final AnimationConfig? config;
-  final bool enableHaptic;
-  final HapticFeedbackType hapticType;
-  final ValueChanged<bool>? onPressStateChanged;
 
   const _ScaleTapWithPressCallback({
     required this.child,
     this.onTap,
     this.config,
-    this.enableHaptic = true,
-    this.hapticType = HapticFeedbackType.light,
     this.onPressStateChanged,
   });
+  final Widget child;
+  final VoidCallback? onTap;
+  final AnimationConfig? config;
+  final ValueChanged<bool>? onPressStateChanged;
 
   @override
   State<_ScaleTapWithPressCallback> createState() => _ScaleTapWithPressCallbackState();
@@ -338,9 +332,6 @@ class _ScaleTapWithPressCallbackState extends State<_ScaleTapWithPressCallback>
   void _onTapDown(TapDownDetails details) {
     _controller.forward();
     widget.onPressStateChanged?.call(true);
-    if (widget.enableHaptic) {
-      widget.hapticType.trigger();
-    }
   }
 
   void _onTapUp(TapUpDetails details) {

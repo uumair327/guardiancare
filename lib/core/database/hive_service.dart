@@ -5,9 +5,9 @@ import 'package:path_provider/path_provider.dart';
 /// Industrial-grade Hive service for fast key-value storage
 /// Best for: User sessions, settings, temporary data, and frequently accessed data
 class HiveService {
-  static final HiveService instance = HiveService._internal();
   
   HiveService._internal();
+  static final HiveService instance = HiveService._internal();
 
   /// Box names
   static const String userSessionBox = 'user_session';

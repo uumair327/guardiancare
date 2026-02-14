@@ -27,10 +27,10 @@ abstract class ForumRemoteDataSource {
 ///
 /// Following: DIP (Dependency Inversion Principle)
 class ForumRemoteDataSourceImpl implements ForumRemoteDataSource {
-  final IDataStore _dataStore;
 
   ForumRemoteDataSourceImpl({required IDataStore dataStore})
       : _dataStore = dataStore;
+  final IDataStore _dataStore;
 
   @override
   Stream<List<ForumModel>> getForums(ForumCategory category) {
@@ -61,9 +61,9 @@ class ForumRemoteDataSourceImpl implements ForumRemoteDataSource {
                 debugPrint('ForumDataSource: Warning - doc missing id field');
               }
               return ForumModel.fromMap(doc);
-            } catch (e) {
+            } on Object catch (e) {
               debugPrint('ForumDataSource: Error parsing forum: $e');
-              throw e;
+              rethrow;
             }
           }).toList();
         },
@@ -78,8 +78,8 @@ class ForumRemoteDataSourceImpl implements ForumRemoteDataSource {
   @override
   Stream<List<CommentModel>> getComments(String forumId) {
     try {
-      final options = QueryOptions(
-        orderBy: [const OrderBy('createdAt', descending: true)],
+      const options = QueryOptions(
+        orderBy: [OrderBy('createdAt', descending: true)],
       );
 
       return _dataStore
@@ -87,7 +87,7 @@ class ForumRemoteDataSourceImpl implements ForumRemoteDataSource {
           .map((result) {
         return result.when(
           success: (docs) {
-            return docs.map((doc) => CommentModel.fromMap(doc)).toList();
+            return docs.map(CommentModel.fromMap).toList();
           },
           failure: (error) {
             debugPrint(
@@ -96,7 +96,7 @@ class ForumRemoteDataSourceImpl implements ForumRemoteDataSource {
           },
         );
       });
-    } catch (e) {
+    } on Object catch (e) {
       throw ServerException(ErrorStrings.withDetails(
           ErrorStrings.getCommentsError, e.toString()));
     }
@@ -126,7 +126,7 @@ class ForumRemoteDataSourceImpl implements ForumRemoteDataSource {
         throw ServerException(ErrorStrings.withDetails(
             ErrorStrings.addCommentError, result.errorOrNull!.message));
       }
-    } catch (e) {
+    } on Object catch (e) {
       if (e is ServerException) rethrow;
       throw ServerException(
           ErrorStrings.withDetails(ErrorStrings.addCommentError, e.toString()));
@@ -155,7 +155,7 @@ class ForumRemoteDataSourceImpl implements ForumRemoteDataSource {
               ErrorStrings.getUserDetailsError, error.message));
         },
       );
-    } catch (e) {
+    } on Object catch (e) {
       if (e is ServerException) rethrow;
       throw ServerException(ErrorStrings.withDetails(
           ErrorStrings.getUserDetailsError, e.toString()));
@@ -188,7 +188,7 @@ class ForumRemoteDataSourceImpl implements ForumRemoteDataSource {
       }
 
       return forumId;
-    } catch (e) {
+    } on Object catch (e) {
       if (e is ServerException) rethrow;
       throw ServerException(ErrorStrings.withDetails(
           ErrorStrings.createForumError, e.toString()));
@@ -207,7 +207,7 @@ class ForumRemoteDataSourceImpl implements ForumRemoteDataSource {
 
       if (commentsResult.isSuccess) {
         final comments = commentsResult.dataOrNull!;
-        for (var doc in comments) {
+        for (final doc in comments) {
           final commentId = doc['id'] as String;
           await _dataStore.deleteSubdocument(
               'forum', forumId, 'comments', commentId);
@@ -221,7 +221,7 @@ class ForumRemoteDataSourceImpl implements ForumRemoteDataSource {
         throw ServerException(ErrorStrings.withDetails(
             ErrorStrings.deleteForumError, result.errorOrNull!.message));
       }
-    } catch (e) {
+    } on Object catch (e) {
       if (e is ServerException) rethrow;
       throw ServerException(ErrorStrings.withDetails(
           ErrorStrings.deleteForumError, e.toString()));
@@ -237,7 +237,7 @@ class ForumRemoteDataSourceImpl implements ForumRemoteDataSource {
         throw ServerException(ErrorStrings.withDetails(
             ErrorStrings.deleteCommentError, result.errorOrNull!.message));
       }
-    } catch (e) {
+    } on Object catch (e) {
       if (e is ServerException) rethrow;
       throw ServerException(ErrorStrings.withDetails(
           ErrorStrings.deleteCommentError, e.toString()));

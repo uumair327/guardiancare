@@ -162,7 +162,7 @@ mixin AnimationControllerMixin<T extends StatefulWidget>
       duration: duration ?? AppDurations.animationShort,
     );
 
-    _animation = Tween<double>(begin: 1.0, end: clampedScale).animate(
+    _animation = Tween<double>(begin: 1, end: clampedScale).animate(
       CurvedAnimation(
         parent: _animationController!,
         curve: curve ?? AppCurves.tap,
@@ -258,7 +258,7 @@ mixin AnimationControllerMixin<T extends StatefulWidget>
     );
 
     // Also create a double animation for compatibility
-    _animation = Tween<double>(begin: 0.0, end: 1.0).animate(
+    _animation = Tween<double>(begin: 0, end: 1).animate(
       CurvedAnimation(
         parent: _animationController!,
         curve: curve ?? AppCurves.standardDecelerate,
@@ -302,7 +302,7 @@ mixin AnimationControllerMixin<T extends StatefulWidget>
     if (!mounted || _animationController == null) return;
     try {
       await _animationController!.forward();
-    } catch (e) {
+    } on Object catch (e) {
       // Controller may be disposed, fail silently
       debugPrint('AnimationControllerMixin: playForward failed: $e');
     }
@@ -316,7 +316,7 @@ mixin AnimationControllerMixin<T extends StatefulWidget>
     if (!mounted || _animationController == null) return;
     try {
       await _animationController!.reverse();
-    } catch (e) {
+    } on Object catch (e) {
       // Controller may be disposed, fail silently
       debugPrint('AnimationControllerMixin: playReverse failed: $e');
     }
@@ -329,7 +329,7 @@ mixin AnimationControllerMixin<T extends StatefulWidget>
     if (_animationController == null) return;
     try {
       _animationController!.reset();
-    } catch (e) {
+    } on Object catch (e) {
       debugPrint('AnimationControllerMixin: resetAnimation failed: $e');
     }
   }
@@ -344,7 +344,7 @@ mixin AnimationControllerMixin<T extends StatefulWidget>
     if (_animationController == null) return;
     try {
       _animationController!.repeat(reverse: reverse);
-    } catch (e) {
+    } on Object catch (e) {
       debugPrint('AnimationControllerMixin: repeatAnimation failed: $e');
     }
   }
@@ -356,7 +356,7 @@ mixin AnimationControllerMixin<T extends StatefulWidget>
     if (_animationController == null) return;
     try {
       _animationController!.stop();
-    } catch (e) {
+    } on Object catch (e) {
       debugPrint('AnimationControllerMixin: stopAnimation failed: $e');
     }
   }
@@ -381,7 +381,7 @@ mixin AnimationControllerMixin<T extends StatefulWidget>
         duration: duration,
         curve: curve ?? Curves.linear,
       );
-    } catch (e) {
+    } on Object catch (e) {
       debugPrint('AnimationControllerMixin: animateTo failed: $e');
     }
   }
@@ -418,7 +418,7 @@ mixin StaggeredAnimationMixin<T extends StatefulWidget> on State<T>, TickerProvi
         duration: itemDuration,
       );
       
-      final animation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      final animation = Tween<double>(begin: 0, end: 1).animate(
         CurvedAnimation(parent: controller, curve: curve),
       );
       
@@ -434,7 +434,7 @@ mixin StaggeredAnimationMixin<T extends StatefulWidget> on State<T>, TickerProvi
     for (int i = 0; i < _staggeredControllers.length; i++) {
       await Future.delayed(staggerDelay);
       if (mounted) {
-        _staggeredControllers[i].forward();
+        await _staggeredControllers[i].forward();
       }
     }
   }

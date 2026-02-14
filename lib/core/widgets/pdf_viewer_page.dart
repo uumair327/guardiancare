@@ -1,21 +1,20 @@
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:guardiancare/core/core.dart';
-import 'package:url_launcher/url_launcher.dart';
-
+import 'package:http/http.dart' as http;
 // Only import pdfx on non-web platforms
 import 'package:pdfx/pdfx.dart' if (dart.library.html) 'pdf_viewer_stub.dart';
-import 'package:http/http.dart' as http;
+import 'package:url_launcher/url_launcher.dart';
 
 class PDFViewerPage extends StatefulWidget {
-  final String pdfUrl;
-  final String title;
 
   const PDFViewerPage({
     super.key,
     required this.pdfUrl,
     required this.title,
   });
+  final String pdfUrl;
+  final String title;
 
   @override
   State<PDFViewerPage> createState() => _PDFViewerPageState();
@@ -60,7 +59,7 @@ class _PDFViewerPageState extends State<PDFViewerPage> {
         );
         _loading = false;
       });
-    } catch (e) {
+    } on Object catch (e) {
       setState(() {
         _error = "Error loading PDF: $e";
         _loading = false;
@@ -76,7 +75,7 @@ class _PDFViewerPageState extends State<PDFViewerPage> {
     super.dispose();
   }
 
-  void _openPdfInBrowser() async {
+  Future<void> _openPdfInBrowser() async {
     final encodedUrl = Uri.encodeComponent(widget.pdfUrl);
     final viewerUrl = Uri.parse('https://docs.google.com/viewer?url=$encodedUrl&embedded=true');
     
@@ -107,25 +106,25 @@ class _PDFViewerPageState extends State<PDFViewerPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(
+                const Icon(
                   Icons.picture_as_pdf,
                   size: AppDimensions.iconXXL,
                   color: AppColors.primary,
                 ),
-                SizedBox(height: AppDimensions.spaceM),
+                const SizedBox(height: AppDimensions.spaceM),
                 Text(
                   'PDF Viewer',
                   style: AppTextStyles.h4.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                SizedBox(height: AppDimensions.spaceS),
+                const SizedBox(height: AppDimensions.spaceS),
                 Text(
                   'Click below to view the PDF document.',
                   style: AppTextStyles.bodyMedium,
                   textAlign: TextAlign.center,
                 ),
-                SizedBox(height: AppDimensions.spaceL),
+                const SizedBox(height: AppDimensions.spaceL),
                 ElevatedButton.icon(
                   onPressed: _openPdfInBrowser,
                   icon: const Icon(Icons.open_in_new),
@@ -133,7 +132,7 @@ class _PDFViewerPageState extends State<PDFViewerPage> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
                     foregroundColor: AppColors.white,
-                    padding: EdgeInsets.symmetric(
+                    padding: const EdgeInsets.symmetric(
                       horizontal: AppDimensions.spaceL,
                       vertical: AppDimensions.spaceM,
                     ),
@@ -159,7 +158,7 @@ class _PDFViewerPageState extends State<PDFViewerPage> {
 
   Widget _buildBody() {
     if (_loading) {
-      return Center(
+      return const Center(
         child: CircularProgressIndicator(color: AppColors.primary),
       );
     }
@@ -171,18 +170,18 @@ class _PDFViewerPageState extends State<PDFViewerPage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
+              const Icon(
                 Icons.error_outline,
                 size: AppDimensions.iconXXL,
                 color: AppColors.error,
               ),
-              SizedBox(height: AppDimensions.spaceM),
+              const SizedBox(height: AppDimensions.spaceM),
               Text(
                 _error!,
                 style: AppTextStyles.bodyMedium,
                 textAlign: TextAlign.center,
               ),
-              SizedBox(height: AppDimensions.spaceM),
+              const SizedBox(height: AppDimensions.spaceM),
               ElevatedButton.icon(
                 onPressed: () {
                   setState(() {
@@ -206,7 +205,6 @@ class _PDFViewerPageState extends State<PDFViewerPage> {
     
     return PdfViewPinch(
       controller: _pdfController as PdfControllerPinch,
-      scrollDirection: Axis.vertical,
     );
   }
 }

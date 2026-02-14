@@ -12,6 +12,18 @@ class QuizModel extends QuizEntity {
     super.imageUrl,
   });
 
+  /// Create QuizModel from QuizEntity
+  factory QuizModel.fromEntity(QuizEntity entity) {
+    return QuizModel(
+      id: entity.id,
+      title: entity.title,
+      category: entity.category,
+      questions: entity.questions,
+      description: entity.description,
+      imageUrl: entity.imageUrl,
+    );
+  }
+
   /// Create QuizModel from JSON/Map
   factory QuizModel.fromJson(Map<String, dynamic> json) {
     return QuizModel(
@@ -39,17 +51,5 @@ class QuizModel extends QuizEntity {
       'description': description,
       'thumbnail': imageUrl,
     };
-  }
-
-  /// Create QuizModel from QuizEntity
-  factory QuizModel.fromEntity(QuizEntity entity) {
-    return QuizModel(
-      id: entity.id,
-      title: entity.title,
-      category: entity.category,
-      questions: entity.questions,
-      description: entity.description,
-      imageUrl: entity.imageUrl,
-    );
   }
 }

@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:guardiancare/core/backend/backend.dart';
-import 'package:guardiancare/core/error/exceptions.dart';
 import 'package:guardiancare/core/constants/constants.dart';
+import 'package:guardiancare/core/error/exceptions.dart';
 import 'package:guardiancare/features/learn/data/models/category_model.dart';
 import 'package:guardiancare/features/learn/data/models/video_model.dart';
 
@@ -21,10 +21,10 @@ abstract class LearnRemoteDataSource {
 ///
 /// Following: DIP (Dependency Inversion Principle)
 class LearnRemoteDataSourceImpl implements LearnRemoteDataSource {
-  final IDataStore _dataStore;
 
   LearnRemoteDataSourceImpl({required IDataStore dataStore})
       : _dataStore = dataStore;
+  final IDataStore _dataStore;
 
   @override
   Future<List<CategoryModel>> getCategories() async {
@@ -34,13 +34,13 @@ class LearnRemoteDataSourceImpl implements LearnRemoteDataSource {
       return result.when(
         success: (docs) {
           final List<CategoryModel> categories = [];
-          for (var doc in docs) {
+          for (final doc in docs) {
             try {
               final category = CategoryModel.fromMap(doc);
               if (category.isValid) {
                 categories.add(category);
               }
-            } catch (e) {
+            } on Object catch (e) {
               debugPrint('LearnDataSource: Error processing category: $e');
             }
           }
@@ -53,7 +53,7 @@ class LearnRemoteDataSourceImpl implements LearnRemoteDataSource {
               ErrorStrings.getCategoriesError, error.message));
         },
       );
-    } catch (e) {
+    } on Object catch (e) {
       if (e is ServerException) rethrow;
       throw ServerException(ErrorStrings.withDetails(
           ErrorStrings.getCategoriesError, e.toString()));
@@ -99,7 +99,7 @@ class LearnRemoteDataSourceImpl implements LearnRemoteDataSource {
               ErrorStrings.getVideosByCategoryError, error.message));
         },
       );
-    } catch (e) {
+    } on Object catch (e) {
       if (e is ServerException) rethrow;
       throw ServerException(ErrorStrings.withDetails(
           ErrorStrings.getVideosByCategoryError, e.toString()));
@@ -114,7 +114,7 @@ class LearnRemoteDataSourceImpl implements LearnRemoteDataSource {
 
     return _dataStore.streamQuery('videos', options: options).map((result) {
       return result.when(
-        success: (docs) => _mapVideos(docs),
+        success: _mapVideos,
         failure: (error) {
           debugPrint('LearnDataSource: Stream error: ${error.message}');
           return <VideoModel>[];
@@ -125,13 +125,13 @@ class LearnRemoteDataSourceImpl implements LearnRemoteDataSource {
 
   List<VideoModel> _mapVideos(List<Map<String, dynamic>> docs) {
     final List<VideoModel> videos = [];
-    for (var doc in docs) {
+    for (final doc in docs) {
       try {
         final video = VideoModel.fromMap(doc);
         if (video.isValid) {
           videos.add(video);
         }
-      } catch (e) {
+      } on Object catch (e) {
         debugPrint('LearnDataSource: Error processing video: $e');
       }
     }

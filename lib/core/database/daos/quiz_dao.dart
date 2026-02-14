@@ -1,6 +1,7 @@
 import 'dart:convert';
-import 'package:sqflite/sqflite.dart';
+
 import 'package:guardiancare/core/database/database_service.dart';
+import 'package:sqflite/sqflite.dart';
 
 /// Data Access Object for Quiz operations
 /// Handles all quiz-related database operations with proper error handling
@@ -33,7 +34,7 @@ class QuizDao {
       'synced': 0,
     };
 
-    return await db.insert(
+    return db.insert(
       'quiz_results',
       data,
       conflictAlgorithm: ConflictAlgorithm.replace,
@@ -85,7 +86,7 @@ class QuizDao {
   }) async {
     final db = await _dbService.database;
     
-    return await db.query(
+    return db.query(
       'quiz_results',
       where: 'user_id = ?',
       whereArgs: [userId],
@@ -110,7 +111,7 @@ class QuizDao {
   Future<List<Map<String, dynamic>>> getUnsyncedResults(String userId) async {
     final db = await _dbService.database;
     
-    return await db.query(
+    return db.query(
       'quiz_results',
       where: 'user_id = ? AND synced = 0',
       whereArgs: [userId],
@@ -124,7 +125,7 @@ class QuizDao {
         .subtract(Duration(days: daysToKeep))
         .millisecondsSinceEpoch;
     
-    return await db.delete(
+    return db.delete(
       'quiz_results',
       where: 'user_id = ? AND completed_at < ?',
       whereArgs: [userId, cutoffTime],

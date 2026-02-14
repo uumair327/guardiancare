@@ -51,7 +51,7 @@ class SupabaseDataStoreAdapter implements IDataStore {
       return BackendResult.success(response);
     } on PostgrestException catch (e) {
       return BackendResult.failure(_mapPostgrestError(e));
-    } catch (e) {
+    } on Object catch (e) {
       return BackendResult.failure(
         BackendError(message: e.toString(), code: BackendErrorCode.unknown),
       );
@@ -69,7 +69,7 @@ class SupabaseDataStoreAdapter implements IDataStore {
           .eq('id', documentId)
           .maybeSingle();
       return BackendResult.success(response != null);
-    } catch (e) {
+    } on Object catch (e) {
       return BackendResult.failure(
         BackendError(message: e.toString(), code: BackendErrorCode.unknown),
       );
@@ -94,7 +94,7 @@ class SupabaseDataStoreAdapter implements IDataStore {
       return BackendResult.success(response['id'] as String);
     } on PostgrestException catch (e) {
       return BackendResult.failure(_mapPostgrestError(e));
-    } catch (e) {
+    } on Object catch (e) {
       return BackendResult.failure(
         BackendError(message: e.toString(), code: BackendErrorCode.unknown),
       );
@@ -136,7 +136,7 @@ class SupabaseDataStoreAdapter implements IDataStore {
       return const BackendResult.success(null);
     } on PostgrestException catch (e) {
       return BackendResult.failure(_mapPostgrestError(e));
-    } catch (e) {
+    } on Object catch (e) {
       return BackendResult.failure(
         BackendError(message: e.toString(), code: BackendErrorCode.unknown),
       );
@@ -158,7 +158,7 @@ class SupabaseDataStoreAdapter implements IDataStore {
       return const BackendResult.success(null);
     } on PostgrestException catch (e) {
       return BackendResult.failure(_mapPostgrestError(e));
-    } catch (e) {
+    } on Object catch (e) {
       return BackendResult.failure(
         BackendError(message: e.toString(), code: BackendErrorCode.unknown),
       );
@@ -175,7 +175,7 @@ class SupabaseDataStoreAdapter implements IDataStore {
       return const BackendResult.success(null);
     } on PostgrestException catch (e) {
       return BackendResult.failure(_mapPostgrestError(e));
-    } catch (e) {
+    } on Object catch (e) {
       return BackendResult.failure(
         BackendError(message: e.toString(), code: BackendErrorCode.unknown),
       );
@@ -221,7 +221,7 @@ class SupabaseDataStoreAdapter implements IDataStore {
       return BackendResult.success(List<Map<String, dynamic>>.from(response));
     } on PostgrestException catch (e) {
       return BackendResult.failure(_mapPostgrestError(e));
-    } catch (e) {
+    } on Object catch (e) {
       return BackendResult.failure(
         BackendError(message: e.toString(), code: BackendErrorCode.unknown),
       );
@@ -242,7 +242,7 @@ class SupabaseDataStoreAdapter implements IDataStore {
       return BackendResult.success(List<Map<String, dynamic>>.from(response));
     } on PostgrestException catch (e) {
       return BackendResult.failure(_mapPostgrestError(e));
-    } catch (e) {
+    } on Object catch (e) {
       return BackendResult.failure(
         BackendError(message: e.toString(), code: BackendErrorCode.unknown),
       );
@@ -263,7 +263,7 @@ class SupabaseDataStoreAdapter implements IDataStore {
       }
       final response = await query;
       return BackendResult.success((response as List).length);
-    } catch (e) {
+    } on Object catch (e) {
       return BackendResult.failure(
         BackendError(message: e.toString(), code: BackendErrorCode.unknown),
       );
@@ -296,7 +296,7 @@ class SupabaseDataStoreAdapter implements IDataStore {
       return BackendResult.success(response);
     } on PostgrestException catch (e) {
       return BackendResult.failure(_mapPostgrestError(e));
-    } catch (e) {
+    } on Object catch (e) {
       return BackendResult.failure(
         BackendError(message: e.toString(), code: BackendErrorCode.unknown),
       );
@@ -327,7 +327,7 @@ class SupabaseDataStoreAdapter implements IDataStore {
       return BackendResult.success(response['id'] as String);
     } on PostgrestException catch (e) {
       return BackendResult.failure(_mapPostgrestError(e));
-    } catch (e) {
+    } on Object catch (e) {
       return BackendResult.failure(
         BackendError(message: e.toString(), code: BackendErrorCode.unknown),
       );
@@ -356,7 +356,7 @@ class SupabaseDataStoreAdapter implements IDataStore {
       return const BackendResult.success(null);
     } on PostgrestException catch (e) {
       return BackendResult.failure(_mapPostgrestError(e));
-    } catch (e) {
+    } on Object catch (e) {
       return BackendResult.failure(
         BackendError(message: e.toString(), code: BackendErrorCode.unknown),
       );
@@ -391,7 +391,7 @@ class SupabaseDataStoreAdapter implements IDataStore {
       return BackendResult.success(List<Map<String, dynamic>>.from(response));
     } on PostgrestException catch (e) {
       return BackendResult.failure(_mapPostgrestError(e));
-    } catch (e) {
+    } on Object catch (e) {
       return BackendResult.failure(
         BackendError(message: e.toString(), code: BackendErrorCode.unknown),
       );
@@ -411,7 +411,7 @@ class SupabaseDataStoreAdapter implements IDataStore {
       return const BackendResult.success(null);
     } on PostgrestException catch (e) {
       return BackendResult.failure(_mapPostgrestError(e));
-    } catch (e) {
+    } on Object catch (e) {
       return BackendResult.failure(
         BackendError(message: e.toString(), code: BackendErrorCode.unknown),
       );
@@ -438,7 +438,7 @@ class SupabaseDataStoreAdapter implements IDataStore {
         }
       }
       return const BackendResult.success(null);
-    } catch (e) {
+    } on Object catch (e) {
       return BackendResult.failure(
         BackendError(message: e.toString(), code: BackendErrorCode.unknown),
       );
@@ -456,7 +456,7 @@ class SupabaseDataStoreAdapter implements IDataStore {
       final accessor = _SupabaseTransactionContext(this);
       final result = await callback(accessor);
       return BackendResult.success(result);
-    } catch (e) {
+    } on Object catch (e) {
       return BackendResult.failure(
         BackendError(
           message: 'Transaction error: $e',
@@ -558,7 +558,7 @@ class SupabaseDataStoreAdapter implements IDataStore {
           code: BackendErrorCode.notFound,
         ),
       );
-    } catch (e) {
+    } on Object catch (e) {
       return BackendResult.failure(
         BackendError(message: e.toString(), code: BackendErrorCode.unknown),
       );
@@ -587,7 +587,7 @@ class SupabaseDataStoreAdapter implements IDataStore {
           code: BackendErrorCode.notFound,
         ),
       );
-    } catch (e) {
+    } on Object catch (e) {
       return BackendResult.failure(
         BackendError(message: e.toString(), code: BackendErrorCode.unknown),
       );
@@ -616,7 +616,7 @@ class SupabaseDataStoreAdapter implements IDataStore {
           code: BackendErrorCode.notFound,
         ),
       );
-    } catch (e) {
+    } on Object catch (e) {
       return BackendResult.failure(
         BackendError(message: e.toString(), code: BackendErrorCode.unknown),
       );
@@ -634,7 +634,7 @@ class SupabaseDataStoreAdapter implements IDataStore {
         field: DateTime.now().toUtc().toIso8601String(),
       });
       return const BackendResult.success(null);
-    } catch (e) {
+    } on Object catch (e) {
       return BackendResult.failure(
         BackendError(message: e.toString(), code: BackendErrorCode.unknown),
       );

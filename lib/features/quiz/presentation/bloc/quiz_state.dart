@@ -3,20 +3,6 @@ import 'package:guardiancare/features/quiz/domain/entities/quiz_result_entity.da
 
 /// Quiz state for Clean Architecture
 class QuizState extends Equatable {
-  final Map<int, String> selectedAnswers;
-  final Map<int, bool> lockedQuestions;
-  final Map<int, bool> feedbackShown;
-  final int currentQuestionIndex;
-  final bool quizCompleted;
-  final bool isSubmitting;
-  final String? error;
-  final QuizResultEntity? quizResult;
-  // New fields for answer validation
-  final QuizAnswerValidationResult? lastAnswerValidation;
-  // New fields for quiz completion
-  final QuizCompletionResult? completionResult;
-  // New fields for recommendations
-  final RecommendationsStatus recommendationsStatus;
 
   const QuizState({
     this.selectedAnswers = const {},
@@ -31,6 +17,20 @@ class QuizState extends Equatable {
     this.completionResult,
     this.recommendationsStatus = RecommendationsStatus.idle,
   });
+  final Map<int, String> selectedAnswers;
+  final Map<int, bool> lockedQuestions;
+  final Map<int, bool> feedbackShown;
+  final int currentQuestionIndex;
+  final bool quizCompleted;
+  final bool isSubmitting;
+  final String? error;
+  final QuizResultEntity? quizResult;
+  // New fields for answer validation
+  final QuizAnswerValidationResult? lastAnswerValidation;
+  // New fields for quiz completion
+  final QuizCompletionResult? completionResult;
+  // New fields for recommendations
+  final RecommendationsStatus recommendationsStatus;
 
   QuizState copyWith({
     Map<int, String>? selectedAnswers,
@@ -79,10 +79,6 @@ class QuizState extends Equatable {
 /// Result of answer validation
 /// Requirements: 2.1
 class QuizAnswerValidationResult extends Equatable {
-  final int questionIndex;
-  final bool isCorrect;
-  final int correctAnswerIndex;
-  final int selectedOption;
 
   const QuizAnswerValidationResult({
     required this.questionIndex,
@@ -90,6 +86,10 @@ class QuizAnswerValidationResult extends Equatable {
     required this.correctAnswerIndex,
     required this.selectedOption,
   });
+  final int questionIndex;
+  final bool isCorrect;
+  final int correctAnswerIndex;
+  final int selectedOption;
 
   @override
   List<Object?> get props => [questionIndex, isCorrect, correctAnswerIndex, selectedOption];
@@ -98,10 +98,6 @@ class QuizAnswerValidationResult extends Equatable {
 /// Result of quiz completion
 /// Requirements: 2.2
 class QuizCompletionResult extends Equatable {
-  final int score;
-  final int totalQuestions;
-  final List<String> categories;
-  final DateTime completedAt;
 
   const QuizCompletionResult({
     required this.score,
@@ -109,6 +105,10 @@ class QuizCompletionResult extends Equatable {
     required this.categories,
     required this.completedAt,
   });
+  final int score;
+  final int totalQuestions;
+  final List<String> categories;
+  final DateTime completedAt;
 
   int get percentage => totalQuestions > 0 
       ? (score / totalQuestions * 100).round() 

@@ -6,12 +6,12 @@ import 'package:guardiancare/features/profile/domain/repositories/profile_reposi
 
 /// Use case for getting user profile
 class GetProfile implements UseCase<ProfileEntity, String> {
-  final ProfileRepository repository;
 
   GetProfile(this.repository);
+  final ProfileRepository repository;
 
   @override
   Future<Either<Failure, ProfileEntity>> call(String uid) async {
-    return await repository.getProfile(uid);
+    return repository.getProfile(uid);
   }
 }

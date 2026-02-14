@@ -5,12 +5,12 @@ import 'package:guardiancare/features/quiz/domain/entities/quiz_entity.dart';
 import 'package:guardiancare/features/quiz/domain/repositories/quiz_repository.dart';
 
 class GetAllQuizzes implements UseCase<List<QuizEntity>, NoParams> {
-  final QuizRepository repository;
 
   GetAllQuizzes(this.repository);
+  final QuizRepository repository;
 
   @override
   Future<Either<Failure, List<QuizEntity>>> call(NoParams params) async {
-    return await repository.getAllQuizzes();
+    return repository.getAllQuizzes();
   }
 }

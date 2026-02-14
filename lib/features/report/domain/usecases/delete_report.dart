@@ -5,12 +5,12 @@ import 'package:guardiancare/features/report/domain/repositories/report_reposito
 
 /// Use case for deleting a report
 class DeleteReport implements UseCase<void, String> {
-  final ReportRepository repository;
 
   DeleteReport(this.repository);
+  final ReportRepository repository;
 
   @override
   Future<Either<Failure, void>> call(String caseName) async {
-    return await repository.deleteReport(caseName);
+    return repository.deleteReport(caseName);
   }
 }

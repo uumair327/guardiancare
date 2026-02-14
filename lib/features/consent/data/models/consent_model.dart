@@ -14,6 +14,20 @@ class ConsentModel extends ConsentEntity {
     required super.consentCheckboxes,
   });
 
+  factory ConsentModel.fromEntity(ConsentEntity entity) {
+    return ConsentModel(
+      parentName: entity.parentName,
+      parentEmail: entity.parentEmail,
+      childName: entity.childName,
+      isChildAbove12: entity.isChildAbove12,
+      parentalKeyHash: entity.parentalKeyHash,
+      securityQuestion: entity.securityQuestion,
+      securityAnswerHash: entity.securityAnswerHash,
+      timestamp: entity.timestamp,
+      consentCheckboxes: entity.consentCheckboxes,
+    );
+  }
+
   factory ConsentModel.fromFirestore(Map<String, dynamic> doc) {
     return ConsentModel.fromMap(doc);
   }
@@ -52,19 +66,5 @@ class ConsentModel extends ConsentEntity {
           .toIso8601String(), // Changed to String for abstraction compatibility
       'consentCheckboxes': consentCheckboxes,
     };
-  }
-
-  factory ConsentModel.fromEntity(ConsentEntity entity) {
-    return ConsentModel(
-      parentName: entity.parentName,
-      parentEmail: entity.parentEmail,
-      childName: entity.childName,
-      isChildAbove12: entity.isChildAbove12,
-      parentalKeyHash: entity.parentalKeyHash,
-      securityQuestion: entity.securityQuestion,
-      securityAnswerHash: entity.securityAnswerHash,
-      timestamp: entity.timestamp,
-      consentCheckboxes: entity.consentCheckboxes,
-    );
   }
 }

@@ -2,13 +2,7 @@ import 'package:dartz/dartz.dart' as dartz;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
-import 'package:guardiancare/core/backend/backend.dart';
 import 'package:guardiancare/core/core.dart';
-import 'package:guardiancare/core/di/injection_container.dart';
-import 'package:guardiancare/features/explore/domain/entities/recommendation.dart';
-import 'package:guardiancare/features/explore/domain/entities/resource.dart';
-import 'package:guardiancare/features/explore/domain/usecases/get_recommendations.dart';
-import 'package:guardiancare/features/explore/domain/usecases/get_resources.dart';
 import 'package:guardiancare/features/explore/explore.dart';
 
 /// Modern, education-friendly Explore Page
@@ -59,9 +53,9 @@ class _ExplorePageState extends State<ExplorePage>
 
 /// Modern header with gradient and animated tabs
 class _ExploreHeader extends StatefulWidget {
-  final TabController tabController;
 
   const _ExploreHeader({required this.tabController});
+  final TabController tabController;
 
   @override
   State<_ExploreHeader> createState() => _ExploreHeaderState();
@@ -81,10 +75,10 @@ class _ExploreHeaderState extends State<_ExploreHeader>
       duration: AppDurations.animationLong,
     );
 
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+    _fadeAnimation = Tween<double>(begin: 0, end: 1).animate(
       CurvedAnimation(
         parent: _controller,
-        curve: const Interval(0.0, 0.6, curve: Curves.easeOut),
+        curve: const Interval(0, 0.6, curve: Curves.easeOut),
       ),
     );
 
@@ -124,7 +118,7 @@ class _ExploreHeaderState extends State<_ExploreHeader>
             ],
             stops: const [0.0, 0.5, 1.0],
           ),
-          borderRadius: BorderRadius.only(
+          borderRadius: const BorderRadius.only(
             bottomLeft: Radius.circular(AppDimensions.radiusXL),
             bottomRight: Radius.circular(AppDimensions.radiusXL),
           ),
@@ -145,7 +139,7 @@ class _ExploreHeaderState extends State<_ExploreHeader>
             child: Column(
               children: [
                 Padding(
-                  padding: EdgeInsets.fromLTRB(
+                  padding: const EdgeInsets.fromLTRB(
                     AppDimensions.screenPaddingH,
                     AppDimensions.spaceM,
                     AppDimensions.screenPaddingH,
@@ -164,7 +158,7 @@ class _ExploreHeaderState extends State<_ExploreHeader>
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                            SizedBox(height: AppDimensions.spaceXS),
+                            const SizedBox(height: AppDimensions.spaceXS),
                             Text(
                               UIStrings.discoverLearningResources,
                               style: AppTextStyles.body2.copyWith(
@@ -175,12 +169,12 @@ class _ExploreHeaderState extends State<_ExploreHeader>
                         ),
                       ),
                       Container(
-                        padding: EdgeInsets.all(AppDimensions.spaceM),
+                        padding: const EdgeInsets.all(AppDimensions.spaceM),
                         decoration: BoxDecoration(
                           color: AppColors.white.withValues(alpha: 0.15),
                           shape: BoxShape.circle,
                         ),
-                        child: Icon(
+                        child: const Icon(
                           Icons.explore_rounded,
                           color: AppColors.white,
                           size: AppDimensions.iconL,
@@ -191,13 +185,13 @@ class _ExploreHeaderState extends State<_ExploreHeader>
                 ),
                 // Modern Tab Bar
                 Container(
-                  margin: EdgeInsets.fromLTRB(
+                  margin: const EdgeInsets.fromLTRB(
                     AppDimensions.screenPaddingH,
                     0,
                     AppDimensions.screenPaddingH,
                     AppDimensions.spaceM,
                   ),
-                  padding: EdgeInsets.all(4),
+                  padding: const EdgeInsets.all(4),
                   decoration: BoxDecoration(
                     color: AppColors.white.withValues(alpha: 0.15),
                     borderRadius: AppDimensions.borderRadiusL,
@@ -230,8 +224,8 @@ class _ExploreHeaderState extends State<_ExploreHeader>
                           mainAxisAlignment: MainAxisAlignment.center,
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Icon(Icons.recommend_rounded, size: 16),
-                            SizedBox(width: 4),
+                            const Icon(Icons.recommend_rounded, size: 16),
+                            const SizedBox(width: 4),
                             Flexible(
                               child: Text(
                                 l10n.recommendedForYou,
@@ -246,8 +240,8 @@ class _ExploreHeaderState extends State<_ExploreHeader>
                           mainAxisAlignment: MainAxisAlignment.center,
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Icon(Icons.library_books_rounded, size: 16),
-                            SizedBox(width: 4),
+                            const Icon(Icons.library_books_rounded, size: 16),
+                            const SizedBox(width: 4),
                             Flexible(
                               child: Text(
                                 l10n.resources,
@@ -319,7 +313,7 @@ class _RecommendedTabState extends State<_RecommendedTab> {
                 final videoSet = <String>{};
                 final videos = <Recommendation>[];
 
-                for (var rec in recommendations) {
+                for (final rec in recommendations) {
                   final videoUrl = rec.videoUrl;
                   if (videoUrl != null &&
                       videoUrl.isNotEmpty &&
@@ -335,7 +329,7 @@ class _RecommendedTabState extends State<_RecommendedTab> {
 
                 return ListView.builder(
                   physics: const AlwaysScrollableScrollPhysics(),
-                  padding: EdgeInsets.all(AppDimensions.screenPaddingH),
+                  padding: const EdgeInsets.all(AppDimensions.screenPaddingH),
                   itemCount: videos.length,
                   itemBuilder: (context, index) {
                     final video = videos[index];
@@ -366,23 +360,23 @@ class _RecommendedTabState extends State<_RecommendedTab> {
     return FadeSlideWidget(
       child: Center(
         child: Padding(
-          padding: EdgeInsets.all(AppDimensions.spaceXL),
+          padding: const EdgeInsets.all(AppDimensions.spaceXL),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
-                padding: EdgeInsets.all(AppDimensions.spaceXL),
+                padding: const EdgeInsets.all(AppDimensions.spaceXL),
                 decoration: BoxDecoration(
                   color: AppColors.cardEmerald.withValues(alpha: 0.1),
                   shape: BoxShape.circle,
                 ),
-                child: Icon(
+                child: const Icon(
                   Icons.person_outline_rounded,
                   size: AppDimensions.iconXXL,
                   color: AppColors.cardEmerald,
                 ),
               ),
-              SizedBox(height: AppDimensions.spaceL),
+              const SizedBox(height: AppDimensions.spaceL),
               Text(
                 l10n.loginToViewRecommendations,
                 style: AppTextStyles.h4.copyWith(
@@ -390,11 +384,11 @@ class _RecommendedTabState extends State<_RecommendedTab> {
                 ),
                 textAlign: TextAlign.center,
               ),
-              SizedBox(height: AppDimensions.spaceM),
+              const SizedBox(height: AppDimensions.spaceM),
               ScaleTapWidget(
                 onTap: () => context.go('/login'),
                 child: Container(
-                  padding: EdgeInsets.symmetric(
+                  padding: const EdgeInsets.symmetric(
                     horizontal: AppDimensions.spaceXL,
                     vertical: AppDimensions.spaceM,
                   ),
@@ -429,11 +423,11 @@ class _RecommendedTabState extends State<_RecommendedTab> {
 
   Widget _buildLoadingState() {
     return ListView.builder(
-      padding: EdgeInsets.all(AppDimensions.screenPaddingH),
+      padding: const EdgeInsets.all(AppDimensions.screenPaddingH),
       itemCount: 4,
       itemBuilder: (context, index) {
         return Padding(
-          padding: EdgeInsets.only(bottom: AppDimensions.spaceM),
+          padding: const EdgeInsets.only(bottom: AppDimensions.spaceM),
           child: ShimmerLoading(
             child: Container(
               height: 100,
@@ -453,29 +447,29 @@ class _RecommendedTabState extends State<_RecommendedTab> {
     return FadeSlideWidget(
       child: Center(
         child: Padding(
-          padding: EdgeInsets.all(AppDimensions.spaceXL),
+          padding: const EdgeInsets.all(AppDimensions.spaceXL),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
-                padding: EdgeInsets.all(AppDimensions.spaceL),
+                padding: const EdgeInsets.all(AppDimensions.spaceL),
                 decoration: BoxDecoration(
                   color: AppColors.error.withValues(alpha: 0.1),
                   shape: BoxShape.circle,
                 ),
-                child: Icon(
+                child: const Icon(
                   Icons.error_outline_rounded,
                   size: AppDimensions.iconXXL,
                   color: AppColors.error,
                 ),
               ),
-              SizedBox(height: AppDimensions.spaceL),
+              const SizedBox(height: AppDimensions.spaceL),
               Text(
                 ErrorStrings.generic,
                 style: AppTextStyles.h4
                     .copyWith(color: context.colors.textPrimary),
               ),
-              SizedBox(height: AppDimensions.spaceS),
+              const SizedBox(height: AppDimensions.spaceS),
               Text(
                 error,
                 style: AppTextStyles.bodySmall.copyWith(
@@ -494,42 +488,42 @@ class _RecommendedTabState extends State<_RecommendedTab> {
     return FadeSlideWidget(
       child: ListView(
         physics: const AlwaysScrollableScrollPhysics(),
-        padding: EdgeInsets.all(AppDimensions.spaceXL),
+        padding: const EdgeInsets.all(AppDimensions.spaceXL),
         children: [
-          SizedBox(height: AppDimensions.spaceXXL),
+          const SizedBox(height: AppDimensions.spaceXXL),
           Center(
             child: Container(
-              padding: EdgeInsets.all(AppDimensions.spaceXL),
+              padding: const EdgeInsets.all(AppDimensions.spaceXL),
               decoration: BoxDecoration(
                 color: AppColors.cardEmerald.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
-              child: Icon(
+              child: const Icon(
                 Icons.video_library_outlined,
                 size: AppDimensions.iconXXL * 1.2,
                 color: AppColors.cardEmerald,
               ),
             ),
           ),
-          SizedBox(height: AppDimensions.spaceL),
+          const SizedBox(height: AppDimensions.spaceL),
           Text(
             l10n.noRecommendationsYet,
             style: AppTextStyles.h3.copyWith(color: context.colors.textPrimary),
             textAlign: TextAlign.center,
           ),
-          SizedBox(height: AppDimensions.spaceS),
+          const SizedBox(height: AppDimensions.spaceS),
           Text(
             l10n.takeQuizForRecommendations,
             style: AppTextStyles.body2
                 .copyWith(color: context.colors.textSecondary),
             textAlign: TextAlign.center,
           ),
-          SizedBox(height: AppDimensions.spaceXL),
+          const SizedBox(height: AppDimensions.spaceXL),
           Center(
             child: ScaleTapWidget(
               onTap: () => context.push('/quiz'),
               child: Container(
-                padding: EdgeInsets.symmetric(
+                padding: const EdgeInsets.symmetric(
                   horizontal: AppDimensions.spaceXL,
                   vertical: AppDimensions.spaceM,
                 ),
@@ -552,15 +546,15 @@ class _RecommendedTabState extends State<_RecommendedTab> {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.quiz_rounded, color: AppColors.white, size: 20),
-                    SizedBox(width: AppDimensions.spaceS),
+                    const Icon(Icons.quiz_rounded, color: AppColors.white, size: 20),
+                    const SizedBox(width: AppDimensions.spaceS),
                     Text(l10n.takeAQuiz, style: AppTextStyles.button),
                   ],
                 ),
               ),
             ),
           ),
-          SizedBox(height: AppDimensions.spaceL),
+          const SizedBox(height: AppDimensions.spaceL),
           Text(
             l10n.pullDownToRefresh,
             style: AppTextStyles.caption.copyWith(
@@ -577,10 +571,6 @@ class _RecommendedTabState extends State<_RecommendedTab> {
 
 /// Modern recommended video card
 class _RecommendedVideoCard extends StatefulWidget {
-  final String title;
-  final String thumbnail;
-  final String videoUrl;
-  final int index;
 
   const _RecommendedVideoCard({
     required this.title,
@@ -588,6 +578,10 @@ class _RecommendedVideoCard extends StatefulWidget {
     required this.videoUrl,
     required this.index,
   });
+  final String title;
+  final String thumbnail;
+  final String videoUrl;
+  final int index;
 
   @override
   State<_RecommendedVideoCard> createState() => _RecommendedVideoCardState();
@@ -608,7 +602,7 @@ class _RecommendedVideoCardState extends State<_RecommendedVideoCard>
       vsync: this,
       duration: AppDurations.animationShort,
     );
-    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.98).animate(
+    _scaleAnimation = Tween<double>(begin: 1, end: 0.98).animate(
       CurvedAnimation(parent: _controller, curve: AppCurves.tap),
     );
   }
@@ -622,7 +616,7 @@ class _RecommendedVideoCardState extends State<_RecommendedVideoCard>
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(bottom: AppDimensions.spaceM),
+      padding: const EdgeInsets.only(bottom: AppDimensions.spaceM),
       child: GestureDetector(
         onTapDown: (_) => _controller.forward(),
         onTapUp: (_) => _controller.reverse(),
@@ -655,7 +649,7 @@ class _RecommendedVideoCardState extends State<_RecommendedVideoCard>
               children: [
                 // Thumbnail
                 ClipRRect(
-                  borderRadius: BorderRadius.only(
+                  borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(AppDimensions.radiusL),
                     bottomLeft: Radius.circular(AppDimensions.radiusL),
                   ),
@@ -677,8 +671,6 @@ class _RecommendedVideoCardState extends State<_RecommendedVideoCard>
                         Container(
                           decoration: BoxDecoration(
                             gradient: LinearGradient(
-                              begin: Alignment.centerLeft,
-                              end: Alignment.centerRight,
                               colors: [
                                 Colors.transparent,
                                 _accentColor.withValues(alpha: 0.3),
@@ -688,7 +680,7 @@ class _RecommendedVideoCardState extends State<_RecommendedVideoCard>
                         ),
                         Center(
                           child: Container(
-                            padding: EdgeInsets.all(AppDimensions.spaceS),
+                            padding: const EdgeInsets.all(AppDimensions.spaceS),
                             decoration: BoxDecoration(
                               color: AppColors.white.withValues(alpha: 0.9),
                               shape: BoxShape.circle,
@@ -707,12 +699,12 @@ class _RecommendedVideoCardState extends State<_RecommendedVideoCard>
                 // Content
                 Expanded(
                   child: Padding(
-                    padding: EdgeInsets.all(AppDimensions.spaceM),
+                    padding: const EdgeInsets.all(AppDimensions.spaceM),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Container(
-                          padding: EdgeInsets.symmetric(
+                          padding: const EdgeInsets.symmetric(
                             horizontal: AppDimensions.spaceS,
                             vertical: 2,
                           ),
@@ -729,7 +721,7 @@ class _RecommendedVideoCardState extends State<_RecommendedVideoCard>
                             ),
                           ),
                         ),
-                        SizedBox(height: AppDimensions.spaceS),
+                        const SizedBox(height: AppDimensions.spaceS),
                         Text(
                           widget.title,
                           style: AppTextStyles.body1.copyWith(
@@ -745,7 +737,7 @@ class _RecommendedVideoCardState extends State<_RecommendedVideoCard>
                 ),
                 // Arrow
                 Padding(
-                  padding: EdgeInsets.only(right: AppDimensions.spaceM),
+                  padding: const EdgeInsets.only(right: AppDimensions.spaceM),
                   child: Icon(
                     Icons.chevron_right_rounded,
                     color: _accentColor,
@@ -806,7 +798,7 @@ class _ResourcesTab extends StatelessWidget {
                 color: AppColors.cardEmerald,
                 child: ListView.builder(
                   physics: const AlwaysScrollableScrollPhysics(),
-                  padding: EdgeInsets.all(AppDimensions.screenPaddingH),
+                  padding: const EdgeInsets.all(AppDimensions.screenPaddingH),
                   itemCount: resources.length,
                   itemBuilder: (context, index) {
                     final resource = resources[index];
@@ -837,11 +829,11 @@ class _ResourcesTab extends StatelessWidget {
 
   Widget _buildLoadingState() {
     return ListView.builder(
-      padding: EdgeInsets.all(AppDimensions.screenPaddingH),
+      padding: const EdgeInsets.all(AppDimensions.screenPaddingH),
       itemCount: 5,
       itemBuilder: (context, index) {
         return Padding(
-          padding: EdgeInsets.only(bottom: AppDimensions.spaceM),
+          padding: const EdgeInsets.only(bottom: AppDimensions.spaceM),
           child: ShimmerLoading(
             child: Container(
               height: 100,
@@ -861,23 +853,23 @@ class _ResourcesTab extends StatelessWidget {
     return FadeSlideWidget(
       child: Center(
         child: Padding(
-          padding: EdgeInsets.all(AppDimensions.spaceXL),
+          padding: const EdgeInsets.all(AppDimensions.spaceXL),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
-                padding: EdgeInsets.all(AppDimensions.spaceL),
+                padding: const EdgeInsets.all(AppDimensions.spaceL),
                 decoration: BoxDecoration(
                   color: AppColors.error.withValues(alpha: 0.1),
                   shape: BoxShape.circle,
                 ),
-                child: Icon(
+                child: const Icon(
                   Icons.error_outline_rounded,
                   size: AppDimensions.iconXXL,
                   color: AppColors.error,
                 ),
               ),
-              SizedBox(height: AppDimensions.spaceL),
+              const SizedBox(height: AppDimensions.spaceL),
               Text(
                 ErrorStrings.failedTo('load resources'),
                 style: AppTextStyles.h4
@@ -894,23 +886,23 @@ class _ResourcesTab extends StatelessWidget {
     return FadeSlideWidget(
       child: Center(
         child: Padding(
-          padding: EdgeInsets.all(AppDimensions.spaceXL),
+          padding: const EdgeInsets.all(AppDimensions.spaceXL),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
-                padding: EdgeInsets.all(AppDimensions.spaceXL),
+                padding: const EdgeInsets.all(AppDimensions.spaceXL),
                 decoration: BoxDecoration(
                   color: AppColors.cardEmerald.withValues(alpha: 0.1),
                   shape: BoxShape.circle,
                 ),
-                child: Icon(
+                child: const Icon(
                   Icons.library_books_outlined,
                   size: AppDimensions.iconXXL * 1.2,
                   color: AppColors.cardEmerald,
                 ),
               ),
-              SizedBox(height: AppDimensions.spaceL),
+              const SizedBox(height: AppDimensions.spaceL),
               Text(
                 l10n.noResourcesAvailable,
                 style: AppTextStyles.h4
@@ -927,12 +919,6 @@ class _ResourcesTab extends StatelessWidget {
 
 /// Modern resource card
 class _ResourceCard extends StatefulWidget {
-  final String title;
-  final String description;
-  final String category;
-  final String type;
-  final String url;
-  final int index;
 
   const _ResourceCard({
     required this.title,
@@ -942,6 +928,12 @@ class _ResourceCard extends StatefulWidget {
     required this.url,
     required this.index,
   });
+  final String title;
+  final String description;
+  final String category;
+  final String type;
+  final String url;
+  final int index;
 
   @override
   State<_ResourceCard> createState() => _ResourceCardState();
@@ -997,7 +989,7 @@ class _ResourceCardState extends State<_ResourceCard>
       vsync: this,
       duration: AppDurations.animationShort,
     );
-    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.98).animate(
+    _scaleAnimation = Tween<double>(begin: 1, end: 0.98).animate(
       CurvedAnimation(parent: _controller, curve: AppCurves.tap),
     );
   }
@@ -1025,7 +1017,7 @@ class _ResourceCardState extends State<_ResourceCard>
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(bottom: AppDimensions.spaceM),
+      padding: const EdgeInsets.only(bottom: AppDimensions.spaceM),
       child: GestureDetector(
         onTapDown: (_) => _controller.forward(),
         onTapUp: (_) => _controller.reverse(),
@@ -1040,13 +1032,12 @@ class _ResourceCardState extends State<_ResourceCard>
             );
           },
           child: Container(
-            padding: EdgeInsets.all(AppDimensions.spaceM),
+            padding: const EdgeInsets.all(AppDimensions.spaceM),
             decoration: BoxDecoration(
               color: context.colors.surface,
               borderRadius: AppDimensions.borderRadiusL,
               border: Border.all(
                 color: _typeColor.withValues(alpha: 0.2),
-                width: 1,
               ),
               boxShadow: [
                 BoxShadow(
@@ -1061,7 +1052,7 @@ class _ResourceCardState extends State<_ResourceCard>
               children: [
                 // Icon
                 Container(
-                  padding: EdgeInsets.all(AppDimensions.spaceM),
+                  padding: const EdgeInsets.all(AppDimensions.spaceM),
                   decoration: BoxDecoration(
                     color: _typeColor.withValues(alpha: 0.1),
                     borderRadius: AppDimensions.borderRadiusM,
@@ -1072,7 +1063,7 @@ class _ResourceCardState extends State<_ResourceCard>
                     size: AppDimensions.iconL,
                   ),
                 ),
-                SizedBox(width: AppDimensions.spaceM),
+                const SizedBox(width: AppDimensions.spaceM),
                 // Content
                 Expanded(
                   child: Column(
@@ -1080,7 +1071,7 @@ class _ResourceCardState extends State<_ResourceCard>
                     children: [
                       if (widget.category.isNotEmpty) ...[
                         Container(
-                          padding: EdgeInsets.symmetric(
+                          padding: const EdgeInsets.symmetric(
                             horizontal: AppDimensions.spaceS,
                             vertical: 2,
                           ),
@@ -1097,7 +1088,7 @@ class _ResourceCardState extends State<_ResourceCard>
                             ),
                           ),
                         ),
-                        SizedBox(height: AppDimensions.spaceS),
+                        const SizedBox(height: AppDimensions.spaceS),
                       ],
                       Text(
                         widget.title,
@@ -1109,7 +1100,7 @@ class _ResourceCardState extends State<_ResourceCard>
                         overflow: TextOverflow.ellipsis,
                       ),
                       if (widget.description.isNotEmpty) ...[
-                        SizedBox(height: AppDimensions.spaceXS),
+                        const SizedBox(height: AppDimensions.spaceXS),
                         Text(
                           widget.description,
                           style: AppTextStyles.bodySmall.copyWith(

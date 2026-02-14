@@ -30,7 +30,7 @@ class FirebaseDataStoreAdapter implements IDataStore {
       return BackendResult.success(doc.exists ? doc.data() : null);
     } on fs.FirebaseException catch (e) {
       return BackendResult.failure(_mapFirestoreError(e));
-    } catch (e, st) {
+    } on Exception catch (e, st) {
       return BackendResult.failure(BackendError.fromException(e, st));
     }
   }
@@ -45,7 +45,7 @@ class FirebaseDataStoreAdapter implements IDataStore {
       return BackendResult.success(doc.exists);
     } on fs.FirebaseException catch (e) {
       return BackendResult.failure(_mapFirestoreError(e));
-    } catch (e, st) {
+    } on Exception catch (e, st) {
       return BackendResult.failure(BackendError.fromException(e, st));
     }
   }
@@ -60,7 +60,7 @@ class FirebaseDataStoreAdapter implements IDataStore {
       return BackendResult.success(docRef.id);
     } on fs.FirebaseException catch (e) {
       return BackendResult.failure(_mapFirestoreError(e));
-    } catch (e, st) {
+    } on Exception catch (e, st) {
       return BackendResult.failure(BackendError.fromException(e, st));
     }
   }
@@ -80,7 +80,7 @@ class FirebaseDataStoreAdapter implements IDataStore {
       return const BackendResult.success(null);
     } on fs.FirebaseException catch (e) {
       return BackendResult.failure(_mapFirestoreError(e));
-    } catch (e, st) {
+    } on Exception catch (e, st) {
       return BackendResult.failure(BackendError.fromException(e, st));
     }
   }
@@ -96,7 +96,7 @@ class FirebaseDataStoreAdapter implements IDataStore {
       return const BackendResult.success(null);
     } on fs.FirebaseException catch (e) {
       return BackendResult.failure(_mapFirestoreError(e));
-    } catch (e, st) {
+    } on Exception catch (e, st) {
       return BackendResult.failure(BackendError.fromException(e, st));
     }
   }
@@ -111,7 +111,7 @@ class FirebaseDataStoreAdapter implements IDataStore {
       return const BackendResult.success(null);
     } on fs.FirebaseException catch (e) {
       return BackendResult.failure(_mapFirestoreError(e));
-    } catch (e, st) {
+    } on Exception catch (e, st) {
       return BackendResult.failure(BackendError.fromException(e, st));
     }
   }
@@ -137,7 +137,7 @@ class FirebaseDataStoreAdapter implements IDataStore {
       return BackendResult.success(results);
     } on fs.FirebaseException catch (e) {
       return BackendResult.failure(_mapFirestoreError(e));
-    } catch (e, st) {
+    } on Exception catch (e, st) {
       return BackendResult.failure(BackendError.fromException(e, st));
     }
   }
@@ -166,7 +166,7 @@ class FirebaseDataStoreAdapter implements IDataStore {
       return BackendResult.success(countQuery.count ?? 0);
     } on fs.FirebaseException catch (e) {
       return BackendResult.failure(_mapFirestoreError(e));
-    } catch (e, st) {
+    } on Exception catch (e, st) {
       return BackendResult.failure(BackendError.fromException(e, st));
     }
   }
@@ -189,7 +189,7 @@ class FirebaseDataStoreAdapter implements IDataStore {
       return BackendResult.success(doc.exists ? doc.data() : null);
     } on fs.FirebaseException catch (e) {
       return BackendResult.failure(_mapFirestoreError(e));
-    } catch (e, st) {
+    } on Exception catch (e, st) {
       return BackendResult.failure(BackendError.fromException(e, st));
     }
   }
@@ -210,7 +210,7 @@ class FirebaseDataStoreAdapter implements IDataStore {
       return BackendResult.success(docRef.id);
     } on fs.FirebaseException catch (e) {
       return BackendResult.failure(_mapFirestoreError(e));
-    } catch (e, st) {
+    } on Exception catch (e, st) {
       return BackendResult.failure(BackendError.fromException(e, st));
     }
   }
@@ -234,7 +234,7 @@ class FirebaseDataStoreAdapter implements IDataStore {
       return const BackendResult.success(null);
     } on fs.FirebaseException catch (e) {
       return BackendResult.failure(_mapFirestoreError(e));
-    } catch (e, st) {
+    } on Exception catch (e, st) {
       return BackendResult.failure(BackendError.fromException(e, st));
     }
   }
@@ -264,7 +264,7 @@ class FirebaseDataStoreAdapter implements IDataStore {
       return BackendResult.success(results);
     } on fs.FirebaseException catch (e) {
       return BackendResult.failure(_mapFirestoreError(e));
-    } catch (e, st) {
+    } on Exception catch (e, st) {
       return BackendResult.failure(BackendError.fromException(e, st));
     }
   }
@@ -286,7 +286,7 @@ class FirebaseDataStoreAdapter implements IDataStore {
       return const BackendResult.success(null);
     } on fs.FirebaseException catch (e) {
       return BackendResult.failure(_mapFirestoreError(e));
-    } catch (e, st) {
+    } on Exception catch (e, st) {
       return BackendResult.failure(BackendError.fromException(e, st));
     }
   }
@@ -317,7 +317,7 @@ class FirebaseDataStoreAdapter implements IDataStore {
       return const BackendResult.success(null);
     } on fs.FirebaseException catch (e) {
       return BackendResult.failure(_mapFirestoreError(e));
-    } catch (e, st) {
+    } on Exception catch (e, st) {
       return BackendResult.failure(BackendError.fromException(e, st));
     }
   }
@@ -330,12 +330,12 @@ class FirebaseDataStoreAdapter implements IDataStore {
     try {
       final result = await _firestore.runTransaction((transaction) async {
         final context = _FirebaseTransactionContext(_firestore, transaction);
-        return await callback(context);
+        return callback(context);
       });
       return BackendResult.success(result);
     } on fs.FirebaseException catch (e) {
       return BackendResult.failure(_mapFirestoreError(e));
-    } catch (e, st) {
+    } on Exception catch (e, st) {
       return BackendResult.failure(BackendError.fromException(e, st));
     }
   }
@@ -418,7 +418,7 @@ class FirebaseDataStoreAdapter implements IDataStore {
       return const BackendResult.success(null);
     } on fs.FirebaseException catch (e) {
       return BackendResult.failure(_mapFirestoreError(e));
-    } catch (e, st) {
+    } on Exception catch (e, st) {
       return BackendResult.failure(BackendError.fromException(e, st));
     }
   }
@@ -437,7 +437,7 @@ class FirebaseDataStoreAdapter implements IDataStore {
       return const BackendResult.success(null);
     } on fs.FirebaseException catch (e) {
       return BackendResult.failure(_mapFirestoreError(e));
-    } catch (e, st) {
+    } on Exception catch (e, st) {
       return BackendResult.failure(BackendError.fromException(e, st));
     }
   }
@@ -456,7 +456,7 @@ class FirebaseDataStoreAdapter implements IDataStore {
       return const BackendResult.success(null);
     } on fs.FirebaseException catch (e) {
       return BackendResult.failure(_mapFirestoreError(e));
-    } catch (e, st) {
+    } on Exception catch (e, st) {
       return BackendResult.failure(BackendError.fromException(e, st));
     }
   }
@@ -474,7 +474,7 @@ class FirebaseDataStoreAdapter implements IDataStore {
       return const BackendResult.success(null);
     } on fs.FirebaseException catch (e) {
       return BackendResult.failure(_mapFirestoreError(e));
-    } catch (e, st) {
+    } on Exception catch (e, st) {
       return BackendResult.failure(BackendError.fromException(e, st));
     }
   }
@@ -486,27 +486,29 @@ class FirebaseDataStoreAdapter implements IDataStore {
   ) {
     if (options == null) return query;
 
+    var modifiedQuery = query;
+
     // Apply filters
     for (final filter in options.filters) {
-      query = _applyFilter(query, filter);
+      modifiedQuery = _applyFilter(modifiedQuery, filter);
     }
 
     // Apply ordering
     for (final order in options.orderBy) {
-      query = query.orderBy(order.field, descending: order.descending);
+      modifiedQuery = modifiedQuery.orderBy(order.field, descending: order.descending);
     }
 
     // Apply limit
     if (options.limit != null) {
-      query = query.limit(options.limit!);
+      modifiedQuery = modifiedQuery.limit(options.limit!);
     }
 
     // Apply offset (Firestore doesn't have offset, use startAfter instead)
     if (options.startAfter != null) {
-      query = query.startAfter([options.startAfter]);
+      modifiedQuery = modifiedQuery.startAfter([options.startAfter]);
     }
 
-    return query;
+    return modifiedQuery;
   }
 
   fs.Query<Map<String, dynamic>> _applyFilter(

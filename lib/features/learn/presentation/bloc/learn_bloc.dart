@@ -17,9 +17,6 @@ import 'package:guardiancare/features/learn/presentation/bloc/learn_state.dart';
 /// - VideoPage only renders UI and dispatches events (3.3)
 /// - No direct Firestore queries in VideoPage (3.4)
 class LearnBloc extends Bloc<LearnEvent, LearnState> {
-  final GetCategories getCategories;
-  final GetVideosByCategory getVideosByCategory;
-  final GetVideosStream getVideosStream;
 
   LearnBloc({
     required this.getCategories,
@@ -32,6 +29,9 @@ class LearnBloc extends Bloc<LearnEvent, LearnState> {
     on<BackToCategories>(_onBackToCategories);
     on<RetryRequested>(_onRetryRequested);
   }
+  final GetCategories getCategories;
+  final GetVideosByCategory getVideosByCategory;
+  final GetVideosStream getVideosStream;
 
   /// Handles CategoriesRequested (LoadCategories) event
   /// Fetches categories through GetCategories use case

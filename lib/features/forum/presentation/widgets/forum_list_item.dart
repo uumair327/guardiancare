@@ -14,14 +14,14 @@ import 'package:intl/intl.dart';
 /// - Educational badges
 /// - Performance optimized with RepaintBoundary
 class ForumListItem extends StatefulWidget {
-  final ForumEntity forum;
-  final int index;
 
   const ForumListItem({
     super.key,
     required this.forum,
     this.index = 0,
   });
+  final ForumEntity forum;
+  final int index;
 
   @override
   State<ForumListItem> createState() => _ForumListItemState();
@@ -47,7 +47,7 @@ class _ForumListItemState extends State<ForumListItem>
       duration: AppDurations.animationShort,
     );
 
-    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.97).animate(
+    _scaleAnimation = Tween<double>(begin: 1, end: 0.97).animate(
       CurvedAnimation(parent: _controller, curve: AppCurves.tap),
     );
   }
@@ -139,7 +139,7 @@ class _ForumListItemState extends State<ForumListItem>
               child: AnimatedContainer(
                 duration: AppDurations.animationShort,
                 curve: AppCurves.standard,
-                margin: EdgeInsets.only(bottom: AppDimensions.spaceM),
+                margin: const EdgeInsets.only(bottom: AppDimensions.spaceM),
                 transform: Matrix4.identity()
                   ..setEntry(3, 2, 0.001)
                   ..rotateX(_tiltOffset.dx)
@@ -152,7 +152,6 @@ class _ForumListItemState extends State<ForumListItem>
                     color: _isPressed
                         ? _primaryColor.withValues(alpha: 0.3)
                         : context.colors.divider.withValues(alpha: 0.5),
-                    width: 1,
                   ),
                   boxShadow: [
                     BoxShadow(
@@ -194,7 +193,7 @@ class _ForumListItemState extends State<ForumListItem>
                 ),
                 // Content
                 Padding(
-                  padding: EdgeInsets.only(
+                  padding: const EdgeInsets.only(
                     left: AppDimensions.spaceM + 4,
                     right: AppDimensions.spaceM,
                     top: AppDimensions.spaceM,
@@ -209,7 +208,7 @@ class _ForumListItemState extends State<ForumListItem>
                         children: [
                           // Question icon
                           Container(
-                            padding: EdgeInsets.all(AppDimensions.spaceS),
+                            padding: const EdgeInsets.all(AppDimensions.spaceS),
                             decoration: BoxDecoration(
                               gradient: LinearGradient(
                                 colors: [
@@ -225,7 +224,7 @@ class _ForumListItemState extends State<ForumListItem>
                               size: AppDimensions.iconS,
                             ),
                           ),
-                          SizedBox(width: AppDimensions.spaceS),
+                          const SizedBox(width: AppDimensions.spaceS),
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -240,7 +239,7 @@ class _ForumListItemState extends State<ForumListItem>
                                   maxLines: 2,
                                   overflow: TextOverflow.ellipsis,
                                 ),
-                                SizedBox(height: AppDimensions.spaceXS),
+                                const SizedBox(height: AppDimensions.spaceXS),
                                 // Author and time
                                 Row(
                                   children: [
@@ -249,7 +248,7 @@ class _ForumListItemState extends State<ForumListItem>
                                       size: 14,
                                       color: context.colors.textSecondary,
                                     ),
-                                    SizedBox(width: 4),
+                                    const SizedBox(width: 4),
                                     Flexible(
                                       child: Text(
                                         widget.forum.userId,
@@ -262,7 +261,7 @@ class _ForumListItemState extends State<ForumListItem>
                                     ),
                                     Container(
                                       margin:
-                                          EdgeInsets.symmetric(horizontal: 6),
+                                          const EdgeInsets.symmetric(horizontal: 6),
                                       width: 3,
                                       height: 3,
                                       decoration: BoxDecoration(
@@ -275,7 +274,7 @@ class _ForumListItemState extends State<ForumListItem>
                                       size: 14,
                                       color: context.colors.textSecondary,
                                     ),
-                                    SizedBox(width: 4),
+                                    const SizedBox(width: 4),
                                     Text(
                                       _getTimeAgo(widget.forum.createdAt),
                                       style: AppTextStyles.caption.copyWith(
@@ -287,11 +286,11 @@ class _ForumListItemState extends State<ForumListItem>
                               ],
                             ),
                           ),
-                          SizedBox(width: AppDimensions.spaceS),
+                          const SizedBox(width: AppDimensions.spaceS),
                           // Arrow indicator
                           AnimatedContainer(
                             duration: AppDurations.animationShort,
-                            padding: EdgeInsets.all(AppDimensions.spaceXS),
+                            padding: const EdgeInsets.all(AppDimensions.spaceXS),
                             decoration: BoxDecoration(
                               color: _isPressed
                                   ? _primaryColor.withValues(alpha: 0.2)
@@ -306,7 +305,7 @@ class _ForumListItemState extends State<ForumListItem>
                           ),
                         ],
                       ),
-                      SizedBox(height: AppDimensions.spaceM),
+                      const SizedBox(height: AppDimensions.spaceM),
                       // Description
                       Text(
                         widget.forum.description,
@@ -317,7 +316,7 @@ class _ForumListItemState extends State<ForumListItem>
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
-                      SizedBox(height: AppDimensions.spaceM),
+                      const SizedBox(height: AppDimensions.spaceM),
                       // Bottom row with badges
                       Row(
                         children: [
@@ -326,7 +325,7 @@ class _ForumListItemState extends State<ForumListItem>
                             label: ForumStrings.discussion,
                             color: _primaryColor,
                           ),
-                          SizedBox(width: AppDimensions.spaceS),
+                          const SizedBox(width: AppDimensions.spaceS),
                           _buildBadge(
                             icon: Icons.family_restroom_rounded,
                             label: ForumStrings.family,
@@ -359,7 +358,7 @@ class _ForumListItemState extends State<ForumListItem>
     required Color color,
   }) {
     return Container(
-      padding: EdgeInsets.symmetric(
+      padding: const EdgeInsets.symmetric(
         horizontal: AppDimensions.spaceS,
         vertical: 4,
       ),
@@ -371,7 +370,7 @@ class _ForumListItemState extends State<ForumListItem>
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(icon, size: 12, color: color),
-          SizedBox(width: 4),
+          const SizedBox(width: 4),
           Text(
             label,
             style: AppTextStyles.caption.copyWith(

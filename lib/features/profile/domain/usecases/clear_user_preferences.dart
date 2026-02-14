@@ -5,12 +5,12 @@ import 'package:guardiancare/features/profile/domain/repositories/profile_reposi
 
 /// Use case for clearing user preferences
 class ClearUserPreferences implements UseCase<void, NoParams> {
-  final ProfileRepository repository;
 
   ClearUserPreferences(this.repository);
+  final ProfileRepository repository;
 
   @override
   Future<Either<Failure, void>> call(NoParams params) async {
-    return await repository.clearUserPreferences();
+    return repository.clearUserPreferences();
   }
 }

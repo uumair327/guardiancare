@@ -2,12 +2,6 @@ import 'package:equatable/equatable.dart';
 
 /// Entity representing video metadata
 class VideoEntity extends Equatable {
-  final String videoId;
-  final String title;
-  final String? description;
-  final String? thumbnailUrl;
-  final Duration? duration;
-  final String? channelName;
 
   const VideoEntity({
     required this.videoId,
@@ -17,6 +11,12 @@ class VideoEntity extends Equatable {
     this.duration,
     this.channelName,
   });
+  final String videoId;
+  final String title;
+  final String? description;
+  final String? thumbnailUrl;
+  final Duration? duration;
+  final String? channelName;
 
   @override
   List<Object?> get props => [
@@ -42,15 +42,15 @@ enum PlaybackState {
 
 /// Entity representing video playback progress
 class VideoProgress extends Equatable {
-  final Duration position;
-  final Duration buffered;
-  final Duration total;
 
   const VideoProgress({
     required this.position,
     required this.buffered,
     required this.total,
   });
+  final Duration position;
+  final Duration buffered;
+  final Duration total;
 
   double get progressPercent =>
       total.inMilliseconds > 0 ? position.inMilliseconds / total.inMilliseconds : 0;

@@ -7,13 +7,13 @@ import 'package:guardiancare/features/emergency/domain/repositories/emergency_re
 /// Use case for getting all emergency contacts
 class GetEmergencyContacts
     implements UseCase<List<EmergencyContactEntity>, NoParams> {
-  final EmergencyRepository repository;
 
   GetEmergencyContacts(this.repository);
+  final EmergencyRepository repository;
 
   @override
   Future<Either<Failure, List<EmergencyContactEntity>>> call(
       NoParams params) async {
-    return await repository.getEmergencyContacts();
+    return repository.getEmergencyContacts();
   }
 }

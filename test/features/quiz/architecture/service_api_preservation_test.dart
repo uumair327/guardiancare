@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:flutter_test/flutter_test.dart' hide test, group, setUp, tearDown, expect;
 import 'package:glados/glados.dart';
 
 /// **Feature: clean-architecture-audit-fix, Property 3: Service API Preservation**
@@ -15,10 +14,6 @@ import 'package:glados/glados.dart';
 
 /// Represents a method signature extracted from source code
 class MethodSignature {
-  final String name;
-  final String returnType;
-  final List<String> parameters;
-  final bool isAsync;
 
   MethodSignature({
     required this.name,
@@ -26,6 +21,10 @@ class MethodSignature {
     required this.parameters,
     required this.isAsync,
   });
+  final String name;
+  final String returnType;
+  final List<String> parameters;
+  final bool isAsync;
 
   @override
   String toString() =>
@@ -54,11 +53,6 @@ class MethodSignature {
 
 /// Represents a service file with its interface and implementation
 class ServicePair {
-  final String serviceName;
-  final String interfacePath;
-  final String implementationPath;
-  final String interfaceContent;
-  final String implementationContent;
 
   ServicePair({
     required this.serviceName,
@@ -67,6 +61,11 @@ class ServicePair {
     required this.interfaceContent,
     required this.implementationContent,
   });
+  final String serviceName;
+  final String interfacePath;
+  final String implementationPath;
+  final String interfaceContent;
+  final String implementationContent;
 
   /// Extracts method signatures from the interface (abstract class)
   List<MethodSignature> get interfaceMethods {
@@ -289,8 +288,8 @@ List<ServicePair> collectServicePairs() {
   final pairs = <ServicePair>[];
 
   // GeminiAIService
-  final geminiInterfacePath = 'lib/features/quiz/domain/services/gemini_ai_service.dart';
-  final geminiImplPath = 'lib/features/quiz/data/services/gemini_ai_service_impl.dart';
+  const geminiInterfacePath = 'lib/features/quiz/domain/services/gemini_ai_service.dart';
+  const geminiImplPath = 'lib/features/quiz/data/services/gemini_ai_service_impl.dart';
 
   if (File(geminiInterfacePath).existsSync() && File(geminiImplPath).existsSync()) {
     pairs.add(ServicePair(
@@ -303,8 +302,8 @@ List<ServicePair> collectServicePairs() {
   }
 
   // YoutubeSearchService
-  final youtubeInterfacePath = 'lib/features/quiz/domain/services/youtube_search_service.dart';
-  final youtubeImplPath = 'lib/features/quiz/data/services/youtube_search_service_impl.dart';
+  const youtubeInterfacePath = 'lib/features/quiz/domain/services/youtube_search_service.dart';
+  const youtubeImplPath = 'lib/features/quiz/data/services/youtube_search_service_impl.dart';
 
   if (File(youtubeInterfacePath).existsSync() && File(youtubeImplPath).existsSync()) {
     pairs.add(ServicePair(
@@ -340,7 +339,7 @@ void main() {
     // Validates: Requirements 5.1
     // ========================================================================
     if (servicePairs.isNotEmpty) {
-      Glados(any.servicePairIndex(servicePairs.length), ExploreConfig(numRuns: 100))
+      Glados(any.servicePairIndex(servicePairs.length), ExploreConfig())
           .test(
         'For any service, implementation SHALL have all interface methods',
         (index) {
@@ -367,7 +366,7 @@ void main() {
     // Validates: Requirements 5.1
     // ========================================================================
     if (servicePairs.isNotEmpty) {
-      Glados(any.servicePairIndex(servicePairs.length), ExploreConfig(numRuns: 100))
+      Glados(any.servicePairIndex(servicePairs.length), ExploreConfig())
           .test(
         'For any service, method signatures SHALL match between interface and implementation',
         (index) {
@@ -389,7 +388,7 @@ void main() {
     // Validates: Requirements 5.1
     // ========================================================================
     if (servicePairs.isNotEmpty) {
-      Glados(any.servicePairIndex(servicePairs.length), ExploreConfig(numRuns: 100))
+      Glados(any.servicePairIndex(servicePairs.length), ExploreConfig())
           .test(
         'For any service, API SHALL be preserved after relocation',
         (index) {
@@ -502,7 +501,7 @@ void main() {
   // ==========================================================================
   group('Service API Preservation - Edge Cases', () {
     test('Service pair collection should not throw', () {
-      expect(() => collectServicePairs(), returnsNormally);
+      expect(collectServicePairs, returnsNormally);
     });
 
     test('Service pairs should have non-empty content', () {

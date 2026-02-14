@@ -1,23 +1,21 @@
-import 'config/backend_config.dart';
-import 'models/backend_result.dart';
-import 'ports/auth_service_port.dart';
-import 'ports/data_store_port.dart';
-import 'ports/storage_service_port.dart';
-import 'ports/analytics_service_port.dart';
-import 'ports/realtime_service_port.dart';
-
+import 'adapters/firebase/firebase_analytics_adapter.dart';
 // Firebase adapters
 import 'adapters/firebase/firebase_auth_adapter.dart';
 import 'adapters/firebase/firebase_data_store_adapter.dart';
-import 'adapters/firebase/firebase_storage_adapter.dart';
-import 'adapters/firebase/firebase_analytics_adapter.dart';
 import 'adapters/firebase/firebase_realtime_adapter.dart';
-
+import 'adapters/firebase/firebase_storage_adapter.dart';
 // Supabase adapters (fully implemented)
 import 'adapters/supabase/supabase_auth_adapter.dart';
 import 'adapters/supabase/supabase_data_store_adapter.dart';
-import 'adapters/supabase/supabase_storage_adapter.dart';
 import 'adapters/supabase/supabase_realtime_adapter.dart';
+import 'adapters/supabase/supabase_storage_adapter.dart';
+import 'config/backend_config.dart';
+import 'models/backend_result.dart';
+import 'ports/analytics_service_port.dart';
+import 'ports/auth_service_port.dart';
+import 'ports/data_store_port.dart';
+import 'ports/realtime_service_port.dart';
+import 'ports/storage_service_port.dart';
 
 /// Backend provider types.
 ///

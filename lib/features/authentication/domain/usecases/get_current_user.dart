@@ -5,12 +5,12 @@ import 'package:guardiancare/features/authentication/domain/entities/user_entity
 import 'package:guardiancare/features/authentication/domain/repositories/auth_repository.dart';
 
 class GetCurrentUser extends UseCase<UserEntity?, NoParams> {
-  final AuthRepository repository;
 
   GetCurrentUser(this.repository);
+  final AuthRepository repository;
 
   @override
   Future<Either<Failure, UserEntity?>> call(NoParams params) async {
-    return await repository.getCurrentUser();
+    return repository.getCurrentUser();
   }
 }

@@ -1,10 +1,11 @@
+import 'dart:ui';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:guardiancare/core/core.dart';
 import 'package:guardiancare/features/features.dart';
-import 'dart:ui';
 
 class Pages extends StatefulWidget {
   const Pages({super.key});
@@ -64,7 +65,7 @@ class _PagesState extends State<Pages> with SingleTickerProviderStateMixin {
       vsync: this,
       duration: AppDurations.animationMedium,
     );
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+    _fadeAnimation = Tween<double>(begin: 0, end: 1).animate(
       CurvedAnimation(parent: _fadeController, curve: Curves.easeOut),
     );
     _fadeController.forward();
@@ -102,7 +103,7 @@ class _PagesState extends State<Pages> with SingleTickerProviderStateMixin {
         return;
       }
 
-      DocumentSnapshot consentDoc =
+      final DocumentSnapshot consentDoc =
           await _firestore.collection('consents').doc(userId).get();
 
       if (mounted) {
@@ -111,7 +112,7 @@ class _PagesState extends State<Pages> with SingleTickerProviderStateMixin {
           isCheckingConsent = false;
         });
       }
-    } catch (e) {
+    } on Object catch (e) {
       debugPrint("Error fetching consent data: $e");
 
       if (mounted) {
@@ -123,7 +124,7 @@ class _PagesState extends State<Pages> with SingleTickerProviderStateMixin {
     }
   }
 
-  void submitConsent() async {
+  Future<void> submitConsent() async {
     setState(() {
       hasSeenConsent = true;
     });
@@ -184,17 +185,17 @@ class _PagesState extends State<Pages> with SingleTickerProviderStateMixin {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Container(
-                      padding: EdgeInsets.all(AppDimensions.spaceL),
+                      padding: const EdgeInsets.all(AppDimensions.spaceL),
                       decoration: BoxDecoration(
                         color: AppColors.primary.withValues(alpha: 0.1),
                         shape: BoxShape.circle,
                       ),
-                      child: CircularProgressIndicator(
+                      child: const CircularProgressIndicator(
                         color: AppColors.primary,
                         strokeWidth: 3,
                       ),
                     ),
-                    SizedBox(height: AppDimensions.spaceM),
+                    const SizedBox(height: AppDimensions.spaceM),
                     Text(
                       'Loading...',
                       style: AppTextStyles.body2.copyWith(
@@ -213,7 +214,7 @@ class _PagesState extends State<Pages> with SingleTickerProviderStateMixin {
             child: Stack(
               children: [
                 BackdropFilter(
-                  filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
+                  filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
                   child: Container(
                     color: AppColors.overlayDark,
                   ),

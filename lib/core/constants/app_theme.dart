@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+
 import 'app_colors.dart';
-import 'app_text_styles.dart';
 import 'app_dimensions.dart';
+import 'app_text_styles.dart';
 
 /// Professional Theme Configuration
 /// Material Design 3 with Custom Brand Identity
@@ -26,7 +27,7 @@ class AppTheme {
       // Color scheme
       primaryColor: AppColors.primary,
       scaffoldBackgroundColor: AppColors.background,
-      colorScheme: ColorScheme.light(
+      colorScheme: const ColorScheme.light(
         primary: AppColors.primary,
         primaryContainer: AppColors.primaryLighter,
         secondary: AppColors.secondary,
@@ -35,11 +36,8 @@ class AppTheme {
         tertiaryContainer: AppColors.accentLight,
         error: AppColors.error,
         errorContainer: AppColors.errorLight,
-        surface: AppColors.surface,
         surfaceContainerHighest: AppColors.surfaceVariant,
-        onPrimary: AppColors.onPrimary,
         onSecondary: AppColors.onSecondary,
-        onError: AppColors.onError,
         onSurface: AppColors.onSurface,
         outline: AppColors.border,
         outlineVariant: AppColors.borderLight,
@@ -55,7 +53,7 @@ class AppTheme {
           color: AppColors.onPrimary,
           fontWeight: FontWeight.w600,
         ),
-        iconTheme: IconThemeData(
+        iconTheme: const IconThemeData(
           color: AppColors.iconOnPrimary,
           size: AppDimensions.iconM,
         ),
@@ -83,7 +81,7 @@ class AppTheme {
           shadowColor: AppColors.shadowMedium,
           padding: AppDimensions.buttonPadding,
           minimumSize:
-              Size(AppDimensions.buttonMinWidth, AppDimensions.buttonHeight),
+              const Size(AppDimensions.buttonMinWidth, AppDimensions.buttonHeight),
           shape: RoundedRectangleBorder(
             borderRadius: AppDimensions.borderRadiusM,
           ),
@@ -99,7 +97,7 @@ class AppTheme {
           elevation: AppDimensions.elevation0,
           padding: AppDimensions.buttonPadding,
           minimumSize:
-              Size(AppDimensions.buttonMinWidth, AppDimensions.buttonHeight),
+              const Size(AppDimensions.buttonMinWidth, AppDimensions.buttonHeight),
           shape: RoundedRectangleBorder(
             borderRadius: AppDimensions.borderRadiusM,
           ),
@@ -111,11 +109,11 @@ class AppTheme {
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
           foregroundColor: AppColors.primary,
-          side: BorderSide(
-              color: AppColors.border, width: AppDimensions.borderThin),
+          side: const BorderSide(
+              color: AppColors.border),
           padding: AppDimensions.buttonPadding,
           minimumSize:
-              Size(AppDimensions.buttonMinWidth, AppDimensions.buttonHeight),
+              const Size(AppDimensions.buttonMinWidth, AppDimensions.buttonHeight),
           shape: RoundedRectangleBorder(
             borderRadius: AppDimensions.borderRadiusM,
           ),
@@ -129,7 +127,7 @@ class AppTheme {
           foregroundColor: AppColors.primary,
           padding: AppDimensions.buttonPadding,
           minimumSize:
-              Size(AppDimensions.buttonMinWidth, AppDimensions.buttonHeight),
+              const Size(AppDimensions.buttonMinWidth, AppDimensions.buttonHeight),
           shape: RoundedRectangleBorder(
             borderRadius: AppDimensions.borderRadiusM,
           ),
@@ -142,7 +140,7 @@ class AppTheme {
         style: IconButton.styleFrom(
           foregroundColor: AppColors.iconPrimary,
           minimumSize:
-              Size(AppDimensions.iconButtonSize, AppDimensions.iconButtonSize),
+              const Size(AppDimensions.iconButtonSize, AppDimensions.iconButtonSize),
           padding: AppDimensions.paddingAllS,
         ),
       ),
@@ -156,25 +154,23 @@ class AppTheme {
         // Default border
         border: OutlineInputBorder(
           borderRadius: AppDimensions.borderRadiusM,
-          borderSide: BorderSide(
+          borderSide: const BorderSide(
             color: AppColors.inputBorder,
-            width: AppDimensions.borderThin,
           ),
         ),
 
         // Enabled border
         enabledBorder: OutlineInputBorder(
           borderRadius: AppDimensions.borderRadiusM,
-          borderSide: BorderSide(
+          borderSide: const BorderSide(
             color: AppColors.inputBorder,
-            width: AppDimensions.borderThin,
           ),
         ),
 
         // Focused border - Emphasized
         focusedBorder: OutlineInputBorder(
           borderRadius: AppDimensions.borderRadiusM,
-          borderSide: BorderSide(
+          borderSide: const BorderSide(
             color: AppColors.inputBorderFocused,
             width: AppDimensions.borderThick,
           ),
@@ -183,16 +179,15 @@ class AppTheme {
         // Error border
         errorBorder: OutlineInputBorder(
           borderRadius: AppDimensions.borderRadiusM,
-          borderSide: BorderSide(
+          borderSide: const BorderSide(
             color: AppColors.inputBorderError,
-            width: AppDimensions.borderThin,
           ),
         ),
 
         // Focused error border
         focusedErrorBorder: OutlineInputBorder(
           borderRadius: AppDimensions.borderRadiusM,
-          borderSide: BorderSide(
+          borderSide: const BorderSide(
             color: AppColors.inputBorderError,
             width: AppDimensions.borderThick,
           ),
@@ -201,9 +196,8 @@ class AppTheme {
         // Disabled border
         disabledBorder: OutlineInputBorder(
           borderRadius: AppDimensions.borderRadiusM,
-          borderSide: BorderSide(
+          borderSide: const BorderSide(
             color: AppColors.inputBorderDisabled,
-            width: AppDimensions.borderThin,
           ),
         ),
 
@@ -239,13 +233,13 @@ class AppTheme {
       ),
 
       // Icon theme
-      iconTheme: IconThemeData(
+      iconTheme: const IconThemeData(
         color: AppColors.iconPrimary,
         size: AppDimensions.iconM,
       ),
 
       // Divider theme
-      dividerTheme: DividerThemeData(
+      dividerTheme: const DividerThemeData(
         color: AppColors.divider,
         thickness: AppDimensions.dividerThickness,
         space: AppDimensions.spaceM,
@@ -274,7 +268,7 @@ class AppTheme {
       ),
 
       // Bottom sheet theme
-      bottomSheetTheme: BottomSheetThemeData(
+      bottomSheetTheme: const BottomSheetThemeData(
         backgroundColor: AppColors.surface,
         elevation: AppDimensions.elevation4,
         shape: RoundedRectangleBorder(
@@ -296,7 +290,7 @@ class AppTheme {
       ),
 
       // List tile theme
-      listTileTheme: ListTileThemeData(
+      listTileTheme: const ListTileThemeData(
         contentPadding: AppDimensions.listItemPadding,
         minVerticalPadding: AppDimensions.spaceS,
         iconColor: AppColors.iconSecondary,
@@ -354,7 +348,7 @@ class AppTheme {
       ),
 
       // Progress indicator theme
-      progressIndicatorTheme: ProgressIndicatorThemeData(
+      progressIndicatorTheme: const ProgressIndicatorThemeData(
         color: AppColors.primary,
         linearTrackColor: AppColors.primaryLighter,
         circularTrackColor: AppColors.primaryLighter,
@@ -383,7 +377,7 @@ class AppTheme {
       // Color scheme
       primaryColor: AppColors.primary,
       scaffoldBackgroundColor: AppColors.darkBackground,
-      colorScheme: ColorScheme.dark(
+      colorScheme: const ColorScheme.dark(
         primary: AppColors.primary,
         primaryContainer: AppColors.primaryDark,
         secondary: AppColors.secondary,
@@ -397,7 +391,6 @@ class AppTheme {
         onPrimary: AppColors.onPrimary,
         onSecondary: AppColors.onSecondary,
         onError: AppColors.onError,
-        onSurface: AppColors.darkTextPrimary,
         outline: AppColors.gray600,
         outlineVariant: AppColors.gray700,
       ),
@@ -412,7 +405,7 @@ class AppTheme {
           color: AppColors.darkTextPrimary,
           fontWeight: FontWeight.w600,
         ),
-        iconTheme: IconThemeData(
+        iconTheme: const IconThemeData(
           color: AppColors.darkTextPrimary,
           size: AppDimensions.iconM,
         ),
@@ -440,7 +433,7 @@ class AppTheme {
           shadowColor: AppColors.black.withValues(alpha: 0.3),
           padding: AppDimensions.buttonPadding,
           minimumSize:
-              Size(AppDimensions.buttonMinWidth, AppDimensions.buttonHeight),
+              const Size(AppDimensions.buttonMinWidth, AppDimensions.buttonHeight),
           shape: RoundedRectangleBorder(
             borderRadius: AppDimensions.borderRadiusM,
           ),
@@ -456,7 +449,7 @@ class AppTheme {
           elevation: AppDimensions.elevation0,
           padding: AppDimensions.buttonPadding,
           minimumSize:
-              Size(AppDimensions.buttonMinWidth, AppDimensions.buttonHeight),
+              const Size(AppDimensions.buttonMinWidth, AppDimensions.buttonHeight),
           shape: RoundedRectangleBorder(
             borderRadius: AppDimensions.borderRadiusM,
           ),
@@ -468,11 +461,11 @@ class AppTheme {
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
           foregroundColor: AppColors.primary,
-          side: BorderSide(
-              color: AppColors.gray600, width: AppDimensions.borderThin),
+          side: const BorderSide(
+              color: AppColors.gray600),
           padding: AppDimensions.buttonPadding,
           minimumSize:
-              Size(AppDimensions.buttonMinWidth, AppDimensions.buttonHeight),
+              const Size(AppDimensions.buttonMinWidth, AppDimensions.buttonHeight),
           shape: RoundedRectangleBorder(
             borderRadius: AppDimensions.borderRadiusM,
           ),
@@ -486,7 +479,7 @@ class AppTheme {
           foregroundColor: AppColors.primary,
           padding: AppDimensions.buttonPadding,
           minimumSize:
-              Size(AppDimensions.buttonMinWidth, AppDimensions.buttonHeight),
+              const Size(AppDimensions.buttonMinWidth, AppDimensions.buttonHeight),
           shape: RoundedRectangleBorder(
             borderRadius: AppDimensions.borderRadiusM,
           ),
@@ -499,7 +492,7 @@ class AppTheme {
         style: IconButton.styleFrom(
           foregroundColor: AppColors.darkTextPrimary,
           minimumSize:
-              Size(AppDimensions.iconButtonSize, AppDimensions.iconButtonSize),
+              const Size(AppDimensions.iconButtonSize, AppDimensions.iconButtonSize),
           padding: AppDimensions.paddingAllS,
         ),
       ),
@@ -513,25 +506,23 @@ class AppTheme {
         // Default border
         border: OutlineInputBorder(
           borderRadius: AppDimensions.borderRadiusM,
-          borderSide: BorderSide(
+          borderSide: const BorderSide(
             color: AppColors.gray600,
-            width: AppDimensions.borderThin,
           ),
         ),
 
         // Enabled border
         enabledBorder: OutlineInputBorder(
           borderRadius: AppDimensions.borderRadiusM,
-          borderSide: BorderSide(
+          borderSide: const BorderSide(
             color: AppColors.gray600,
-            width: AppDimensions.borderThin,
           ),
         ),
 
         // Focused border
         focusedBorder: OutlineInputBorder(
           borderRadius: AppDimensions.borderRadiusM,
-          borderSide: BorderSide(
+          borderSide: const BorderSide(
             color: AppColors.primary,
             width: AppDimensions.borderThick,
           ),
@@ -540,16 +531,15 @@ class AppTheme {
         // Error border
         errorBorder: OutlineInputBorder(
           borderRadius: AppDimensions.borderRadiusM,
-          borderSide: BorderSide(
+          borderSide: const BorderSide(
             color: AppColors.error,
-            width: AppDimensions.borderThin,
           ),
         ),
 
         // Focused error border
         focusedErrorBorder: OutlineInputBorder(
           borderRadius: AppDimensions.borderRadiusM,
-          borderSide: BorderSide(
+          borderSide: const BorderSide(
             color: AppColors.error,
             width: AppDimensions.borderThick,
           ),
@@ -558,9 +548,8 @@ class AppTheme {
         // Disabled border
         disabledBorder: OutlineInputBorder(
           borderRadius: AppDimensions.borderRadiusM,
-          borderSide: BorderSide(
+          borderSide: const BorderSide(
             color: AppColors.gray700,
-            width: AppDimensions.borderThin,
           ),
         ),
 
@@ -610,13 +599,13 @@ class AppTheme {
       ),
 
       // Icon theme - Dark mode
-      iconTheme: IconThemeData(
+      iconTheme: const IconThemeData(
         color: AppColors.darkTextPrimary,
         size: AppDimensions.iconM,
       ),
 
       // Divider theme - Dark mode
-      dividerTheme: DividerThemeData(
+      dividerTheme: const DividerThemeData(
         color: AppColors.gray700,
         thickness: AppDimensions.dividerThickness,
         space: AppDimensions.spaceM,
@@ -648,7 +637,7 @@ class AppTheme {
       ),
 
       // Bottom sheet theme - Dark mode
-      bottomSheetTheme: BottomSheetThemeData(
+      bottomSheetTheme: const BottomSheetThemeData(
         backgroundColor: AppColors.darkSurface,
         elevation: AppDimensions.elevation4,
         shape: RoundedRectangleBorder(
@@ -670,7 +659,7 @@ class AppTheme {
       ),
 
       // List tile theme - Dark mode
-      listTileTheme: ListTileThemeData(
+      listTileTheme: const ListTileThemeData(
         contentPadding: AppDimensions.listItemPadding,
         minVerticalPadding: AppDimensions.spaceS,
         iconColor: AppColors.darkTextSecondary,
@@ -728,7 +717,7 @@ class AppTheme {
       ),
 
       // Progress indicator theme - Dark mode
-      progressIndicatorTheme: ProgressIndicatorThemeData(
+      progressIndicatorTheme: const ProgressIndicatorThemeData(
         color: AppColors.primary,
         linearTrackColor: AppColors.gray700,
         circularTrackColor: AppColors.gray700,
@@ -747,7 +736,7 @@ class AppTheme {
       ),
 
       // Bottom navigation bar theme - Dark mode
-      bottomNavigationBarTheme: BottomNavigationBarThemeData(
+      bottomNavigationBarTheme: const BottomNavigationBarThemeData(
         backgroundColor: AppColors.darkSurface,
         selectedItemColor: AppColors.primary,
         unselectedItemColor: AppColors.darkTextTertiary,
@@ -756,7 +745,7 @@ class AppTheme {
       ),
 
       // Navigation bar theme - Dark mode (Material 3)
-      navigationBarTheme: NavigationBarThemeData(
+      navigationBarTheme: const NavigationBarThemeData(
         backgroundColor: AppColors.darkSurface,
         indicatorColor: AppColors.primaryDark,
         elevation: AppDimensions.elevation4,

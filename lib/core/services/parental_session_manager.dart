@@ -15,11 +15,11 @@ abstract class ParentalSessionManager {
 /// Implementation of ParentalSessionManager
 /// Manages session-based verification state that resets when app closes
 class ParentalSessionManagerImpl implements ParentalSessionManager {
+  factory ParentalSessionManagerImpl() => _instance;
+  ParentalSessionManagerImpl._internal();
   // Singleton pattern for session state persistence within app lifecycle
   static final ParentalSessionManagerImpl _instance =
       ParentalSessionManagerImpl._internal();
-  factory ParentalSessionManagerImpl() => _instance;
-  ParentalSessionManagerImpl._internal();
 
   // Session state - resets when app closes
   bool _isVerified = false;

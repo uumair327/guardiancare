@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_test/flutter_test.dart' hide test, group, setUp, tearDown, expect;
 import 'package:glados/glados.dart';
 import 'package:go_router/go_router.dart';
 import 'package:guardiancare/core/routing/auth_guard.dart';
@@ -17,18 +16,18 @@ import 'package:guardiancare/core/routing/auth_guard.dart';
 
 /// Mock AuthGuard that tracks all method calls and allows configurable behavior
 class MockAuthGuard implements AuthGuard {
-  final List<String> methodCalls = [];
-  final List<String> redirectPaths = [];
-  final List<String> publicRouteChecks = [];
-  
-  bool _isAuthenticated = false;
-  final Set<String> _publicRoutes;
   
   MockAuthGuard({
     bool isAuthenticated = false,
     Set<String>? publicRoutes,
   }) : _isAuthenticated = isAuthenticated,
        _publicRoutes = publicRoutes ?? {'/login'};
+  final List<String> methodCalls = [];
+  final List<String> redirectPaths = [];
+  final List<String> publicRouteChecks = [];
+  
+  bool _isAuthenticated = false;
+  final Set<String> _publicRoutes;
 
   @override
   String? redirect(BuildContext context, GoRouterState state) {
@@ -93,10 +92,10 @@ class MockAuthGuard implements AuthGuard {
 
 /// Mock GoRouterState for testing
 class MockGoRouterState implements GoRouterState {
-  @override
-  final String matchedLocation;
   
   MockGoRouterState({required this.matchedLocation});
+  @override
+  final String matchedLocation;
   
   @override
   dynamic noSuchMethod(Invocation invocation) => null;
@@ -107,7 +106,6 @@ class MockGoRouterState implements GoRouterState {
 // ============================================================================
 
 class AuthGuardTestFixture {
-  final MockAuthGuard authGuard;
   
   AuthGuardTestFixture._({required this.authGuard});
   
@@ -121,6 +119,7 @@ class AuthGuardTestFixture {
     );
     return AuthGuardTestFixture._(authGuard: authGuard);
   }
+  final MockAuthGuard authGuard;
   
   void reset() {
     authGuard.reset();
@@ -183,7 +182,7 @@ void main() {
     // Property 7.1: AuthGuard encapsulates all authentication redirect logic
     // Validates: Requirement 7.1
     // ========================================================================
-    Glados(any.anyRoute, ExploreConfig(numRuns: 100)).test(
+    Glados(any.anyRoute, ExploreConfig()).test(
       'For any route, AuthGuard.redirect SHALL be called for authentication checks',
       (route) {
         final fixture = AuthGuardTestFixture.create();
@@ -219,7 +218,7 @@ void main() {
     // Property 7.2: AuthGuard.isAuthenticated is called during redirect
     // Validates: Requirement 7.1
     // ========================================================================
-    Glados(any.anyRoute, ExploreConfig(numRuns: 100)).test(
+    Glados(any.anyRoute, ExploreConfig()).test(
       'For any redirect evaluation, AuthGuard.isAuthenticated SHALL be called',
       (route) {
         final fixture = AuthGuardTestFixture.create();
@@ -248,7 +247,7 @@ void main() {
     // Property 7.3: AuthGuard.isPublicRoute is called during redirect
     // Validates: Requirement 7.2
     // ========================================================================
-    Glados(any.anyRoute, ExploreConfig(numRuns: 100)).test(
+    Glados(any.anyRoute, ExploreConfig()).test(
       'For any redirect evaluation, AuthGuard.isPublicRoute SHALL be called',
       (route) {
         final fixture = AuthGuardTestFixture.create();
@@ -284,10 +283,10 @@ void main() {
     // Property 7.4: Unauthenticated users accessing protected routes are redirected to login
     // Validates: Requirement 7.1
     // ========================================================================
-    Glados(any.protectedRoute, ExploreConfig(numRuns: 100)).test(
+    Glados(any.protectedRoute, ExploreConfig()).test(
       'For any protected route, unauthenticated users SHALL be redirected to /login',
       (route) {
-        final fixture = AuthGuardTestFixture.create(isAuthenticated: false);
+        final fixture = AuthGuardTestFixture.create();
         final state = MockGoRouterState(matchedLocation: route);
         
         try {
@@ -313,7 +312,7 @@ void main() {
     // Property 7.5: Authenticated users accessing public routes are redirected to home
     // Validates: Requirement 7.1
     // ========================================================================
-    Glados(any.publicRoute, ExploreConfig(numRuns: 100)).test(
+    Glados(any.publicRoute, ExploreConfig()).test(
       'For any public route, authenticated users SHALL be redirected to /',
       (route) {
         final fixture = AuthGuardTestFixture.create(isAuthenticated: true);
@@ -342,7 +341,7 @@ void main() {
     // Property 7.6: Authenticated users accessing protected routes are not redirected
     // Validates: Requirement 7.1
     // ========================================================================
-    Glados(any.protectedRoute, ExploreConfig(numRuns: 100)).test(
+    Glados(any.protectedRoute, ExploreConfig()).test(
       'For any protected route, authenticated users SHALL NOT be redirected',
       (route) {
         final fixture = AuthGuardTestFixture.create(isAuthenticated: true);
@@ -371,10 +370,10 @@ void main() {
     // Property 7.7: Unauthenticated users accessing public routes are not redirected
     // Validates: Requirement 7.1
     // ========================================================================
-    Glados(any.publicRoute, ExploreConfig(numRuns: 100)).test(
+    Glados(any.publicRoute, ExploreConfig()).test(
       'For any public route, unauthenticated users SHALL NOT be redirected',
       (route) {
-        final fixture = AuthGuardTestFixture.create(isAuthenticated: false);
+        final fixture = AuthGuardTestFixture.create();
         final state = MockGoRouterState(matchedLocation: route);
         
         try {
@@ -400,7 +399,7 @@ void main() {
     // Property 7.8: AuthGuard maintains single responsibility
     // Validates: Requirement 7.2
     // ========================================================================
-    Glados2(any.anyRoute, any.authState, ExploreConfig(numRuns: 100)).test(
+    Glados2(any.anyRoute, any.authState, ExploreConfig()).test(
       'For any route and auth state, AuthGuard SHALL only call auth-related methods',
       (route, isAuthenticated) {
         final fixture = AuthGuardTestFixture.create(isAuthenticated: isAuthenticated);
@@ -429,7 +428,7 @@ void main() {
     // Property 7.9: Multiple redirect evaluations are all handled by AuthGuard
     // Validates: Requirement 7.1
     // ========================================================================
-    Glados(any.nonEmptyList(any.anyRoute), ExploreConfig(numRuns: 100)).test(
+    Glados(any.nonEmptyList(any.anyRoute), ExploreConfig()).test(
       'For any sequence of routes, all redirects SHALL be handled by AuthGuard',
       (routes) {
         final fixture = AuthGuardTestFixture.create();
@@ -469,10 +468,10 @@ void main() {
     // Property 7.10: Auth state changes affect redirect behavior correctly
     // Validates: Requirement 7.1
     // ========================================================================
-    Glados(any.protectedRoute, ExploreConfig(numRuns: 100)).test(
+    Glados(any.protectedRoute, ExploreConfig()).test(
       'For any protected route, auth state change SHALL affect redirect behavior',
       (route) {
-        final fixture = AuthGuardTestFixture.create(isAuthenticated: false);
+        final fixture = AuthGuardTestFixture.create();
         final state = MockGoRouterState(matchedLocation: route);
         
         try {
@@ -531,7 +530,7 @@ void main() {
     });
 
     test('AuthGuard should handle root path correctly for unauthenticated users', () {
-      final fixture = AuthGuardTestFixture.create(isAuthenticated: false);
+      final fixture = AuthGuardTestFixture.create();
       final state = MockGoRouterState(matchedLocation: '/');
       
       final redirectPath = fixture.authGuard.redirect(
@@ -546,7 +545,7 @@ void main() {
     });
 
     test('AuthGuard should handle nested routes correctly', () {
-      final fixture = AuthGuardTestFixture.create(isAuthenticated: false);
+      final fixture = AuthGuardTestFixture.create();
       final state = MockGoRouterState(matchedLocation: '/forum/123');
       
       final redirectPath = fixture.authGuard.redirect(

@@ -6,12 +6,12 @@ import 'package:guardiancare/features/learn/domain/repositories/learn_repository
 
 /// Use case for getting learning categories
 class GetCategories implements UseCase<List<CategoryEntity>, NoParams> {
-  final LearnRepository repository;
 
   GetCategories(this.repository);
+  final LearnRepository repository;
 
   @override
   Future<Either<Failure, List<CategoryEntity>>> call(NoParams params) async {
-    return await repository.getCategories();
+    return repository.getCategories();
   }
 }

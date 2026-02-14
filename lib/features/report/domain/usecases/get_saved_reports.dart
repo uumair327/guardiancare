@@ -5,12 +5,12 @@ import 'package:guardiancare/features/report/domain/repositories/report_reposito
 
 /// Use case for getting all saved reports
 class GetSavedReports implements UseCase<List<String>, NoParams> {
-  final ReportRepository repository;
 
   GetSavedReports(this.repository);
+  final ReportRepository repository;
 
   @override
   Future<Either<Failure, List<String>>> call(NoParams params) async {
-    return await repository.getSavedReports();
+    return repository.getSavedReports();
   }
 }

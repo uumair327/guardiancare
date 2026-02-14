@@ -18,9 +18,9 @@ typedef LoadCategories = CategoriesRequested;
 
 /// Event when a category is selected
 class CategorySelected extends LearnEvent {
-  final String categoryName;
 
   const CategorySelected(this.categoryName);
+  final String categoryName;
 
   @override
   List<Object> get props => [categoryName];
@@ -29,9 +29,9 @@ class CategorySelected extends LearnEvent {
 /// Event to request videos for a category
 /// Alias: LoadVideosByCategory (for SRP compliance)
 class VideosRequested extends LearnEvent {
-  final String category;
 
   const VideosRequested(this.category);
+  final String category;
 
   @override
   List<Object> get props => [category];

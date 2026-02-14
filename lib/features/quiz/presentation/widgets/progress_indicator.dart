@@ -4,10 +4,6 @@ import 'package:guardiancare/core/core.dart';
 /// Modern animated progress indicator for quiz
 /// Shows current progress with smooth animations
 class QuizProgressIndicator extends StatelessWidget {
-  final int currentQuestion;
-  final int totalQuestions;
-  final Color? activeColor;
-  final Color? inactiveColor;
 
   const QuizProgressIndicator({
     super.key,
@@ -16,6 +12,10 @@ class QuizProgressIndicator extends StatelessWidget {
     this.activeColor,
     this.inactiveColor,
   });
+  final int currentQuestion;
+  final int totalQuestions;
+  final Color? activeColor;
+  final Color? inactiveColor;
 
   @override
   Widget build(BuildContext context) {
@@ -64,7 +64,7 @@ class QuizProgressIndicator extends StatelessWidget {
               },
             ),
           ),
-          SizedBox(height: AppDimensions.spaceS),
+          const SizedBox(height: AppDimensions.spaceS),
           // Progress text
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -93,12 +93,6 @@ class QuizProgressIndicator extends StatelessWidget {
 
 /// Circular progress indicator for quiz completion
 class QuizCircularProgress extends StatefulWidget {
-  final double progress;
-  final double size;
-  final double strokeWidth;
-  final Color? activeColor;
-  final Color? inactiveColor;
-  final Widget? child;
 
   const QuizCircularProgress({
     super.key,
@@ -109,6 +103,12 @@ class QuizCircularProgress extends StatefulWidget {
     this.inactiveColor,
     this.child,
   });
+  final double progress;
+  final double size;
+  final double strokeWidth;
+  final Color? activeColor;
+  final Color? inactiveColor;
+  final Widget? child;
 
   @override
   State<QuizCircularProgress> createState() => _QuizCircularProgressState();
@@ -128,7 +128,7 @@ class _QuizCircularProgressState extends State<QuizCircularProgress>
     );
 
     _progressAnimation =
-        Tween<double>(begin: 0.0, end: widget.progress).animate(
+        Tween<double>(begin: 0, end: widget.progress).animate(
       CurvedAnimation(parent: _controller, curve: AppCurves.emphasized),
     );
 
@@ -185,10 +185,6 @@ class _QuizCircularProgressState extends State<QuizCircularProgress>
 }
 
 class _CircularProgressPainter extends CustomPainter {
-  final double progress;
-  final Color activeColor;
-  final Color inactiveColor;
-  final double strokeWidth;
 
   _CircularProgressPainter({
     required this.progress,
@@ -196,6 +192,10 @@ class _CircularProgressPainter extends CustomPainter {
     required this.inactiveColor,
     required this.strokeWidth,
   });
+  final double progress;
+  final Color activeColor;
+  final Color inactiveColor;
+  final double strokeWidth;
 
   @override
   void paint(Canvas canvas, Size size) {

@@ -48,14 +48,14 @@ void main() {
         );
 
         // Initial value should be 0.0
-        AnimationTestUtils.verifyAnimationValue(controller, 0.0);
+        AnimationTestUtils.verifyAnimationValue(controller, 0);
 
         // Forward to completion
         controller.forward();
         await tester.pumpAndSettle();
 
         // Final value should be 1.0
-        AnimationTestUtils.verifyAnimationValue(controller, 1.0);
+        AnimationTestUtils.verifyAnimationValue(controller, 1);
       });
     });
 
@@ -126,7 +126,7 @@ void main() {
         AnimationTestUtils.verifyScale(
           tester,
           find.byKey(const Key('test_scale_tap')),
-          1.0,
+          1,
         );
       });
     });
@@ -178,7 +178,7 @@ void main() {
         AnimationTestUtils.verifyScale(
           tester,
           find.byKey(const Key('test_scale_tap')),
-          1.0,
+          1,
         );
 
         // Press down
@@ -234,8 +234,8 @@ void main() {
       testWidgets('creates proper test wrapper', (tester) async {
         await tester.pumpWidget(
           AnimationTestUtils.wrapForTest(
-            Container(
-              key: const Key('test_container'),
+            const SizedBox(
+              key: Key('test_container'),
               width: 100,
               height: 100,
             ),
@@ -252,13 +252,13 @@ void main() {
 
 /// Helper widget for testing animation controller
 class _AnimatedTestWidget extends StatefulWidget {
-  final void Function(AnimationController) onControllerCreated;
-  final Duration duration;
 
   const _AnimatedTestWidget({
     required this.onControllerCreated,
     this.duration = const Duration(milliseconds: 300),
   });
+  final void Function(AnimationController) onControllerCreated;
+  final Duration duration;
 
   @override
   State<_AnimatedTestWidget> createState() => _AnimatedTestWidgetState();

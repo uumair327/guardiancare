@@ -10,10 +10,10 @@ abstract class ReportEvent extends Equatable {
 
 /// Event to create a new report
 class CreateReportRequested extends ReportEvent {
-  final String caseName;
-  final List<String> questions;
 
   const CreateReportRequested(this.caseName, this.questions);
+  final String caseName;
+  final List<String> questions;
 
   @override
   List<Object?> get props => [caseName, questions];
@@ -21,9 +21,9 @@ class CreateReportRequested extends ReportEvent {
 
 /// Event to load a saved report
 class LoadReportRequested extends ReportEvent {
-  final String caseName;
 
   const LoadReportRequested(this.caseName);
+  final String caseName;
 
   @override
   List<Object?> get props => [caseName];
@@ -31,10 +31,10 @@ class LoadReportRequested extends ReportEvent {
 
 /// Event to update an answer
 class UpdateAnswerRequested extends ReportEvent {
-  final int questionIndex;
-  final bool isChecked;
 
   const UpdateAnswerRequested(this.questionIndex, this.isChecked);
+  final int questionIndex;
+  final bool isChecked;
 
   @override
   List<Object?> get props => [questionIndex, isChecked];
@@ -47,9 +47,9 @@ class SaveReportRequested extends ReportEvent {
 
 /// Event to delete a report
 class DeleteReportRequested extends ReportEvent {
-  final String caseName;
 
   const DeleteReportRequested(this.caseName);
+  final String caseName;
 
   @override
   List<Object?> get props => [caseName];

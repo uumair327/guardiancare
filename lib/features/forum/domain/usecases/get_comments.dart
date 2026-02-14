@@ -5,9 +5,9 @@ import 'package:guardiancare/features/forum/domain/entities/comment_entity.dart'
 import 'package:guardiancare/features/forum/domain/repositories/forum_repository.dart';
 
 class GetComments {
-  final ForumRepository repository;
 
   GetComments(this.repository);
+  final ForumRepository repository;
 
   Stream<Either<Failure, List<CommentEntity>>> call(GetCommentsParams params) {
     return repository.getComments(params.forumId);
@@ -15,9 +15,9 @@ class GetComments {
 }
 
 class GetCommentsParams extends Equatable {
-  final String forumId;
 
   const GetCommentsParams({required this.forumId});
+  final String forumId;
 
   @override
   List<Object> get props => [forumId];

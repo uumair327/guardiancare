@@ -1,10 +1,11 @@
 import 'dart:convert';
+
 import 'package:dartz/dartz.dart';
 import 'package:flutter/foundation.dart';
-import 'package:http/http.dart' as http;
 import 'package:guardiancare/core/constants/constants.dart';
 import 'package:guardiancare/core/error/failures.dart';
 import 'package:guardiancare/features/quiz/domain/services/youtube_search_service.dart';
+import 'package:http/http.dart' as http;
 
 /// Implementation of [YoutubeSearchService] using YouTube Data API v3
 ///
@@ -14,8 +15,6 @@ import 'package:guardiancare/features/quiz/domain/services/youtube_search_servic
 ///
 /// Requirements: 1.2, 5.1
 class YoutubeSearchServiceImpl implements YoutubeSearchService {
-  final http.Client _httpClient;
-  final String _apiKey;
 
   /// Creates a [YoutubeSearchServiceImpl]
   ///
@@ -26,16 +25,18 @@ class YoutubeSearchServiceImpl implements YoutubeSearchService {
     String? apiKey,
   })  : _httpClient = httpClient ?? http.Client(),
         _apiKey = apiKey ?? kYoutubeApiKey;
+  final http.Client _httpClient;
+  final String _apiKey;
 
   @override
   Future<Either<Failure, VideoData>> searchVideo(String term) async {
     if (term.isEmpty) {
-      return Left(YoutubeApiFailure(ErrorStrings.youtubeSearchTermEmpty));
+      return const Left(YoutubeApiFailure(ErrorStrings.youtubeSearchTermEmpty));
     }
 
     // Skip invalid terms that start with dash
     if (term.startsWith('-')) {
-      return Left(YoutubeApiFailure(ErrorStrings.youtubeInvalidTermFormat));
+      return const Left(YoutubeApiFailure(ErrorStrings.youtubeInvalidTermFormat));
     }
 
     try {
@@ -74,7 +75,7 @@ class YoutubeSearchServiceImpl implements YoutubeSearchService {
 
       debugPrint('✅ YouTube API: Found video "${videoData.title}"');
       return Right(videoData);
-    } catch (e) {
+    } on Object catch (e) {
       debugPrint('❌ YouTube API exception: $e');
       return Left(YoutubeApiFailure(ErrorStrings.withDetails(ErrorStrings.youtubeApiError, e.toString())));
     }

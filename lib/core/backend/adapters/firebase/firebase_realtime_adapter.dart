@@ -175,14 +175,39 @@ class FirebaseRealtimeAdapter implements IRealtimeService {
 
   @override
   Stream<Map<String, dynamic>> subscribeMultiple(List<String> channels) {
-    final controller = StreamController<Map<String, dynamic>>.broadcast();
+    final controller = StreamController<Map<String, dynamic>>.broadcast(
+      onCancel: () {
+        // Cleanup will be handled by individual channel subscriptions
+      },
+    );
 
+    final subscriptions = <StreamSubscription>[];
     for (final channel in channels) {
-      subscribe(channel).listen(
-        (data) => controller.add({...data, 'channel': channel}),
-        onError: (error) => controller.addError(error),
+      final sub = subscribe(channel).listen(
+        (data) {
+          if (!controller.isClosed) {
+            controller.add({...data, 'channel': channel});
+          }
+        },
+        onError: (error) {
+          if (!controller.isClosed) {
+            controller.addError(error);
+          }
+        },
+        onDone: () {
+          // Clean up when individual subscription completes
+        },
       );
+      subscriptions.add(sub);
     }
+
+    // Store cleanup function
+    controller.onCancel = () async {
+      for (final sub in subscriptions) {
+        await sub.cancel();
+      }
+      await controller.close();
+    };
 
     return controller.stream;
   }
@@ -238,7 +263,7 @@ class FirebaseRealtimeAdapter implements IRealtimeService {
       }, SetOptions(merge: true));
 
       return const BackendResult.success(null);
-    } catch (e) {
+    } on Object catch (e) {
       return BackendResult.failure(
         BackendError(message: e.toString(), code: BackendErrorCode.unknown),
       );
@@ -251,7 +276,7 @@ class FirebaseRealtimeAdapter implements IRealtimeService {
     try {
       final doc = await _firestore.collection('presence').doc(userId).get();
       return BackendResult.success(doc.data());
-    } catch (e) {
+    } on Object catch (e) {
       return BackendResult.failure(
         BackendError(message: e.toString(), code: BackendErrorCode.unknown),
       );
@@ -294,7 +319,7 @@ class FirebaseRealtimeAdapter implements IRealtimeService {
         cacheSizeBytes: Settings.CACHE_SIZE_UNLIMITED,
       );
       return const BackendResult.success(null);
-    } catch (e) {
+    } on Object catch (e) {
       return BackendResult.failure(
         BackendError(message: e.toString(), code: BackendErrorCode.unknown),
       );
@@ -319,7 +344,7 @@ class FirebaseRealtimeAdapter implements IRealtimeService {
     try {
       await _firestore.waitForPendingWrites();
       return const BackendResult.success(null);
-    } catch (e) {
+    } on Object catch (e) {
       return BackendResult.failure(
         BackendError(message: e.toString(), code: BackendErrorCode.unknown),
       );

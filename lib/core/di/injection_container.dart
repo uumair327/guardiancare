@@ -1,24 +1,13 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart' show kIsWeb, debugPrint;
 import 'package:get_it/get_it.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:guardiancare/core/core.dart';
 import 'package:guardiancare/features/features.dart';
-
-// Backend Abstraction Layer (Hexagonal Architecture)
-import 'package:guardiancare/core/backend/backend.dart';
-
-// Quiz feature service imports - Clean Architecture compliant
-// Domain layer abstract interfaces (Requirements: 4.1, 4.2)
-import 'package:guardiancare/features/quiz/domain/services/gemini_ai_service.dart';
-import 'package:guardiancare/features/quiz/domain/services/youtube_search_service.dart';
-// Data layer concrete implementations (Requirements: 4.1, 4.2)
-import 'package:guardiancare/features/quiz/data/services/gemini_ai_service_impl.dart';
-import 'package:guardiancare/features/quiz/data/services/youtube_search_service_impl.dart';
 import 'package:guardiancare/features/quiz/domain/usecases/get_all_quizzes.dart';
 import 'package:guardiancare/features/quiz/domain/usecases/save_quiz_history.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 final sl = GetIt.instance;
 
@@ -35,7 +24,7 @@ Future<void> init() async {
   // ============================================================================
   // Core
   // ============================================================================
-  sl.registerLazySingleton<NetworkInfo>(() => NetworkInfoImpl());
+  sl.registerLazySingleton<NetworkInfo>(NetworkInfoImpl.new);
 
   // ============================================================================
   // External (Legacy - kept for gradual migration, will be removed)
@@ -50,8 +39,8 @@ Future<void> init() async {
   sl.registerLazySingleton(() => FirebaseFirestore.instance);
   sl.registerLazySingleton(() => GoogleSignIn(
         scopes: ['email', 'profile'],
-        // If Google Sign-In still fails, add your Web Client ID here:
-        // serverClientId: 'YOUR_WEB_CLIENT_ID.apps.googleusercontent.com',
+        serverClientId:
+            '480855529488-809q7ih0n0vhoqrj47pgk986u4kobt1h.apps.googleusercontent.com',
       ));
 
   // Initialize Storage Manager (SQLite + Hive)
@@ -169,7 +158,7 @@ void _initManagers() {
 
   // ParentalSessionManager - handles session state management exclusively
   sl.registerLazySingleton<ParentalSessionManager>(
-    () => ParentalSessionManagerImpl(),
+    ParentalSessionManagerImpl.new,
   );
 
   // ParentalKeyVerifier - handles verification logic exclusively
@@ -191,7 +180,7 @@ void _initManagers() {
   // Note: The service uses singleton pattern internally, but we register it
   // for consistency and to allow injection via GetIt
   sl.registerLazySingleton<ParentalVerificationService>(
-    () => ParentalVerificationService(),
+    ParentalVerificationService.new,
   );
 
   // ============================================================================
@@ -249,6 +238,8 @@ void _initAuthFeature() {
   sl.registerLazySingleton(() => SignOut(sl()));
   sl.registerLazySingleton(() => GetCurrentUser(sl()));
   sl.registerLazySingleton(() => SendPasswordResetEmail(sl()));
+  sl.registerLazySingleton(() => SendEmailVerification(sl()));
+  sl.registerLazySingleton(() => ReloadUser(sl()));
 
   // BLoC
   sl.registerFactory(
@@ -259,6 +250,8 @@ void _initAuthFeature() {
       signOut: sl(),
       getCurrentUser: sl(),
       sendPasswordResetEmail: sl(),
+      sendEmailVerification: sl(),
+      reloadUser: sl(),
     ),
   );
 }
@@ -407,18 +400,18 @@ void _initLearnFeature() {
 void _initQuizFeature() {
   // Data sources
   sl.registerLazySingleton<QuizLocalDataSource>(
-    () => QuizLocalDataSourceImpl(),
+    QuizLocalDataSourceImpl.new,
   );
 
   // Services - Abstract interfaces bound to concrete implementations
   // Clean Architecture: Domain interfaces registered with Data layer implementations
   // Requirements: 4.3
   sl.registerLazySingleton<GeminiAIService>(
-    () => GeminiAIServiceImpl(),
+    GeminiAIServiceImpl.new,
   );
 
   sl.registerLazySingleton<YoutubeSearchService>(
-    () => YoutubeSearchServiceImpl(),
+    YoutubeSearchServiceImpl.new,
   );
 
   // Repositories
@@ -462,7 +455,7 @@ void _initQuizFeature() {
 void _initEmergencyFeature() {
   // Data sources
   sl.registerLazySingleton<EmergencyLocalDataSource>(
-    () => EmergencyLocalDataSourceImpl(),
+    EmergencyLocalDataSourceImpl.new,
   );
 
   // Repositories

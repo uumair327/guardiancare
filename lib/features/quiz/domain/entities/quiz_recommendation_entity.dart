@@ -8,6 +8,16 @@ import 'package:equatable/equatable.dart';
 ///
 /// Requirements: 4.3
 class QuizRecommendation extends Equatable {
+
+  const QuizRecommendation({
+    this.id,
+    required this.title,
+    required this.videoUrl,
+    required this.category,
+    required this.thumbnailUrl,
+    this.timestamp,
+    required this.userId,
+  });
   /// Unique identifier for the recommendation (optional, assigned by persistence layer)
   final String? id;
 
@@ -28,16 +38,6 @@ class QuizRecommendation extends Equatable {
 
   /// User ID this recommendation belongs to
   final String userId;
-
-  const QuizRecommendation({
-    this.id,
-    required this.title,
-    required this.videoUrl,
-    required this.category,
-    required this.thumbnailUrl,
-    this.timestamp,
-    required this.userId,
-  });
 
   @override
   List<Object?> get props => [id, title, videoUrl, category, thumbnailUrl, timestamp, userId];

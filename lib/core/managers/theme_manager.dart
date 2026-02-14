@@ -29,11 +29,6 @@ abstract class ThemeManager {
 /// Implementation of ThemeManager
 /// Manages application theme and delegates persistence to ThemeService
 class ThemeManagerImpl implements ThemeManager {
-  final ThemeService _themeService;
-  final StreamController<ThemeMode> _themeController =
-      StreamController<ThemeMode>.broadcast();
-
-  ThemeMode _currentThemeMode;
 
   ThemeManagerImpl({
     required ThemeService themeService,
@@ -43,6 +38,11 @@ class ThemeManagerImpl implements ThemeManager {
     debugPrint(
         'ThemeManager initialized with default theme: $_currentThemeMode');
   }
+  final ThemeService _themeService;
+  final StreamController<ThemeMode> _themeController =
+      StreamController<ThemeMode>.broadcast();
+
+  ThemeMode _currentThemeMode;
 
   @override
   ThemeMode get currentThemeMode => _currentThemeMode;

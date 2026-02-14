@@ -5,10 +5,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 /// Follows Clean Architecture - Infrastructure layer service
 /// Single Responsibility: Only handles theme storage operations
 class ThemeService {
-  static const String _themeKey = 'app_theme_mode';
-  final SharedPreferences _prefs;
 
   ThemeService(this._prefs);
+  static const String _themeKey = 'app_theme_mode';
+  final SharedPreferences _prefs;
 
   /// Get saved theme mode from storage
   /// Returns null if no theme has been saved (uses system default)
@@ -35,12 +35,12 @@ class ThemeService {
       ThemeMode.dark => 'dark',
       ThemeMode.system => 'system',
     };
-    return await _prefs.setString(_themeKey, themeValue);
+    return _prefs.setString(_themeKey, themeValue);
   }
 
   /// Clear saved theme (will use system default)
   Future<bool> clearThemeMode() async {
-    return await _prefs.remove(_themeKey);
+    return _prefs.remove(_themeKey);
   }
 
   /// Check if the current theme is dark

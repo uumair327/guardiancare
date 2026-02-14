@@ -5,7 +5,6 @@ import 'package:guardiancare/core/error/failures.dart';
 import 'package:guardiancare/core/services/crypto_service.dart';
 import 'package:guardiancare/core/services/parental_key_verifier.dart';
 import 'package:guardiancare/core/services/parental_session_manager.dart';
-import 'package:guardiancare/core/services/parental_verification_service.dart';
 
 /// **Feature: srp-clean-architecture-fix, Property 9: Parental Verification Decomposition**
 /// **Validates: Requirements 9.1, 9.2, 9.3**
@@ -130,9 +129,6 @@ class MockCryptoService implements CryptoService {
 // ============================================================================
 
 class ParentalVerificationTestFixture {
-  final MockParentalSessionManager sessionManager;
-  final MockParentalKeyVerifier keyVerifier;
-  final MockCryptoService cryptoService;
 
   ParentalVerificationTestFixture._({
     required this.sessionManager,
@@ -150,6 +146,9 @@ class ParentalVerificationTestFixture {
       cryptoService: cryptoService,
     );
   }
+  final MockParentalSessionManager sessionManager;
+  final MockParentalKeyVerifier keyVerifier;
+  final MockCryptoService cryptoService;
 
   void reset() {
     sessionManager.clearCalls();
@@ -211,7 +210,7 @@ void main() {
     // Property 9.1: ParentalSessionManager handles session state exclusively
     // Validates: Requirement 9.1
     // ========================================================================
-    Glados(any.boolean, ExploreConfig(numRuns: 100)).test(
+    Glados(any.boolean, ExploreConfig()).test(
       'For any session state change, ParentalSessionManager SHALL manage state exclusively',
       (verifiedState) {
         final fixture = ParentalVerificationTestFixture.create();
@@ -251,7 +250,7 @@ void main() {
     // Property 9.2: ParentalKeyVerifier handles verification logic exclusively
     // Validates: Requirement 9.2
     // ========================================================================
-    Glados2(any.userId, any.parentalKey, ExploreConfig(numRuns: 100)).test(
+    Glados2(any.userId, any.parentalKey, ExploreConfig()).test(
       'For any key verification, ParentalKeyVerifier SHALL handle verification exclusively',
       (userId, key) async {
         final fixture = ParentalVerificationTestFixture.create();
@@ -292,7 +291,7 @@ void main() {
     // Property 9.3: CryptoService handles cryptographic operations exclusively
     // Validates: Requirement 9.3
     // ========================================================================
-    Glados(any.parentalKey, ExploreConfig(numRuns: 100)).test(
+    Glados(any.parentalKey, ExploreConfig()).test(
       'For any hash operation, CryptoService SHALL handle crypto exclusively',
       (input) {
         final fixture = ParentalVerificationTestFixture.create();
@@ -332,7 +331,7 @@ void main() {
     // Property 9.4: CryptoService compareHash works correctly
     // Validates: Requirement 9.3
     // ========================================================================
-    Glados(any.parentalKey, ExploreConfig(numRuns: 100)).test(
+    Glados(any.parentalKey, ExploreConfig()).test(
       'For any hash comparison, CryptoService SHALL correctly compare hashes',
       (input) {
         final fixture = ParentalVerificationTestFixture.create();
@@ -373,7 +372,7 @@ void main() {
     // Property 9.5: Session reset clears verification state
     // Validates: Requirement 9.1
     // ========================================================================
-    Glados(any.intBetween(1, 5), ExploreConfig(numRuns: 100)).test(
+    Glados(any.intBetween(1, 5), ExploreConfig()).test(
       'For any number of verifications, reset SHALL clear session state',
       (count) {
         final fixture = ParentalVerificationTestFixture.create();
@@ -408,7 +407,7 @@ void main() {
     // Property 9.6: ParentalKeyVerifier returns failure on error
     // Validates: Requirement 9.2
     // ========================================================================
-    Glados2(any.userId, any.parentalKey, ExploreConfig(numRuns: 100)).test(
+    Glados2(any.userId, any.parentalKey, ExploreConfig()).test(
       'For any verification failure, ParentalKeyVerifier SHALL return AuthenticationFailure',
       (userId, key) async {
         final fixture = ParentalVerificationTestFixture.create();
@@ -452,7 +451,7 @@ void main() {
     // Property 9.7: Services maintain single responsibility during operations
     // Validates: Requirements 9.1, 9.2, 9.3
     // ========================================================================
-    Glados2(any.userId, any.parentalKey, ExploreConfig(numRuns: 100)).test(
+    Glados2(any.userId, any.parentalKey, ExploreConfig()).test(
       'During operations, each service SHALL maintain single responsibility',
       (userId, key) async {
         final fixture = ParentalVerificationTestFixture.create();
@@ -491,7 +490,7 @@ void main() {
     // Property 9.8: Multiple session state changes are all tracked
     // Validates: Requirement 9.1
     // ========================================================================
-    Glados(any.nonEmptyList(any.boolean), ExploreConfig(numRuns: 100)).test(
+    Glados(any.nonEmptyList(any.boolean), ExploreConfig()).test(
       'For any sequence of state changes, all SHALL be tracked by ParentalSessionManager',
       (states) {
         final fixture = ParentalVerificationTestFixture.create();
@@ -525,7 +524,7 @@ void main() {
     // Property 9.9: Multiple verifications are all processed
     // Validates: Requirement 9.2
     // ========================================================================
-    Glados(any.intBetween(1, 5), ExploreConfig(numRuns: 100)).test(
+    Glados(any.intBetween(1, 5), ExploreConfig()).test(
       'For any number of verifications, all SHALL be processed by ParentalKeyVerifier',
       (count) async {
         final fixture = ParentalVerificationTestFixture.create();
@@ -563,7 +562,7 @@ void main() {
     // Property 9.10: Verification result affects session state correctly
     // Validates: Requirements 9.1, 9.2
     // ========================================================================
-    Glados(any.boolean, ExploreConfig(numRuns: 100)).test(
+    Glados(any.boolean, ExploreConfig()).test(
       'For any verification result, session state SHALL be updated accordingly',
       (isValid) async {
         final fixture = ParentalVerificationTestFixture.create();
@@ -656,7 +655,7 @@ void main() {
     test('CryptoService should handle special characters', () {
       final fixture = ParentalVerificationTestFixture.create();
 
-      final specialChars = '!@#\$%^&*()_+-=[]{}|;:,.<>?';
+      const specialChars = r'!@#$%^&*()_+-=[]{}|;:,.<>?';
       final hash = fixture.cryptoService.hashString(specialChars);
 
       expect(hash, equals('hashed_$specialChars'));
@@ -707,9 +706,9 @@ void main() {
   // ==========================================================================
   group('Parental Verification - Real Implementation Tests', () {
     test('CryptoServiceImpl should produce consistent SHA-256 hashes', () {
-      final cryptoService = const CryptoServiceImpl();
+      const cryptoService = CryptoServiceImpl();
 
-      final input = 'test_parental_key_1234';
+      const input = 'test_parental_key_1234';
       final hash1 = cryptoService.hashString(input);
       final hash2 = cryptoService.hashString(input);
 
@@ -721,9 +720,9 @@ void main() {
     });
 
     test('CryptoServiceImpl compareHash should work correctly', () {
-      final cryptoService = const CryptoServiceImpl();
+      const cryptoService = CryptoServiceImpl();
 
-      final input = 'my_secret_key';
+      const input = 'my_secret_key';
       final hash = cryptoService.hashString(input);
 
       // Correct input should match

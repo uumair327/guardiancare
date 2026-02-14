@@ -10,6 +10,13 @@ import 'package:guardiancare/core/error/failures.dart';
 ///
 /// Requirements: 1.3, 2.2
 class VideoData extends Equatable {
+
+  const VideoData({
+    required this.videoId,
+    required this.title,
+    required this.thumbnailUrl,
+    required this.videoUrl,
+  });
   /// Unique identifier for the video on YouTube
   final String videoId;
 
@@ -21,13 +28,6 @@ class VideoData extends Equatable {
 
   /// Direct URL to watch the video
   final String videoUrl;
-
-  const VideoData({
-    required this.videoId,
-    required this.title,
-    required this.thumbnailUrl,
-    required this.videoUrl,
-  });
 
   @override
   List<Object> get props => [videoId, title, thumbnailUrl, videoUrl];

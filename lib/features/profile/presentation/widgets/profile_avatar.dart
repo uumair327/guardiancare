@@ -1,14 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:guardiancare/core/core.dart';
 
 /// Animated profile avatar with 3D effect
 class ProfileAvatar extends StatefulWidget {
-  final String? photoURL;
-  final String displayName;
-  final double size;
-  final VoidCallback? onTap;
 
   const ProfileAvatar({
     super.key,
@@ -17,6 +12,10 @@ class ProfileAvatar extends StatefulWidget {
     this.size = 80,
     this.onTap,
   });
+  final String? photoURL;
+  final String displayName;
+  final double size;
+  final VoidCallback? onTap;
 
   @override
   State<ProfileAvatar> createState() => _ProfileAvatarState();
@@ -36,17 +35,17 @@ class _ProfileAvatarState extends State<ProfileAvatar>
       duration: AppDurations.animationLong,
     );
 
-    _scaleAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+    _scaleAnimation = Tween<double>(begin: 0, end: 1).animate(
       CurvedAnimation(
         parent: _controller,
-        curve: const Interval(0.0, 0.7, curve: Curves.elasticOut),
+        curve: const Interval(0, 0.7, curve: Curves.elasticOut),
       ),
     );
 
-    _rotateAnimation = Tween<double>(begin: -0.1, end: 0.0).animate(
+    _rotateAnimation = Tween<double>(begin: -0.1, end: 0).animate(
       CurvedAnimation(
         parent: _controller,
-        curve: const Interval(0.3, 1.0, curve: Curves.easeOutBack),
+        curve: const Interval(0.3, 1, curve: Curves.easeOutBack),
       ),
     );
 
@@ -107,7 +106,7 @@ class _ProfileAvatarState extends State<ProfileAvatar>
             ),
             padding: const EdgeInsets.all(4),
             child: Container(
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 shape: BoxShape.circle,
                 color: AppColors.white,
               ),
@@ -131,7 +130,7 @@ class _ProfileAvatarState extends State<ProfileAvatar>
   Widget _buildPlaceholder() {
     return Container(
       color: AppColors.primary.withValues(alpha: 0.1),
-      child: Center(
+      child: const Center(
         child: CircularProgressIndicator(
           strokeWidth: 2,
           color: AppColors.primary,

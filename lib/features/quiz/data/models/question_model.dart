@@ -11,6 +11,18 @@ class QuestionModel extends QuestionEntity {
     super.explanation,
   });
 
+  /// Create QuestionModel from QuestionEntity
+  factory QuestionModel.fromEntity(QuestionEntity entity) {
+    return QuestionModel(
+      quizId: entity.quizId,
+      question: entity.question,
+      options: entity.options,
+      correctAnswerIndex: entity.correctAnswerIndex,
+      category: entity.category,
+      explanation: entity.explanation,
+    );
+  }
+
   /// Create QuestionModel from JSON/Map
   factory QuestionModel.fromJson(Map<String, dynamic> json) {
     return QuestionModel(
@@ -38,17 +50,5 @@ class QuestionModel extends QuestionEntity {
       'category': category,
       'explanation': explanation,
     };
-  }
-
-  /// Create QuestionModel from QuestionEntity
-  factory QuestionModel.fromEntity(QuestionEntity entity) {
-    return QuestionModel(
-      quizId: entity.quizId,
-      question: entity.question,
-      options: entity.options,
-      correctAnswerIndex: entity.correctAnswerIndex,
-      category: entity.category,
-      explanation: entity.explanation,
-    );
   }
 }

@@ -9,13 +9,6 @@ import 'package:guardiancare/core/constants/app_colors.dart';
 /// - Configurable intensity
 /// - Performance optimized
 class PulseWidget extends StatefulWidget {
-  final Widget child;
-  final Duration duration;
-  final double minScale;
-  final double maxScale;
-  final bool enableGlow;
-  final Color? glowColor;
-  final bool enabled;
 
   const PulseWidget({
     super.key,
@@ -27,6 +20,13 @@ class PulseWidget extends StatefulWidget {
     this.glowColor,
     this.enabled = true,
   });
+  final Widget child;
+  final Duration duration;
+  final double minScale;
+  final double maxScale;
+  final bool enableGlow;
+  final Color? glowColor;
+  final bool enabled;
 
   @override
   State<PulseWidget> createState() => _PulseWidgetState();
@@ -55,8 +55,8 @@ class _PulseWidgetState extends State<PulseWidget>
     ));
 
     _glowAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
+      begin: 0,
+      end: 1,
     ).animate(CurvedAnimation(
       parent: _controller,
       curve: Curves.easeInOut,
@@ -123,10 +123,6 @@ class _PulseWidgetState extends State<PulseWidget>
 
 /// Breathing animation for subtle attention
 class BreathingWidget extends StatefulWidget {
-  final Widget child;
-  final Duration duration;
-  final double intensity;
-  final bool enabled;
 
   const BreathingWidget({
     super.key,
@@ -135,6 +131,10 @@ class BreathingWidget extends StatefulWidget {
     this.intensity = 0.03,
     this.enabled = true,
   });
+  final Widget child;
+  final Duration duration;
+  final double intensity;
+  final bool enabled;
 
   @override
   State<BreathingWidget> createState() => _BreathingWidgetState();

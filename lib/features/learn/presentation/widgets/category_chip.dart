@@ -5,10 +5,6 @@ import 'package:guardiancare/core/core.dart';
 /// Category filter chip with animation
 /// Used for filtering videos by category
 class CategoryChip extends StatefulWidget {
-  final String label;
-  final bool isSelected;
-  final VoidCallback onTap;
-  final IconData? icon;
 
   const CategoryChip({
     super.key,
@@ -17,6 +13,10 @@ class CategoryChip extends StatefulWidget {
     required this.onTap,
     this.icon,
   });
+  final String label;
+  final bool isSelected;
+  final VoidCallback onTap;
+  final IconData? icon;
 
   @override
   State<CategoryChip> createState() => _CategoryChipState();
@@ -35,7 +35,7 @@ class _CategoryChipState extends State<CategoryChip>
       duration: AppDurations.animationShort,
     );
 
-    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.95).animate(
+    _scaleAnimation = Tween<double>(begin: 1, end: 0.95).animate(
       CurvedAnimation(parent: _controller, curve: AppCurves.tap),
     );
   }
@@ -68,7 +68,7 @@ class _CategoryChipState extends State<CategoryChip>
           child: AnimatedContainer(
             duration: AppDurations.animationShort,
             curve: AppCurves.standard,
-            padding: EdgeInsets.symmetric(
+            padding: const EdgeInsets.symmetric(
               horizontal: AppDimensions.spaceM,
               vertical: AppDimensions.spaceS,
             ),
@@ -104,7 +104,7 @@ class _CategoryChipState extends State<CategoryChip>
                         ? AppColors.white
                         : AppColors.textSecondary,
                   ),
-                  SizedBox(width: AppDimensions.spaceXS),
+                  const SizedBox(width: AppDimensions.spaceXS),
                 ],
                 Text(
                   widget.label,
@@ -118,8 +118,8 @@ class _CategoryChipState extends State<CategoryChip>
                   ),
                 ),
                 if (widget.isSelected) ...[
-                  SizedBox(width: AppDimensions.spaceXS),
-                  Icon(
+                  const SizedBox(width: AppDimensions.spaceXS),
+                  const Icon(
                     Icons.check_rounded,
                     size: AppDimensions.iconXS,
                     color: AppColors.white,

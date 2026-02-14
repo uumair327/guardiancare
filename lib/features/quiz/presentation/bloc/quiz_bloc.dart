@@ -16,11 +16,6 @@ import 'package:guardiancare/features/quiz/presentation/bloc/quiz_state.dart';
 /// - Quiz completion and result persistence (Requirements: 2.2)
 /// - Recommendation generation delegation (Requirements: 2.3)
 class QuizBloc extends Bloc<QuizEvent, QuizState> {
-  final SubmitQuiz submitQuiz;
-  final ValidateQuiz validateQuiz;
-  final GenerateRecommendations generateRecommendations;
-  final SaveQuizHistory saveQuizHistory;
-  final IAuthService authService;
 
   QuizBloc({
     required this.submitQuiz,
@@ -42,6 +37,11 @@ class QuizBloc extends Bloc<QuizEvent, QuizState> {
     on<CompleteQuizRequested>(_onCompleteQuizRequested);
     on<GenerateRecommendationsRequested>(_onGenerateRecommendationsRequested);
   }
+  final SubmitQuiz submitQuiz;
+  final ValidateQuiz validateQuiz;
+  final GenerateRecommendations generateRecommendations;
+  final SaveQuizHistory saveQuizHistory;
+  final IAuthService authService;
 
   void _onAnswerSelected(AnswerSelected event, Emitter<QuizState> emit) {
     // Cannot change answer if question is locked
@@ -205,7 +205,7 @@ class QuizBloc extends Bloc<QuizEvent, QuizState> {
       // Trigger recommendation generation
       debugPrint('🚀 Triggering recommendation generation...');
       add(GenerateRecommendationsRequested(categories: categories));
-    } catch (e) {
+    } on Object catch (e) {
       debugPrint('❌ Error completing quiz: $e');
       emit(state.copyWith(
         isSubmitting: false,

@@ -17,9 +17,9 @@ class EmergencyLoading extends EmergencyState {}
 
 /// Emergency contacts loaded successfully
 class EmergencyContactsLoaded extends EmergencyState {
-  final List<EmergencyContactEntity> contacts;
 
   const EmergencyContactsLoaded(this.contacts);
+  final List<EmergencyContactEntity> contacts;
 
   @override
   List<Object?> get props => [contacts];
@@ -41,9 +41,9 @@ class EmergencyCallCompleted extends EmergencyState {}
 
 /// Error state
 class EmergencyError extends EmergencyState {
-  final String message;
 
   const EmergencyError(this.message);
+  final String message;
 
   @override
   List<Object?> get props => [message];

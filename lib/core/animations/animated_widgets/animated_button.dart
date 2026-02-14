@@ -33,34 +33,6 @@ import 'scale_tap_widget.dart';
 /// );
 /// ```
 class AnimatedButton extends StatelessWidget {
-  /// The child widget to display inside the button.
-  final Widget child;
-
-  /// Callback when the button is tapped.
-  final VoidCallback? onTap;
-
-  /// Callback when the button is long pressed.
-  final VoidCallback? onLongPress;
-
-  /// Animation configuration for the scale-tap effect.
-  ///
-  /// If null, uses [AnimationPresets.scaleButton] as default.
-  final AnimationConfig? config;
-
-  /// Whether haptic feedback is enabled.
-  final bool enableHaptic;
-
-  /// The type of haptic feedback to trigger.
-  final HapticFeedbackType hapticType;
-
-  /// Whether the button responds to touch interactions.
-  final bool enabled;
-
-  /// Padding inside the button.
-  final EdgeInsetsGeometry? padding;
-
-  /// Decoration for the button container.
-  final BoxDecoration? decoration;
 
   /// Creates an animated button with scale-tap animation.
   const AnimatedButton({
@@ -161,6 +133,34 @@ class AnimatedButton extends StatelessWidget {
       ),
     );
   }
+  /// The child widget to display inside the button.
+  final Widget child;
+
+  /// Callback when the button is tapped.
+  final VoidCallback? onTap;
+
+  /// Callback when the button is long pressed.
+  final VoidCallback? onLongPress;
+
+  /// Animation configuration for the scale-tap effect.
+  ///
+  /// If null, uses [AnimationPresets.scaleButton] as default.
+  final AnimationConfig? config;
+
+  /// Whether haptic feedback is enabled.
+  final bool enableHaptic;
+
+  /// The type of haptic feedback to trigger.
+  final HapticFeedbackType hapticType;
+
+  /// Whether the button responds to touch interactions.
+  final bool enabled;
+
+  /// Padding inside the button.
+  final EdgeInsetsGeometry? padding;
+
+  /// Decoration for the button container.
+  final BoxDecoration? decoration;
 
   @override
   Widget build(BuildContext context) {

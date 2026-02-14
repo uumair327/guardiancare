@@ -6,11 +6,6 @@ import 'package:guardiancare/features/emergency/domain/entities/emergency_contac
 /// Modern emergency contact card with gradient design and animations
 /// Features scale tap animations, haptic feedback, and staggered contact list
 class EmergencyContactCard extends StatefulWidget {
-  final IconData icon;
-  final String title;
-  final List<EmergencyContactEntity> contacts;
-  final List<Color> gradientColors;
-  final void Function(String number) onCall;
 
   const EmergencyContactCard({
     super.key,
@@ -20,6 +15,11 @@ class EmergencyContactCard extends StatefulWidget {
     required this.onCall,
     this.gradientColors = const [AppColors.videoPrimary, AppColors.videoPrimaryDark],
   });
+  final IconData icon;
+  final String title;
+  final List<EmergencyContactEntity> contacts;
+  final List<Color> gradientColors;
+  final void Function(String number) onCall;
 
   @override
   State<EmergencyContactCard> createState() => _EmergencyContactCardState();
@@ -73,7 +73,7 @@ class _EmergencyContactCardState extends State<EmergencyContactCard>
 
   Widget _buildHeader() {
     return Container(
-      padding: EdgeInsets.all(AppDimensions.spaceL),
+      padding: const EdgeInsets.all(AppDimensions.spaceL),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
@@ -83,7 +83,7 @@ class _EmergencyContactCardState extends State<EmergencyContactCard>
             widget.gradientColors.last.withValues(alpha: 0.1),
           ],
         ),
-        borderRadius: BorderRadius.only(
+        borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(AppDimensions.radiusL),
           topRight: Radius.circular(AppDimensions.radiusL),
         ),
@@ -91,7 +91,7 @@ class _EmergencyContactCardState extends State<EmergencyContactCard>
       child: Row(
         children: [
           Container(
-            padding: EdgeInsets.all(AppDimensions.spaceM),
+            padding: const EdgeInsets.all(AppDimensions.spaceM),
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
@@ -113,7 +113,7 @@ class _EmergencyContactCardState extends State<EmergencyContactCard>
               size: 24,
             ),
           ),
-          SizedBox(width: AppDimensions.spaceM),
+          const SizedBox(width: AppDimensions.spaceM),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -125,7 +125,7 @@ class _EmergencyContactCardState extends State<EmergencyContactCard>
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                SizedBox(height: AppDimensions.spaceXS),
+                const SizedBox(height: AppDimensions.spaceXS),
                 Text(
                   '${widget.contacts.length} contacts available',
                   style: AppTextStyles.caption.copyWith(
@@ -142,7 +142,7 @@ class _EmergencyContactCardState extends State<EmergencyContactCard>
 
   Widget _buildContactList() {
     return Padding(
-      padding: EdgeInsets.all(AppDimensions.spaceM),
+      padding: const EdgeInsets.all(AppDimensions.spaceM),
       child: Column(
         children: List.generate(
           widget.contacts.length,
@@ -181,24 +181,24 @@ class _EmergencyContactCardState extends State<EmergencyContactCard>
 
 /// Individual contact item with call button
 class _ContactItem extends StatelessWidget {
-  final EmergencyContactEntity contact;
-  final List<Color> gradientColors;
-  final void Function(String number) onCall;
 
   const _ContactItem({
     required this.contact,
     required this.gradientColors,
     required this.onCall,
   });
+  final EmergencyContactEntity contact;
+  final List<Color> gradientColors;
+  final void Function(String number) onCall;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(bottom: AppDimensions.spaceS),
+      padding: const EdgeInsets.only(bottom: AppDimensions.spaceS),
       child: ScaleTapWidget(
         onTap: () => onCall(contact.number),
         child: Container(
-          padding: EdgeInsets.all(AppDimensions.spaceM),
+          padding: const EdgeInsets.all(AppDimensions.spaceM),
           decoration: BoxDecoration(
             color: AppColors.white.withValues(alpha: 0.05),
             borderRadius: AppDimensions.borderRadiusM,
@@ -220,7 +220,7 @@ class _ContactItem extends StatelessWidget {
                         fontWeight: FontWeight.w600,
                       ),
                     ),
-                    SizedBox(height: AppDimensions.spaceXS),
+                    const SizedBox(height: AppDimensions.spaceXS),
                     Row(
                       children: [
                         Icon(
@@ -228,7 +228,7 @@ class _ContactItem extends StatelessWidget {
                           color: gradientColors.first,
                           size: 14,
                         ),
-                        SizedBox(width: AppDimensions.spaceXS),
+                        const SizedBox(width: AppDimensions.spaceXS),
                         Text(
                           contact.number,
                           style: AppTextStyles.bodySmall.copyWith(
@@ -239,7 +239,7 @@ class _ContactItem extends StatelessWidget {
                       ],
                     ),
                     if (contact.description != null) ...[
-                      SizedBox(height: AppDimensions.spaceXS),
+                      const SizedBox(height: AppDimensions.spaceXS),
                       Text(
                         contact.description!,
                         style: AppTextStyles.caption.copyWith(
@@ -267,13 +267,13 @@ class _ContactItem extends StatelessWidget {
 
 /// Animated call button with pulse effect
 class _CallButton extends StatefulWidget {
-  final List<Color> gradientColors;
-  final VoidCallback onTap;
 
   const _CallButton({
     required this.gradientColors,
     required this.onTap,
   });
+  final List<Color> gradientColors;
+  final VoidCallback onTap;
 
   @override
   State<_CallButton> createState() => _CallButtonState();
@@ -291,7 +291,7 @@ class _CallButtonState extends State<_CallButton>
       vsync: this,
       duration: const Duration(milliseconds: 1500),
     );
-    _pulseAnimation = Tween<double>(begin: 1.0, end: 1.15).animate(
+    _pulseAnimation = Tween<double>(begin: 1, end: 1.15).animate(
       CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
     );
     _pulseController.repeat(reverse: true);
@@ -319,9 +319,9 @@ class _CallButtonState extends State<_CallButton>
           );
         },
         child: Container(
-          padding: EdgeInsets.all(AppDimensions.spaceM),
+          padding: const EdgeInsets.all(AppDimensions.spaceM),
           decoration: BoxDecoration(
-            gradient: LinearGradient(
+            gradient: const LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [AppColors.emergencyGreen, AppColors.emergencyGreenDark],

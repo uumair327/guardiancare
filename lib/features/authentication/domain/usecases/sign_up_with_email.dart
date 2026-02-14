@@ -6,13 +6,13 @@ import 'package:guardiancare/features/authentication/domain/entities/user_entity
 import 'package:guardiancare/features/authentication/domain/repositories/auth_repository.dart';
 
 class SignUpWithEmail extends UseCase<UserEntity, SignUpParams> {
-  final AuthRepository repository;
 
   SignUpWithEmail(this.repository);
+  final AuthRepository repository;
 
   @override
   Future<Either<Failure, UserEntity>> call(SignUpParams params) async {
-    return await repository.signUpWithEmailAndPassword(
+    return repository.signUpWithEmailAndPassword(
       email: params.email,
       password: params.password,
       displayName: params.displayName,
@@ -22,10 +22,6 @@ class SignUpWithEmail extends UseCase<UserEntity, SignUpParams> {
 }
 
 class SignUpParams extends Equatable {
-  final String email;
-  final String password;
-  final String displayName;
-  final String role;
 
   const SignUpParams({
     required this.email,
@@ -33,6 +29,10 @@ class SignUpParams extends Equatable {
     required this.displayName,
     required this.role,
   });
+  final String email;
+  final String password;
+  final String displayName;
+  final String role;
 
   @override
   List<Object> get props => [email, password, displayName, role];

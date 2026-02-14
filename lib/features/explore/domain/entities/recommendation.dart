@@ -1,12 +1,6 @@
 import 'package:equatable/equatable.dart';
 
 class Recommendation extends Equatable {
-  final String id;
-  final String userId;
-  final String title;
-  final String? thumbnail;
-  final String? videoUrl;
-  final DateTime? timestamp;
 
   const Recommendation({
     required this.id,
@@ -16,6 +10,12 @@ class Recommendation extends Equatable {
     this.videoUrl,
     this.timestamp,
   });
+  final String id;
+  final String userId;
+  final String title;
+  final String? thumbnail;
+  final String? videoUrl;
+  final DateTime? timestamp;
 
   @override
   List<Object?> get props => [

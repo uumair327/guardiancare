@@ -6,12 +6,6 @@ import 'package:guardiancare/core/core.dart';
 /// Uses centralized [AnimatedButton] for scale-tap animation,
 /// eliminating duplicate animation code.
 class VideoControlButton extends StatelessWidget {
-  final IconData icon;
-  final String? label;
-  final VoidCallback onTap;
-  final Color? color;
-  final double size;
-  final bool showLabel;
 
   const VideoControlButton({
     super.key,
@@ -22,6 +16,12 @@ class VideoControlButton extends StatelessWidget {
     this.size = 32,
     this.showLabel = true,
   });
+  final IconData icon;
+  final String? label;
+  final VoidCallback onTap;
+  final Color? color;
+  final double size;
+  final bool showLabel;
 
   @override
   Widget build(BuildContext context) {
@@ -30,9 +30,7 @@ class VideoControlButton extends StatelessWidget {
     return AnimatedButton(
       onTap: onTap,
       config: AnimationPresets.scaleLarge, // 0.9 scale, same as original
-      enableHaptic: true,
-      hapticType: HapticFeedbackType.light,
-      padding: EdgeInsets.symmetric(
+      padding: const EdgeInsets.symmetric(
         horizontal: AppDimensions.spaceM,
         vertical: AppDimensions.spaceS,
       ),
@@ -40,7 +38,7 @@ class VideoControlButton extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Container(
-            padding: EdgeInsets.all(AppDimensions.spaceS),
+            padding: const EdgeInsets.all(AppDimensions.spaceS),
             decoration: BoxDecoration(
               color: buttonColor.withValues(alpha: 0.15),
               shape: BoxShape.circle,
@@ -52,7 +50,7 @@ class VideoControlButton extends StatelessWidget {
             ),
           ),
           if (showLabel && label != null) ...[
-            SizedBox(height: AppDimensions.spaceXS),
+            const SizedBox(height: AppDimensions.spaceXS),
             Text(
               label!,
               style: AppTextStyles.caption.copyWith(
@@ -72,9 +70,6 @@ class VideoControlButton extends StatelessWidget {
 /// Uses centralized [AnimatedButton.circular] for scale-tap animation,
 /// eliminating duplicate animation code.
 class PlayPauseButton extends StatelessWidget {
-  final bool isPlaying;
-  final VoidCallback onTap;
-  final double size;
 
   const PlayPauseButton({
     super.key,
@@ -82,6 +77,9 @@ class PlayPauseButton extends StatelessWidget {
     required this.onTap,
     this.size = 64,
   });
+  final bool isPlaying;
+  final VoidCallback onTap;
+  final double size;
 
   @override
   Widget build(BuildContext context) {
@@ -92,19 +90,18 @@ class PlayPauseButton extends StatelessWidget {
       size: size,
       onTap: onTap,
       config: playPauseConfig,
-      enableHaptic: true,
       hapticType: HapticFeedbackType.medium,
-      boxShadow: [
+      boxShadow: const [
         BoxShadow(
           color: AppColors.videoPrimarySubtle40,
           blurRadius: 16,
-          offset: const Offset(0, 4),
+          offset: Offset(0, 4),
         ),
       ],
       child: Container(
         width: size,
         height: size,
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           gradient: AppColors.videoGradient,
           shape: BoxShape.circle,
         ),
@@ -124,11 +121,6 @@ class PlayPauseButton extends StatelessWidget {
 
 /// Seek button for forward/backward
 class SeekButton extends StatelessWidget {
-  final int seconds;
-  final bool isForward;
-  final VoidCallback onTap;
-  final IconData? icon;
-  final bool showLabel;
 
   const SeekButton({
     super.key,
@@ -138,6 +130,11 @@ class SeekButton extends StatelessWidget {
     this.icon,
     this.showLabel = false,
   });
+  final int seconds;
+  final bool isForward;
+  final VoidCallback onTap;
+  final IconData? icon;
+  final bool showLabel;
 
   @override
   Widget build(BuildContext context) {

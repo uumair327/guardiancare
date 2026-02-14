@@ -11,6 +11,17 @@ class VideoModel extends VideoEntity {
     super.timestamp,
   });
 
+  /// Create VideoModel from VideoEntity
+  factory VideoModel.fromEntity(VideoEntity entity) {
+    return VideoModel(
+      thumbnail: entity.thumbnail,
+      title: entity.title,
+      videoUrl: entity.videoUrl,
+      category: entity.category,
+      timestamp: entity.timestamp,
+    );
+  }
+
   /// Create VideoModel from Firestore document
   factory VideoModel.fromFirestore(Map<String, dynamic> doc) {
     return VideoModel(
@@ -18,9 +29,11 @@ class VideoModel extends VideoEntity {
       title: doc['title'] as String? ?? 'Untitled',
       videoUrl: doc['video'] as String? ?? doc['videoUrl'] as String? ?? '',
       category: doc['category'] as String?,
-      timestamp: doc['timestamp'] != null
+      timestamp: doc['timestamp'] is Timestamp
           ? (doc['timestamp'] as Timestamp).toDate()
-          : null,
+          : (doc['timestamp'] is String
+              ? DateTime.tryParse(doc['timestamp'])
+              : null),
     );
   }
 
@@ -33,16 +46,5 @@ class VideoModel extends VideoEntity {
       'category': category,
       'timestamp': timestamp != null ? Timestamp.fromDate(timestamp!) : null,
     };
-  }
-
-  /// Create VideoModel from VideoEntity
-  factory VideoModel.fromEntity(VideoEntity entity) {
-    return VideoModel(
-      thumbnail: entity.thumbnail,
-      title: entity.title,
-      videoUrl: entity.videoUrl,
-      category: entity.category,
-      timestamp: entity.timestamp,
-    );
   }
 }

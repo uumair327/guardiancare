@@ -1,6 +1,7 @@
 import 'dart:async';
-import 'package:flutter_bloc/flutter_bloc.dart';
+
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:guardiancare/features/forum/domain/usecases/add_comment.dart';
 import 'package:guardiancare/features/forum/domain/usecases/get_comments.dart';
 import 'package:guardiancare/features/forum/domain/usecases/get_forums.dart';
@@ -8,10 +9,6 @@ import 'package:guardiancare/features/forum/presentation/bloc/forum_event.dart';
 import 'package:guardiancare/features/forum/presentation/bloc/forum_state.dart';
 
 class ForumBloc extends Bloc<ForumEvent, ForumState> {
-  final GetForums getForums;
-  final GetComments getComments;
-  final AddComment addComment;
-  final FirebaseAuth firebaseAuth;
 
   ForumBloc({
     required this.getForums,
@@ -24,6 +21,10 @@ class ForumBloc extends Bloc<ForumEvent, ForumState> {
     on<SubmitComment>(_onSubmitComment);
     on<RefreshForums>(_onRefreshForums);
   }
+  final GetForums getForums;
+  final GetComments getComments;
+  final AddComment addComment;
+  final FirebaseAuth firebaseAuth;
 
   Future<void> _onLoadForums(
     LoadForums event,
@@ -111,8 +112,4 @@ class ForumBloc extends Bloc<ForumEvent, ForumState> {
     add(LoadForums(event.category));
   }
 
-  @override
-  Future<void> close() {
-    return super.close();
-  }
 }

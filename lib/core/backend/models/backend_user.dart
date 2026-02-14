@@ -26,6 +26,26 @@ class BackendUser {
     this.metadata = const {},
   });
 
+  /// Create from JSON map
+  factory BackendUser.fromJson(Map<String, dynamic> json) {
+    return BackendUser(
+      id: json['id'] as String,
+      email: json['email'] as String?,
+      displayName: json['displayName'] as String?,
+      photoUrl: json['photoUrl'] as String?,
+      phoneNumber: json['phoneNumber'] as String?,
+      emailVerified: json['emailVerified'] as bool? ?? false,
+      isAnonymous: json['isAnonymous'] as bool? ?? false,
+      createdAt: json['createdAt'] != null
+          ? DateTime.parse(json['createdAt'] as String)
+          : null,
+      lastLoginAt: json['lastLoginAt'] != null
+          ? DateTime.parse(json['lastLoginAt'] as String)
+          : null,
+      metadata: (json['metadata'] as Map<String, dynamic>?) ?? {},
+    );
+  }
+
   /// Unique user identifier
   final String id;
 
@@ -97,26 +117,6 @@ class BackendUser {
       if (lastLoginAt != null) 'lastLoginAt': lastLoginAt!.toIso8601String(),
       if (metadata.isNotEmpty) 'metadata': metadata,
     };
-  }
-
-  /// Create from JSON map
-  factory BackendUser.fromJson(Map<String, dynamic> json) {
-    return BackendUser(
-      id: json['id'] as String,
-      email: json['email'] as String?,
-      displayName: json['displayName'] as String?,
-      photoUrl: json['photoUrl'] as String?,
-      phoneNumber: json['phoneNumber'] as String?,
-      emailVerified: json['emailVerified'] as bool? ?? false,
-      isAnonymous: json['isAnonymous'] as bool? ?? false,
-      createdAt: json['createdAt'] != null
-          ? DateTime.parse(json['createdAt'] as String)
-          : null,
-      lastLoginAt: json['lastLoginAt'] != null
-          ? DateTime.parse(json['lastLoginAt'] as String)
-          : null,
-      metadata: (json['metadata'] as Map<String, dynamic>?) ?? {},
-    );
   }
 
   @override

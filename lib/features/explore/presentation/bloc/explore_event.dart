@@ -10,9 +10,9 @@ abstract class ExploreEvent extends Equatable {
 
 /// Event to load recommended videos
 class LoadRecommendedVideos extends ExploreEvent {
-  final String uid;
 
   const LoadRecommendedVideos(this.uid);
+  final String uid;
 
   @override
   List<Object?> get props => [uid];
@@ -23,9 +23,9 @@ class LoadRecommendedResources extends ExploreEvent {}
 
 /// Event to search resources
 class SearchResourcesRequested extends ExploreEvent {
-  final String query;
 
   const SearchResourcesRequested(this.query);
+  final String query;
 
   @override
   List<Object?> get props => [query];

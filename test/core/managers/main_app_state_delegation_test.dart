@@ -4,11 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart'
     hide test, group, setUp, tearDown, expect;
 import 'package:glados/glados.dart';
+import 'package:guardiancare/core/backend/backend.dart';
+import 'package:guardiancare/core/managers/app_lifecycle_manager.dart';
 import 'package:guardiancare/core/managers/auth_state_manager.dart';
 import 'package:guardiancare/core/managers/locale_manager.dart';
-import 'package:guardiancare/core/managers/app_lifecycle_manager.dart';
 import 'package:guardiancare/core/models/auth_state_event.dart';
-import 'package:guardiancare/core/backend/backend.dart';
 
 /// **Feature: srp-clean-architecture-fix, Property 1: Main App State Delegation**
 /// **Validates: Requirements 1.1, 1.2, 1.3, 1.4**
@@ -57,7 +57,6 @@ class MockAuthStateManager implements AuthStateManager {
   void simulateLogin() {
     _eventController.add(AuthStateEvent(
       type: AuthStateEventType.login,
-      user: null,
       timestamp: DateTime.now(),
     ));
   }
@@ -70,15 +69,15 @@ class MockAuthStateManager implements AuthStateManager {
 
 /// Mock LocaleManager that tracks all method calls
 class MockLocaleManager implements LocaleManager {
+
+  MockLocaleManager({Locale defaultLocale = const Locale('en')})
+      : _currentLocale = defaultLocale;
   final List<String> methodCalls = [];
   final List<Locale> recordedLocaleChanges = [];
   final StreamController<Locale> _localeController =
       StreamController<Locale>.broadcast();
 
   Locale _currentLocale;
-
-  MockLocaleManager({Locale defaultLocale = const Locale('en')})
-      : _currentLocale = defaultLocale;
 
   @override
   Locale get currentLocale => _currentLocale;
@@ -138,15 +137,15 @@ class MockAppLifecycleManager implements AppLifecycleManager {
 /// Simulates the delegation behavior of GuardiancareState
 /// This class mirrors how GuardiancareState delegates to managers
 class AppStateDelegator {
-  final AuthStateManager authManager;
-  final LocaleManager localeManager;
-  final AppLifecycleManager lifecycleManager;
 
   AppStateDelegator({
     required this.authManager,
     required this.localeManager,
     required this.lifecycleManager,
   });
+  final AuthStateManager authManager;
+  final LocaleManager localeManager;
+  final AppLifecycleManager lifecycleManager;
 
   /// Delegates locale change to LocaleManager (mirrors GuardiancareState.changeLocale)
   void changeLocale(Locale newLocale) {
@@ -181,10 +180,6 @@ class AppStateDelegator {
 // ============================================================================
 
 class TestFixture {
-  final MockAuthStateManager authManager;
-  final MockLocaleManager localeManager;
-  final MockAppLifecycleManager lifecycleManager;
-  final AppStateDelegator delegator;
 
   TestFixture._({
     required this.authManager,
@@ -209,6 +204,10 @@ class TestFixture {
       delegator: delegator,
     );
   }
+  final MockAuthStateManager authManager;
+  final MockLocaleManager localeManager;
+  final MockAppLifecycleManager lifecycleManager;
+  final AppStateDelegator delegator;
 }
 
 // ============================================================================

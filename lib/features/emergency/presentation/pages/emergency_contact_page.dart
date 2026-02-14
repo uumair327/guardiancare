@@ -127,11 +127,11 @@ class _EmergencyContactPageState extends State<EmergencyContactPage>
       child: FadeTransition(
         opacity: _headerFadeAnimation,
         child: Container(
-          padding: EdgeInsets.all(AppDimensions.spaceL),
+          padding: const EdgeInsets.all(AppDimensions.spaceL),
           child: Row(
             children: [
               _buildBackButton(),
-              SizedBox(width: AppDimensions.spaceM),
+              const SizedBox(width: AppDimensions.spaceM),
               Expanded(child: _buildHeaderContent(l10n)),
               _buildEmergencyIcon(),
             ],
@@ -148,7 +148,7 @@ class _EmergencyContactPageState extends State<EmergencyContactPage>
         Navigator.pop(context);
       },
       child: Container(
-        padding: EdgeInsets.all(AppDimensions.spaceS),
+        padding: const EdgeInsets.all(AppDimensions.spaceS),
         decoration: BoxDecoration(
           color: AppColors.white.withValues(alpha: 0.1),
           borderRadius: AppDimensions.borderRadiusM,
@@ -173,7 +173,7 @@ class _EmergencyContactPageState extends State<EmergencyContactPage>
             fontWeight: FontWeight.bold,
           ),
         ),
-        SizedBox(height: AppDimensions.spaceXS),
+        const SizedBox(height: AppDimensions.spaceXS),
         Text(
           'Quick access to help when you need it',
           style: AppTextStyles.bodySmall.copyWith(
@@ -186,7 +186,7 @@ class _EmergencyContactPageState extends State<EmergencyContactPage>
 
   Widget _buildEmergencyIcon() {
     return Container(
-      padding: EdgeInsets.all(AppDimensions.spaceM),
+      padding: const EdgeInsets.all(AppDimensions.spaceM),
       decoration: BoxDecoration(
         gradient: AppColors.emergencyRedGradient,
         borderRadius: AppDimensions.borderRadiusM,
@@ -208,12 +208,12 @@ class _EmergencyContactPageState extends State<EmergencyContactPage>
 
   Widget _buildLoadingState() {
     return SingleChildScrollView(
-      padding: EdgeInsets.all(AppDimensions.spaceL),
+      padding: const EdgeInsets.all(AppDimensions.spaceL),
       child: Column(
         children: List.generate(
           3,
           (index) => Padding(
-            padding: EdgeInsets.only(bottom: AppDimensions.spaceL),
+            padding: const EdgeInsets.only(bottom: AppDimensions.spaceL),
             child: ShimmerLoading(
               baseColor: AppColors.emergencyShimmerBase,
               highlightColor: AppColors.emergencyShimmerHighlight,
@@ -238,23 +238,23 @@ class _EmergencyContactPageState extends State<EmergencyContactPage>
   ) {
     return Center(
       child: Padding(
-        padding: EdgeInsets.all(AppDimensions.spaceXL),
+        padding: const EdgeInsets.all(AppDimensions.spaceXL),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              padding: EdgeInsets.all(AppDimensions.spaceL),
+              padding: const EdgeInsets.all(AppDimensions.spaceL),
               decoration: BoxDecoration(
                 color: AppColors.error.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
-              child: Icon(
+              child: const Icon(
                 Icons.error_outline_rounded,
                 color: AppColors.error,
                 size: 48,
               ),
             ),
-            SizedBox(height: AppDimensions.spaceL),
+            const SizedBox(height: AppDimensions.spaceL),
             Text(
               'Something went wrong',
               style: AppTextStyles.h3.copyWith(
@@ -262,7 +262,7 @@ class _EmergencyContactPageState extends State<EmergencyContactPage>
                 fontWeight: FontWeight.bold,
               ),
             ),
-            SizedBox(height: AppDimensions.spaceS),
+            const SizedBox(height: AppDimensions.spaceS),
             Text(
               message,
               style: AppTextStyles.body1.copyWith(
@@ -270,25 +270,25 @@ class _EmergencyContactPageState extends State<EmergencyContactPage>
               ),
               textAlign: TextAlign.center,
             ),
-            SizedBox(height: AppDimensions.spaceXL),
+            const SizedBox(height: AppDimensions.spaceXL),
             ScaleTapWidget(
               onTap: () {
                 HapticFeedback.lightImpact();
                 context.read<EmergencyBloc>().add(LoadEmergencyContacts());
               },
               child: Container(
-                padding: EdgeInsets.symmetric(
+                padding: const EdgeInsets.symmetric(
                   horizontal: AppDimensions.spaceXL,
                   vertical: AppDimensions.spaceM,
                 ),
                 decoration: BoxDecoration(
                   gradient: AppColors.videoGradient,
                   borderRadius: AppDimensions.borderRadiusM,
-                  boxShadow: [
+                  boxShadow: const [
                     BoxShadow(
                       color: AppColors.videoPrimarySubtle30,
                       blurRadius: 16,
-                      offset: const Offset(0, 4),
+                      offset: Offset(0, 4),
                     ),
                   ],
                 ),
@@ -316,12 +316,12 @@ class _EmergencyContactPageState extends State<EmergencyContactPage>
     final childSafety = state.getContactsByCategory('Child Safety');
 
     return SingleChildScrollView(
-      padding: EdgeInsets.all(AppDimensions.spaceL),
+      padding: const EdgeInsets.all(AppDimensions.spaceL),
       child: Column(
         children: [
           // Emergency banner
           _buildEmergencyBanner(),
-          SizedBox(height: AppDimensions.spaceL),
+          const SizedBox(height: AppDimensions.spaceL),
           // Emergency Services section
           if (emergencyServices.isNotEmpty)
             _buildAnimatedSection(
@@ -334,7 +334,7 @@ class _EmergencyContactPageState extends State<EmergencyContactPage>
                 onCall: (number) => _handleCall(context, number),
               ),
             ),
-          SizedBox(height: AppDimensions.spaceL),
+          const SizedBox(height: AppDimensions.spaceL),
           // Child Safety section
           if (childSafety.isNotEmpty)
             _buildAnimatedSection(
@@ -343,14 +343,10 @@ class _EmergencyContactPageState extends State<EmergencyContactPage>
                 icon: Icons.child_care_rounded,
                 title: l10n.childSafety,
                 contacts: childSafety,
-                gradientColors: const [
-                  AppColors.videoPrimary,
-                  AppColors.videoPrimaryDark
-                ],
                 onCall: (number) => _handleCall(context, number),
               ),
             ),
-          SizedBox(height: AppDimensions.spaceXL),
+          const SizedBox(height: AppDimensions.spaceXL),
           // Safety tip
           _buildAnimatedSection(
             index: 2,
@@ -386,7 +382,7 @@ class _EmergencyContactPageState extends State<EmergencyContactPage>
 
   Widget _buildEmergencyBanner() {
     return Container(
-      padding: EdgeInsets.all(AppDimensions.spaceM),
+      padding: const EdgeInsets.all(AppDimensions.spaceM),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
@@ -402,18 +398,18 @@ class _EmergencyContactPageState extends State<EmergencyContactPage>
       child: Row(
         children: [
           Container(
-            padding: EdgeInsets.all(AppDimensions.spaceS),
+            padding: const EdgeInsets.all(AppDimensions.spaceS),
             decoration: BoxDecoration(
               color: AppColors.error.withValues(alpha: 0.2),
               borderRadius: AppDimensions.borderRadiusS,
             ),
-            child: Icon(
+            child: const Icon(
               Icons.info_outline_rounded,
               color: AppColors.error,
               size: 20,
             ),
           ),
-          SizedBox(width: AppDimensions.spaceM),
+          const SizedBox(width: AppDimensions.spaceM),
           Expanded(
             child: Text(
               'In case of emergency, stay calm and call the appropriate number',
@@ -429,7 +425,7 @@ class _EmergencyContactPageState extends State<EmergencyContactPage>
 
   Widget _buildSafetyTip() {
     return Container(
-      padding: EdgeInsets.all(AppDimensions.spaceL),
+      padding: const EdgeInsets.all(AppDimensions.spaceL),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
@@ -450,7 +446,7 @@ class _EmergencyContactPageState extends State<EmergencyContactPage>
           Row(
             children: [
               Container(
-                padding: EdgeInsets.all(AppDimensions.spaceS),
+                padding: const EdgeInsets.all(AppDimensions.spaceS),
                 decoration: BoxDecoration(
                   gradient: AppColors.videoGradient,
                   borderRadius: AppDimensions.borderRadiusS,
@@ -461,7 +457,7 @@ class _EmergencyContactPageState extends State<EmergencyContactPage>
                   size: 20,
                 ),
               ),
-              SizedBox(width: AppDimensions.spaceM),
+              const SizedBox(width: AppDimensions.spaceM),
               Text(
                 'Safety Tip',
                 style: AppTextStyles.body1.copyWith(
@@ -471,7 +467,7 @@ class _EmergencyContactPageState extends State<EmergencyContactPage>
               ),
             ],
           ),
-          SizedBox(height: AppDimensions.spaceM),
+          const SizedBox(height: AppDimensions.spaceM),
           Text(
             'Always share your location with a trusted adult when going out. '
             'Memorize important phone numbers in case you don\'t have access to your phone.',
@@ -509,21 +505,21 @@ class _EmergencyContactPageState extends State<EmergencyContactPage>
 
 /// Call confirmation bottom sheet
 class _CallConfirmationSheet extends StatelessWidget {
-  final String number;
-  final VoidCallback onConfirm;
-  final VoidCallback onCancel;
 
   const _CallConfirmationSheet({
     required this.number,
     required this.onConfirm,
     required this.onCancel,
   });
+  final String number;
+  final VoidCallback onConfirm;
+  final VoidCallback onCancel;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.all(AppDimensions.spaceM),
-      padding: EdgeInsets.all(AppDimensions.spaceL),
+      margin: const EdgeInsets.all(AppDimensions.spaceM),
+      padding: const EdgeInsets.all(AppDimensions.spaceL),
       decoration: BoxDecoration(
         color: AppColors.videoSurface,
         borderRadius: AppDimensions.borderRadiusXL,
@@ -541,10 +537,10 @@ class _CallConfirmationSheet extends StatelessWidget {
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
-            SizedBox(height: AppDimensions.spaceL),
+            const SizedBox(height: AppDimensions.spaceL),
             // Phone icon
             Container(
-              padding: EdgeInsets.all(AppDimensions.spaceL),
+              padding: const EdgeInsets.all(AppDimensions.spaceL),
               decoration: BoxDecoration(
                 gradient: AppColors.emergencyGreenGradient,
                 shape: BoxShape.circle,
@@ -562,7 +558,7 @@ class _CallConfirmationSheet extends StatelessWidget {
                 size: 32,
               ),
             ),
-            SizedBox(height: AppDimensions.spaceL),
+            const SizedBox(height: AppDimensions.spaceL),
             Text(
               'Call $number?',
               style: AppTextStyles.h3.copyWith(
@@ -570,14 +566,14 @@ class _CallConfirmationSheet extends StatelessWidget {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            SizedBox(height: AppDimensions.spaceS),
+            const SizedBox(height: AppDimensions.spaceS),
             Text(
               'You are about to make an emergency call',
               style: AppTextStyles.bodySmall.copyWith(
                 color: AppColors.white.withValues(alpha: 0.6),
               ),
             ),
-            SizedBox(height: AppDimensions.spaceXL),
+            const SizedBox(height: AppDimensions.spaceXL),
             // Buttons
             Row(
               children: [
@@ -585,7 +581,7 @@ class _CallConfirmationSheet extends StatelessWidget {
                   child: ScaleTapWidget(
                     onTap: onCancel,
                     child: Container(
-                      padding: EdgeInsets.symmetric(
+                      padding: const EdgeInsets.symmetric(
                         vertical: AppDimensions.spaceM,
                       ),
                       decoration: BoxDecoration(
@@ -604,12 +600,12 @@ class _CallConfirmationSheet extends StatelessWidget {
                     ),
                   ),
                 ),
-                SizedBox(width: AppDimensions.spaceM),
+                const SizedBox(width: AppDimensions.spaceM),
                 Expanded(
                   child: ScaleTapWidget(
                     onTap: onConfirm,
                     child: Container(
-                      padding: EdgeInsets.symmetric(
+                      padding: const EdgeInsets.symmetric(
                         vertical: AppDimensions.spaceM,
                       ),
                       decoration: BoxDecoration(

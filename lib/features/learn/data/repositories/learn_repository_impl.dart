@@ -8,9 +8,9 @@ import 'package:guardiancare/features/learn/domain/repositories/learn_repository
 
 /// Implementation of LearnRepository
 class LearnRepositoryImpl implements LearnRepository {
-  final LearnRemoteDataSource remoteDataSource;
 
   LearnRepositoryImpl({required this.remoteDataSource});
+  final LearnRemoteDataSource remoteDataSource;
 
   @override
   Future<Either<Failure, List<CategoryEntity>>> getCategories() async {
@@ -19,7 +19,7 @@ class LearnRepositoryImpl implements LearnRepository {
       return Right(categories);
     } on ServerException catch (e) {
       return Left(ServerFailure(e.message));
-    } catch (e) {
+    } on Object catch (e) {
       return Left(ServerFailure(ErrorStrings.withDetails(ErrorStrings.getCategoriesError, e.toString())));
     }
   }
@@ -32,7 +32,7 @@ class LearnRepositoryImpl implements LearnRepository {
       return Right(videos);
     } on ServerException catch (e) {
       return Left(ServerFailure(e.message));
-    } catch (e) {
+    } on Object catch (e) {
       return Left(
           ServerFailure(ErrorStrings.withDetails(ErrorStrings.getVideosByCategoryError, e.toString())));
     }
@@ -43,9 +43,9 @@ class LearnRepositoryImpl implements LearnRepository {
       String category) {
     try {
       return remoteDataSource.getVideosByCategoryStream(category).map(
-            (videos) => Right<Failure, List<VideoEntity>>(videos),
+            Right<Failure, List<VideoEntity>>.new,
           );
-    } catch (e) {
+    } on Object catch (e) {
       return Stream.value(
         Left(ServerFailure(ErrorStrings.withDetails(ErrorStrings.streamVideosError, e.toString()))),
       );

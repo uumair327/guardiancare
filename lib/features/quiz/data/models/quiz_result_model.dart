@@ -11,6 +11,18 @@ class QuizResultModel extends QuizResultEntity {
     required super.incorrectCategories,
   });
 
+  /// Create QuizResultModel from QuizResultEntity
+  factory QuizResultModel.fromEntity(QuizResultEntity entity) {
+    return QuizResultModel(
+      totalQuestions: entity.totalQuestions,
+      correctAnswers: entity.correctAnswers,
+      incorrectAnswers: entity.incorrectAnswers,
+      scorePercentage: entity.scorePercentage,
+      selectedAnswers: entity.selectedAnswers,
+      incorrectCategories: entity.incorrectCategories,
+    );
+  }
+
   /// Create QuizResultModel from JSON
   factory QuizResultModel.fromJson(Map<String, dynamic> json) {
     return QuizResultModel(
@@ -34,17 +46,5 @@ class QuizResultModel extends QuizResultEntity {
       'selectedAnswers': selectedAnswers,
       'incorrectCategories': incorrectCategories,
     };
-  }
-
-  /// Create QuizResultModel from QuizResultEntity
-  factory QuizResultModel.fromEntity(QuizResultEntity entity) {
-    return QuizResultModel(
-      totalQuestions: entity.totalQuestions,
-      correctAnswers: entity.correctAnswers,
-      incorrectAnswers: entity.incorrectAnswers,
-      scorePercentage: entity.scorePercentage,
-      selectedAnswers: entity.selectedAnswers,
-      incorrectCategories: entity.incorrectCategories,
-    );
   }
 }

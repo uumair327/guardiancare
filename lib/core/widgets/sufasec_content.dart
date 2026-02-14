@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:guardiancare/core/core.dart';
 
 class CustomContentPage extends StatelessWidget {
-  final Map<String, dynamic> content;
 
   const CustomContentPage({super.key, required this.content});
+  final Map<String, dynamic> content;
 
   @override
   Widget build(BuildContext context) {

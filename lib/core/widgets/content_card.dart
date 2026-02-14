@@ -4,9 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:guardiancare/core/core.dart';
 
 class ContentCard extends StatefulWidget {
-  final String imageUrl;
-  final String title;
-  final String description;
 
   const ContentCard({
     super.key,
@@ -14,6 +11,9 @@ class ContentCard extends StatefulWidget {
     required this.title,
     required this.description,
   });
+  final String imageUrl;
+  final String title;
+  final String description;
 
   @override
   State<ContentCard> createState() => _ContentCardState();
@@ -33,7 +33,7 @@ class _ContentCardState extends State<ContentCard>
       duration: AppDurations.animationShort,
     );
 
-    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.98).animate(
+    _scaleAnimation = Tween<double>(begin: 1, end: 0.98).animate(
       CurvedAnimation(parent: _controller, curve: AppCurves.tap),
     );
   }
@@ -78,7 +78,7 @@ class _ContentCardState extends State<ContentCard>
           },
           child: AnimatedContainer(
             duration: AppDurations.animationShort,
-            margin: EdgeInsets.symmetric(
+            margin: const EdgeInsets.symmetric(
               horizontal: AppDimensions.spaceM,
               vertical: AppDimensions.spaceS,
             ),
@@ -125,7 +125,7 @@ class _ContentCardState extends State<ContentCard>
                                 return Container(
                                   height: 200,
                                   color: AppColors.shimmerBase,
-                                  child: Icon(
+                                  child: const Icon(
                                     Icons.broken_image,
                                     size: AppDimensions.iconXXL,
                                     color: AppColors.textSecondary,
@@ -136,7 +136,7 @@ class _ContentCardState extends State<ContentCard>
                           : Container(
                               height: 200,
                               color: AppColors.shimmerBase,
-                              child: Icon(
+                              child: const Icon(
                                 Icons.video_library,
                                 size: AppDimensions.iconXXL,
                                 color: AppColors.textSecondary,
@@ -149,7 +149,7 @@ class _ContentCardState extends State<ContentCard>
                             duration: AppDurations.animationShort,
                             opacity: _isPressed ? 0.6 : 0.8,
                             child: Container(
-                              padding: EdgeInsets.all(AppDimensions.spaceM),
+                              padding: const EdgeInsets.all(AppDimensions.spaceM),
                               decoration: BoxDecoration(
                                 color: AppColors.white.withValues(alpha: 0.9),
                                 shape: BoxShape.circle,
@@ -160,7 +160,7 @@ class _ContentCardState extends State<ContentCard>
                                   ),
                                 ],
                               ),
-                              child: Icon(
+                              child: const Icon(
                                 Icons.play_arrow_rounded,
                                 color: AppColors.primary,
                                 size: AppDimensions.iconL,

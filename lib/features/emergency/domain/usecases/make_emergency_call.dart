@@ -5,12 +5,12 @@ import 'package:guardiancare/features/emergency/domain/repositories/emergency_re
 
 /// Use case for making an emergency call
 class MakeEmergencyCall implements UseCase<void, String> {
-  final EmergencyRepository repository;
 
   MakeEmergencyCall(this.repository);
+  final EmergencyRepository repository;
 
   @override
   Future<Either<Failure, void>> call(String phoneNumber) async {
-    return await repository.makeEmergencyCall(phoneNumber);
+    return repository.makeEmergencyCall(phoneNumber);
   }
 }

@@ -21,9 +21,9 @@ class ReportLoading extends ReportState {
 
 /// Report loaded successfully
 class ReportLoaded extends ReportState {
-  final ReportEntity report;
 
   const ReportLoaded(this.report);
+  final ReportEntity report;
 
   @override
   List<Object?> get props => [report];
@@ -31,9 +31,9 @@ class ReportLoaded extends ReportState {
 
 /// Report saving state
 class ReportSaving extends ReportState {
-  final ReportEntity report;
 
   const ReportSaving(this.report);
+  final ReportEntity report;
 
   @override
   List<Object?> get props => [report];
@@ -41,9 +41,9 @@ class ReportSaving extends ReportState {
 
 /// Report saved successfully
 class ReportSaved extends ReportState {
-  final ReportEntity report;
 
   const ReportSaved(this.report);
+  final ReportEntity report;
 
   @override
   List<Object?> get props => [report];
@@ -51,9 +51,9 @@ class ReportSaved extends ReportState {
 
 /// Saved reports loaded
 class SavedReportsLoaded extends ReportState {
-  final List<String> savedReports;
 
   const SavedReportsLoaded(this.savedReports);
+  final List<String> savedReports;
 
   @override
   List<Object?> get props => [savedReports];
@@ -61,9 +61,9 @@ class SavedReportsLoaded extends ReportState {
 
 /// Error state
 class ReportError extends ReportState {
-  final String message;
 
   const ReportError(this.message);
+  final String message;
 
   @override
   List<Object?> get props => [message];

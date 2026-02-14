@@ -7,6 +7,8 @@ import 'package:guardiancare/features/quiz/domain/repositories/recommendation_re
 
 /// Model for converting QuizRecommendation to/from DataStore
 class QuizRecommendationModel {
+  QuizRecommendationModel._();
+
   /// Creates a [QuizRecommendation] from Map
   static QuizRecommendation fromMap(Map<String, dynamic> data) {
     DateTime? parseTimestamp(dynamic val) {
@@ -42,11 +44,10 @@ class QuizRecommendationModel {
 
 /// Implementation of [RecommendationRepository] using IDataStore
 class RecommendationRepositoryImpl implements RecommendationRepository {
-  final IDataStore _dataStore;
-  static const String _collection = 'recommendations';
-
   RecommendationRepositoryImpl({required IDataStore dataStore})
       : _dataStore = dataStore;
+  final IDataStore _dataStore;
+  static const String _collection = 'recommendations';
 
   @override
   Future<Either<Failure, String>> saveRecommendation(
@@ -56,10 +57,10 @@ class RecommendationRepositoryImpl implements RecommendationRepository {
           _collection, QuizRecommendationModel.toMap(recommendation));
 
       return result.when(
-        success: (id) => Right(id),
+        success: Right.new,
         failure: (e) => Left(ServerFailure(e.message)),
       );
-    } catch (e) {
+    } on Object catch (e) {
       return Left(
           ServerFailure('Failed to save recommendation: ${e.toString()}'));
     }
@@ -88,7 +89,7 @@ class RecommendationRepositoryImpl implements RecommendationRepository {
         },
         failure: (e) async => Left(ServerFailure(e.message)),
       );
-    } catch (e) {
+    } on Object catch (e) {
       return Left(
           ServerFailure('Failed to clear recommendations: ${e.toString()}'));
     }
@@ -112,12 +113,12 @@ class RecommendationRepositoryImpl implements RecommendationRepository {
       return result.when(
         success: (docs) {
           final recommendations =
-              docs.map((doc) => QuizRecommendationModel.fromMap(doc)).toList();
+              docs.map(QuizRecommendationModel.fromMap).toList();
           return Right(recommendations);
         },
         failure: (e) => Left(ServerFailure(e.message)),
       );
-    } catch (e) {
+    } on Object catch (e) {
       return Left(
           ServerFailure('Failed to get recommendations: ${e.toString()}'));
     }

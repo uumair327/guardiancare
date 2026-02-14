@@ -53,15 +53,15 @@ class PreferencesStorageServiceImpl implements PreferencesStorageService {
     _ensureInitialized();
     
     if (value is String) {
-      return await _prefs.setString(key, value);
+      return _prefs.setString(key, value);
     } else if (value is int) {
-      return await _prefs.setInt(key, value);
+      return _prefs.setInt(key, value);
     } else if (value is double) {
-      return await _prefs.setDouble(key, value);
+      return _prefs.setDouble(key, value);
     } else if (value is bool) {
-      return await _prefs.setBool(key, value);
+      return _prefs.setBool(key, value);
     } else if (value is List<String>) {
-      return await _prefs.setStringList(key, value);
+      return _prefs.setStringList(key, value);
     }
     throw ArgumentError('Unsupported type for SharedPreferences: ${value.runtimeType}');
   }
@@ -76,7 +76,7 @@ class PreferencesStorageServiceImpl implements PreferencesStorageService {
   @override
   Future<bool> removeSetting(String key) async {
     _ensureInitialized();
-    return await _prefs.remove(key);
+    return _prefs.remove(key);
   }
 
   @override
@@ -94,6 +94,6 @@ class PreferencesStorageServiceImpl implements PreferencesStorageService {
   @override
   Future<bool> clear() async {
     _ensureInitialized();
-    return await _prefs.clear();
+    return _prefs.clear();
   }
 }

@@ -3,14 +3,6 @@ import 'package:guardiancare/features/video_player/domain/entities/video_entity.
 
 /// State for the video player cubit
 class VideoPlayerState extends Equatable {
-  final PlaybackState playbackState;
-  final VideoProgress progress;
-  final String? videoTitle;
-  final String? errorMessage;
-  final bool isFullScreen;
-  final bool showControls;
-  final double playbackSpeed;
-  final bool isMuted;
 
   const VideoPlayerState({
     this.playbackState = PlaybackState.idle,
@@ -26,6 +18,14 @@ class VideoPlayerState extends Equatable {
     this.playbackSpeed = 1.0,
     this.isMuted = false,
   });
+  final PlaybackState playbackState;
+  final VideoProgress progress;
+  final String? videoTitle;
+  final String? errorMessage;
+  final bool isFullScreen;
+  final bool showControls;
+  final double playbackSpeed;
+  final bool isMuted;
 
   VideoPlayerState copyWith({
     PlaybackState? playbackState,

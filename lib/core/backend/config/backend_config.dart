@@ -78,7 +78,6 @@ abstract final class BackendConfig {
   /// ```
   static const bool useSupabaseAuth = bool.fromEnvironment(
     'USE_SUPABASE_AUTH',
-    defaultValue: false,
   );
 
   /// Override database provider.
@@ -89,7 +88,6 @@ abstract final class BackendConfig {
   /// ```
   static const bool useSupabaseDatabase = bool.fromEnvironment(
     'USE_SUPABASE_DATABASE',
-    defaultValue: false,
   );
 
   /// Override storage provider.
@@ -100,7 +98,6 @@ abstract final class BackendConfig {
   /// ```
   static const bool useSupabaseStorage = bool.fromEnvironment(
     'USE_SUPABASE_STORAGE',
-    defaultValue: false,
   );
 
   /// Override realtime provider.
@@ -111,7 +108,42 @@ abstract final class BackendConfig {
   /// ```
   static const bool useSupabaseRealtime = bool.fromEnvironment(
     'USE_SUPABASE_REALTIME',
-    defaultValue: false,
+  );
+
+  // ============================================================================
+  // Authentication Method Feature Flags
+  // ============================================================================
+
+  /// Enable/disable Google Sign-In.
+  ///
+  /// When `false`, the Google Sign-In button is hidden from the login page.
+  /// Useful for temporarily disabling Google Sign-In when OAuth is misconfigured.
+  /// ```bash
+  /// flutter run --dart-define=ENABLE_GOOGLE_SIGN_IN=true
+  /// ```
+  static const bool enableGoogleSignIn = bool.fromEnvironment(
+    'ENABLE_GOOGLE_SIGN_IN',
+  );
+
+  /// Enable/disable Email/Password authentication.
+  ///
+  /// When `true`, email/password sign-in and sign-up are available.
+  /// ```bash
+  /// flutter run --dart-define=ENABLE_EMAIL_AUTH=true
+  /// ```
+  static const bool enableEmailAuth = bool.fromEnvironment(
+    'ENABLE_EMAIL_AUTH',
+    defaultValue: true,
+  );
+
+  /// Enable/disable Apple Sign-In.
+  ///
+  /// When `false`, the Apple Sign-In button is hidden from the login page.
+  /// ```bash
+  /// flutter run --dart-define=ENABLE_APPLE_SIGN_IN=true
+  /// ```
+  static const bool enableAppleSignIn = bool.fromEnvironment(
+    'ENABLE_APPLE_SIGN_IN',
   );
 
   // ============================================================================
@@ -183,6 +215,11 @@ abstract final class BackendConfig {
           'useSupabaseDatabase': useSupabaseDatabase,
           'useSupabaseStorage': useSupabaseStorage,
           'useSupabaseRealtime': useSupabaseRealtime,
+        },
+        'authMethods': {
+          'enableGoogleSignIn': enableGoogleSignIn,
+          'enableEmailAuth': enableEmailAuth,
+          'enableAppleSignIn': enableAppleSignIn,
         },
         'hasSupabaseFeatures': hasSupabaseFeatures,
         'hasFirebaseFeatures': hasFirebaseFeatures,

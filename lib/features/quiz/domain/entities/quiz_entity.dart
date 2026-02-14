@@ -3,12 +3,6 @@ import 'package:guardiancare/features/quiz/domain/entities/question_entity.dart'
 
 /// Quiz entity representing a quiz with questions
 class QuizEntity extends Equatable {
-  final String id;
-  final String title;
-  final String category;
-  final List<QuestionEntity> questions;
-  final String? description;
-  final String? imageUrl;
 
   const QuizEntity({
     required this.id,
@@ -18,6 +12,12 @@ class QuizEntity extends Equatable {
     this.description,
     this.imageUrl,
   });
+  final String id;
+  final String title;
+  final String category;
+  final List<QuestionEntity> questions;
+  final String? description;
+  final String? imageUrl;
 
   @override
   List<Object?> get props => [id, title, category, questions, description];

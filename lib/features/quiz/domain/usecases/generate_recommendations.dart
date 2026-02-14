@@ -8,9 +8,9 @@ import 'package:guardiancare/features/quiz/domain/usecases/recommendation_use_ca
 /// Parameters for generating recommendations
 /// Requirements: 2.3
 class GenerateRecommendationsParams extends Equatable {
-  final List<String> categories;
 
   const GenerateRecommendationsParams({required this.categories});
+  final List<String> categories;
 
   @override
   List<Object> get props => [categories];
@@ -23,13 +23,13 @@ class GenerateRecommendationsParams extends Equatable {
 /// 
 /// Requirements: 2.3
 class GenerateRecommendations implements UseCase<void, GenerateRecommendationsParams> {
-  final RecommendationUseCase? _recommendationUseCase;
 
   /// Creates a GenerateRecommendations use case
   /// 
   /// [recommendationUseCase] - Optional RecommendationUseCase for delegation.
   /// If not provided, the use case will return an error.
   GenerateRecommendations([this._recommendationUseCase]);
+  final RecommendationUseCase? _recommendationUseCase;
 
   @override
   Future<Either<Failure, void>> call(GenerateRecommendationsParams params) async {
@@ -54,14 +54,14 @@ class GenerateRecommendations implements UseCase<void, GenerateRecommendationsPa
         );
 
         return result.fold(
-          (failure) => Left(failure),
+          Left.new,
           (_) => const Right(null),
         );
       }
 
       // Fallback error if no use case provided
       return const Left(ServerFailure('RecommendationUseCase not configured'));
-    } catch (e) {
+    } on Object catch (e) {
       return Left(ServerFailure('Failed to generate recommendations: ${e.toString()}'));
     }
   }

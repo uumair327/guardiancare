@@ -1,12 +1,15 @@
+// ignore_for_file: deprecated_member_use
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 /// Test helper utilities for video controller tests
 class TestHelper {
+  TestHelper._();
+
   /// Sets up common test environment
   static void setupTestEnvironment() {
     TestWidgetsFlutterBinding.ensureInitialized();
-    
+
     // Mock platform channels that might be used by the video player
     const MethodChannel('plugins.flutter.io/video_player')
         .setMockMethodCallHandler((MethodCall methodCall) async {
@@ -101,14 +104,16 @@ class TestHelper {
   }
 
   /// Validates that a widget tree contains expected video elements
-  static void expectVideoListElements(WidgetTester tester, List<String> expectedTitles) {
+  static void expectVideoListElements(
+      WidgetTester tester, List<String> expectedTitles) {
     for (final title in expectedTitles) {
       expect(find.text(title), findsOneWidget);
     }
   }
 
   /// Validates that a widget tree contains expected category elements
-  static void expectCategoryListElements(WidgetTester tester, List<String> expectedCategories) {
+  static void expectCategoryListElements(
+      WidgetTester tester, List<String> expectedCategories) {
     for (final category in expectedCategories) {
       expect(find.text(category), findsOneWidget);
     }
@@ -121,15 +126,19 @@ class TestHelper {
 
   /// Simulates a timeout error for testing timeout handling
   static Exception createTimeoutError() {
-    return Exception('Request timed out. Please check your internet connection.');
+    return Exception(
+        'Request timed out. Please check your internet connection.');
   }
 }
 
 /// Custom matchers for video testing
 class VideoTestMatchers {
+  VideoTestMatchers._();
+
   /// Matches a valid YouTube URL
   static Matcher isValidYouTubeUrl = predicate<String>((url) {
-    final youtubePattern = RegExp(r'youtube\.com/watch\?v=([a-zA-Z0-9_-]{11})|youtu\.be/([a-zA-Z0-9_-]{11})');
+    final youtubePattern = RegExp(
+        r'youtube\.com/watch\?v=([a-zA-Z0-9_-]{11})|youtu\.be/([a-zA-Z0-9_-]{11})');
     return youtubePattern.hasMatch(url);
   }, 'is a valid YouTube URL');
 
@@ -138,7 +147,7 @@ class VideoTestMatchers {
     try {
       final uri = Uri.parse(url);
       return uri.hasScheme && (uri.scheme == 'http' || uri.scheme == 'https');
-    } catch (e) {
+    } on Object catch (_) {
       return false;
     }
   }, 'is a valid HTTP/HTTPS URL');
@@ -146,20 +155,21 @@ class VideoTestMatchers {
   /// Matches complete video data
   static Matcher hasCompleteVideoData = predicate<Map<String, dynamic>>((data) {
     return data.containsKey('title') &&
-           data.containsKey('videoUrl') &&
-           data.containsKey('thumbnailUrl') &&
-           data.containsKey('category') &&
-           data['title'] != null &&
-           data['videoUrl'] != null &&
-           data['thumbnailUrl'] != null &&
-           data['category'] != null;
+        data.containsKey('videoUrl') &&
+        data.containsKey('thumbnailUrl') &&
+        data.containsKey('category') &&
+        data['title'] != null &&
+        data['videoUrl'] != null &&
+        data['thumbnailUrl'] != null &&
+        data['category'] != null;
   }, 'has complete video data');
 
   /// Matches complete category data
-  static Matcher hasCompleteCategoryData = predicate<Map<String, dynamic>>((data) {
+  static Matcher hasCompleteCategoryData =
+      predicate<Map<String, dynamic>>((data) {
     return data.containsKey('name') &&
-           data.containsKey('thumbnail') &&
-           data['name'] != null &&
-           data['thumbnail'] != null;
+        data.containsKey('thumbnail') &&
+        data['name'] != null &&
+        data['thumbnail'] != null;
   }, 'has complete category data');
 }

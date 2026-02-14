@@ -2,11 +2,6 @@ import 'package:equatable/equatable.dart';
 
 /// Report entity representing an incident report
 class ReportEntity extends Equatable {
-  final String caseName;
-  final List<String> questions;
-  final Map<int, bool> answers;
-  final DateTime? savedAt;
-  final bool isDirty;
 
   const ReportEntity({
     required this.caseName,
@@ -15,6 +10,11 @@ class ReportEntity extends Equatable {
     this.savedAt,
     this.isDirty = false,
   });
+  final String caseName;
+  final List<String> questions;
+  final Map<int, bool> answers;
+  final DateTime? savedAt;
+  final bool isDirty;
 
   @override
   List<Object?> get props => [caseName, questions, answers, savedAt, isDirty];
@@ -46,7 +46,7 @@ class ReportEntity extends Equatable {
 
   /// Get completion percentage
   double get completionPercentage {
-    if (totalCount == 0) return 0.0;
+    if (totalCount == 0) return 0;
     return selectedCount / totalCount;
   }
 

@@ -25,9 +25,9 @@ extension ThemeColors on BuildContext {
 
 /// Theme color scheme that provides context-aware colors
 class ThemeColorScheme {
-  final BuildContext _context;
 
   const ThemeColorScheme(this._context);
+  final BuildContext _context;
 
   bool get _isDark => Theme.of(_context).brightness == Brightness.dark;
   ColorScheme get _colorScheme => Theme.of(_context).colorScheme;

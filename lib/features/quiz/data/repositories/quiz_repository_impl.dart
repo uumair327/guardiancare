@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:guardiancare/core/backend/backend.dart';
 import 'package:guardiancare/core/constants/constants.dart';
 import 'package:guardiancare/core/error/error.dart';
 import 'package:guardiancare/features/quiz/data/datasources/quiz_local_datasource.dart';
@@ -8,18 +9,16 @@ import 'package:guardiancare/features/quiz/domain/entities/question_entity.dart'
 import 'package:guardiancare/features/quiz/domain/entities/quiz_entity.dart';
 import 'package:guardiancare/features/quiz/domain/entities/quiz_result_entity.dart';
 import 'package:guardiancare/features/quiz/domain/repositories/quiz_repository.dart';
-import 'package:guardiancare/core/backend/backend.dart';
-import 'package:guardiancare/core/error/failures.dart'; // Added for ServerFailure
 
 /// Implementation of QuizRepository
 class QuizRepositoryImpl implements QuizRepository {
-  final QuizLocalDataSource localDataSource;
-  final IDataStore dataStore;
 
   QuizRepositoryImpl({
     required this.localDataSource,
     required this.dataStore,
   });
+  final QuizLocalDataSource localDataSource;
+  final IDataStore dataStore;
 
   @override
   Future<Either<Failure, QuizEntity>> getQuiz(String quizId) async {
@@ -28,7 +27,7 @@ class QuizRepositoryImpl implements QuizRepository {
       return Right(quiz);
     } on CacheException catch (e) {
       return Left(CacheFailure(e.message));
-    } catch (e) {
+    } on Object catch (e) {
       return Left(CacheFailure(
           ErrorStrings.withDetails(ErrorStrings.getQuizError, e.toString())));
     }
@@ -42,7 +41,7 @@ class QuizRepositoryImpl implements QuizRepository {
       return Right(questions);
     } on CacheException catch (e) {
       return Left(CacheFailure(e.message));
-    } catch (e) {
+    } on Object catch (e) {
       return Left(CacheFailure(ErrorStrings.withDetails(
           ErrorStrings.getQuestionsError, e.toString())));
     }
@@ -57,7 +56,7 @@ class QuizRepositoryImpl implements QuizRepository {
     try {
       // Convert entities to models for calculation
       final questionModels =
-          questions.map((q) => QuestionModel.fromEntity(q)).toList();
+          questions.map(QuestionModel.fromEntity).toList();
 
       final result = localDataSource.calculateResults(
         quizId: quizId,
@@ -66,7 +65,7 @@ class QuizRepositoryImpl implements QuizRepository {
       );
 
       return Right(result);
-    } catch (e) {
+    } on Object catch (e) {
       return Left(CacheFailure(ErrorStrings.withDetails(
           ErrorStrings.submitQuizError, e.toString())));
     }
@@ -76,11 +75,11 @@ class QuizRepositoryImpl implements QuizRepository {
   Either<Failure, bool> validateQuizData(List<QuestionEntity> questions) {
     try {
       final questionModels =
-          questions.map((q) => QuestionModel.fromEntity(q)).toList();
+          questions.map(QuestionModel.fromEntity).toList();
 
       final isValid = localDataSource.validateQuizData(questionModels);
       return Right(isValid);
-    } catch (e) {
+    } on Object catch (e) {
       return Left(CacheFailure(ErrorStrings.withDetails(
           ErrorStrings.validateQuizError, e.toString())));
     }
@@ -110,7 +109,7 @@ class QuizRepositoryImpl implements QuizRepository {
         success: (_) => const Right(null),
         failure: (e) => Left(ServerFailure(e.message)),
       );
-    } catch (e) {
+    } on Object catch (e) {
       return Left(ServerFailure(ErrorStrings.withDetails(
           'Failed to save quiz history', e.toString())));
     }
@@ -135,7 +134,7 @@ class QuizRepositoryImpl implements QuizRepository {
 
       final List<QuizEntity> quizzes = [];
 
-      for (var qData in quizzesData) {
+      for (final qData in quizzesData) {
         if (qData['name'] != null && (qData['use'] == true)) {
           final quizName = qData['name'] as String;
 
@@ -144,7 +143,7 @@ class QuizRepositoryImpl implements QuizRepository {
           }).toList();
 
           final questions = relatedQuestionsData
-              .map((map) => QuestionModel.fromJson(map))
+              .map(QuestionModel.fromJson)
               .toList();
 
           quizzes.add(QuizModel(
@@ -158,7 +157,7 @@ class QuizRepositoryImpl implements QuizRepository {
         }
       }
       return Right(quizzes);
-    } catch (e) {
+    } on Object catch (e) {
       return Left(ServerFailure(
           ErrorStrings.withDetails('Failed to load quizzes', e.toString())));
     }

@@ -11,12 +11,6 @@ import 'package:guardiancare/features/home/presentation/widgets/action_card.dart
 /// - Responsive grid layout
 /// - Performance optimized
 class ActionGrid extends StatefulWidget {
-  final VoidCallback onQuizTap;
-  final VoidCallback onLearnTap;
-  final VoidCallback onEmergencyTap;
-  final VoidCallback onProfileTap;
-  final VoidCallback onWebsiteTap;
-  final VoidCallback onMailTap;
 
   const ActionGrid({
     super.key,
@@ -27,6 +21,12 @@ class ActionGrid extends StatefulWidget {
     required this.onWebsiteTap,
     required this.onMailTap,
   });
+  final VoidCallback onQuizTap;
+  final VoidCallback onLearnTap;
+  final VoidCallback onEmergencyTap;
+  final VoidCallback onProfileTap;
+  final VoidCallback onWebsiteTap;
+  final VoidCallback onMailTap;
 
   @override
   State<ActionGrid> createState() => _ActionGridState();
@@ -77,11 +77,11 @@ class _ActionGridState extends State<ActionGrid> {
     ];
 
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: AppDimensions.screenPaddingH),
+      padding: const EdgeInsets.symmetric(horizontal: AppDimensions.screenPaddingH),
       child: GridView.builder(
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 3,
           mainAxisSpacing: AppDimensions.spaceM,
           crossAxisSpacing: AppDimensions.spaceM,
@@ -98,14 +98,12 @@ class _ActionGridState extends State<ActionGrid> {
           return FadeSlideWidget(
             duration: AppDurations.animationMedium,
             delay: Duration(milliseconds: 80 * staggerIndex),
-            direction: SlideDirection.up,
             slideOffset: 20,
             child: ActionCard(
               icon: action.icon,
               label: action.label,
               color: action.color,
               onTap: action.onTap,
-              enable3DEffect: true,
             ),
           );
         },
@@ -115,10 +113,6 @@ class _ActionGridState extends State<ActionGrid> {
 }
 
 class _ActionItem {
-  final IconData icon;
-  final String label;
-  final Color color;
-  final VoidCallback onTap;
 
   const _ActionItem({
     required this.icon,
@@ -126,4 +120,8 @@ class _ActionItem {
     required this.color,
     required this.onTap,
   });
+  final IconData icon;
+  final String label;
+  final Color color;
+  final VoidCallback onTap;
 }

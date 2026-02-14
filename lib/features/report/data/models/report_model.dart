@@ -10,6 +10,17 @@ class ReportModel extends ReportEntity {
     super.isDirty,
   });
 
+  /// Create ReportModel from ReportEntity
+  factory ReportModel.fromEntity(ReportEntity entity) {
+    return ReportModel(
+      caseName: entity.caseName,
+      questions: entity.questions,
+      answers: entity.answers,
+      savedAt: entity.savedAt,
+      isDirty: entity.isDirty,
+    );
+  }
+
   /// Create ReportModel from JSON
   factory ReportModel.fromJson(Map<String, dynamic> json) {
     final checkboxStates = json['checkboxStates'] as Map<String, dynamic>? ?? {};
@@ -24,7 +35,7 @@ class ReportModel extends ReportEntity {
 
     return ReportModel(
       caseName: json['caseName'] as String? ?? '',
-      questions: [], // Questions not stored in JSON, passed separately
+      questions: const [], // Questions not stored in JSON, passed separately
       answers: answers,
       savedAt: json['savedAt'] != null
           ? DateTime.tryParse(json['savedAt'] as String)
@@ -44,17 +55,6 @@ class ReportModel extends ReportEntity {
       'savedAt': savedAt?.toIso8601String(),
       'timestamp': DateTime.now().toIso8601String(),
     };
-  }
-
-  /// Create ReportModel from ReportEntity
-  factory ReportModel.fromEntity(ReportEntity entity) {
-    return ReportModel(
-      caseName: entity.caseName,
-      questions: entity.questions,
-      answers: entity.answers,
-      savedAt: entity.savedAt,
-      isDirty: entity.isDirty,
-    );
   }
 
   /// Create a copy with updated fields

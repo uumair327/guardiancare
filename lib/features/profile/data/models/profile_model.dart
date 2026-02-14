@@ -14,22 +14,44 @@ class ProfileModel extends ProfileEntity {
     super.profileValidated,
   });
 
+  /// Create ProfileModel from ProfileEntity
+  factory ProfileModel.fromEntity(ProfileEntity entity) {
+    return ProfileModel(
+      uid: entity.uid,
+      displayName: entity.displayName,
+      email: entity.email,
+      photoURL: entity.photoURL,
+      createdAt: entity.createdAt,
+      lastLoginAt: entity.lastLoginAt,
+      authProvider: entity.authProvider,
+      profileValidated: entity.profileValidated,
+    );
+  }
+
   /// Create ProfileModel from JSON
+  ///
+  /// Handles both Firestore [Timestamp] and ISO 8601 [String] date formats
+  /// for cross-backend compatibility (Firebase, Supabase, etc.)
   factory ProfileModel.fromJson(Map<String, dynamic> json) {
     return ProfileModel(
       uid: json['uid'] as String,
       displayName: json['displayName'] as String,
       email: json['email'] as String,
       photoURL: json['photoURL'] as String?,
-      createdAt: json['createdAt'] != null
-          ? (json['createdAt'] as Timestamp).toDate()
-          : null,
-      lastLoginAt: json['lastLoginAt'] != null
-          ? (json['lastLoginAt'] as Timestamp).toDate()
-          : null,
+      createdAt: _parseDateTime(json['createdAt']),
+      lastLoginAt: _parseDateTime(json['lastLoginAt']),
       authProvider: json['authProvider'] as String?,
       profileValidated: json['profileValidated'] as bool? ?? false,
     );
+  }
+
+  /// Safely parses a date value that could be a [Timestamp], [String], or null.
+  static DateTime? _parseDateTime(dynamic value) {
+    if (value == null) return null;
+    if (value is Timestamp) return value.toDate();
+    if (value is String) return DateTime.tryParse(value);
+    if (value is int) return DateTime.fromMillisecondsSinceEpoch(value);
+    return null;
   }
 
   /// Convert ProfileModel to JSON
@@ -45,19 +67,5 @@ class ProfileModel extends ProfileEntity {
       'authProvider': authProvider,
       'profileValidated': profileValidated,
     };
-  }
-
-  /// Create ProfileModel from ProfileEntity
-  factory ProfileModel.fromEntity(ProfileEntity entity) {
-    return ProfileModel(
-      uid: entity.uid,
-      displayName: entity.displayName,
-      email: entity.email,
-      photoURL: entity.photoURL,
-      createdAt: entity.createdAt,
-      lastLoginAt: entity.lastLoginAt,
-      authProvider: entity.authProvider,
-      profileValidated: entity.profileValidated,
-    );
   }
 }

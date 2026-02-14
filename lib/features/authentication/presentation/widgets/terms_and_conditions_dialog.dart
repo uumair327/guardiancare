@@ -12,17 +12,17 @@ import 'package:guardiancare/core/core.dart';
 /// This widget follows Google Play's Families Policy requirements
 /// for apps targeting children and families.
 class TermsAndConditionsDialog extends StatefulWidget {
-  /// Callback function when the user accepts all terms
-  final VoidCallback onAccept;
-
-  /// Callback function when the user declines/cancels
-  final VoidCallback onDecline;
 
   const TermsAndConditionsDialog({
     super.key,
     required this.onAccept,
     required this.onDecline,
   });
+  /// Callback function when the user accepts all terms
+  final VoidCallback onAccept;
+
+  /// Callback function when the user declines/cancels
+  final VoidCallback onDecline;
 
   /// Shows the terms and conditions dialog and returns whether the user accepted.
   ///
@@ -119,7 +119,7 @@ class _TermsAndConditionsDialogState extends State<TermsAndConditionsDialog>
       child: Dialog(
         elevation: 0,
         backgroundColor: Colors.transparent,
-        insetPadding: EdgeInsets.symmetric(
+        insetPadding: const EdgeInsets.symmetric(
           horizontal: AppDimensions.spaceL,
           vertical: AppDimensions.spaceXL,
         ),
@@ -151,8 +151,8 @@ class _TermsAndConditionsDialogState extends State<TermsAndConditionsDialog>
 
   Widget _buildHeader() {
     return Container(
-      padding: EdgeInsets.all(AppDimensions.spaceL),
-      decoration: BoxDecoration(
+      padding: const EdgeInsets.all(AppDimensions.spaceL),
+      decoration: const BoxDecoration(
         gradient: LinearGradient(
           colors: [
             AppColors.primary,
@@ -167,18 +167,18 @@ class _TermsAndConditionsDialogState extends State<TermsAndConditionsDialog>
       child: Row(
         children: [
           Container(
-            padding: EdgeInsets.all(AppDimensions.spaceS),
+            padding: const EdgeInsets.all(AppDimensions.spaceS),
             decoration: BoxDecoration(
               color: AppColors.white.withValues(alpha: 0.2),
               borderRadius: AppDimensions.borderRadiusM,
             ),
-            child: Icon(
+            child: const Icon(
               Icons.verified_user_rounded,
               color: AppColors.white,
               size: 28,
             ),
           ),
-          SizedBox(width: AppDimensions.spaceM),
+          const SizedBox(width: AppDimensions.spaceM),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -190,7 +190,7 @@ class _TermsAndConditionsDialogState extends State<TermsAndConditionsDialog>
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                SizedBox(height: 2),
+                const SizedBox(height: 2),
                 Text(
                   'Please review before continuing',
                   style: AppTextStyles.caption.copyWith(
@@ -210,7 +210,7 @@ class _TermsAndConditionsDialogState extends State<TermsAndConditionsDialog>
       children: [
         SingleChildScrollView(
           controller: _scrollController,
-          padding: EdgeInsets.all(AppDimensions.spaceL),
+          padding: const EdgeInsets.all(AppDimensions.spaceL),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -222,14 +222,14 @@ class _TermsAndConditionsDialogState extends State<TermsAndConditionsDialog>
                   color: context.colors.textPrimary,
                 ),
               ),
-              SizedBox(height: AppDimensions.spaceS),
+              const SizedBox(height: AppDimensions.spaceS),
               Text(
                 'Please read and accept the following terms and conditions to proceed.',
                 style: AppTextStyles.body2.copyWith(
                   color: context.colors.textSecondary,
                 ),
               ),
-              SizedBox(height: AppDimensions.spaceL),
+              const SizedBox(height: AppDimensions.spaceL),
 
               // Terms bullet points
               _buildTermItem('Your data will be securely stored.'),
@@ -238,7 +238,7 @@ class _TermsAndConditionsDialogState extends State<TermsAndConditionsDialog>
               _buildTermItem(
                   'You acknowledge the responsibility of safeguarding your account.'),
 
-              SizedBox(height: AppDimensions.spaceL),
+              const SizedBox(height: AppDimensions.spaceL),
 
               // Parent/Guardian Confirmation (COPPA Compliance)
               _buildConsentCheckbox(
@@ -263,7 +263,7 @@ class _TermsAndConditionsDialogState extends State<TermsAndConditionsDialog>
             left: 0,
             right: 0,
             child: Container(
-              padding: EdgeInsets.symmetric(vertical: AppDimensions.spaceS),
+              padding: const EdgeInsets.symmetric(vertical: AppDimensions.spaceS),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,
@@ -277,12 +277,12 @@ class _TermsAndConditionsDialogState extends State<TermsAndConditionsDialog>
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(
+                  const Icon(
                     Icons.keyboard_arrow_down_rounded,
                     color: AppColors.primary,
                     size: 20,
                   ),
-                  SizedBox(width: AppDimensions.spaceXS),
+                  const SizedBox(width: AppDimensions.spaceXS),
                   Text(
                     'Scroll down to accept',
                     style: AppTextStyles.caption.copyWith(
@@ -300,20 +300,20 @@ class _TermsAndConditionsDialogState extends State<TermsAndConditionsDialog>
 
   Widget _buildTermItem(String text) {
     return Padding(
-      padding: EdgeInsets.only(bottom: AppDimensions.spaceS),
+      padding: const EdgeInsets.only(bottom: AppDimensions.spaceS),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            margin: EdgeInsets.only(top: 6),
+            margin: const EdgeInsets.only(top: 6),
             width: 6,
             height: 6,
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               color: AppColors.primary,
               shape: BoxShape.circle,
             ),
           ),
-          SizedBox(width: AppDimensions.spaceM),
+          const SizedBox(width: AppDimensions.spaceM),
           Expanded(
             child: Text(
               text,
@@ -338,12 +338,12 @@ class _TermsAndConditionsDialogState extends State<TermsAndConditionsDialog>
     VoidCallback? onLinkTap,
   }) {
     return Padding(
-      padding: EdgeInsets.only(bottom: AppDimensions.spaceS),
+      padding: const EdgeInsets.only(bottom: AppDimensions.spaceS),
       child: InkWell(
         onTap: () => onChanged(!value),
         borderRadius: AppDimensions.borderRadiusM,
         child: Container(
-          padding: EdgeInsets.all(AppDimensions.spaceM),
+          padding: const EdgeInsets.all(AppDimensions.spaceM),
           decoration: BoxDecoration(
             color: value
                 ? AppColors.primary.withValues(alpha: 0.05)
@@ -373,14 +373,14 @@ class _TermsAndConditionsDialogState extends State<TermsAndConditionsDialog>
                   ),
                 ),
                 child: value
-                    ? Icon(
+                    ? const Icon(
                         Icons.check_rounded,
                         color: AppColors.white,
                         size: 16,
                       )
                     : null,
               ),
-              SizedBox(width: AppDimensions.spaceM),
+              const SizedBox(width: AppDimensions.spaceM),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -394,7 +394,7 @@ class _TermsAndConditionsDialogState extends State<TermsAndConditionsDialog>
                               ? AppColors.primary
                               : context.colors.textSecondary,
                         ),
-                        SizedBox(width: AppDimensions.spaceXS),
+                        const SizedBox(width: AppDimensions.spaceXS),
                         Text(
                           title,
                           style: AppTextStyles.body2.copyWith(
@@ -405,7 +405,7 @@ class _TermsAndConditionsDialogState extends State<TermsAndConditionsDialog>
                           ),
                         ),
                         if (isRequired) ...[
-                          SizedBox(width: AppDimensions.spaceXS),
+                          const SizedBox(width: AppDimensions.spaceXS),
                           Text(
                             '*',
                             style: AppTextStyles.body2.copyWith(
@@ -416,7 +416,7 @@ class _TermsAndConditionsDialogState extends State<TermsAndConditionsDialog>
                         ],
                       ],
                     ),
-                    SizedBox(height: 4),
+                    const SizedBox(height: 4),
                     Text(
                       subtitle,
                       style: AppTextStyles.caption.copyWith(
@@ -424,7 +424,7 @@ class _TermsAndConditionsDialogState extends State<TermsAndConditionsDialog>
                       ),
                     ),
                     if (onLinkTap != null) ...[
-                      SizedBox(height: 4),
+                      const SizedBox(height: 4),
                       GestureDetector(
                         onTap: onLinkTap,
                         child: Text(
@@ -449,10 +449,10 @@ class _TermsAndConditionsDialogState extends State<TermsAndConditionsDialog>
 
   Widget _buildActions() {
     return Container(
-      padding: EdgeInsets.all(AppDimensions.spaceL),
+      padding: const EdgeInsets.all(AppDimensions.spaceL),
       decoration: BoxDecoration(
         color: context.colors.background,
-        borderRadius: BorderRadius.only(
+        borderRadius: const BorderRadius.only(
           bottomLeft: Radius.circular(AppDimensions.radiusXL),
           bottomRight: Radius.circular(AppDimensions.radiusXL),
         ),
@@ -466,10 +466,10 @@ class _TermsAndConditionsDialogState extends State<TermsAndConditionsDialog>
             child: AnimatedContainer(
               duration: AppDurations.animationShort,
               width: double.infinity,
-              padding: EdgeInsets.symmetric(vertical: AppDimensions.spaceM),
+              padding: const EdgeInsets.symmetric(vertical: AppDimensions.spaceM),
               decoration: BoxDecoration(
                 gradient: _canAccept
-                    ? LinearGradient(
+                    ? const LinearGradient(
                         colors: [AppColors.primary, AppColors.primaryDark],
                       )
                     : null,
@@ -498,7 +498,7 @@ class _TermsAndConditionsDialogState extends State<TermsAndConditionsDialog>
               ),
             ),
           ),
-          SizedBox(height: AppDimensions.spaceS),
+          const SizedBox(height: AppDimensions.spaceS),
           // Cancel Button
           TextButton(
             onPressed: widget.onDecline,

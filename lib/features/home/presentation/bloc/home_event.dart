@@ -19,9 +19,9 @@ class RefreshCarouselItems extends HomeEvent {
 /// Internal event for when carousel items are received from stream
 /// @internal - Do not use directly, used by HomeBloc internally
 class CarouselItemsReceived extends HomeEvent {
-  final List<CarouselItemEntity> items;
 
   const CarouselItemsReceived(this.items);
+  final List<CarouselItemEntity> items;
 
   @override
   List<Object?> get props => [items];
@@ -30,10 +30,10 @@ class CarouselItemsReceived extends HomeEvent {
 /// Internal event for when an error occurs in the stream
 /// @internal - Do not use directly, used by HomeBloc internally
 class CarouselItemsError extends HomeEvent {
-  final String message;
-  final String? code;
 
   const CarouselItemsError(this.message, {this.code});
+  final String message;
+  final String? code;
 
   @override
   List<Object?> get props => [message, code];

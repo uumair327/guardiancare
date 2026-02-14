@@ -90,19 +90,26 @@ service cloud.firestore {
     }
     
     match /quiz_results/{resultId} {
-      // Users can read/write their own quiz results
-      allow read, write: if isAuthenticated() &&
-        request.auth.uid == resource.data.userId;
+      // Users can read/update/delete their own quiz results
+      allow read, update, delete: if isAuthenticated() &&
+        request.auth.uid == resource.data.uid;
+      // On create, check the INCOMING data
       allow create: if isAuthenticated() &&
-        request.resource.data.userId == request.auth.uid;
+        request.resource.data.uid == request.auth.uid;
     }
     
     // ==================== Recommendations ====================
     match /recommendations/{recId} {
       // User-specific recommendations
+      // Note: field name is 'UID' (matching RecommendationModel.toFirestore())
       allow read: if isAuthenticated() &&
-        (resource.data.userId == request.auth.uid || isAdmin());
-      allow write: if isAdmin();
+        (resource.data.UID == request.auth.uid || isAdmin());
+      // Allow users to create their own recommendations
+      allow create: if isAuthenticated() &&
+        request.resource.data.UID == request.auth.uid;
+      // Allow users to update/delete their own recommendations
+      allow update, delete: if isAuthenticated() &&
+        (resource.data.UID == request.auth.uid || isAdmin());
     }
     
     // ==================== Resources ====================

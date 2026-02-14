@@ -1,9 +1,9 @@
 /// Base class for all exceptions in the application
 class AppException implements Exception {
-  final String message;
-  final String? code;
 
   const AppException(this.message, {this.code});
+  final String message;
+  final String? code;
 
   @override
   String toString() =>
@@ -22,9 +22,9 @@ class CacheException extends AppException {
 
 /// Network-related exceptions
 class NetworkException extends AppException {
-  final int? statusCode;
 
   const NetworkException(super.message, {super.code, this.statusCode});
+  final int? statusCode;
 
   @override
   String toString() =>
@@ -53,9 +53,9 @@ class NotFoundException extends AppException {
 
 /// Rate limit exceptions
 class RateLimitException extends AppException {
-  final Duration? retryAfter;
 
   const RateLimitException(super.message, {super.code, this.retryAfter});
+  final Duration? retryAfter;
 }
 
 /// Timeout exceptions

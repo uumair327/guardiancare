@@ -227,7 +227,7 @@ class SupabaseRealtimeAdapter implements IRealtimeService {
           'documents': docs,
         });
       }
-    } catch (e) {
+    } on Object catch (e) {
       debugPrint('SupabaseRealtime: Error fetching initial data: $e');
     }
   }
@@ -238,7 +238,7 @@ class SupabaseRealtimeAdapter implements IRealtimeService {
 
     for (final channel in channels) {
       subscribe(channel).listen(
-        (data) => controller.add(data),
+        controller.add,
         onError: (e) => controller.addError(e),
       );
     }
@@ -300,7 +300,7 @@ class SupabaseRealtimeAdapter implements IRealtimeService {
       });
 
       return const BackendResult.success(null);
-    } catch (e) {
+    } on Object catch (e) {
       return BackendResult.failure(
         BackendError(message: e.toString(), code: BackendErrorCode.unknown),
       );
@@ -320,7 +320,7 @@ class SupabaseRealtimeAdapter implements IRealtimeService {
           .maybeSingle();
 
       return BackendResult.success(response);
-    } catch (e) {
+    } on Object catch (e) {
       return BackendResult.failure(
         BackendError(message: e.toString(), code: BackendErrorCode.unknown),
       );

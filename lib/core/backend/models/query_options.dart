@@ -90,15 +90,6 @@ class QueryOptions {
 class QueryFilter {
   const QueryFilter(this.field, this.operator, this.value);
 
-  /// Field name to filter on
-  final String field;
-
-  /// Filter operator
-  final FilterOperator operator;
-
-  /// Value to compare against
-  final dynamic value;
-
   // Convenience constructors
   const QueryFilter.equals(this.field, this.value)
       : operator = FilterOperator.equals;
@@ -126,6 +117,15 @@ class QueryFilter {
 
   const QueryFilter.notInList(this.field, this.value)
       : operator = FilterOperator.whereNotIn;
+
+  /// Field name to filter on
+  final String field;
+
+  /// Filter operator
+  final FilterOperator operator;
+
+  /// Value to compare against
+  final dynamic value;
 
   @override
   String toString() => 'QueryFilter($field ${operator.name} $value)';

@@ -4,10 +4,6 @@ import 'package:guardiancare/core/core.dart';
 /// Section container for profile page
 /// Groups related menu items with a title
 class ProfileSection extends StatelessWidget {
-  final String title;
-  final IconData? icon;
-  final List<Widget> children;
-  final EdgeInsets? padding;
 
   const ProfileSection({
     super.key,
@@ -16,6 +12,10 @@ class ProfileSection extends StatelessWidget {
     required this.children,
     this.padding,
   });
+  final String title;
+  final IconData? icon;
+  final List<Widget> children;
+  final EdgeInsets? padding;
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +24,7 @@ class ProfileSection extends StatelessWidget {
       children: [
         Padding(
           padding: padding ??
-              EdgeInsets.symmetric(
+              const EdgeInsets.symmetric(
                 horizontal: AppDimensions.screenPaddingH,
                 vertical: AppDimensions.spaceS,
               ),
@@ -36,7 +36,7 @@ class ProfileSection extends StatelessWidget {
                   color: AppColors.primary,
                   size: AppDimensions.iconS,
                 ),
-                SizedBox(width: AppDimensions.spaceS),
+                const SizedBox(width: AppDimensions.spaceS),
               ],
               Expanded(
                 child: Text(
@@ -52,9 +52,9 @@ class ProfileSection extends StatelessWidget {
             ],
           ),
         ),
-        SizedBox(height: AppDimensions.spaceS),
+        const SizedBox(height: AppDimensions.spaceS),
         Padding(
-          padding: EdgeInsets.symmetric(
+          padding: const EdgeInsets.symmetric(
             horizontal: AppDimensions.screenPaddingH,
           ),
           child: Column(

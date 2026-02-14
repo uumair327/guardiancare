@@ -5,12 +5,6 @@ import 'package:guardiancare/features/video_player/domain/entities/video_entity.
 
 /// Modern video progress bar with education-friendly design
 class VideoProgressBar extends StatefulWidget {
-  final VideoProgress progress;
-  final ValueChanged<Duration>? onSeek;
-  final bool showTimeLabels;
-  final Color? progressColor;
-  final Color? bufferedColor;
-  final Color? backgroundColor;
 
   const VideoProgressBar({
     super.key,
@@ -21,6 +15,12 @@ class VideoProgressBar extends StatefulWidget {
     this.bufferedColor,
     this.backgroundColor,
   });
+  final VideoProgress progress;
+  final ValueChanged<Duration>? onSeek;
+  final bool showTimeLabels;
+  final Color? progressColor;
+  final Color? bufferedColor;
+  final Color? backgroundColor;
 
   @override
   State<VideoProgressBar> createState() => _VideoProgressBarState();
@@ -171,7 +171,7 @@ class _VideoProgressBarState extends State<VideoProgressBar> {
         ),
         // Time labels
         if (widget.showTimeLabels) ...[
-          SizedBox(height: AppDimensions.spaceXS),
+          const SizedBox(height: AppDimensions.spaceXS),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [

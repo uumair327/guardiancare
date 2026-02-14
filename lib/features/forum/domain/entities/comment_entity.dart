@@ -2,11 +2,6 @@ import 'package:equatable/equatable.dart';
 
 /// Domain entity representing a comment on a forum post
 class CommentEntity extends Equatable {
-  final String id;
-  final String userId;
-  final String forumId;
-  final String text;
-  final DateTime createdAt;
 
   const CommentEntity({
     required this.id,
@@ -15,6 +10,11 @@ class CommentEntity extends Equatable {
     required this.text,
     required this.createdAt,
   });
+  final String id;
+  final String userId;
+  final String forumId;
+  final String text;
+  final DateTime createdAt;
 
   @override
   List<Object?> get props => [id, userId, forumId, text, createdAt];

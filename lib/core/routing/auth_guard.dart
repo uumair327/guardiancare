@@ -28,19 +28,18 @@ abstract class AuthGuard {
 ///
 /// Following: DIP (Dependency Inversion Principle)
 class AuthGuardImpl implements AuthGuard {
+
+  AuthGuardImpl({required IAuthService authService})
+      : _authService = authService;
   final IAuthService _authService;
 
   /// List of routes that don't require authentication
   static const List<String> _publicRoutes = [
     '/login',
-    // Email/Password routes commented out - only Google Sign-In enabled
-    // '/signup',
-    // '/password-reset',
-    // '/email-verification',
+    '/signup',
+    '/password-reset',
+    '/email-verification',
   ];
-
-  AuthGuardImpl({required IAuthService authService})
-      : _authService = authService;
 
   @override
   String? redirect(BuildContext context, GoRouterState state) {
@@ -63,6 +62,10 @@ class AuthGuardImpl implements AuthGuard {
 
   @override
   bool isAuthenticated() {
+    final user = _authService.currentUser;
+    if (user != null && !user.emailVerified) {
+      return false;
+    }
     return _authService.isSignedIn;
   }
 
@@ -76,14 +79,14 @@ class AuthGuardImpl implements AuthGuard {
 /// @deprecated Use AuthGuardImpl with IAuthService instead
 @Deprecated('Use AuthGuardImpl with IAuthService instead')
 class FirebaseAuthGuard implements AuthGuard {
+
+  FirebaseAuthGuard({required IAuthService authService})
+      : _authService = authService;
   final IAuthService _authService;
 
   static const List<String> _publicRoutes = [
     '/login',
   ];
-
-  FirebaseAuthGuard({required IAuthService authService})
-      : _authService = authService;
 
   @override
   String? redirect(BuildContext context, GoRouterState state) {

@@ -28,13 +28,13 @@ class QuizLocalDataSourceImpl implements QuizLocalDataSource {
   Future<QuizModel> getQuiz(String quizId) async {
     // In a real implementation, this would fetch from local storage
     // For now, return a placeholder
-    throw CacheException(ErrorStrings.cacheNotFound);
+    throw const CacheException(ErrorStrings.cacheNotFound);
   }
 
   @override
   Future<List<QuestionModel>> getQuestions(String quizId) async {
     // In a real implementation, this would fetch from local storage
-    throw CacheException(ErrorStrings.cacheNotFound);
+    throw const CacheException(ErrorStrings.cacheNotFound);
   }
 
   @override

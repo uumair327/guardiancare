@@ -54,10 +54,10 @@ class MockLearnRepository implements LearnRepository {
 
 /// Mock GetCategories use case that tracks calls
 class MockGetCategories extends GetCategories {
-  final List<NoParams> calls = [];
-  Either<Failure, List<CategoryEntity>> mockResult = const Right([]);
 
   MockGetCategories() : super(MockLearnRepository());
+  final List<NoParams> calls = [];
+  Either<Failure, List<CategoryEntity>> mockResult = const Right([]);
 
   @override
   Future<Either<Failure, List<CategoryEntity>>> call(NoParams params) async {
@@ -68,10 +68,10 @@ class MockGetCategories extends GetCategories {
 
 /// Mock GetVideosByCategory use case that tracks calls
 class MockGetVideosByCategory extends GetVideosByCategory {
-  final List<String> calls = [];
-  Either<Failure, List<VideoEntity>> mockResult = const Right([]);
 
   MockGetVideosByCategory() : super(MockLearnRepository());
+  final List<String> calls = [];
+  Either<Failure, List<VideoEntity>> mockResult = const Right([]);
 
   @override
   Future<Either<Failure, List<VideoEntity>>> call(String category) async {
@@ -95,10 +95,6 @@ class MockGetVideosStream extends GetVideosStream {
 // ============================================================================
 
 class LearnTestFixture {
-  final MockGetCategories getCategories;
-  final MockGetVideosByCategory getVideosByCategory;
-  final MockGetVideosStream getVideosStream;
-  final LearnBloc bloc;
 
   LearnTestFixture._({
     required this.getCategories,
@@ -123,6 +119,10 @@ class LearnTestFixture {
       bloc: bloc,
     );
   }
+  final MockGetCategories getCategories;
+  final MockGetVideosByCategory getVideosByCategory;
+  final MockGetVideosStream getVideosStream;
+  final LearnBloc bloc;
 
   void dispose() {
     bloc.close();
@@ -204,12 +204,12 @@ void main() {
     // Property 3.1: Category requests are delegated to GetCategories use case
     // Validates: Requirement 3.1
     // ========================================================================
-    Glados(any.intBetween(1, 5), ExploreConfig(numRuns: 100)).test(
+    Glados(any.intBetween(1, 5), ExploreConfig()).test(
       'For any CategoriesRequested event, LearnBloc SHALL delegate to GetCategories use case',
       (count) async {
         final fixture = LearnTestFixture.create();
-        fixture.getCategories.mockResult = Right([
-          const CategoryEntity(name: 'Test Category', thumbnail: 'https://example.com/thumb.jpg'),
+        fixture.getCategories.mockResult = const Right([
+          CategoryEntity(name: 'Test Category', thumbnail: 'https://example.com/thumb.jpg'),
         ]);
 
         try {
@@ -237,7 +237,7 @@ void main() {
     // Property 3.2: Video requests are delegated to GetVideosByCategory use case
     // Validates: Requirement 3.2
     // ========================================================================
-    Glados(any.categoryName, ExploreConfig(numRuns: 100)).test(
+    Glados(any.categoryName, ExploreConfig()).test(
       'For any VideosRequested event, LearnBloc SHALL delegate to GetVideosByCategory use case',
       (categoryName) async {
         final fixture = LearnTestFixture.create();
@@ -278,7 +278,7 @@ void main() {
     // Property 3.3: Successful category fetch emits CategoriesLoaded state
     // Validates: Requirement 3.1
     // ========================================================================
-    Glados(any.categoryEntityList, ExploreConfig(numRuns: 100)).test(
+    Glados(any.categoryEntityList, ExploreConfig()).test(
       'For any successful category fetch, LearnBloc SHALL emit CategoriesLoaded state',
       (categories) async {
         final fixture = LearnTestFixture.create();
@@ -319,7 +319,7 @@ void main() {
     // Property 3.4: Successful video fetch emits VideosLoaded state
     // Validates: Requirement 3.2
     // ========================================================================
-    Glados2(any.categoryName, any.videoEntityList, ExploreConfig(numRuns: 100)).test(
+    Glados2(any.categoryName, any.videoEntityList, ExploreConfig()).test(
       'For any successful video fetch, LearnBloc SHALL emit VideosLoaded state',
       (categoryName, videos) async {
         final fixture = LearnTestFixture.create();
@@ -365,7 +365,7 @@ void main() {
     // Property 3.5: Failed category fetch emits LearnError state
     // Validates: Requirement 3.1
     // ========================================================================
-    Glados(any.intBetween(1, 3), ExploreConfig(numRuns: 100)).test(
+    Glados(any.intBetween(1, 3), ExploreConfig()).test(
       'For any failed category fetch, LearnBloc SHALL emit LearnError state',
       (count) async {
         final fixture = LearnTestFixture.create();
@@ -400,7 +400,7 @@ void main() {
     // Property 3.6: Failed video fetch emits LearnError state
     // Validates: Requirement 3.2
     // ========================================================================
-    Glados(any.categoryName, ExploreConfig(numRuns: 100)).test(
+    Glados(any.categoryName, ExploreConfig()).test(
       'For any failed video fetch, LearnBloc SHALL emit LearnError state',
       (categoryName) async {
         final fixture = LearnTestFixture.create();
@@ -435,7 +435,7 @@ void main() {
     // Property 3.7: CategorySelected triggers VideosRequested
     // Validates: Requirement 3.2
     // ========================================================================
-    Glados(any.categoryName, ExploreConfig(numRuns: 100)).test(
+    Glados(any.categoryName, ExploreConfig()).test(
       'For any CategorySelected event, LearnBloc SHALL trigger video loading',
       (categoryName) async {
         final fixture = LearnTestFixture.create();
@@ -468,7 +468,7 @@ void main() {
     // Property 3.8: Multiple category requests are all delegated
     // Validates: Requirement 3.1
     // ========================================================================
-    Glados(any.intBetween(1, 5), ExploreConfig(numRuns: 100)).test(
+    Glados(any.intBetween(1, 5), ExploreConfig()).test(
       'For any sequence of category selections, all SHALL be delegated to use case',
       (count) async {
         final fixture = LearnTestFixture.create();
@@ -511,7 +511,7 @@ void main() {
     // Property 3.9: BackToCategories triggers category reload
     // Validates: Requirement 3.1
     // ========================================================================
-    Glados(any.intBetween(1, 3), ExploreConfig(numRuns: 100)).test(
+    Glados(any.intBetween(1, 3), ExploreConfig()).test(
       'For any BackToCategories event, LearnBloc SHALL reload categories',
       (count) async {
         final fixture = LearnTestFixture.create();

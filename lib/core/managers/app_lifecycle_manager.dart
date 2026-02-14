@@ -20,13 +20,13 @@ abstract class AppLifecycleManager {
 /// Implementation of AppLifecycleManager
 /// Manages app lifecycle events and delegates to appropriate services
 class AppLifecycleManagerImpl implements AppLifecycleManager {
-  final ParentalVerificationService _verificationService;
 
   AppLifecycleManagerImpl({
     ParentalVerificationService? verificationService,
   }) : _verificationService = verificationService ?? ParentalVerificationService() {
     debugPrint('AppLifecycleManager initialized');
   }
+  final ParentalVerificationService _verificationService;
 
   @override
   void onPaused() {

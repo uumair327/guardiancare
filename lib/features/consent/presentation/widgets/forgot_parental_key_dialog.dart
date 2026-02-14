@@ -1,10 +1,7 @@
 import 'dart:convert';
 import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
-import 'package:guardiancare/core/backend/backend.dart';
-import 'package:guardiancare/core/constants/constants.dart';
 import 'package:guardiancare/core/core.dart';
-import 'package:guardiancare/core/di/injection_container.dart';
 import 'package:guardiancare/features/consent/domain/repositories/consent_repository.dart';
 
 class ForgotParentalKeyDialog extends StatefulWidget {
@@ -64,7 +61,7 @@ class _ForgotParentalKeyDialogState extends State<ForgotParentalKeyDialog> {
           _storedAnswerHash = consent.securityAnswerHash;
         });
       });
-    } catch (e) {
+    } on Object catch (e) {
       debugPrint('Error loading security question: $e');
     }
   }
@@ -103,12 +100,12 @@ class _ForgotParentalKeyDialogState extends State<ForgotParentalKeyDialog> {
         });
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(FeedbackStrings.incorrectAnswer),
+            content: const Text(FeedbackStrings.incorrectAnswer),
             backgroundColor: context.colors.error,
           ),
         );
       }
-    } catch (e) {
+    } on Object catch (e) {
       if (!mounted) return;
       setState(() {
         _isLoading = false;
@@ -159,12 +156,12 @@ class _ForgotParentalKeyDialogState extends State<ForgotParentalKeyDialog> {
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(FeedbackStrings.parentalKeyReset),
+            content: const Text(FeedbackStrings.parentalKeyReset),
             backgroundColor: context.colors.success,
           ),
         );
       });
-    } catch (e) {
+    } on Object catch (e) {
       if (!mounted) return;
       setState(() {
         _isLoading = false;
@@ -202,7 +199,7 @@ class _ForgotParentalKeyDialogState extends State<ForgotParentalKeyDialog> {
             ),
             child: Row(
               children: [
-                Icon(Icons.help_outline, color: AppColors.primary),
+                const Icon(Icons.help_outline, color: AppColors.primary),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
@@ -223,7 +220,7 @@ class _ForgotParentalKeyDialogState extends State<ForgotParentalKeyDialog> {
               labelText: UIStrings.yourAnswer,
               hintText: UIStrings.enterAnswerHint,
               border: const OutlineInputBorder(),
-              prefixIcon: Icon(Icons.question_answer, color: AppColors.primary),
+              prefixIcon: const Icon(Icons.question_answer, color: AppColors.primary),
               suffixIcon: IconButton(
                 icon: Icon(
                     _obscureAnswer ? Icons.visibility : Icons.visibility_off),
@@ -272,7 +269,7 @@ class _ForgotParentalKeyDialogState extends State<ForgotParentalKeyDialog> {
             labelText: UIStrings.newParentalKey,
             hintText: UIStrings.minCharactersHint,
             border: const OutlineInputBorder(),
-            prefixIcon: Icon(Icons.lock, color: AppColors.primary),
+            prefixIcon: const Icon(Icons.lock, color: AppColors.primary),
             suffixIcon: IconButton(
               icon: Icon(
                   _obscureNewKey ? Icons.visibility : Icons.visibility_off),
@@ -302,7 +299,7 @@ class _ForgotParentalKeyDialogState extends State<ForgotParentalKeyDialog> {
             labelText: UIStrings.confirmNewKey,
             hintText: UIStrings.reenterKeyHint,
             border: const OutlineInputBorder(),
-            prefixIcon: Icon(Icons.lock_outline, color: AppColors.primary),
+            prefixIcon: const Icon(Icons.lock_outline, color: AppColors.primary),
             suffixIcon: IconButton(
               icon: Icon(
                   _obscureConfirmKey ? Icons.visibility : Icons.visibility_off),
@@ -335,11 +332,11 @@ class _ForgotParentalKeyDialogState extends State<ForgotParentalKeyDialog> {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
       ),
-      title: Row(
+      title: const Row(
         children: [
           Icon(Icons.lock_reset, color: AppColors.primary),
-          const SizedBox(width: 12),
-          const Text(UIStrings.forgotParentalKey),
+          SizedBox(width: 12),
+          Text(UIStrings.forgotParentalKey),
         ],
       ),
       content: Form(

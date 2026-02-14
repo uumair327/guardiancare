@@ -31,7 +31,6 @@ class MockQuizRepository implements QuizRepository {
       description: 'Test Description',
       category: 'test',
       questions: const [],
-      imageUrl: null,
     ));
   }
 
@@ -52,11 +51,11 @@ class MockQuizRepository implements QuizRepository {
     required Map<int, String> answers,
     required List<QuestionEntity> questions,
   }) async {
-    return Right(const QuizResultEntity(
+    return const Right(QuizResultEntity(
       totalQuestions: 10,
       correctAnswers: 8,
       incorrectAnswers: 2,
-      scorePercentage: 80.0,
+      scorePercentage: 80,
       selectedAnswers: {},
       incorrectCategories: [],
     ));
@@ -80,17 +79,17 @@ class MockQuizRepository implements QuizRepository {
 }
 
 class MockSubmitQuiz extends SubmitQuiz {
+
+  MockSubmitQuiz() : super(MockQuizRepository());
   final List<SubmitQuizParams> calls = [];
-  Either<Failure, QuizResultEntity> mockResult = Right(const QuizResultEntity(
+  Either<Failure, QuizResultEntity> mockResult = const Right(QuizResultEntity(
     totalQuestions: 10,
     correctAnswers: 8,
     incorrectAnswers: 2,
-    scorePercentage: 80.0,
+    scorePercentage: 80,
     selectedAnswers: {},
     incorrectCategories: [],
   ));
-
-  MockSubmitQuiz() : super(MockQuizRepository());
 
   @override
   Future<Either<Failure, QuizResultEntity>> call(
@@ -101,10 +100,10 @@ class MockSubmitQuiz extends SubmitQuiz {
 }
 
 class MockValidateQuiz extends ValidateQuiz {
-  final List<List<QuestionEntity>> calls = [];
-  Either<Failure, bool> mockResult = const Right(true);
 
   MockValidateQuiz() : super(MockQuizRepository());
+  final List<List<QuestionEntity>> calls = [];
+  Either<Failure, bool> mockResult = const Right(true);
 
   @override
   Future<Either<Failure, bool>> call(List<QuestionEntity> params) async {
@@ -114,10 +113,10 @@ class MockValidateQuiz extends ValidateQuiz {
 }
 
 class MockGenerateRecommendations extends GenerateRecommendations {
-  final List<GenerateRecommendationsParams> calls = [];
-  Either<Failure, void> mockResult = const Right(null);
 
   MockGenerateRecommendations() : super();
+  final List<GenerateRecommendationsParams> calls = [];
+  Either<Failure, void> mockResult = const Right(null);
 
   @override
   Future<Either<Failure, void>> call(
@@ -128,10 +127,10 @@ class MockGenerateRecommendations extends GenerateRecommendations {
 }
 
 class MockSaveQuizHistory extends SaveQuizHistory {
-  final List<SaveQuizHistoryParams> calls = [];
-  Either<Failure, void> mockResult = const Right(null);
 
   MockSaveQuizHistory() : super(MockQuizRepository());
+  final List<SaveQuizHistoryParams> calls = [];
+  Either<Failure, void> mockResult = const Right(null);
 
   @override
   Future<Either<Failure, void>> call(SaveQuizHistoryParams params) async {
@@ -199,6 +198,10 @@ class MockAuthService implements IAuthService {
   Future<BackendResult<BackendUser>> linkWithOAuth(
           OAuthProvider provider) async =>
       BackendResult.success(currentUser!);
+
+  @override
+  Future<BackendResult<void>> reload() async =>
+      const BackendResult.success(null);
   @override
   Future<BackendResult<void>> updateProfile(
           {String? displayName, String? photoUrl}) async =>
@@ -238,12 +241,6 @@ class MockAuthService implements IAuthService {
 
 // Fixture
 class QuizTestFixture {
-  final MockSubmitQuiz submitQuiz;
-  final MockValidateQuiz validateQuiz;
-  final MockGenerateRecommendations generateRecommendations;
-  final MockSaveQuizHistory saveQuizHistory;
-  final MockAuthService authService;
-  final QuizBloc bloc;
 
   QuizTestFixture._({
     required this.submitQuiz,
@@ -277,6 +274,12 @@ class QuizTestFixture {
       bloc: bloc,
     );
   }
+  final MockSubmitQuiz submitQuiz;
+  final MockValidateQuiz validateQuiz;
+  final MockGenerateRecommendations generateRecommendations;
+  final MockSaveQuizHistory saveQuizHistory;
+  final MockAuthService authService;
+  final QuizBloc bloc;
 
   void dispose() {
     bloc.close();
@@ -308,7 +311,7 @@ extension QuizGenerators on Any {
 void main() {
   group('Property 2: Quiz Business Logic Delegation', () {
     Glados3(any.questionIndex, any.optionIndex, any.optionIndex,
-            ExploreConfig(numRuns: 100))
+            ExploreConfig())
         .test(
       'For any answer submission, QuizBloc SHALL handle validation logic',
       (questionIndex, selectedOption, correctAnswerIndex) async {
@@ -333,7 +336,7 @@ void main() {
       },
     );
 
-    Glados2(any.questionIndex, any.optionIndex, ExploreConfig(numRuns: 100))
+    Glados2(any.questionIndex, any.optionIndex, ExploreConfig())
         .test(
       'For any answer where selected equals correct, isCorrect SHALL be true',
       (questionIndex, optionIndex) async {
@@ -354,7 +357,7 @@ void main() {
     );
 
     Glados3(any.questionIndex, any.optionIndex, any.optionIndex,
-            ExploreConfig(numRuns: 100))
+            ExploreConfig())
         .test(
       'For any answer where selected differs from correct, isCorrect SHALL be false',
       (questionIndex, selectedOption, correctAnswerIndex) async {
@@ -375,7 +378,7 @@ void main() {
       },
     );
 
-    Glados(any.categoryList, ExploreConfig(numRuns: 100)).test(
+    Glados(any.categoryList, ExploreConfig()).test(
       'For any recommendation request, QuizBloc SHALL delegate to GenerateRecommendations use case',
       (categories) async {
         final fixture = QuizTestFixture.create();
@@ -392,7 +395,7 @@ void main() {
       },
     );
 
-    Glados(any.categoryList, ExploreConfig(numRuns: 100)).test(
+    Glados(any.categoryList, ExploreConfig()).test(
       'For any successful recommendation generation, status SHALL transition to generated',
       (categories) async {
         final fixture = QuizTestFixture.create();
@@ -415,7 +418,7 @@ void main() {
       },
     );
 
-    Glados(any.categoryList, ExploreConfig(numRuns: 100)).test(
+    Glados(any.categoryList, ExploreConfig()).test(
       'For any failed recommendation generation, status SHALL be failed',
       (categories) async {
         final fixture = QuizTestFixture.create();
@@ -433,7 +436,7 @@ void main() {
       },
     );
 
-    Glados(any.intBetween(1, 5), ExploreConfig(numRuns: 100)).test(
+    Glados(any.intBetween(1, 5), ExploreConfig()).test(
       'For any sequence of answer submissions, all SHALL be validated by QuizBloc',
       (count) async {
         final fixture = QuizTestFixture.create();

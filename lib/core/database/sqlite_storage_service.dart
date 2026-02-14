@@ -79,7 +79,7 @@ class SQLiteStorageServiceImpl implements SQLiteStorageService {
       _cacheDao = CacheDao();
       _initialized = true;
       debugPrint('✅ SQLite Storage Service initialized successfully');
-    } catch (e) {
+    } on Object catch (e) {
       debugPrint('❌ SQLite Storage Service initialization failed: $e');
       rethrow;
     }
@@ -124,7 +124,7 @@ class SQLiteStorageServiceImpl implements SQLiteStorageService {
     if (!isAvailable || !_initialized || _quizDao == null) {
       return {};
     }
-    return await _quizDao!.getQuizStatistics(userId);
+    return _quizDao!.getQuizStatistics(userId);
   }
 
   @override
@@ -132,7 +132,7 @@ class SQLiteStorageServiceImpl implements SQLiteStorageService {
     if (!isAvailable || !_initialized || _videoDao == null) {
       return {};
     }
-    return await _videoDao!.getWatchStatistics(userId);
+    return _videoDao!.getWatchStatistics(userId);
   }
 
   @override
@@ -140,7 +140,7 @@ class SQLiteStorageServiceImpl implements SQLiteStorageService {
     if (!isAvailable || !_initialized || _cacheDao == null) {
       return {};
     }
-    return await _cacheDao!.getCacheStatistics();
+    return _cacheDao!.getCacheStatistics();
   }
 
   @override

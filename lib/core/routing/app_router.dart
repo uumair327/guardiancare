@@ -1,12 +1,11 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:guardiancare/core/core.dart';
-import 'package:guardiancare/core/backend/backend.dart';
 import 'package:guardiancare/core/di/di.dart' as di;
 import 'package:guardiancare/features/features.dart';
-import 'package:guardiancare/features/quiz/domain/entities/question_entity.dart';
 import 'package:guardiancare/features/video_player/presentation/pages/video_player_page.dart'
     as video_player;
 
@@ -17,6 +16,8 @@ import 'package:guardiancare/features/video_player/presentation/pages/video_play
 ///
 /// Following: DIP (Dependency Inversion Principle) - uses IAuthService abstraction
 class AppRouter {
+  AppRouter._();
+
   static final _rootNavigatorKey = GlobalKey<NavigatorState>();
 
   // Lazy initialization of AuthGuard using IAuthService
@@ -54,9 +55,7 @@ class AppRouter {
         name: 'login',
         builder: (context, state) => const LoginPage(),
       ),
-      // Email/Password authentication routes - COMMENTED OUT
-      // Only Google Sign-In is enabled
-      /*
+      // Email/Password authentication routes
       GoRoute(
         path: '/signup',
         name: 'signup',
@@ -72,7 +71,6 @@ class AppRouter {
         name: 'email-verification',
         builder: (context, state) => const EmailVerificationPage(),
       ),
-      */
 
       // Main app route with bottom navigation
       GoRoute(
@@ -141,7 +139,7 @@ class AppRouter {
           if (createdAtStr != null) {
             try {
               createdAt = DateTime.parse(createdAtStr);
-            } catch (_) {}
+            } on Object catch (_) {}
           }
 
           return ForumDetailPage(

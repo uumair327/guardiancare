@@ -11,10 +11,10 @@ abstract class QuizEvent extends Equatable {
 
 /// Event when an answer is selected
 class AnswerSelected extends QuizEvent {
-  final int questionIndex;
-  final String answer;
 
   const AnswerSelected(this.questionIndex, this.answer);
+  final int questionIndex;
+  final String answer;
 
   @override
   List<Object?> get props => [questionIndex, answer];
@@ -22,9 +22,9 @@ class AnswerSelected extends QuizEvent {
 
 /// Event when feedback is shown
 class FeedbackShown extends QuizEvent {
-  final int questionIndex;
 
   const FeedbackShown(this.questionIndex);
+  final int questionIndex;
 
   @override
   List<Object?> get props => [questionIndex];
@@ -32,9 +32,9 @@ class FeedbackShown extends QuizEvent {
 
 /// Event to navigate to a specific question
 class NavigateToQuestion extends QuizEvent {
-  final int questionIndex;
 
   const NavigateToQuestion(this.questionIndex);
+  final int questionIndex;
 
   @override
   List<Object?> get props => [questionIndex];
@@ -62,13 +62,13 @@ class QuizReset extends QuizEvent {
 
 /// Event to submit quiz for scoring
 class QuizSubmitted extends QuizEvent {
-  final String quizId;
-  final List<QuestionEntity> questions;
 
   const QuizSubmitted({
     required this.quizId,
     required this.questions,
   });
+  final String quizId;
+  final List<QuestionEntity> questions;
 
   @override
   List<Object?> get props => [quizId, questions];
@@ -77,15 +77,15 @@ class QuizSubmitted extends QuizEvent {
 /// Event when an answer is submitted for validation
 /// Requirements: 2.1
 class SubmitAnswerRequested extends QuizEvent {
-  final int questionIndex;
-  final int selectedOption;
-  final int correctAnswerIndex;
 
   const SubmitAnswerRequested({
     required this.questionIndex,
     required this.selectedOption,
     required this.correctAnswerIndex,
   });
+  final int questionIndex;
+  final int selectedOption;
+  final int correctAnswerIndex;
 
   @override
   List<Object?> get props =>
@@ -95,15 +95,15 @@ class SubmitAnswerRequested extends QuizEvent {
 /// Event when quiz is completed and needs to be processed
 /// Requirements: 2.2
 class CompleteQuizRequested extends QuizEvent {
-  final List<QuestionEntity> questions;
-  final int correctAnswers;
-  final int totalQuestions;
 
   const CompleteQuizRequested({
     required this.questions,
     required this.correctAnswers,
     required this.totalQuestions,
   });
+  final List<QuestionEntity> questions;
+  final int correctAnswers;
+  final int totalQuestions;
 
   @override
   List<Object?> get props => [questions, correctAnswers, totalQuestions];
@@ -112,9 +112,9 @@ class CompleteQuizRequested extends QuizEvent {
 /// Event to generate recommendations based on quiz categories
 /// Requirements: 2.3
 class GenerateRecommendationsRequested extends QuizEvent {
-  final List<String> categories;
 
   const GenerateRecommendationsRequested({required this.categories});
+  final List<String> categories;
 
   @override
   List<Object?> get props => [categories];

@@ -2,16 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:guardiancare/core/core.dart';
 
 class ParentalVerificationDialog extends StatefulWidget {
-  final String featureName;
-  final VoidCallback onVerified;
-  final VoidCallback? onForgotKey;
 
   const ParentalVerificationDialog({
-    Key? key,
+    super.key,
     required this.featureName,
     required this.onVerified,
     this.onForgotKey,
-  }) : super(key: key);
+  });
+  final String featureName;
+  final VoidCallback onVerified;
+  final VoidCallback? onForgotKey;
 
   @override
   State<ParentalVerificationDialog> createState() =>
@@ -35,7 +35,7 @@ class _ParentalVerificationDialogState
     if (_keyController.text.length < 4) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Key must be at least 4 characters'),
+          content: const Text('Key must be at least 4 characters'),
           backgroundColor: context.colors.error,
         ),
       );
@@ -67,7 +67,7 @@ class _ParentalVerificationDialogState
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Invalid parental key'),
+          content: const Text('Invalid parental key'),
           backgroundColor: context.colors.error,
         ),
       );
@@ -83,7 +83,7 @@ class _ParentalVerificationDialogState
       title: Row(
         children: [
           Icon(Icons.lock, color: context.colors.primary),
-          SizedBox(width: AppDimensions.spaceM),
+          const SizedBox(width: AppDimensions.spaceM),
           Expanded(
             child:
                 Text('Parental Verification', style: AppTextStyles.dialogTitle),

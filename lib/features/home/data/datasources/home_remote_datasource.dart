@@ -13,10 +13,10 @@ abstract class HomeRemoteDataSource {
 /// Following: DIP (Dependency Inversion Principle)
 /// This data source depends on IDataStore abstraction, not Firebase directly.
 class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
-  final IDataStore _dataStore;
 
   HomeRemoteDataSourceImpl({required IDataStore dataStore})
       : _dataStore = dataStore;
+  final IDataStore _dataStore;
 
   @override
   Stream<List<CarouselItemModel>> getCarouselItems() {
@@ -32,7 +32,7 @@ class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
                 try {
                   debugPrint('HomeRemoteDataSource: Parsing doc: $doc');
                   return CarouselItemModel.fromMap(doc);
-                } catch (e) {
+                } on Object catch (e) {
                   debugPrint('Error parsing carousel document: $e');
                   return null;
                 }

@@ -210,7 +210,7 @@ void main() {
 
   group('BackendErrorCode', () {
     test('has expected auth codes', () {
-      final codes = BackendErrorCode.values;
+      const codes = BackendErrorCode.values;
       expect(codes, contains(BackendErrorCode.authError));
       expect(codes, contains(BackendErrorCode.invalidCredentials));
       expect(codes, contains(BackendErrorCode.userNotFound));
@@ -222,7 +222,7 @@ void main() {
     });
 
     test('has expected data codes', () {
-      final codes = BackendErrorCode.values;
+      const codes = BackendErrorCode.values;
       expect(codes, contains(BackendErrorCode.notFound));
       expect(codes, contains(BackendErrorCode.alreadyExists));
       expect(codes, contains(BackendErrorCode.permissionDenied));
@@ -230,7 +230,7 @@ void main() {
     });
 
     test('has expected network codes', () {
-      final codes = BackendErrorCode.values;
+      const codes = BackendErrorCode.values;
       expect(codes, contains(BackendErrorCode.networkError));
       expect(codes, contains(BackendErrorCode.timeout));
       expect(codes, contains(BackendErrorCode.serverError));
@@ -238,14 +238,14 @@ void main() {
     });
 
     test('has expected operation codes', () {
-      final codes = BackendErrorCode.values;
+      const codes = BackendErrorCode.values;
       expect(codes, contains(BackendErrorCode.operationNotAllowed));
       expect(codes, contains(BackendErrorCode.rateLimited));
       expect(codes, contains(BackendErrorCode.unknown));
     });
 
     test('has expected storage codes', () {
-      final codes = BackendErrorCode.values;
+      const codes = BackendErrorCode.values;
       expect(codes, contains(BackendErrorCode.storageFull));
       expect(codes, contains(BackendErrorCode.fileTooLarge));
       expect(codes, contains(BackendErrorCode.invalidFileType));

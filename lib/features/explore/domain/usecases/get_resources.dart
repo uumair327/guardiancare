@@ -4,9 +4,9 @@ import 'package:guardiancare/features/explore/domain/entities/resource.dart';
 import 'package:guardiancare/features/explore/domain/repositories/explore_repository.dart';
 
 class GetResources {
-  final ExploreRepository repository;
 
   GetResources(this.repository);
+  final ExploreRepository repository;
 
   Stream<Either<Failure, List<Resource>>> call() {
     return repository.getResources();

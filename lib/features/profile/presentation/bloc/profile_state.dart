@@ -18,9 +18,9 @@ class ProfileLoading extends ProfileState {}
 
 /// Profile loaded successfully
 class ProfileLoaded extends ProfileState {
-  final ProfileEntity profile;
 
   const ProfileLoaded(this.profile);
+  final ProfileEntity profile;
 
   @override
   List<Object?> get props => [profile];
@@ -37,9 +37,9 @@ class PreferencesCleared extends ProfileState {}
 
 /// Error state
 class ProfileError extends ProfileState {
-  final String message;
 
   const ProfileError(this.message);
+  final String message;
 
   @override
   List<Object?> get props => [message];
@@ -51,13 +51,13 @@ class AccountDeleting extends ProfileState {}
 /// Language changed successfully
 /// Requirements: 6.1
 class LanguageChanged extends ProfileState {
-  final Locale newLocale;
-  final String localeName;
 
   const LanguageChanged({
     required this.newLocale,
     required this.localeName,
   });
+  final Locale newLocale;
+  final String localeName;
 
   @override
   List<Object?> get props => [newLocale, localeName];

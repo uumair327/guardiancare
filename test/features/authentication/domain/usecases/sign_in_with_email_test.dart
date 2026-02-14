@@ -1,11 +1,11 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/annotations.dart';
-import 'package:mockito/mockito.dart';
 import 'package:guardiancare/core/error/failures.dart';
 import 'package:guardiancare/features/authentication/domain/entities/user_entity.dart';
 import 'package:guardiancare/features/authentication/domain/repositories/auth_repository.dart';
 import 'package:guardiancare/features/authentication/domain/usecases/sign_in_with_email.dart';
+import 'package:mockito/annotations.dart';
+import 'package:mockito/mockito.dart';
 
 import 'sign_in_with_email_test.mocks.dart';
 

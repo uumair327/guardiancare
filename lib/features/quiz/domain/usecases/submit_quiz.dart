@@ -8,15 +8,15 @@ import 'package:guardiancare/features/quiz/domain/repositories/quiz_repository.d
 
 /// Parameters for submitting a quiz
 class SubmitQuizParams extends Equatable {
-  final String quizId;
-  final Map<int, String> answers;
-  final List<QuestionEntity> questions;
 
   const SubmitQuizParams({
     required this.quizId,
     required this.answers,
     required this.questions,
   });
+  final String quizId;
+  final Map<int, String> answers;
+  final List<QuestionEntity> questions;
 
   @override
   List<Object> get props => [quizId, answers, questions];
@@ -24,14 +24,14 @@ class SubmitQuizParams extends Equatable {
 
 /// Use case for submitting quiz answers
 class SubmitQuiz implements UseCase<QuizResultEntity, SubmitQuizParams> {
-  final QuizRepository repository;
 
   SubmitQuiz(this.repository);
+  final QuizRepository repository;
 
   @override
   Future<Either<Failure, QuizResultEntity>> call(
       SubmitQuizParams params) async {
-    return await repository.submitQuiz(
+    return repository.submitQuiz(
       quizId: params.quizId,
       answers: params.answers,
       questions: params.questions,

@@ -10,16 +10,6 @@ import 'package:guardiancare/core/constants/app_dimensions.dart';
 /// - Customizable depth
 /// - Performance optimized
 class NeumorphicContainer extends StatelessWidget {
-  final Widget child;
-  final double depth;
-  final Color? backgroundColor;
-  final BorderRadius? borderRadius;
-  final EdgeInsets? padding;
-  final double? width;
-  final double? height;
-  final bool isPressed;
-  final Color? lightShadowColor;
-  final Color? darkShadowColor;
 
   const NeumorphicContainer({
     super.key,
@@ -34,6 +24,16 @@ class NeumorphicContainer extends StatelessWidget {
     this.lightShadowColor,
     this.darkShadowColor,
   });
+  final Widget child;
+  final double depth;
+  final Color? backgroundColor;
+  final BorderRadius? borderRadius;
+  final EdgeInsets? padding;
+  final double? width;
+  final double? height;
+  final bool isPressed;
+  final Color? lightShadowColor;
+  final Color? darkShadowColor;
 
   @override
   Widget build(BuildContext context) {
@@ -89,15 +89,6 @@ class NeumorphicContainer extends StatelessWidget {
 
 /// Neumorphic button with press animation
 class NeumorphicButton extends StatefulWidget {
-  final Widget child;
-  final VoidCallback? onTap;
-  final double depth;
-  final Color? backgroundColor;
-  final BorderRadius? borderRadius;
-  final EdgeInsets? padding;
-  final double? width;
-  final double? height;
-  final bool enabled;
 
   const NeumorphicButton({
     super.key,
@@ -111,6 +102,15 @@ class NeumorphicButton extends StatefulWidget {
     this.height,
     this.enabled = true,
   });
+  final Widget child;
+  final VoidCallback? onTap;
+  final double depth;
+  final Color? backgroundColor;
+  final BorderRadius? borderRadius;
+  final EdgeInsets? padding;
+  final double? width;
+  final double? height;
+  final bool enabled;
 
   @override
   State<NeumorphicButton> createState() => _NeumorphicButtonState();
@@ -160,13 +160,6 @@ class _NeumorphicButtonState extends State<NeumorphicButton> {
 
 /// Neumorphic icon button
 class NeumorphicIconButton extends StatefulWidget {
-  final IconData icon;
-  final VoidCallback? onTap;
-  final double size;
-  final double depth;
-  final Color? iconColor;
-  final Color? backgroundColor;
-  final bool enabled;
 
   const NeumorphicIconButton({
     super.key,
@@ -178,6 +171,13 @@ class NeumorphicIconButton extends StatefulWidget {
     this.backgroundColor,
     this.enabled = true,
   });
+  final IconData icon;
+  final VoidCallback? onTap;
+  final double size;
+  final double depth;
+  final Color? iconColor;
+  final Color? backgroundColor;
+  final bool enabled;
 
   @override
   State<NeumorphicIconButton> createState() => _NeumorphicIconButtonState();
@@ -215,11 +215,6 @@ class _NeumorphicIconButtonState extends State<NeumorphicIconButton> {
 
 /// Neumorphic progress indicator
 class NeumorphicProgress extends StatelessWidget {
-  final double value; // 0.0 to 1.0
-  final double height;
-  final Color? backgroundColor;
-  final Color? progressColor;
-  final BorderRadius? borderRadius;
 
   const NeumorphicProgress({
     super.key,
@@ -229,6 +224,11 @@ class NeumorphicProgress extends StatelessWidget {
     this.progressColor,
     this.borderRadius,
   });
+  final double value; // 0.0 to 1.0
+  final double height;
+  final Color? backgroundColor;
+  final Color? progressColor;
+  final BorderRadius? borderRadius;
 
   @override
   Widget build(BuildContext context) {
@@ -242,16 +242,16 @@ class NeumorphicProgress extends StatelessWidget {
         decoration: BoxDecoration(
           color: bgColor,
           borderRadius: radius,
-          boxShadow: [
+          boxShadow: const [
             BoxShadow(
               color: AppColors.gray300,
-              offset: const Offset(2, 2),
+              offset: Offset(2, 2),
               blurRadius: 4,
               spreadRadius: -2,
             ),
             BoxShadow(
               color: AppColors.white,
-              offset: const Offset(-2, -2),
+              offset: Offset(-2, -2),
               blurRadius: 4,
               spreadRadius: -2,
             ),

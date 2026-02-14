@@ -4,9 +4,6 @@ import 'package:guardiancare/core/core.dart';
 /// Modern question card with animations
 /// Displays the current question with a clean, education-friendly design
 class QuestionCard extends StatefulWidget {
-  final String question;
-  final int questionNumber;
-  final int totalQuestions;
 
   const QuestionCard({
     super.key,
@@ -14,6 +11,9 @@ class QuestionCard extends StatefulWidget {
     required this.questionNumber,
     required this.totalQuestions,
   });
+  final String question;
+  final int questionNumber;
+  final int totalQuestions;
 
   @override
   State<QuestionCard> createState() => _QuestionCardState();
@@ -33,10 +33,10 @@ class _QuestionCardState extends State<QuestionCard>
       duration: AppDurations.animationMedium,
     );
 
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+    _fadeAnimation = Tween<double>(begin: 0, end: 1).animate(
       CurvedAnimation(
         parent: _controller,
-        curve: const Interval(0.0, 0.6, curve: Curves.easeOut),
+        curve: const Interval(0, 0.6, curve: Curves.easeOut),
       ),
     );
 
@@ -46,7 +46,7 @@ class _QuestionCardState extends State<QuestionCard>
     ).animate(
       CurvedAnimation(
         parent: _controller,
-        curve: const Interval(0.2, 1.0, curve: Curves.easeOutCubic),
+        curve: const Interval(0.2, 1, curve: Curves.easeOutCubic),
       ),
     );
 
@@ -83,7 +83,7 @@ class _QuestionCardState extends State<QuestionCard>
           );
         },
         child: Container(
-          padding: EdgeInsets.all(AppDimensions.spaceL),
+          padding: const EdgeInsets.all(AppDimensions.spaceL),
           decoration: BoxDecoration(
             color: context.colors.surface,
             borderRadius: AppDimensions.borderRadiusL,
@@ -96,7 +96,6 @@ class _QuestionCardState extends State<QuestionCard>
             ],
             border: Border.all(
               color: context.colors.primary.withValues(alpha: 0.1),
-              width: 1,
             ),
           ),
           child: Column(
@@ -104,7 +103,7 @@ class _QuestionCardState extends State<QuestionCard>
             children: [
               // Question badge
               Container(
-                padding: EdgeInsets.symmetric(
+                padding: const EdgeInsets.symmetric(
                   horizontal: AppDimensions.spaceM,
                   vertical: AppDimensions.spaceS,
                 ),
@@ -120,12 +119,12 @@ class _QuestionCardState extends State<QuestionCard>
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(
+                    const Icon(
                       Icons.help_outline_rounded,
                       color: AppColors.white,
                       size: AppDimensions.iconS,
                     ),
-                    SizedBox(width: AppDimensions.spaceS),
+                    const SizedBox(width: AppDimensions.spaceS),
                     Text(
                       'Question ${widget.questionNumber}',
                       style: AppTextStyles.bodySmall.copyWith(
@@ -136,7 +135,7 @@ class _QuestionCardState extends State<QuestionCard>
                   ],
                 ),
               ),
-              SizedBox(height: AppDimensions.spaceL),
+              const SizedBox(height: AppDimensions.spaceL),
               // Question text
               Text(
                 widget.question,

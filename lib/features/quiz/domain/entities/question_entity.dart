@@ -2,12 +2,6 @@ import 'package:equatable/equatable.dart';
 
 /// Question entity representing a quiz question
 class QuestionEntity extends Equatable {
-  final String quizId;
-  final String question;
-  final List<String> options;
-  final int correctAnswerIndex;
-  final String category;
-  final String? explanation;
 
   const QuestionEntity({
     this.quizId = '', // Default empty for compatibility if needed, or required?
@@ -23,6 +17,12 @@ class QuestionEntity extends Equatable {
     required this.category,
     this.explanation,
   });
+  final String quizId;
+  final String question;
+  final List<String> options;
+  final int correctAnswerIndex;
+  final String category;
+  final String? explanation;
 
   @override
   List<Object?> get props => [

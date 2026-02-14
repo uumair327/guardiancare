@@ -18,13 +18,13 @@ abstract class UserStatsLocalDataSource {
 /// Follows Single Responsibility by delegating database operations
 /// to specialized DAOs (QuizDao, VideoDao).
 class UserStatsLocalDataSourceImpl implements UserStatsLocalDataSource {
-  final QuizDao quizDao;
-  final VideoDao videoDao;
 
   UserStatsLocalDataSourceImpl({
     required this.quizDao,
     required this.videoDao,
   });
+  final QuizDao quizDao;
+  final VideoDao videoDao;
 
   @override
   Future<UserStatsEntity> getUserStats(String userId) async {

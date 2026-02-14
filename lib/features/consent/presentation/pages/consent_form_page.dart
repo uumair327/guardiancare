@@ -6,12 +6,12 @@ import 'package:guardiancare/features/consent/presentation/bloc/consent_event.da
 import 'package:guardiancare/features/consent/presentation/bloc/consent_state.dart';
 
 class ConsentFormPage extends StatefulWidget {
-  final VoidCallback onSubmit;
 
   const ConsentFormPage({
     super.key,
     required this.onSubmit,
   });
+  final VoidCallback onSubmit;
 
   @override
   State<ConsentFormPage> createState() => _ConsentFormPageState();
@@ -93,13 +93,13 @@ class _ConsentFormPageState extends State<ConsentFormPage> {
                       color: AppColors.primary,
                     ),
                   ),
-                  SizedBox(height: AppDimensions.spaceL),
+                  const SizedBox(height: AppDimensions.spaceL),
                   Text(
                     'This app is designed for children. Please set up a parental key to protect your child.',
                     style: AppTextStyles.bodyMedium,
                     textAlign: TextAlign.center,
                   ),
-                  SizedBox(height: AppDimensions.spaceL),
+                  const SizedBox(height: AppDimensions.spaceL),
                   TextField(
                     controller: _keyController,
                     decoration: InputDecoration(
@@ -113,14 +113,13 @@ class _ConsentFormPageState extends State<ConsentFormPage> {
                       fillColor: AppColors.inputBackground,
                       border: OutlineInputBorder(
                         borderRadius: AppDimensions.borderRadiusM,
-                        borderSide: BorderSide(
+                        borderSide: const BorderSide(
                           color: AppColors.inputBorder,
-                          width: AppDimensions.borderThin,
                         ),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: AppDimensions.borderRadiusM,
-                        borderSide: BorderSide(
+                        borderSide: const BorderSide(
                           color: AppColors.inputBorderFocused,
                           width: AppDimensions.borderThick,
                         ),
@@ -132,7 +131,7 @@ class _ConsentFormPageState extends State<ConsentFormPage> {
                     obscureText: true,
                     onChanged: _validateKey,
                   ),
-                  SizedBox(height: AppDimensions.spaceM),
+                  const SizedBox(height: AppDimensions.spaceM),
                   CheckboxListTile(
                     title: Text(
                       'I agree to the terms and conditions',
@@ -146,7 +145,7 @@ class _ConsentFormPageState extends State<ConsentFormPage> {
                       });
                     },
                   ),
-                  SizedBox(height: AppDimensions.spaceL),
+                  const SizedBox(height: AppDimensions.spaceL),
                   BlocBuilder<ConsentBloc, ConsentState>(
                     builder: (context, state) {
                       final isSubmitting = state is ParentalKeySubmitting;

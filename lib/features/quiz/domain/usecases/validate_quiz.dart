@@ -6,9 +6,9 @@ import 'package:guardiancare/features/quiz/domain/repositories/quiz_repository.d
 
 /// Use case for validating quiz data
 class ValidateQuiz implements UseCase<bool, List<QuestionEntity>> {
-  final QuizRepository repository;
 
   ValidateQuiz(this.repository);
+  final QuizRepository repository;
 
   @override
   Future<Either<Failure, bool>> call(List<QuestionEntity> questions) async {

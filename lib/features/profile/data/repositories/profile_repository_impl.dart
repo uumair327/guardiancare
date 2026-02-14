@@ -8,9 +8,9 @@ import 'package:guardiancare/features/profile/domain/repositories/profile_reposi
 
 /// Implementation of ProfileRepository
 class ProfileRepositoryImpl implements ProfileRepository {
-  final ProfileRemoteDataSource remoteDataSource;
 
   ProfileRepositoryImpl({required this.remoteDataSource});
+  final ProfileRemoteDataSource remoteDataSource;
 
   @override
   Future<Either<Failure, ProfileEntity>> getProfile(String uid) async {
@@ -19,7 +19,7 @@ class ProfileRepositoryImpl implements ProfileRepository {
       return Right(profile);
     } on ServerException catch (e) {
       return Left(ServerFailure(e.message));
-    } catch (e) {
+    } on Object catch (e) {
       return Left(ServerFailure(ErrorStrings.withDetails(ErrorStrings.getProfileError, e.toString())));
     }
   }
@@ -32,7 +32,7 @@ class ProfileRepositoryImpl implements ProfileRepository {
       return const Right(null);
     } on ServerException catch (e) {
       return Left(ServerFailure(e.message));
-    } catch (e) {
+    } on Object catch (e) {
       return Left(ServerFailure(ErrorStrings.withDetails(ErrorStrings.updateProfileError, e.toString())));
     }
   }
@@ -44,7 +44,7 @@ class ProfileRepositoryImpl implements ProfileRepository {
       return const Right(null);
     } on ServerException catch (e) {
       return Left(ServerFailure(e.message));
-    } catch (e) {
+    } on Object catch (e) {
       return Left(ServerFailure(ErrorStrings.withDetails(ErrorStrings.deleteAccountError, e.toString())));
     }
   }
@@ -56,7 +56,7 @@ class ProfileRepositoryImpl implements ProfileRepository {
       return const Right(null);
     } on CacheException catch (e) {
       return Left(CacheFailure(e.message));
-    } catch (e) {
+    } on Object catch (e) {
       return Left(CacheFailure(ErrorStrings.withDetails(ErrorStrings.clearPreferencesError, e.toString())));
     }
   }

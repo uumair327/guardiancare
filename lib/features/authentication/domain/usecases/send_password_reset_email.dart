@@ -5,20 +5,20 @@ import 'package:guardiancare/core/usecases/usecase.dart';
 import 'package:guardiancare/features/authentication/domain/repositories/auth_repository.dart';
 
 class SendPasswordResetEmail extends UseCase<void, PasswordResetParams> {
-  final AuthRepository repository;
 
   SendPasswordResetEmail(this.repository);
+  final AuthRepository repository;
 
   @override
   Future<Either<Failure, void>> call(PasswordResetParams params) async {
-    return await repository.sendPasswordResetEmail(params.email);
+    return repository.sendPasswordResetEmail(params.email);
   }
 }
 
 class PasswordResetParams extends Equatable {
-  final String email;
 
   const PasswordResetParams({required this.email});
+  final String email;
 
   @override
   List<Object> get props => [email];

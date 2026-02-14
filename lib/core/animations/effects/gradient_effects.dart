@@ -9,11 +9,6 @@ import 'package:guardiancare/core/constants/app_colors.dart';
 /// - Multiple gradient types
 /// - Performance optimized
 class AnimatedGradientBackground extends StatefulWidget {
-  final List<Color> colors;
-  final Duration duration;
-  final Widget? child;
-  final AlignmentGeometry begin;
-  final AlignmentGeometry end;
 
   const AnimatedGradientBackground({
     super.key,
@@ -23,6 +18,11 @@ class AnimatedGradientBackground extends StatefulWidget {
     this.begin = Alignment.topLeft,
     this.end = Alignment.bottomRight,
   });
+  final List<Color> colors;
+  final Duration duration;
+  final Widget? child;
+  final AlignmentGeometry begin;
+  final AlignmentGeometry end;
 
   @override
   State<AnimatedGradientBackground> createState() =>
@@ -43,7 +43,7 @@ class _AnimatedGradientBackgroundState extends State<AnimatedGradientBackground>
       duration: widget.duration,
     );
 
-    _animation = Tween<double>(begin: 0.0, end: 1.0).animate(
+    _animation = Tween<double>(begin: 0, end: 1).animate(
       CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
     );
 
@@ -52,7 +52,7 @@ class _AnimatedGradientBackgroundState extends State<AnimatedGradientBackground>
         setState(() {
           _colorIndex = (_colorIndex + 1) % (widget.colors.length - 1);
         });
-        _controller.forward(from: 0.0);
+        _controller.forward(from: 0);
       }
     });
 
@@ -103,9 +103,6 @@ class _AnimatedGradientBackgroundState extends State<AnimatedGradientBackground>
 
 /// Mesh gradient effect for modern UI
 class MeshGradient extends StatelessWidget {
-  final List<Color> colors;
-  final double intensity;
-  final Widget? child;
 
   const MeshGradient({
     super.key,
@@ -113,6 +110,9 @@ class MeshGradient extends StatelessWidget {
     this.intensity = 0.5,
     this.child,
   });
+  final List<Color> colors;
+  final double intensity;
+  final Widget? child;
 
   @override
   Widget build(BuildContext context) {
@@ -129,13 +129,13 @@ class MeshGradient extends StatelessWidget {
 }
 
 class _MeshGradientPainter extends CustomPainter {
-  final List<Color> colors;
-  final double intensity;
 
   _MeshGradientPainter({
     required this.colors,
     required this.intensity,
   });
+  final List<Color> colors;
+  final double intensity;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -153,7 +153,7 @@ class _MeshGradientPainter extends CustomPainter {
       paint.shader = RadialGradient(
         colors: [
           colors[i].withValues(alpha: intensity),
-          colors[i].withValues(alpha: 0.0),
+          colors[i].withValues(alpha: 0),
         ],
       ).createShader(Rect.fromCircle(center: center, radius: radius));
 
@@ -169,10 +169,6 @@ class _MeshGradientPainter extends CustomPainter {
 
 /// Gradient border effect
 class GradientBorder extends StatelessWidget {
-  final Widget child;
-  final List<Color> colors;
-  final double borderWidth;
-  final BorderRadius? borderRadius;
 
   const GradientBorder({
     super.key,
@@ -181,6 +177,10 @@ class GradientBorder extends StatelessWidget {
     this.borderWidth = 2.0,
     this.borderRadius,
   });
+  final Widget child;
+  final List<Color> colors;
+  final double borderWidth;
+  final BorderRadius? borderRadius;
 
   @override
   Widget build(BuildContext context) {
@@ -213,11 +213,6 @@ class GradientBorder extends StatelessWidget {
 
 /// Shimmer gradient text effect
 class GradientText extends StatelessWidget {
-  final String text;
-  final TextStyle? style;
-  final List<Color> colors;
-  final AlignmentGeometry begin;
-  final AlignmentGeometry end;
 
   const GradientText({
     super.key,
@@ -227,6 +222,11 @@ class GradientText extends StatelessWidget {
     this.begin = Alignment.topLeft,
     this.end = Alignment.bottomRight,
   });
+  final String text;
+  final TextStyle? style;
+  final List<Color> colors;
+  final AlignmentGeometry begin;
+  final AlignmentGeometry end;
 
   @override
   Widget build(BuildContext context) {

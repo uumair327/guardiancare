@@ -33,6 +33,11 @@ abstract class AuthRepository {
   /// Send password reset email
   Future<Either<Failure, void>> sendPasswordResetEmail(String email);
 
+  /// Send email verification
+  Future<Either<Failure, void>> sendEmailVerification();
+
+  Future<Either<Failure, void>> reloadUser();
+
   /// Update user profile
   Future<Either<Failure, void>> updateUserProfile({
     String? displayName,

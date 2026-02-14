@@ -4,10 +4,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 /// Service for managing app locale/language
 /// Follows Clean Architecture - Infrastructure layer service
 class LocaleService {
-  static const String _localeKey = 'app_locale';
-  final SharedPreferences _prefs;
 
   LocaleService(this._prefs);
+  static const String _localeKey = 'app_locale';
+  final SharedPreferences _prefs;
 
   /// Get saved locale from storage
   Locale? getSavedLocale() {
@@ -27,12 +27,12 @@ class LocaleService {
     final localeCode = locale.countryCode != null
         ? '${locale.languageCode}_${locale.countryCode}'
         : locale.languageCode;
-    return await _prefs.setString(_localeKey, localeCode);
+    return _prefs.setString(_localeKey, localeCode);
   }
 
   /// Clear saved locale (will use system default)
   Future<bool> clearLocale() async {
-    return await _prefs.remove(_localeKey);
+    return _prefs.remove(_localeKey);
   }
 
   /// Get all supported locales
@@ -98,10 +98,6 @@ class LocaleService {
 
 /// Model class for locale information
 class LocaleInfo {
-  final Locale locale;
-  final String name;
-  final String nativeName;
-  final String flag;
 
   LocaleInfo({
     required this.locale,
@@ -109,6 +105,10 @@ class LocaleInfo {
     required this.nativeName,
     required this.flag,
   });
+  final Locale locale;
+  final String name;
+  final String nativeName;
+  final String flag;
 
   String get displayName => '$flag $nativeName';
   String get fullDisplayName => '$flag $nativeName ($name)';

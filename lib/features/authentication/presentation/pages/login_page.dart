@@ -6,7 +6,12 @@ import 'package:guardiancare/core/core.dart';
 import 'package:guardiancare/features/authentication/authentication.dart';
 
 /// Modern, education-friendly login page
-/// Features engaging animations, child-safe design, and welcoming visuals
+/// Features engaging animations, child-safe design, and welcoming visuals.
+///
+/// Supports multiple auth methods controlled by [BackendConfig] feature flags:
+/// - Email/Password (when [BackendConfig.enableEmailAuth] is true)
+/// - Google Sign-In (when [BackendConfig.enableGoogleSignIn] is true)
+/// - Apple Sign-In (when [BackendConfig.enableAppleSignIn] is true)
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
@@ -20,6 +25,12 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
   late Animation<double> _floatAnimation;
+
+  // Email/password form
+  final _formKey = GlobalKey<FormState>();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  bool _obscurePassword = true;
 
   @override
   void initState() {
@@ -38,10 +49,10 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
       duration: const Duration(milliseconds: 2000),
     )..repeat(reverse: true);
 
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+    _fadeAnimation = Tween<double>(begin: 0, end: 1).animate(
       CurvedAnimation(
         parent: _mainController,
-        curve: const Interval(0.0, 0.5, curve: Curves.easeOut),
+        curve: const Interval(0, 0.5, curve: Curves.easeOut),
       ),
     );
 
@@ -66,12 +77,12 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
   void dispose() {
     _mainController.dispose();
     _floatController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
     super.dispose();
   }
 
   /// Initiates Google Sign-In flow after user accepts terms and conditions.
-  ///
-  /// Shows terms dialog first, then triggers authentication if accepted.
   Future<void> _handleGoogleSignIn(BuildContext context) async {
     HapticFeedback.mediumImpact();
     final accepted = await TermsAndConditionsDialog.show(context);
@@ -80,10 +91,18 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
     }
   }
 
-  // NOTE: Skip functionality has been removed for production.
-  // Authentication is now required to access the app.
-  // If guest access is needed in the future, implement a proper
-  // guest user flow with limited permissions instead of bypassing auth.
+  /// Handles email/password sign-in after form validation.
+  void _handleEmailSignIn(BuildContext context) {
+    if (_formKey.currentState!.validate()) {
+      HapticFeedback.mediumImpact();
+      context.read<AuthBloc>().add(
+            SignInWithEmailRequested(
+              email: _emailController.text.trim(),
+              password: _passwordController.text,
+            ),
+          );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -95,23 +114,38 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
           body: BlocConsumer<AuthBloc, AuthState>(
             listener: (context, state) {
               if (state is AuthError) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Row(
-                      children: [
-                        Icon(Icons.error_outline_rounded,
-                            color: AppColors.white, size: 20),
-                        SizedBox(width: AppDimensions.spaceS),
-                        Expanded(child: Text(state.message)),
-                      ],
+                if (state.code == 'email-not-verified') {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(state.message),
+                      backgroundColor: AppColors.warning,
+                      duration: const Duration(seconds: 5),
+                      action: SnackBarAction(
+                        label: 'Verify',
+                        textColor: AppColors.white,
+                        onPressed: () => context.push('/email-verification'),
+                      ),
                     ),
-                    backgroundColor: AppColors.error,
-                    behavior: SnackBarBehavior.floating,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: AppDimensions.borderRadiusM,
+                  );
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Row(
+                        children: [
+                          const Icon(Icons.error_outline_rounded,
+                              color: AppColors.white, size: 20),
+                          const SizedBox(width: AppDimensions.spaceS),
+                          Expanded(child: Text(state.message)),
+                        ],
+                      ),
+                      backgroundColor: AppColors.error,
+                      behavior: SnackBarBehavior.floating,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: AppDimensions.borderRadiusM,
+                      ),
                     ),
-                  ),
-                );
+                  );
+                }
               } else if (state is AuthAuthenticated) {
                 context.go('/');
               }
@@ -159,7 +193,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                 gradient: RadialGradient(
                   colors: [
                     AppColors.primary.withValues(alpha: 0.15),
-                    AppColors.primary.withValues(alpha: 0.0),
+                    AppColors.primary.withValues(alpha: 0),
                   ],
                 ),
               ),
@@ -186,7 +220,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                 gradient: RadialGradient(
                   colors: [
                     AppColors.primary.withValues(alpha: 0.1),
-                    AppColors.primary.withValues(alpha: 0.0),
+                    AppColors.primary.withValues(alpha: 0),
                   ],
                 ),
               ),
@@ -203,17 +237,17 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
         mainAxisSize: MainAxisSize.min,
         children: [
           Container(
-            padding: EdgeInsets.all(AppDimensions.spaceL),
+            padding: const EdgeInsets.all(AppDimensions.spaceL),
             decoration: BoxDecoration(
               color: AppColors.primary.withValues(alpha: 0.1),
               shape: BoxShape.circle,
             ),
-            child: CircularProgressIndicator(
+            child: const CircularProgressIndicator(
               valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
               strokeWidth: 3,
             ),
           ),
-          SizedBox(height: AppDimensions.spaceL),
+          const SizedBox(height: AppDimensions.spaceL),
           Text(
             'Signing you in...',
             style: AppTextStyles.body1.copyWith(
@@ -231,7 +265,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
     return SingleChildScrollView(
       physics: const BouncingScrollPhysics(),
       child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: AppDimensions.screenPaddingH),
+        padding: const EdgeInsets.symmetric(horizontal: AppDimensions.screenPaddingH),
         child: AnimatedBuilder(
           animation: _mainController,
           builder: (context, child) {
@@ -245,15 +279,15 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
           },
           child: Column(
             children: [
-              SizedBox(height: AppDimensions.spaceXL),
+              const SizedBox(height: AppDimensions.spaceXL),
               _buildHeader(l10n),
-              SizedBox(height: AppDimensions.spaceXL),
+              const SizedBox(height: AppDimensions.spaceL),
               _buildIllustration(),
-              SizedBox(height: AppDimensions.spaceXL),
+              const SizedBox(height: AppDimensions.spaceL),
               _buildWelcomeCard(context, l10n),
-              SizedBox(height: AppDimensions.spaceL),
+              const SizedBox(height: AppDimensions.spaceL),
               _buildFeaturesList(l10n),
-              SizedBox(height: AppDimensions.spaceXXL),
+              const SizedBox(height: AppDimensions.spaceXXL),
             ],
           ),
         ),
@@ -264,12 +298,11 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
   /// Builds the header section with app branding.
   Widget _buildHeader(AppLocalizations l10n) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
       children: [
         Container(
-          padding: EdgeInsets.all(8),
+          padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            gradient: LinearGradient(
+            gradient: const LinearGradient(
               colors: [AppColors.primary, AppColors.primaryDark],
             ),
             borderRadius: AppDimensions.borderRadiusM,
@@ -281,13 +314,13 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
               ),
             ],
           ),
-          child: Icon(
+          child: const Icon(
             Icons.shield_rounded,
             color: AppColors.white,
             size: 24,
           ),
         ),
-        SizedBox(width: AppDimensions.spaceS),
+        const SizedBox(width: AppDimensions.spaceS),
         Text(
           AppStrings.appName,
           style: AppTextStyles.h4.copyWith(
@@ -295,9 +328,6 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
             fontWeight: FontWeight.bold,
           ),
         ),
-        // NOTE: Skip button removed - authentication is required for production.
-        // To re-enable guest access, add a proper guest user implementation
-        // with appropriate permission restrictions.
       ],
     );
   }
@@ -312,20 +342,20 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
         );
       },
       child: SizedBox(
-        height: 200,
+        height: 160,
         child: Stack(
           alignment: Alignment.center,
           children: [
             // Background glow
             Container(
-              width: 180,
-              height: 180,
+              width: 140,
+              height: 140,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 gradient: RadialGradient(
                   colors: [
                     AppColors.primary.withValues(alpha: 0.15),
-                    AppColors.primary.withValues(alpha: 0.0),
+                    AppColors.primary.withValues(alpha: 0),
                   ],
                 ),
               ),
@@ -333,8 +363,8 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
             // Logo
             Image.asset(
               AppAssets.logo,
-              width: 140,
-              height: 140,
+              width: 110,
+              height: 110,
             ),
           ],
         ),
@@ -345,7 +375,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
   Widget _buildWelcomeCard(BuildContext context, AppLocalizations l10n) {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.all(AppDimensions.spaceL),
+      padding: const EdgeInsets.all(AppDimensions.spaceL),
       decoration: BoxDecoration(
         color: context.colors.surface,
         borderRadius: AppDimensions.borderRadiusXL,
@@ -367,7 +397,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
               fontWeight: FontWeight.bold,
             ),
           ),
-          SizedBox(height: AppDimensions.spaceXS),
+          const SizedBox(height: AppDimensions.spaceXS),
           Text(
             'Join us in keeping children safe',
             style: AppTextStyles.body2.copyWith(
@@ -375,30 +405,259 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
             ),
             textAlign: TextAlign.center,
           ),
-          SizedBox(height: AppDimensions.spaceL),
+          const SizedBox(height: AppDimensions.spaceL),
+
+          // Email/Password Sign-In Form
+          if (BackendConfig.enableEmailAuth) ...[
+            _buildEmailSignInForm(context),
+            const SizedBox(height: AppDimensions.spaceM),
+          ],
+
+          // Divider between auth methods
+          if (BackendConfig.enableEmailAuth &&
+              BackendConfig.enableGoogleSignIn) ...[
+            _buildDivider(),
+            const SizedBox(height: AppDimensions.spaceM),
+          ],
+
           // Google Sign In Button
-          _buildGoogleSignInButton(context),
-          SizedBox(height: AppDimensions.spaceM),
+          if (BackendConfig.enableGoogleSignIn) ...[
+            _buildGoogleSignInButton(context),
+            const SizedBox(height: AppDimensions.spaceM),
+          ],
+
           // Info text
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
+              const Icon(
                 Icons.lock_rounded,
                 size: 14,
                 color: AppColors.textSecondary,
               ),
-              SizedBox(width: AppDimensions.spaceXS),
+              const SizedBox(width: AppDimensions.spaceXS),
               Text(
-                'Secure sign-in with Google',
+                'Secure sign-in',
                 style: AppTextStyles.caption.copyWith(
                   color: AppColors.textSecondary,
                 ),
               ),
             ],
           ),
+
+          // Create Account link (only when email auth is enabled)
+          if (BackendConfig.enableEmailAuth) ...[
+            const SizedBox(height: AppDimensions.spaceM),
+            _buildCreateAccountLink(context),
+          ],
         ],
       ),
+    );
+  }
+
+  /// Builds the email/password sign-in form.
+  Widget _buildEmailSignInForm(BuildContext context) {
+    return Form(
+      key: _formKey,
+      child: Column(
+        children: [
+          // Email field
+          TextFormField(
+            controller: _emailController,
+            keyboardType: TextInputType.emailAddress,
+            textInputAction: TextInputAction.next,
+            decoration: InputDecoration(
+              labelText: 'Email',
+              hintText: 'Enter your email',
+              prefixIcon: Icon(
+                Icons.email_outlined,
+                color: AppColors.primary.withValues(alpha: 0.7),
+              ),
+              border: OutlineInputBorder(
+                borderRadius: AppDimensions.borderRadiusM,
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: AppDimensions.borderRadiusM,
+                borderSide: const BorderSide(
+                  color: AppColors.gray200,
+                  width: 1.5,
+                ),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: AppDimensions.borderRadiusM,
+                borderSide: const BorderSide(
+                  color: AppColors.primary,
+                  width: 2,
+                ),
+              ),
+              filled: true,
+              fillColor: context.colors.background,
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: AppDimensions.spaceM,
+                vertical: AppDimensions.spaceM,
+              ),
+            ),
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Please enter your email';
+              }
+              if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
+                  .hasMatch(value)) {
+                return 'Please enter a valid email';
+              }
+              return null;
+            },
+            onTapOutside: (_) => FocusManager.instance.primaryFocus?.unfocus(),
+          ),
+          const SizedBox(height: AppDimensions.spaceM),
+
+          // Password field
+          TextFormField(
+            controller: _passwordController,
+            obscureText: _obscurePassword,
+            textInputAction: TextInputAction.done,
+            onFieldSubmitted: (_) => _handleEmailSignIn(context),
+            decoration: InputDecoration(
+              labelText: 'Password',
+              hintText: 'Enter your password',
+              prefixIcon: Icon(
+                Icons.lock_outline,
+                color: AppColors.primary.withValues(alpha: 0.7),
+              ),
+              suffixIcon: IconButton(
+                icon: Icon(
+                  _obscurePassword
+                      ? Icons.visibility_off_outlined
+                      : Icons.visibility_outlined,
+                  color: AppColors.textSecondary,
+                ),
+                onPressed: () {
+                  setState(() {
+                    _obscurePassword = !_obscurePassword;
+                  });
+                },
+              ),
+              border: OutlineInputBorder(
+                borderRadius: AppDimensions.borderRadiusM,
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: AppDimensions.borderRadiusM,
+                borderSide: const BorderSide(
+                  color: AppColors.gray200,
+                  width: 1.5,
+                ),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: AppDimensions.borderRadiusM,
+                borderSide: const BorderSide(
+                  color: AppColors.primary,
+                  width: 2,
+                ),
+              ),
+              filled: true,
+              fillColor: context.colors.background,
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: AppDimensions.spaceM,
+                vertical: AppDimensions.spaceM,
+              ),
+            ),
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Please enter your password';
+              }
+              if (value.length < 6) {
+                return 'Password must be at least 6 characters';
+              }
+              return null;
+            },
+            onTapOutside: (_) => FocusManager.instance.primaryFocus?.unfocus(),
+          ),
+
+          // Forgot Password link
+          Align(
+            alignment: Alignment.centerRight,
+            child: TextButton(
+              onPressed: () => context.push('/password-reset'),
+              style: TextButton.styleFrom(
+                padding: const EdgeInsets.symmetric(
+                  vertical: AppDimensions.spaceXS,
+                ),
+              ),
+              child: Text(
+                'Forgot Password?',
+                style: AppTextStyles.caption.copyWith(
+                  color: AppColors.primary,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: AppDimensions.spaceS),
+
+          // Sign In button
+          ScaleTapWidget(
+            onTap: () => _handleEmailSignIn(context),
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(vertical: AppDimensions.spaceM),
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: [AppColors.primary, AppColors.primaryDark],
+                ),
+                borderRadius: AppDimensions.borderRadiusM,
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColors.primary.withValues(alpha: 0.3),
+                    blurRadius: 12,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: Center(
+                child: Text(
+                  'Sign In',
+                  style: AppTextStyles.button.copyWith(
+                    color: AppColors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Builds the divider between auth methods.
+  Widget _buildDivider() {
+    return Row(
+      children: [
+        const Expanded(
+          child: Divider(
+            color: AppColors.gray200,
+            thickness: 1,
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: AppDimensions.spaceM),
+          child: Text(
+            'OR',
+            style: AppTextStyles.caption.copyWith(
+              color: AppColors.textSecondary,
+              fontWeight: FontWeight.w600,
+              letterSpacing: 1.2,
+            ),
+          ),
+        ),
+        const Expanded(
+          child: Divider(
+            color: AppColors.gray200,
+            thickness: 1,
+          ),
+        ),
+      ],
     );
   }
 
@@ -407,7 +666,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
       onTap: () => _handleGoogleSignIn(context),
       child: Container(
         width: double.infinity,
-        padding: EdgeInsets.symmetric(vertical: AppDimensions.spaceM),
+        padding: const EdgeInsets.symmetric(vertical: AppDimensions.spaceM),
         decoration: BoxDecoration(
           color: AppColors.white,
           borderRadius: AppDimensions.borderRadiusM,
@@ -439,7 +698,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                 width: 20,
                 height: 20,
                 errorBuilder: (context, error, stackTrace) {
-                  return Icon(
+                  return const Icon(
                     Icons.g_mobiledata_rounded,
                     color: AppColors.primary,
                     size: 24,
@@ -447,7 +706,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                 },
               ),
             ),
-            SizedBox(width: AppDimensions.spaceM),
+            const SizedBox(width: AppDimensions.spaceM),
             Text(
               'Continue with Google',
               style: AppTextStyles.button.copyWith(
@@ -461,21 +720,45 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
     );
   }
 
+  /// Builds the 'Create Account' link.
+  Widget _buildCreateAccountLink(BuildContext context) {
+    return TextButton(
+      onPressed: () => context.push('/signup'),
+      child: Text.rich(
+        TextSpan(
+          text: "Don't have an account? ",
+          style: AppTextStyles.bodySmall.copyWith(
+            color: context.colors.textSecondary,
+          ),
+          children: const [
+            TextSpan(
+              text: 'Create Account',
+              style: TextStyle(
+                color: AppColors.primary,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildFeaturesList(AppLocalizations l10n) {
     final features = [
-      _FeatureItem(
+      const _FeatureItem(
         icon: Icons.school_rounded,
         title: 'Learn Safety',
         description: 'Educational content for children',
         color: AppColors.cardEmerald,
       ),
-      _FeatureItem(
+      const _FeatureItem(
         icon: Icons.forum_rounded,
         title: 'Community',
         description: 'Connect with other parents',
         color: AppColors.videoPrimary,
       ),
-      _FeatureItem(
+      const _FeatureItem(
         icon: Icons.emergency_rounded,
         title: 'Emergency Help',
         description: 'Quick access to helplines',
@@ -487,7 +770,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: EdgeInsets.only(left: AppDimensions.spaceXS),
+          padding: const EdgeInsets.only(left: AppDimensions.spaceXS),
           child: Text(
             'What you can do',
             style: AppTextStyles.h5.copyWith(
@@ -496,7 +779,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
             ),
           ),
         ),
-        SizedBox(height: AppDimensions.spaceM),
+        const SizedBox(height: AppDimensions.spaceM),
         ...features.asMap().entries.map((entry) {
           return FadeSlideWidget(
             delay: Duration(milliseconds: 600 + (entry.key * 100)),
@@ -509,8 +792,8 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
 
   Widget _buildFeatureCard(_FeatureItem feature) {
     return Container(
-      margin: EdgeInsets.only(bottom: AppDimensions.spaceS),
-      padding: EdgeInsets.all(AppDimensions.spaceM),
+      margin: const EdgeInsets.only(bottom: AppDimensions.spaceS),
+      padding: const EdgeInsets.all(AppDimensions.spaceM),
       decoration: BoxDecoration(
         color: context.colors.surface,
         borderRadius: AppDimensions.borderRadiusL,
@@ -521,7 +804,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
       child: Row(
         children: [
           Container(
-            padding: EdgeInsets.all(AppDimensions.spaceS),
+            padding: const EdgeInsets.all(AppDimensions.spaceS),
             decoration: BoxDecoration(
               color: feature.color.withValues(alpha: 0.1),
               borderRadius: AppDimensions.borderRadiusM,
@@ -532,7 +815,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
               size: 24,
             ),
           ),
-          SizedBox(width: AppDimensions.spaceM),
+          const SizedBox(width: AppDimensions.spaceM),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -553,7 +836,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
               ],
             ),
           ),
-          Icon(
+          const Icon(
             Icons.arrow_forward_ios_rounded,
             size: 16,
             color: AppColors.textSecondary,
@@ -565,10 +848,6 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
 }
 
 class _FeatureItem {
-  final IconData icon;
-  final String title;
-  final String description;
-  final Color color;
 
   const _FeatureItem({
     required this.icon,
@@ -576,4 +855,8 @@ class _FeatureItem {
     required this.description,
     required this.color,
   });
+  final IconData icon;
+  final String title;
+  final String description;
+  final Color color;
 }

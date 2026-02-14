@@ -27,7 +27,7 @@ class FirebaseAnalyticsAdapter implements IAnalyticsService {
     try {
       await _analytics.setAnalyticsCollectionEnabled(enabled);
       return const BackendResult.success(null);
-    } catch (e, st) {
+    } on Exception catch (e, st) {
       return BackendResult.failure(BackendError.fromException(e, st));
     }
   }
@@ -38,7 +38,7 @@ class FirebaseAnalyticsAdapter implements IAnalyticsService {
     try {
       await _analytics.setUserId(id: userId);
       return const BackendResult.success(null);
-    } catch (e, st) {
+    } on Exception catch (e, st) {
       return BackendResult.failure(BackendError.fromException(e, st));
     }
   }
@@ -51,7 +51,7 @@ class FirebaseAnalyticsAdapter implements IAnalyticsService {
     try {
       await _analytics.setUserProperty(name: name, value: value);
       return const BackendResult.success(null);
-    } catch (e, st) {
+    } on Exception catch (e, st) {
       return BackendResult.failure(BackendError.fromException(e, st));
     }
   }
@@ -68,7 +68,7 @@ class FirebaseAnalyticsAdapter implements IAnalyticsService {
         );
       }
       return const BackendResult.success(null);
-    } catch (e, st) {
+    } on Exception catch (e, st) {
       return BackendResult.failure(BackendError.fromException(e, st));
     }
   }
@@ -76,10 +76,10 @@ class FirebaseAnalyticsAdapter implements IAnalyticsService {
   @override
   Future<BackendResult<void>> clearUserData() async {
     try {
-      await _analytics.setUserId(id: null);
+      await _analytics.setUserId();
       await _analytics.resetAnalyticsData();
       return const BackendResult.success(null);
-    } catch (e, st) {
+    } on Exception catch (e, st) {
       return BackendResult.failure(BackendError.fromException(e, st));
     }
   }
@@ -96,7 +96,7 @@ class FirebaseAnalyticsAdapter implements IAnalyticsService {
         parameters: _sanitizeParameters(parameters),
       );
       return const BackendResult.success(null);
-    } catch (e, st) {
+    } on Exception catch (e, st) {
       return BackendResult.failure(BackendError.fromException(e, st));
     }
   }
@@ -112,7 +112,7 @@ class FirebaseAnalyticsAdapter implements IAnalyticsService {
         screenClass: screenClass,
       );
       return const BackendResult.success(null);
-    } catch (e, st) {
+    } on Exception catch (e, st) {
       return BackendResult.failure(BackendError.fromException(e, st));
     }
   }
@@ -122,7 +122,7 @@ class FirebaseAnalyticsAdapter implements IAnalyticsService {
     try {
       await _analytics.logLogin(loginMethod: method);
       return const BackendResult.success(null);
-    } catch (e, st) {
+    } on Exception catch (e, st) {
       return BackendResult.failure(BackendError.fromException(e, st));
     }
   }
@@ -132,7 +132,7 @@ class FirebaseAnalyticsAdapter implements IAnalyticsService {
     try {
       await _analytics.logSignUp(signUpMethod: method);
       return const BackendResult.success(null);
-    } catch (e, st) {
+    } on Exception catch (e, st) {
       return BackendResult.failure(BackendError.fromException(e, st));
     }
   }
@@ -142,7 +142,7 @@ class FirebaseAnalyticsAdapter implements IAnalyticsService {
     try {
       await _analytics.logSearch(searchTerm: searchTerm);
       return const BackendResult.success(null);
-    } catch (e, st) {
+    } on Exception catch (e, st) {
       return BackendResult.failure(BackendError.fromException(e, st));
     }
   }
@@ -160,7 +160,7 @@ class FirebaseAnalyticsAdapter implements IAnalyticsService {
         method: method ?? 'unknown',
       );
       return const BackendResult.success(null);
-    } catch (e, st) {
+    } on Exception catch (e, st) {
       return BackendResult.failure(BackendError.fromException(e, st));
     }
   }
@@ -176,7 +176,7 @@ class FirebaseAnalyticsAdapter implements IAnalyticsService {
         itemId: itemId,
       );
       return const BackendResult.success(null);
-    } catch (e, st) {
+    } on Exception catch (e, st) {
       return BackendResult.failure(BackendError.fromException(e, st));
     }
   }
@@ -187,7 +187,7 @@ class FirebaseAnalyticsAdapter implements IAnalyticsService {
     try {
       await _analytics.logAppOpen();
       return const BackendResult.success(null);
-    } catch (e, st) {
+    } on Exception catch (e, st) {
       return BackendResult.failure(BackendError.fromException(e, st));
     }
   }
@@ -197,7 +197,7 @@ class FirebaseAnalyticsAdapter implements IAnalyticsService {
     try {
       await _analytics.logTutorialBegin();
       return const BackendResult.success(null);
-    } catch (e, st) {
+    } on Exception catch (e, st) {
       return BackendResult.failure(BackendError.fromException(e, st));
     }
   }
@@ -207,7 +207,7 @@ class FirebaseAnalyticsAdapter implements IAnalyticsService {
     try {
       await _analytics.logTutorialComplete();
       return const BackendResult.success(null);
-    } catch (e, st) {
+    } on Exception catch (e, st) {
       return BackendResult.failure(BackendError.fromException(e, st));
     }
   }
@@ -230,7 +230,7 @@ class FirebaseAnalyticsAdapter implements IAnalyticsService {
         ],
       );
       return const BackendResult.success(null);
-    } catch (e, st) {
+    } on Exception catch (e, st) {
       return BackendResult.failure(BackendError.fromException(e, st));
     }
   }
@@ -246,7 +246,7 @@ class FirebaseAnalyticsAdapter implements IAnalyticsService {
         itemListName: itemListName,
       );
       return const BackendResult.success(null);
-    } catch (e, st) {
+    } on Exception catch (e, st) {
       return BackendResult.failure(BackendError.fromException(e, st));
     }
   }
@@ -273,7 +273,7 @@ class FirebaseAnalyticsAdapter implements IAnalyticsService {
         },
       );
       return const BackendResult.success(null);
-    } catch (e, st) {
+    } on Exception catch (e, st) {
       return BackendResult.failure(BackendError.fromException(e, st));
     }
   }

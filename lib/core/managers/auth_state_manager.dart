@@ -31,17 +31,17 @@ abstract class AuthStateManager {
 ///
 /// Following: DIP (Dependency Inversion Principle)
 class AuthStateManagerImpl implements AuthStateManager {
+
+  AuthStateManagerImpl({required IAuthService authService})
+      : _authService = authService {
+    _init();
+  }
   final IAuthService _authService;
   final StreamController<AuthStateEvent> _eventController =
       StreamController<AuthStateEvent>.broadcast();
 
   StreamSubscription<BackendUser?>? _authSubscription;
   BackendUser? _currentUser;
-
-  AuthStateManagerImpl({required IAuthService authService})
-      : _authService = authService {
-    _init();
-  }
 
   void _init() {
     _currentUser = _authService.currentUser;

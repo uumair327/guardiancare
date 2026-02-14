@@ -6,10 +6,6 @@ import 'progress_indicator.dart';
 /// Modern result card for quiz completion
 /// Shows score with animations and encouraging feedback
 class ResultCard extends StatefulWidget {
-  final int correctAnswers;
-  final int totalQuestions;
-  final VoidCallback? onRetry;
-  final VoidCallback? onBack;
 
   const ResultCard({
     super.key,
@@ -18,6 +14,10 @@ class ResultCard extends StatefulWidget {
     this.onRetry,
     this.onBack,
   });
+  final int correctAnswers;
+  final int totalQuestions;
+  final VoidCallback? onRetry;
+  final VoidCallback? onBack;
 
   @override
   State<ResultCard> createState() => _ResultCardState();
@@ -38,24 +38,24 @@ class _ResultCardState extends State<ResultCard>
       duration: AppDurations.animationLong,
     );
 
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+    _fadeAnimation = Tween<double>(begin: 0, end: 1).animate(
       CurvedAnimation(
         parent: _controller,
-        curve: const Interval(0.0, 0.5, curve: Curves.easeOut),
+        curve: const Interval(0, 0.5, curve: Curves.easeOut),
       ),
     );
 
-    _scaleAnimation = Tween<double>(begin: 0.8, end: 1.0).animate(
+    _scaleAnimation = Tween<double>(begin: 0.8, end: 1).animate(
       CurvedAnimation(
         parent: _controller,
         curve: const Interval(0.2, 0.7, curve: Curves.elasticOut),
       ),
     );
 
-    _slideAnimation = Tween<double>(begin: 30.0, end: 0.0).animate(
+    _slideAnimation = Tween<double>(begin: 30, end: 0).animate(
       CurvedAnimation(
         parent: _controller,
-        curve: const Interval(0.3, 1.0, curve: Curves.easeOutCubic),
+        curve: const Interval(0.3, 1, curve: Curves.easeOutCubic),
       ),
     );
 
@@ -111,7 +111,7 @@ class _ResultCardState extends State<ResultCard>
           );
         },
         child: Container(
-          padding: EdgeInsets.all(AppDimensions.spaceXL),
+          padding: const EdgeInsets.all(AppDimensions.spaceXL),
           decoration: BoxDecoration(
             color: context.colors.surface,
             borderRadius: AppDimensions.borderRadiusXL,
@@ -128,7 +128,7 @@ class _ResultCardState extends State<ResultCard>
             children: [
               // Trophy icon
               Container(
-                padding: EdgeInsets.all(AppDimensions.spaceL),
+                padding: const EdgeInsets.all(AppDimensions.spaceL),
                 decoration: BoxDecoration(
                   color: _resultColor.withValues(alpha: 0.1),
                   shape: BoxShape.circle,
@@ -141,7 +141,7 @@ class _ResultCardState extends State<ResultCard>
                   size: AppDimensions.iconXXL,
                 ),
               ),
-              SizedBox(height: AppDimensions.spaceL),
+              const SizedBox(height: AppDimensions.spaceL),
               // Feedback title
               Text(
                 _feedbackTitle,
@@ -150,14 +150,14 @@ class _ResultCardState extends State<ResultCard>
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              SizedBox(height: AppDimensions.spaceS),
+              const SizedBox(height: AppDimensions.spaceS),
               Text(
                 _feedbackMessage,
                 style: AppTextStyles.body1.copyWith(
                   color: context.colors.textSecondary,
                 ),
               ),
-              SizedBox(height: AppDimensions.spaceXL),
+              const SizedBox(height: AppDimensions.spaceXL),
               // Circular progress
               QuizCircularProgress(
                 progress: _percentage,
@@ -183,10 +183,10 @@ class _ResultCardState extends State<ResultCard>
                   ],
                 ),
               ),
-              SizedBox(height: AppDimensions.spaceL),
+              const SizedBox(height: AppDimensions.spaceL),
               // Score details
               Container(
-                padding: EdgeInsets.all(AppDimensions.spaceM),
+                padding: const EdgeInsets.all(AppDimensions.spaceM),
                 decoration: BoxDecoration(
                   color: context.colors.background,
                   borderRadius: AppDimensions.borderRadiusM,
@@ -225,7 +225,7 @@ class _ResultCardState extends State<ResultCard>
                   ],
                 ),
               ),
-              SizedBox(height: AppDimensions.spaceXL),
+              const SizedBox(height: AppDimensions.spaceXL),
               // Action buttons
               Row(
                 children: [
@@ -234,7 +234,7 @@ class _ResultCardState extends State<ResultCard>
                       child: ScaleTapWidget(
                         onTap: widget.onRetry,
                         child: Container(
-                          padding: EdgeInsets.symmetric(
+                          padding: const EdgeInsets.symmetric(
                             vertical: AppDimensions.spaceM,
                           ),
                           decoration: BoxDecoration(
@@ -256,13 +256,13 @@ class _ResultCardState extends State<ResultCard>
                       ),
                     ),
                   if (widget.onRetry != null && widget.onBack != null)
-                    SizedBox(width: AppDimensions.spaceM),
+                    const SizedBox(width: AppDimensions.spaceM),
                   if (widget.onBack != null)
                     Expanded(
                       child: ScaleTapWidget(
                         onTap: widget.onBack,
                         child: Container(
-                          padding: EdgeInsets.symmetric(
+                          padding: const EdgeInsets.symmetric(
                             vertical: AppDimensions.spaceM,
                           ),
                           decoration: BoxDecoration(
@@ -308,7 +308,7 @@ class _ResultCardState extends State<ResultCard>
     return Column(
       children: [
         Icon(icon, color: color, size: AppDimensions.iconS),
-        SizedBox(height: AppDimensions.spaceXS),
+        const SizedBox(height: AppDimensions.spaceXS),
         Text(
           value,
           style: AppTextStyles.h4.copyWith(

@@ -8,9 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:guardiancare/core/core.dart';
-import 'package:guardiancare/core/backend/backend.dart';
-import 'package:guardiancare/features/features.dart';
 import 'package:guardiancare/core/di/di.dart' as di;
+import 'package:guardiancare/features/features.dart';
 
 import 'firebase_options.dart';
 
@@ -32,7 +31,7 @@ void main() async {
     await Firebase.initializeApp(
         options: DefaultFirebaseOptions.currentPlatform);
     debugPrint('Firebase initialized successfully');
-  } catch (e) {
+  } on Object catch (e) {
     if (e.toString().contains('duplicate-app')) {
       debugPrint('Firebase already initialized, skipping...');
     } else {
@@ -47,7 +46,7 @@ void main() async {
     if (supabaseInitialized) {
       debugPrint('Supabase initialized successfully');
     }
-  } catch (e) {
+  } on Object catch (e) {
     debugPrint('Supabase initialization failed: $e');
     // Don't rethrow - allow app to continue with Firebase fallback
     // In production, you may want to handle this differently

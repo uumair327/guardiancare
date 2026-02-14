@@ -4,25 +4,26 @@
 import 'package:flutter/widgets.dart';
 
 class PdfDocument {
+  PdfDocument._();
+
   static Future<PdfDocument> openData(dynamic data) async {
     throw UnsupportedError('PDF viewing not supported on web');
   }
 }
 
 class PdfControllerPinch {
-  PdfControllerPinch({required Future<PdfDocument> document});
+  PdfControllerPinch();
   void dispose() {}
 }
 
 class PdfViewPinch extends StatelessWidget {
-  final PdfControllerPinch controller;
-  final Axis scrollDirection;
-
   const PdfViewPinch({
     super.key,
     required this.controller,
     this.scrollDirection = Axis.vertical,
   });
+  final PdfControllerPinch controller;
+  final Axis scrollDirection;
 
   @override
   Widget build(BuildContext context) {

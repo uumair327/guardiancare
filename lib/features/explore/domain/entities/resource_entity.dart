@@ -2,10 +2,6 @@ import 'package:equatable/equatable.dart';
 
 /// Resource entity representing an educational resource
 class ResourceEntity extends Equatable {
-  final String title;
-  final String url;
-  final String type; // 'pdf', 'link', 'video', etc.
-  final DateTime? timestamp;
 
   const ResourceEntity({
     required this.title,
@@ -13,6 +9,10 @@ class ResourceEntity extends Equatable {
     required this.type,
     this.timestamp,
   });
+  final String title;
+  final String url;
+  final String type; // 'pdf', 'link', 'video', etc.
+  final DateTime? timestamp;
 
   @override
   List<Object?> get props => [title, url, type, timestamp];

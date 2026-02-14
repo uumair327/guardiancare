@@ -19,9 +19,9 @@ class LearnLoading extends LearnState {}
 /// Categories loaded successfully
 /// Requirements: 3.1 - Categories fetched through LearnBloc/LearnRepository
 class CategoriesLoaded extends LearnState {
-  final List<CategoryEntity> categories;
 
   const CategoriesLoaded(this.categories);
+  final List<CategoryEntity> categories;
 
   @override
   List<Object> get props => [categories];
@@ -29,9 +29,9 @@ class CategoriesLoaded extends LearnState {
 
 /// Videos loading state
 class VideosLoading extends LearnState {
-  final String categoryName;
 
   const VideosLoading(this.categoryName);
+  final String categoryName;
 
   @override
   List<Object> get props => [categoryName];
@@ -40,10 +40,10 @@ class VideosLoading extends LearnState {
 /// Videos loaded successfully
 /// Requirements: 3.2 - Videos fetched through LearnBloc/LearnRepository
 class VideosLoaded extends LearnState {
-  final String categoryName;
-  final List<VideoEntity> videos;
 
   const VideosLoaded(this.categoryName, this.videos);
+  final String categoryName;
+  final List<VideoEntity> videos;
 
   @override
   List<Object> get props => [categoryName, videos];
@@ -51,10 +51,10 @@ class VideosLoaded extends LearnState {
 
 /// Error state
 class LearnError extends LearnState {
-  final String message;
-  final bool canRetry;
 
   const LearnError(this.message, {this.canRetry = true});
+  final String message;
+  final bool canRetry;
 
   @override
   List<Object> get props => [message, canRetry];

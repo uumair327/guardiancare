@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 
 /// Parallax scroll effect for depth perception
 /// 
@@ -9,9 +8,6 @@ import 'package:flutter/rendering.dart';
 /// - Works with any scrollable
 /// - Performance optimized
 class ParallaxScrollEffect extends StatelessWidget {
-  final Widget child;
-  final double parallaxFactor;
-  final GlobalKey backgroundKey;
 
   const ParallaxScrollEffect({
     super.key,
@@ -19,6 +15,9 @@ class ParallaxScrollEffect extends StatelessWidget {
     required this.backgroundKey,
     this.parallaxFactor = 0.5,
   });
+  final Widget child;
+  final double parallaxFactor;
+  final GlobalKey backgroundKey;
 
   @override
   Widget build(BuildContext context) {
@@ -37,10 +36,6 @@ class ParallaxScrollEffect extends StatelessWidget {
 }
 
 class _ParallaxFlowDelegate extends FlowDelegate {
-  final ScrollableState scrollable;
-  final BuildContext listItemContext;
-  final GlobalKey backgroundImageKey;
-  final double parallaxFactor;
 
   _ParallaxFlowDelegate({
     required this.scrollable,
@@ -48,6 +43,10 @@ class _ParallaxFlowDelegate extends FlowDelegate {
     required this.backgroundImageKey,
     required this.parallaxFactor,
   }) : super(repaint: scrollable.position);
+  final ScrollableState scrollable;
+  final BuildContext listItemContext;
+  final GlobalKey backgroundImageKey;
+  final double parallaxFactor;
 
   @override
   BoxConstraints getConstraintsForChild(int i, BoxConstraints constraints) {
@@ -66,7 +65,7 @@ class _ParallaxFlowDelegate extends FlowDelegate {
     final viewportDimension = scrollable.position.viewportDimension;
     final scrollFraction = (listItemOffset.dy / viewportDimension).clamp(0.0, 1.0);
 
-    final verticalAlignment = Alignment(0.0, scrollFraction * 2 - 1);
+    final verticalAlignment = Alignment(0, scrollFraction * 2 - 1);
 
     final backgroundSize =
         (backgroundImageKey.currentContext!.findRenderObject() as RenderBox).size;
@@ -79,7 +78,7 @@ class _ParallaxFlowDelegate extends FlowDelegate {
     context.paintChild(
       0,
       transform: Transform.translate(
-        offset: Offset(0.0, childRect.top * parallaxFactor),
+        offset: Offset(0, childRect.top * parallaxFactor),
       ).transform,
     );
   }
@@ -95,10 +94,6 @@ class _ParallaxFlowDelegate extends FlowDelegate {
 
 /// Simple parallax container for header images
 class ParallaxHeader extends StatelessWidget {
-  final Widget child;
-  final double height;
-  final double parallaxFactor;
-  final ScrollController? scrollController;
 
   const ParallaxHeader({
     super.key,
@@ -107,6 +102,10 @@ class ParallaxHeader extends StatelessWidget {
     this.parallaxFactor = 0.5,
     this.scrollController,
   });
+  final Widget child;
+  final double height;
+  final double parallaxFactor;
+  final ScrollController? scrollController;
 
   @override
   Widget build(BuildContext context) {
@@ -129,9 +128,6 @@ class ParallaxHeader extends StatelessWidget {
 
 /// Parallax layer for multi-layer depth effects
 class ParallaxLayer extends StatefulWidget {
-  final Widget child;
-  final double depth; // 0.0 = foreground, 1.0 = background
-  final Offset baseOffset;
 
   const ParallaxLayer({
     super.key,
@@ -139,6 +135,9 @@ class ParallaxLayer extends StatefulWidget {
     this.depth = 0.5,
     this.baseOffset = Offset.zero,
   });
+  final Widget child;
+  final double depth; // 0.0 = foreground, 1.0 = background
+  final Offset baseOffset;
 
   @override
   State<ParallaxLayer> createState() => _ParallaxLayerState();

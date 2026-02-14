@@ -12,13 +12,13 @@ import 'package:guardiancare/features/quiz/domain/services/youtube_search_servic
 /// 
 /// Requirements: 4.4
 class RecommendationUseCaseParams extends Equatable {
-  final List<String> categories;
-  final String userId;
 
   const RecommendationUseCaseParams({
     required this.categories,
     required this.userId,
   });
+  final List<String> categories;
+  final String userId;
 
   @override
   List<Object> get props => [categories, userId];
@@ -26,15 +26,15 @@ class RecommendationUseCaseParams extends Equatable {
 
 /// Result of the recommendation generation process
 class RecommendationResult extends Equatable {
-  final int savedCount;
-  final int failedCount;
-  final List<String> errors;
 
   const RecommendationResult({
     required this.savedCount,
     required this.failedCount,
     this.errors = const [],
   });
+  final int savedCount;
+  final int failedCount;
+  final List<String> errors;
 
   @override
   List<Object> get props => [savedCount, failedCount, errors];
@@ -51,9 +51,6 @@ class RecommendationResult extends Equatable {
 /// 
 /// Requirements: 4.4
 class RecommendationUseCase implements UseCase<RecommendationResult, RecommendationUseCaseParams> {
-  final GeminiAIService _geminiService;
-  final YoutubeSearchService _youtubeService;
-  final RecommendationRepository _repository;
 
   /// Creates a [RecommendationUseCase]
   /// 
@@ -65,6 +62,9 @@ class RecommendationUseCase implements UseCase<RecommendationResult, Recommendat
   })  : _geminiService = geminiService,
         _youtubeService = youtubeService,
         _repository = repository;
+  final GeminiAIService _geminiService;
+  final YoutubeSearchService _youtubeService;
+  final RecommendationRepository _repository;
 
   @override
   Future<Either<Failure, RecommendationResult>> call(RecommendationUseCaseParams params) async {
@@ -190,7 +190,7 @@ class RecommendationUseCase implements UseCase<RecommendationResult, Recommendat
         failedCount: failedCount,
         errors: errors,
       ));
-    } catch (e, stackTrace) {
+    } on Exception catch (e, stackTrace) {
       debugPrint('========================================');
       debugPrint('❌ FATAL ERROR in RecommendationUseCase');
       debugPrint('   Error: $e');

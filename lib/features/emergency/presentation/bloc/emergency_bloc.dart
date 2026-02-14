@@ -8,9 +8,6 @@ import 'package:guardiancare/features/emergency/presentation/bloc/emergency_stat
 
 /// BLoC for managing emergency state
 class EmergencyBloc extends Bloc<EmergencyEvent, EmergencyState> {
-  final GetEmergencyContacts getEmergencyContacts;
-  final GetContactsByCategory getContactsByCategory;
-  final MakeEmergencyCall makeEmergencyCall;
 
   EmergencyBloc({
     required this.getEmergencyContacts,
@@ -21,6 +18,9 @@ class EmergencyBloc extends Bloc<EmergencyEvent, EmergencyState> {
     on<LoadContactsByCategory>(_onLoadContactsByCategory);
     on<MakeCallRequested>(_onMakeCallRequested);
   }
+  final GetEmergencyContacts getEmergencyContacts;
+  final GetContactsByCategory getContactsByCategory;
+  final MakeEmergencyCall makeEmergencyCall;
 
   Future<void> _onLoadEmergencyContacts(
     LoadEmergencyContacts event,

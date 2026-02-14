@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:guardiancare/core/core.dart';
 import 'package:guardiancare/core/di/di.dart' as di;
-import 'package:guardiancare/core/usecases/usecase.dart';
 import 'package:guardiancare/features/quiz/domain/entities/quiz_entity.dart';
 import 'package:guardiancare/features/quiz/domain/usecases/get_all_quizzes.dart';
 import 'package:guardiancare/features/quiz/presentation/widgets/widgets.dart';
@@ -68,15 +67,15 @@ class _QuizPageState extends State<QuizPage> {
 
   Widget _buildLoadingState() {
     return Padding(
-      padding: EdgeInsets.all(AppDimensions.screenPaddingH),
+      padding: const EdgeInsets.all(AppDimensions.screenPaddingH),
       child: GridView.builder(
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
           crossAxisSpacing: AppDimensions.spaceM,
           mainAxisSpacing: AppDimensions.spaceM,
           childAspectRatio: 0.8,
         ),
-        itemCount: 4,
+        itemCount: 6,
         itemBuilder: (context, index) {
           return FadeSlideWidget(
             delay: Duration(milliseconds: index * 100),
@@ -85,6 +84,22 @@ class _QuizPageState extends State<QuizPage> {
                 decoration: BoxDecoration(
                   color: context.colors.surfaceVariant,
                   borderRadius: AppDimensions.borderRadiusL,
+                ),
+                child: Stack(
+                  children: [
+                    Positioned(
+                      top: AppDimensions.spaceM,
+                      right: AppDimensions.spaceM,
+                      child: Container(
+                        width: 32,
+                        height: 32,
+                        decoration: BoxDecoration(
+                          color: context.colors.surface,
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -101,7 +116,7 @@ class _QuizPageState extends State<QuizPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              padding: EdgeInsets.all(AppDimensions.spaceXL),
+              padding: const EdgeInsets.all(AppDimensions.spaceXL),
               decoration: BoxDecoration(
                 color: context.colors.primary.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
@@ -112,14 +127,14 @@ class _QuizPageState extends State<QuizPage> {
                 color: context.colors.primary,
               ),
             ),
-            SizedBox(height: AppDimensions.spaceL),
+            const SizedBox(height: AppDimensions.spaceL),
             Text(
               l10n.noQuizzesAvailable,
               style: AppTextStyles.h4.copyWith(
                 color: context.colors.textPrimary,
               ),
             ),
-            SizedBox(height: AppDimensions.spaceS),
+            const SizedBox(height: AppDimensions.spaceS),
             Text(
               UIStrings.checkBackLaterQuizzes,
               style: AppTextStyles.body2.copyWith(
@@ -137,9 +152,9 @@ class _QuizPageState extends State<QuizPage> {
       onRefresh: _loadQuizzes,
       color: context.colors.primary,
       child: Padding(
-        padding: EdgeInsets.all(AppDimensions.screenPaddingH),
+        padding: const EdgeInsets.all(AppDimensions.screenPaddingH),
         child: GridView.builder(
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
             crossAxisSpacing: AppDimensions.spaceM,
             mainAxisSpacing: AppDimensions.spaceM,

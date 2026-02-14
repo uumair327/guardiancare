@@ -5,12 +5,6 @@ import 'package:guardiancare/core/core.dart';
 /// Animated stat card for profile page
 /// Shows achievements, progress, or other stats
 class ProfileStatCard extends StatefulWidget {
-  final IconData icon;
-  final String label;
-  final String value;
-  final Color? color;
-  final VoidCallback? onTap;
-  final int index;
 
   const ProfileStatCard({
     super.key,
@@ -21,6 +15,12 @@ class ProfileStatCard extends StatefulWidget {
     this.onTap,
     this.index = 0,
   });
+  final IconData icon;
+  final String label;
+  final String value;
+  final Color? color;
+  final VoidCallback? onTap;
+  final int index;
 
   @override
   State<ProfileStatCard> createState() => _ProfileStatCardState();
@@ -42,7 +42,7 @@ class _ProfileStatCardState extends State<ProfileStatCard>
       duration: AppDurations.animationShort,
     );
 
-    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.95).animate(
+    _scaleAnimation = Tween<double>(begin: 1, end: 0.95).animate(
       CurvedAnimation(parent: _controller, curve: AppCurves.tap),
     );
   }
@@ -84,7 +84,7 @@ class _ProfileStatCardState extends State<ProfileStatCard>
             );
           },
           child: Container(
-            padding: EdgeInsets.all(AppDimensions.spaceM),
+            padding: const EdgeInsets.all(AppDimensions.spaceM),
             decoration: BoxDecoration(
               color: AppColors.surface,
               borderRadius: AppDimensions.borderRadiusL,
@@ -97,14 +97,13 @@ class _ProfileStatCardState extends State<ProfileStatCard>
               ],
               border: Border.all(
                 color: _cardColor.withValues(alpha: 0.2),
-                width: 1,
               ),
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Container(
-                  padding: EdgeInsets.all(AppDimensions.spaceS),
+                  padding: const EdgeInsets.all(AppDimensions.spaceS),
                   decoration: BoxDecoration(
                     color: _cardColor.withValues(alpha: 0.1),
                     shape: BoxShape.circle,
@@ -115,7 +114,7 @@ class _ProfileStatCardState extends State<ProfileStatCard>
                     size: AppDimensions.iconM,
                   ),
                 ),
-                SizedBox(height: AppDimensions.spaceS),
+                const SizedBox(height: AppDimensions.spaceS),
                 Text(
                   widget.value,
                   style: AppTextStyles.h3.copyWith(
@@ -123,7 +122,7 @@ class _ProfileStatCardState extends State<ProfileStatCard>
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                SizedBox(height: AppDimensions.spaceXXS),
+                const SizedBox(height: AppDimensions.spaceXXS),
                 Text(
                   widget.label,
                   style: AppTextStyles.caption.copyWith(

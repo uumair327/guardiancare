@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:guardiancare/core/constants/app_colors.dart';
 import 'package:guardiancare/core/constants/app_dimensions.dart';
-import 'package:guardiancare/core/managers/theme_manager.dart';
 import 'package:guardiancare/core/di/di.dart' as di;
+import 'package:guardiancare/core/managers/theme_manager.dart';
 
 /// Premium animated theme toggle widget
 /// Features:
@@ -40,7 +40,6 @@ class ThemeToggle extends StatelessWidget {
               color: isDark
                   ? AppColors.primary.withValues(alpha: 0.3)
                   : AppColors.gray200,
-              width: 1,
             ),
             boxShadow: [
               BoxShadow(
@@ -59,7 +58,7 @@ class ThemeToggle extends StatelessWidget {
                 duration: const Duration(milliseconds: 300),
                 transitionBuilder: (child, animation) {
                   return RotationTransition(
-                    turns: Tween(begin: 0.5, end: 1.0).animate(animation),
+                    turns: Tween<double>(begin: 0.5, end: 1).animate(animation),
                     child: ScaleTransition(
                       scale: animation,
                       child: child,

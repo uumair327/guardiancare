@@ -11,11 +11,6 @@ import 'package:guardiancare/features/report/presentation/bloc/report_state.dart
 
 /// BLoC for managing report state with Clean Architecture
 class ReportBloc extends Bloc<ReportEvent, ReportState> {
-  final CreateReport createReport;
-  final LoadReport loadReport;
-  final SaveReport saveReport;
-  final DeleteReport deleteReport;
-  final GetSavedReports getSavedReports;
 
   ReportBloc({
     required this.createReport,
@@ -32,6 +27,11 @@ class ReportBloc extends Bloc<ReportEvent, ReportState> {
     on<LoadSavedReportsRequested>(_onLoadSavedReports);
     on<ClearReportRequested>(_onClearReport);
   }
+  final CreateReport createReport;
+  final LoadReport loadReport;
+  final SaveReport saveReport;
+  final DeleteReport deleteReport;
+  final GetSavedReports getSavedReports;
 
   Future<void> _onCreateReport(
     CreateReportRequested event,
@@ -108,7 +108,6 @@ class ReportBloc extends Bloc<ReportEvent, ReportState> {
             questions: currentState.report.questions,
             answers: currentState.report.answers,
             savedAt: DateTime.now(),
-            isDirty: false,
           );
           emit(ReportSaved(savedReport));
         },

@@ -12,9 +12,9 @@ abstract class ProfileEvent extends Equatable {
 
 /// Event to load user profile
 class LoadProfile extends ProfileEvent {
-  final String uid;
 
   const LoadProfile(this.uid);
+  final String uid;
 
   @override
   List<Object?> get props => [uid];
@@ -22,9 +22,9 @@ class LoadProfile extends ProfileEvent {
 
 /// Event to update user profile
 class UpdateProfileRequested extends ProfileEvent {
-  final ProfileEntity profile;
 
   const UpdateProfileRequested(this.profile);
+  final ProfileEntity profile;
 
   @override
   List<Object?> get props => [profile];
@@ -32,9 +32,9 @@ class UpdateProfileRequested extends ProfileEvent {
 
 /// Event to delete user account
 class DeleteAccountRequested extends ProfileEvent {
-  final String uid;
 
   const DeleteAccountRequested(this.uid);
+  final String uid;
 
   @override
   List<Object?> get props => [uid];
@@ -48,9 +48,9 @@ class ClearPreferencesRequested extends ProfileEvent {
 /// Event to request language change
 /// Requirements: 6.1
 class ChangeLanguageRequested extends ProfileEvent {
-  final Locale newLocale;
 
   const ChangeLanguageRequested(this.newLocale);
+  final Locale newLocale;
 
   @override
   List<Object?> get props => [newLocale];

@@ -35,7 +35,7 @@ abstract final class NetworkConfig {
   static const int maxRetryDelayMs = 10000;
 
   /// Retry delay multiplier for exponential backoff
-  static const double retryMultiplier = 2.0;
+  static const double retryMultiplier = 2;
 
   /// HTTP status codes that should trigger a retry
   static const List<int> retryableStatusCodes = [408, 429, 500, 502, 503, 504];

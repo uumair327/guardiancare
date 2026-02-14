@@ -30,7 +30,7 @@ class _ForumPageState extends State<ForumPage>
       vsync: this,
       duration: AppDurations.animationMedium,
     );
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+    _fadeAnimation = Tween<double>(begin: 0, end: 1).animate(
       CurvedAnimation(parent: _fadeController, curve: Curves.easeOut),
     );
   }
@@ -94,18 +94,18 @@ class _ForumPageState extends State<ForumPage>
           title: Row(
             children: [
               Container(
-                padding: EdgeInsets.all(AppDimensions.spaceS),
+                padding: const EdgeInsets.all(AppDimensions.spaceS),
                 decoration: BoxDecoration(
                   color: AppColors.videoPrimarySubtle10,
                   borderRadius: AppDimensions.borderRadiusS,
                 ),
-                child: Icon(
+                child: const Icon(
                   Icons.gavel_rounded,
                   color: AppColors.videoPrimary,
                   size: AppDimensions.iconM,
                 ),
               ),
-              SizedBox(width: AppDimensions.spaceS),
+              const SizedBox(width: AppDimensions.spaceS),
               Text(l10n.guidelinesTitle, style: AppTextStyles.dialogTitle),
             ],
           ),
@@ -118,7 +118,7 @@ class _ForumPageState extends State<ForumPage>
                   l10n.guidelinesWelcome,
                   style: AppTextStyles.body2,
                 ),
-                SizedBox(height: AppDimensions.spaceM),
+                const SizedBox(height: AppDimensions.spaceM),
                 _buildGuidelineItem(
                   Icons.favorite_rounded,
                   l10n.guidelineRespect,
@@ -146,7 +146,7 @@ class _ForumPageState extends State<ForumPage>
             ScaleTapWidget(
               onTap: () => Navigator.of(context).pop(),
               child: Container(
-                padding: EdgeInsets.symmetric(
+                padding: const EdgeInsets.symmetric(
                   horizontal: AppDimensions.spaceL,
                   vertical: AppDimensions.spaceS,
                 ),
@@ -165,7 +165,7 @@ class _ForumPageState extends State<ForumPage>
 
   Widget _buildGuidelineItem(IconData icon, String text, Color color) {
     return Padding(
-      padding: EdgeInsets.only(bottom: AppDimensions.spaceS),
+      padding: const EdgeInsets.only(bottom: AppDimensions.spaceS),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -177,7 +177,7 @@ class _ForumPageState extends State<ForumPage>
             ),
             child: Icon(icon, color: color, size: 16),
           ),
-          SizedBox(width: AppDimensions.spaceS),
+          const SizedBox(width: AppDimensions.spaceS),
           Expanded(
             child: Text(
               text,
@@ -220,7 +220,7 @@ class _ForumPlaceholder extends StatelessWidget {
         // Header placeholder
         Container(
           height: 180,
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
@@ -238,11 +238,11 @@ class _ForumPlaceholder extends StatelessWidget {
         // Content placeholder
         Expanded(
           child: ListView.builder(
-            padding: EdgeInsets.all(AppDimensions.screenPaddingH),
+            padding: const EdgeInsets.all(AppDimensions.screenPaddingH),
             itemCount: 5,
             itemBuilder: (context, index) {
               return Padding(
-                padding: EdgeInsets.only(bottom: AppDimensions.spaceM),
+                padding: const EdgeInsets.only(bottom: AppDimensions.spaceM),
                 child: Container(
                   height: 100,
                   decoration: BoxDecoration(
@@ -300,7 +300,7 @@ class _ForumContentState extends State<_ForumContent>
     // Load initial forums
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (context.read<ForumBloc>().state is ForumInitial) {
-        context.read<ForumBloc>().add(LoadForums(ForumCategory.parent));
+        context.read<ForumBloc>().add(const LoadForums(ForumCategory.parent));
       }
     });
 
@@ -323,9 +323,9 @@ class _ForumContentState extends State<_ForumContent>
 
 /// Modern forum header with gradient and tabs
 class _ForumHeader extends StatefulWidget {
-  final TabController tabController;
 
   const _ForumHeader({required this.tabController});
+  final TabController tabController;
 
   @override
   State<_ForumHeader> createState() => _ForumHeaderState();
@@ -345,10 +345,10 @@ class _ForumHeaderState extends State<_ForumHeader>
       duration: AppDurations.animationLong,
     );
 
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+    _fadeAnimation = Tween<double>(begin: 0, end: 1).animate(
       CurvedAnimation(
         parent: _controller,
-        curve: const Interval(0.0, 0.6, curve: Curves.easeOut),
+        curve: const Interval(0, 0.6, curve: Curves.easeOut),
       ),
     );
 
@@ -388,7 +388,7 @@ class _ForumHeaderState extends State<_ForumHeader>
             ],
             stops: const [0.0, 0.5, 1.0],
           ),
-          borderRadius: BorderRadius.only(
+          borderRadius: const BorderRadius.only(
             bottomLeft: Radius.circular(AppDimensions.radiusXL),
             bottomRight: Radius.circular(AppDimensions.radiusXL),
           ),
@@ -409,7 +409,7 @@ class _ForumHeaderState extends State<_ForumHeader>
             child: Column(
               children: [
                 Padding(
-                  padding: EdgeInsets.fromLTRB(
+                  padding: const EdgeInsets.fromLTRB(
                     AppDimensions.screenPaddingH,
                     AppDimensions.spaceM,
                     AppDimensions.screenPaddingH,
@@ -428,7 +428,7 @@ class _ForumHeaderState extends State<_ForumHeader>
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                            SizedBox(height: AppDimensions.spaceXS),
+                            const SizedBox(height: AppDimensions.spaceXS),
                             Text(
                               l10n.connectAndShare,
                               style: AppTextStyles.body2.copyWith(
@@ -439,12 +439,12 @@ class _ForumHeaderState extends State<_ForumHeader>
                         ),
                       ),
                       Container(
-                        padding: EdgeInsets.all(AppDimensions.spaceM),
+                        padding: const EdgeInsets.all(AppDimensions.spaceM),
                         decoration: BoxDecoration(
                           color: AppColors.white.withValues(alpha: 0.15),
                           shape: BoxShape.circle,
                         ),
-                        child: Icon(
+                        child: const Icon(
                           Icons.forum_rounded,
                           color: AppColors.white,
                           size: AppDimensions.iconL,
@@ -455,7 +455,7 @@ class _ForumHeaderState extends State<_ForumHeader>
                 ),
                 // Modern Tab Bar
                 Container(
-                  margin: EdgeInsets.fromLTRB(
+                  margin: const EdgeInsets.fromLTRB(
                     AppDimensions.screenPaddingH,
                     0,
                     AppDimensions.screenPaddingH,
@@ -492,13 +492,13 @@ class _ForumHeaderState extends State<_ForumHeader>
                     tabs: [
                       Tab(
                         child: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 4),
+                          padding: const EdgeInsets.symmetric(horizontal: 4),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Icon(Icons.family_restroom_rounded, size: 16),
-                              SizedBox(width: 4),
+                              const Icon(Icons.family_restroom_rounded, size: 16),
+                              const SizedBox(width: 4),
                               Flexible(
                                 child: Text(
                                   l10n.parentForums,
@@ -512,13 +512,13 @@ class _ForumHeaderState extends State<_ForumHeader>
                       ),
                       Tab(
                         child: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 4),
+                          padding: const EdgeInsets.symmetric(horizontal: 4),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Icon(Icons.child_care_rounded, size: 16),
-                              SizedBox(width: 4),
+                              const Icon(Icons.child_care_rounded, size: 16),
+                              const SizedBox(width: 4),
                               Flexible(
                                 child: Text(
                                   l10n.forChildren,
@@ -544,9 +544,9 @@ class _ForumHeaderState extends State<_ForumHeader>
 
 /// Forum list view for each category
 class _ForumListView extends StatelessWidget {
-  final ForumCategory category;
 
   const _ForumListView({required this.category});
+  final ForumCategory category;
 
   @override
   Widget build(BuildContext context) {
@@ -591,12 +591,11 @@ class _ForumListView extends StatelessWidget {
             color: AppColors.videoPrimary,
             child: ListView.builder(
               itemCount: state.forums.length,
-              padding: EdgeInsets.all(AppDimensions.screenPaddingH),
+              padding: const EdgeInsets.all(AppDimensions.screenPaddingH),
               itemBuilder: (context, index) {
                 return FadeSlideWidget(
                   duration: AppDurations.animationMedium,
                   delay: Duration(milliseconds: 50 * index),
-                  direction: SlideDirection.up,
                   slideOffset: 20,
                   child: ForumListItem(
                     forum: state.forums[index],
@@ -620,13 +619,13 @@ class _ForumListView extends StatelessWidget {
   Widget _buildLoadingState() {
     return ListView.builder(
       itemCount: 5,
-      padding: EdgeInsets.all(AppDimensions.screenPaddingH),
+      padding: const EdgeInsets.all(AppDimensions.screenPaddingH),
       itemBuilder: (context, index) {
         return FadeSlideWidget(
           duration: AppDurations.animationShort,
           delay: Duration(milliseconds: 50 * index),
           child: Padding(
-            padding: EdgeInsets.only(bottom: AppDimensions.spaceM),
+            padding: const EdgeInsets.only(bottom: AppDimensions.spaceM),
             child: ShimmerLoading(
               child: Container(
                 height: 120,
@@ -650,24 +649,24 @@ class _ForumListView extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              padding: EdgeInsets.all(AppDimensions.spaceXL),
-              decoration: BoxDecoration(
+              padding: const EdgeInsets.all(AppDimensions.spaceXL),
+              decoration: const BoxDecoration(
                 color: AppColors.videoPrimarySubtle10,
                 shape: BoxShape.circle,
               ),
-              child: Icon(
+              child: const Icon(
                 Icons.forum_outlined,
                 size: AppDimensions.iconXXL,
                 color: AppColors.videoPrimary,
               ),
             ),
-            SizedBox(height: AppDimensions.spaceL),
+            const SizedBox(height: AppDimensions.spaceL),
             Text(
               l10n.noForumsAvailable,
               style:
                   AppTextStyles.h4.copyWith(color: context.colors.textPrimary),
             ),
-            SizedBox(height: AppDimensions.spaceS),
+            const SizedBox(height: AppDimensions.spaceS),
             Text(
               l10n.beFirstToDiscuss,
               style: AppTextStyles.body2
@@ -691,26 +690,26 @@ class _ForumListView extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              padding: EdgeInsets.all(AppDimensions.spaceL),
+              padding: const EdgeInsets.all(AppDimensions.spaceL),
               decoration: BoxDecoration(
                 color: AppColors.error.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
-              child: Icon(
+              child: const Icon(
                 Icons.error_outline_rounded,
                 size: AppDimensions.iconXXL,
                 color: AppColors.error,
               ),
             ),
-            SizedBox(height: AppDimensions.spaceL),
+            const SizedBox(height: AppDimensions.spaceL),
             Text(
               l10n.somethingWentWrong,
               style:
                   AppTextStyles.h4.copyWith(color: context.colors.textPrimary),
             ),
-            SizedBox(height: AppDimensions.spaceS),
+            const SizedBox(height: AppDimensions.spaceS),
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: AppDimensions.spaceXL),
+              padding: const EdgeInsets.symmetric(horizontal: AppDimensions.spaceXL),
               child: Text(
                 message,
                 textAlign: TextAlign.center,
@@ -718,37 +717,37 @@ class _ForumListView extends StatelessWidget {
                     .copyWith(color: context.colors.textSecondary),
               ),
             ),
-            SizedBox(height: AppDimensions.spaceL),
+            const SizedBox(height: AppDimensions.spaceL),
             ScaleTapWidget(
               onTap: () {
                 HapticFeedback.lightImpact();
                 context.read<ForumBloc>().add(LoadForums(category));
               },
               child: Container(
-                padding: EdgeInsets.symmetric(
+                padding: const EdgeInsets.symmetric(
                   horizontal: AppDimensions.spaceL,
                   vertical: AppDimensions.spaceM,
                 ),
                 decoration: BoxDecoration(
                   gradient: AppColors.videoGradient,
                   borderRadius: AppDimensions.borderRadiusM,
-                  boxShadow: [
+                  boxShadow: const [
                     BoxShadow(
                       color: AppColors.videoPrimarySubtle30,
                       blurRadius: 8,
-                      offset: const Offset(0, 4),
+                      offset: Offset(0, 4),
                     ),
                   ],
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(
+                    const Icon(
                       Icons.refresh_rounded,
                       color: AppColors.white,
                       size: AppDimensions.iconS,
                     ),
-                    SizedBox(width: AppDimensions.spaceS),
+                    const SizedBox(width: AppDimensions.spaceS),
                     Text(l10n.retry, style: AppTextStyles.button),
                   ],
                 ),

@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
-import 'package:guardiancare/features/forum/domain/entities/forum_entity.dart';
 import 'package:guardiancare/features/forum/domain/entities/comment_entity.dart';
+import 'package:guardiancare/features/forum/domain/entities/forum_entity.dart';
 
 abstract class ForumState extends Equatable {
   const ForumState();
@@ -18,20 +18,20 @@ class ForumLoading extends ForumState {
 }
 
 class ForumsLoaded extends ForumState {
-  final List<ForumEntity> forums;
-  final ForumCategory category;
 
   const ForumsLoaded(this.forums, this.category);
+  final List<ForumEntity> forums;
+  final ForumCategory category;
 
   @override
   List<Object> get props => [forums, category];
 }
 
 class CommentsLoaded extends ForumState {
-  final List<CommentEntity> comments;
-  final String forumId;
 
   const CommentsLoaded(this.comments, this.forumId);
+  final List<CommentEntity> comments;
+  final String forumId;
 
   @override
   List<Object> get props => [comments, forumId];
@@ -46,19 +46,19 @@ class CommentSubmitted extends ForumState {
 }
 
 class ForumError extends ForumState {
-  final String message;
-  final String? code;
 
   const ForumError(this.message, {this.code});
+  final String message;
+  final String? code;
 
   @override
   List<Object?> get props => [message, code];
 }
 
 class ForumCreated extends ForumState {
-  final String forumId;
 
   const ForumCreated(this.forumId);
+  final String forumId;
 
   @override
   List<Object> get props => [forumId];

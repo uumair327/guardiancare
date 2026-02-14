@@ -13,12 +13,6 @@ import 'package:guardiancare/features/profile/presentation/bloc/profile_state.da
 /// Delegates language changes to LocaleService and logout to AuthRepository
 /// Requirements: 6.1, 6.2, 6.3
 class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
-  final GetProfile getProfile;
-  final UpdateProfile updateProfile;
-  final DeleteAccount deleteAccount;
-  final ClearUserPreferences clearUserPreferences;
-  final LocaleService localeService;
-  final AuthRepository authRepository;
 
   ProfileBloc({
     required this.getProfile,
@@ -35,6 +29,12 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     on<ChangeLanguageRequested>(_onChangeLanguage);
     on<LogoutRequested>(_onLogout);
   }
+  final GetProfile getProfile;
+  final UpdateProfile updateProfile;
+  final DeleteAccount deleteAccount;
+  final ClearUserPreferences clearUserPreferences;
+  final LocaleService localeService;
+  final AuthRepository authRepository;
 
   Future<void> _onLoadProfile(
     LoadProfile event,
@@ -121,7 +121,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       } else {
         emit(const ProfileError('Failed to save language preference'));
       }
-    } catch (e) {
+    } on Object catch (e) {
       emit(ProfileError('Error changing language: ${e.toString()}'));
     }
   }

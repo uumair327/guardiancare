@@ -8,6 +8,14 @@ class CategoryModel extends CategoryEntity {
     required super.thumbnail,
   });
 
+  /// Create CategoryModel from CategoryEntity
+  factory CategoryModel.fromEntity(CategoryEntity entity) {
+    return CategoryModel(
+      name: entity.name,
+      thumbnail: entity.thumbnail,
+    );
+  }
+
   /// Create CategoryModel from Firestore document
   factory CategoryModel.fromFirestore(QueryDocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>;
@@ -31,13 +39,5 @@ class CategoryModel extends CategoryEntity {
       'name': name,
       'thumbnail': thumbnail,
     };
-  }
-
-  /// Create CategoryModel from CategoryEntity
-  factory CategoryModel.fromEntity(CategoryEntity entity) {
-    return CategoryModel(
-      name: entity.name,
-      thumbnail: entity.thumbnail,
-    );
   }
 }

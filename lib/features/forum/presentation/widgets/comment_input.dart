@@ -12,9 +12,9 @@ import 'package:guardiancare/features/forum/forum.dart';
 /// - Glassmorphism style
 /// - Haptic feedback
 class CommentInput extends StatefulWidget {
-  final String forumId;
 
   const CommentInput({super.key, required this.forumId});
+  final String forumId;
 
   @override
   State<CommentInput> createState() => _CommentInputState();
@@ -46,7 +46,7 @@ class _CommentInputState extends State<CommentInput>
       duration: AppDurations.animationShort,
     );
 
-    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.95).animate(
+    _scaleAnimation = Tween<double>(begin: 1, end: 0.95).animate(
       CurvedAnimation(parent: _animationController, curve: AppCurves.tap),
     );
   }
@@ -80,7 +80,7 @@ class _CommentInputState extends State<CommentInput>
       HapticFeedback.heavyImpact();
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Row(
+          content: const Row(
             children: [
               Icon(Icons.warning_rounded, color: AppColors.white, size: 20),
               SizedBox(width: AppDimensions.spaceS),
@@ -102,7 +102,7 @@ class _CommentInputState extends State<CommentInput>
       HapticFeedback.heavyImpact();
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Row(
+          content: const Row(
             children: [
               Icon(Icons.warning_rounded, color: AppColors.white, size: 20),
               SizedBox(width: AppDimensions.spaceS),
@@ -150,7 +150,7 @@ class _CommentInputState extends State<CommentInput>
 
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Row(
+              content: const Row(
                 children: [
                   Icon(Icons.check_circle_rounded,
                       color: AppColors.white, size: 20),
@@ -247,13 +247,13 @@ class _CommentInputState extends State<CommentInput>
                                   .withValues(alpha: 0.6),
                             ),
                             border: InputBorder.none,
-                            contentPadding: EdgeInsets.symmetric(
+                            contentPadding: const EdgeInsets.symmetric(
                               horizontal: AppDimensions.spaceM,
                               vertical: AppDimensions.spaceM,
                             ),
                             counterText: '',
                             prefixIcon: Padding(
-                              padding: EdgeInsets.only(
+                              padding: const EdgeInsets.only(
                                 left: AppDimensions.spaceM,
                                 right: AppDimensions.spaceS,
                               ),
@@ -265,7 +265,7 @@ class _CommentInputState extends State<CommentInput>
                                 size: 20,
                               ),
                             ),
-                            prefixIconConstraints: BoxConstraints(
+                            prefixIconConstraints: const BoxConstraints(
                               minWidth: 40,
                               minHeight: 20,
                             ),
@@ -273,7 +273,7 @@ class _CommentInputState extends State<CommentInput>
                         ),
                       ),
                     ),
-                    SizedBox(width: AppDimensions.spaceS),
+                    const SizedBox(width: AppDimensions.spaceS),
                     GestureDetector(
                       onTapDown: (_) => _animationController.forward(),
                       onTapUp: (_) => _animationController.reverse(),
@@ -318,7 +318,7 @@ class _CommentInputState extends State<CommentInput>
                           ),
                           child: Center(
                             child: isSubmitting
-                                ? SizedBox(
+                                ? const SizedBox(
                                     width: 20,
                                     height: 20,
                                     child: CircularProgressIndicator(
@@ -339,7 +339,7 @@ class _CommentInputState extends State<CommentInput>
                     ),
                   ],
                 ),
-                SizedBox(height: AppDimensions.spaceS),
+                const SizedBox(height: AppDimensions.spaceS),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [

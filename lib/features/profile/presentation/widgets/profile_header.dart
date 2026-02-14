@@ -6,14 +6,14 @@ import 'profile_avatar.dart';
 /// Modern header for profile page
 /// Features gradient background, animated avatar, and user info
 class ProfileHeader extends StatefulWidget {
-  final ProfileEntity profile;
-  final VoidCallback? onAvatarTap;
 
   const ProfileHeader({
     super.key,
     required this.profile,
     this.onAvatarTap,
   });
+  final ProfileEntity profile;
+  final VoidCallback? onAvatarTap;
 
   @override
   State<ProfileHeader> createState() => _ProfileHeaderState();
@@ -33,10 +33,10 @@ class _ProfileHeaderState extends State<ProfileHeader>
       duration: AppDurations.animationLong,
     );
 
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+    _fadeAnimation = Tween<double>(begin: 0, end: 1).animate(
       CurvedAnimation(
         parent: _controller,
-        curve: const Interval(0.0, 0.6, curve: Curves.easeOut),
+        curve: const Interval(0, 0.6, curve: Curves.easeOut),
       ),
     );
 
@@ -63,7 +63,7 @@ class _ProfileHeaderState extends State<ProfileHeader>
   Widget build(BuildContext context) {
     return RepaintBoundary(
       child: Container(
-        padding: EdgeInsets.fromLTRB(
+        padding: const EdgeInsets.fromLTRB(
           AppDimensions.screenPaddingH,
           AppDimensions.spaceM,
           AppDimensions.screenPaddingH,
@@ -80,7 +80,7 @@ class _ProfileHeaderState extends State<ProfileHeader>
             ],
             stops: const [0.0, 0.5, 1.0],
           ),
-          borderRadius: BorderRadius.only(
+          borderRadius: const BorderRadius.only(
             bottomLeft: Radius.circular(AppDimensions.radiusXL),
             bottomRight: Radius.circular(AppDimensions.radiusXL),
           ),
@@ -107,7 +107,7 @@ class _ProfileHeaderState extends State<ProfileHeader>
                   size: 100,
                   onTap: widget.onAvatarTap,
                 ),
-                SizedBox(height: AppDimensions.spaceM),
+                const SizedBox(height: AppDimensions.spaceM),
                 // Name
                 Text(
                   widget.profile.displayName.isNotEmpty
@@ -118,10 +118,10 @@ class _ProfileHeaderState extends State<ProfileHeader>
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                SizedBox(height: AppDimensions.spaceXS),
+                const SizedBox(height: AppDimensions.spaceXS),
                 // Email
                 Container(
-                  padding: EdgeInsets.symmetric(
+                  padding: const EdgeInsets.symmetric(
                     horizontal: AppDimensions.spaceM,
                     vertical: AppDimensions.spaceXS,
                   ),
@@ -137,7 +137,7 @@ class _ProfileHeaderState extends State<ProfileHeader>
                         color: AppColors.white.withValues(alpha: 0.9),
                         size: AppDimensions.iconXS,
                       ),
-                      SizedBox(width: AppDimensions.spaceS),
+                      const SizedBox(width: AppDimensions.spaceS),
                       Text(
                         widget.profile.email,
                         style: AppTextStyles.bodySmall.copyWith(
@@ -147,10 +147,10 @@ class _ProfileHeaderState extends State<ProfileHeader>
                     ],
                   ),
                 ),
-                SizedBox(height: AppDimensions.spaceM),
+                const SizedBox(height: AppDimensions.spaceM),
                 // Motivational message
                 Container(
-                  padding: EdgeInsets.symmetric(
+                  padding: const EdgeInsets.symmetric(
                     horizontal: AppDimensions.spaceM,
                     vertical: AppDimensions.spaceS,
                   ),
@@ -161,12 +161,12 @@ class _ProfileHeaderState extends State<ProfileHeader>
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(
+                      const Icon(
                         Icons.star_rounded,
                         color: AppColors.warning,
                         size: AppDimensions.iconS,
                       ),
-                      SizedBox(width: AppDimensions.spaceS),
+                      const SizedBox(width: AppDimensions.spaceS),
                       Text(
                         'Keep learning and growing!',
                         style: AppTextStyles.bodySmall.copyWith(

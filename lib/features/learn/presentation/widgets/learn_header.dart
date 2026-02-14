@@ -4,14 +4,14 @@ import 'package:guardiancare/core/core.dart';
 /// Modern header for the learn page
 /// Features gradient background, animated icon, and motivational text
 class LearnHeader extends StatefulWidget {
-  final String? categoryName;
-  final VoidCallback? onBackPressed;
 
   const LearnHeader({
     super.key,
     this.categoryName,
     this.onBackPressed,
   });
+  final String? categoryName;
+  final VoidCallback? onBackPressed;
 
   @override
   State<LearnHeader> createState() => _LearnHeaderState();
@@ -32,10 +32,10 @@ class _LearnHeaderState extends State<LearnHeader>
       duration: AppDurations.animationLong,
     );
 
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+    _fadeAnimation = Tween<double>(begin: 0, end: 1).animate(
       CurvedAnimation(
         parent: _controller,
-        curve: const Interval(0.0, 0.6, curve: Curves.easeOut),
+        curve: const Interval(0, 0.6, curve: Curves.easeOut),
       ),
     );
 
@@ -49,10 +49,10 @@ class _LearnHeaderState extends State<LearnHeader>
       ),
     );
 
-    _iconAnimation = Tween<double>(begin: 0.8, end: 1.0).animate(
+    _iconAnimation = Tween<double>(begin: 0.8, end: 1).animate(
       CurvedAnimation(
         parent: _controller,
-        curve: const Interval(0.3, 1.0, curve: Curves.elasticOut),
+        curve: const Interval(0.3, 1, curve: Curves.elasticOut),
       ),
     );
 
@@ -72,7 +72,7 @@ class _LearnHeaderState extends State<LearnHeader>
 
     return RepaintBoundary(
       child: Container(
-        padding: EdgeInsets.fromLTRB(
+        padding: const EdgeInsets.fromLTRB(
           AppDimensions.screenPaddingH,
           AppDimensions.spaceM,
           AppDimensions.screenPaddingH,
@@ -89,7 +89,7 @@ class _LearnHeaderState extends State<LearnHeader>
             ],
             stops: const [0.0, 0.5, 1.0],
           ),
-          borderRadius: BorderRadius.only(
+          borderRadius: const BorderRadius.only(
             bottomLeft: Radius.circular(AppDimensions.radiusXL),
             bottomRight: Radius.circular(AppDimensions.radiusXL),
           ),
@@ -117,19 +117,19 @@ class _LearnHeaderState extends State<LearnHeader>
                       ScaleTapWidget(
                         onTap: widget.onBackPressed,
                         child: Container(
-                          padding: EdgeInsets.all(AppDimensions.spaceS),
+                          padding: const EdgeInsets.all(AppDimensions.spaceS),
                           decoration: BoxDecoration(
                             color: AppColors.white.withValues(alpha: 0.15),
                             borderRadius: AppDimensions.borderRadiusS,
                           ),
-                          child: Icon(
+                          child: const Icon(
                             Icons.arrow_back_rounded,
                             color: AppColors.white,
                             size: AppDimensions.iconM,
                           ),
                         ),
                       ),
-                      SizedBox(width: AppDimensions.spaceM),
+                      const SizedBox(width: AppDimensions.spaceM),
                     ],
                     Expanded(
                       child: Column(
@@ -142,7 +142,7 @@ class _LearnHeaderState extends State<LearnHeader>
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          SizedBox(height: AppDimensions.spaceXS),
+                          const SizedBox(height: AppDimensions.spaceXS),
                           Text(
                             isShowingVideos
                                 ? 'Watch and learn at your own pace'
@@ -164,7 +164,7 @@ class _LearnHeaderState extends State<LearnHeader>
                         );
                       },
                       child: Container(
-                        padding: EdgeInsets.all(AppDimensions.spaceM),
+                        padding: const EdgeInsets.all(AppDimensions.spaceM),
                         decoration: BoxDecoration(
                           color: AppColors.white.withValues(alpha: 0.15),
                           shape: BoxShape.circle,
@@ -180,11 +180,11 @@ class _LearnHeaderState extends State<LearnHeader>
                     ),
                   ],
                 ),
-                SizedBox(height: AppDimensions.spaceM),
+                const SizedBox(height: AppDimensions.spaceM),
                 // Progress indicator or stats
                 if (!isShowingVideos)
                   Container(
-                    padding: EdgeInsets.symmetric(
+                    padding: const EdgeInsets.symmetric(
                       horizontal: AppDimensions.spaceM,
                       vertical: AppDimensions.spaceS,
                     ),
@@ -194,12 +194,12 @@ class _LearnHeaderState extends State<LearnHeader>
                     ),
                     child: Row(
                       children: [
-                        Icon(
+                        const Icon(
                           Icons.lightbulb_outline_rounded,
                           color: AppColors.warning,
                           size: AppDimensions.iconS,
                         ),
-                        SizedBox(width: AppDimensions.spaceS),
+                        const SizedBox(width: AppDimensions.spaceS),
                         Expanded(
                           child: Text(
                             'Learning is a journey, not a destination',

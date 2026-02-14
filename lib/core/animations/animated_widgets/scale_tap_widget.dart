@@ -30,6 +30,20 @@ import '../config/haptic_feedback_type.dart';
 /// );
 /// ```
 class ScaleTapWidget extends StatefulWidget {
+
+  const ScaleTapWidget({
+    super.key,
+    required this.child,
+    this.onTap,
+    this.onLongPress,
+    this.config,
+    this.scaleDown,
+    this.duration,
+    this.curve,
+    this.enableHaptic = true,
+    this.hapticType = HapticFeedbackType.light,
+    this.enabled = true,
+  });
   /// The child widget to animate.
   final Widget child;
 
@@ -76,20 +90,6 @@ class ScaleTapWidget extends StatefulWidget {
   /// Whether the widget responds to touch interactions.
   final bool enabled;
 
-  const ScaleTapWidget({
-    super.key,
-    required this.child,
-    this.onTap,
-    this.onLongPress,
-    this.config,
-    this.scaleDown,
-    this.duration,
-    this.curve,
-    this.enableHaptic = true,
-    this.hapticType = HapticFeedbackType.light,
-    this.enabled = true,
-  });
-
   @override
   State<ScaleTapWidget> createState() => _ScaleTapWidgetState();
 }
@@ -117,7 +117,7 @@ class _ScaleTapWidgetState extends State<ScaleTapWidget>
       return AnimationConfig(
         duration: widget.duration ?? _legacyDefaultDuration,
         curve: widget.curve ?? _legacyDefaultCurve,
-        begin: 1.0,
+        begin: 1,
         end: widget.scaleDown!,
       );
     }
@@ -157,7 +157,7 @@ class _ScaleTapWidgetState extends State<ScaleTapWidget>
       return AnimationConfig(
         duration: widget.duration ?? _legacyDefaultDuration,
         curve: widget.curve ?? _legacyDefaultCurve,
-        begin: 1.0,
+        begin: 1,
         end: widget.scaleDown!,
       );
     }

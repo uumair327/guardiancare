@@ -5,9 +5,6 @@ import 'package:guardiancare/core/core.dart';
 /// Education-friendly bottom navigation bar
 /// Features smooth animations, vibrant colors, and engaging design
 class BottomNav extends StatefulWidget {
-  final int currentIndex;
-  final ValueChanged<int> onTap;
-  final List<NavItem> items;
 
   const BottomNav({
     super.key,
@@ -15,6 +12,9 @@ class BottomNav extends StatefulWidget {
     required this.onTap,
     required this.items,
   });
+  final int currentIndex;
+  final ValueChanged<int> onTap;
+  final List<NavItem> items;
 
   @override
   State<BottomNav> createState() => _BottomNavState();
@@ -40,7 +40,7 @@ class _BottomNavState extends State<BottomNav> with TickerProviderStateMixin {
     );
 
     _scaleAnimations = _controllers.map((controller) {
-      return Tween<double>(begin: 1.0, end: 0.9).animate(
+      return Tween<double>(begin: 1, end: 0.9).animate(
         CurvedAnimation(parent: controller, curve: AppCurves.tap),
       );
     }).toList();
@@ -65,7 +65,7 @@ class _BottomNavState extends State<BottomNav> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.fromLTRB(
+      margin: const EdgeInsets.fromLTRB(
         AppDimensions.spaceM,
         0,
         AppDimensions.spaceM,
@@ -92,7 +92,7 @@ class _BottomNavState extends State<BottomNav> with TickerProviderStateMixin {
         borderRadius: AppDimensions.borderRadiusXL,
         child: Container(
           height: 70,
-          padding: EdgeInsets.symmetric(
+          padding: const EdgeInsets.symmetric(
             horizontal: AppDimensions.spaceM,
             vertical: AppDimensions.spaceS,
           ),
@@ -116,11 +116,6 @@ class _BottomNavState extends State<BottomNav> with TickerProviderStateMixin {
 
 /// Individual navigation item widget
 class _NavItemWidget extends StatelessWidget {
-  final NavItem item;
-  final bool isSelected;
-  final VoidCallback onTap;
-  final Animation<double> scaleAnimation;
-  final AnimationController controller;
 
   const _NavItemWidget({
     required this.item,
@@ -129,6 +124,11 @@ class _NavItemWidget extends StatelessWidget {
     required this.scaleAnimation,
     required this.controller,
   });
+  final NavItem item;
+  final bool isSelected;
+  final VoidCallback onTap;
+  final Animation<double> scaleAnimation;
+  final AnimationController controller;
 
   @override
   Widget build(BuildContext context) {
@@ -150,7 +150,7 @@ class _NavItemWidget extends StatelessWidget {
             child: AnimatedContainer(
               duration: AppDurations.animationMedium,
               curve: AppCurves.emphasized,
-              padding: EdgeInsets.all(AppDimensions.spaceS),
+              padding: const EdgeInsets.all(AppDimensions.spaceS),
               decoration: BoxDecoration(
                 gradient: isSelected
                     ? LinearGradient(
@@ -191,10 +191,6 @@ class _NavItemWidget extends StatelessWidget {
 
 /// Navigation item data model
 class NavItem {
-  final IconData icon;
-  final IconData activeIcon;
-  final String label;
-  final Color? activeColor;
 
   const NavItem({
     required this.icon,
@@ -202,13 +198,14 @@ class NavItem {
     required this.label,
     this.activeColor,
   });
+  final IconData icon;
+  final IconData activeIcon;
+  final String label;
+  final Color? activeColor;
 }
 
 /// Floating action button style bottom nav (alternative design)
 class FloatingBottomNav extends StatefulWidget {
-  final int currentIndex;
-  final ValueChanged<int> onTap;
-  final List<NavItem> items;
 
   const FloatingBottomNav({
     super.key,
@@ -216,6 +213,9 @@ class FloatingBottomNav extends StatefulWidget {
     required this.onTap,
     required this.items,
   });
+  final int currentIndex;
+  final ValueChanged<int> onTap;
+  final List<NavItem> items;
 
   @override
   State<FloatingBottomNav> createState() => _FloatingBottomNavState();
@@ -251,7 +251,7 @@ class _FloatingBottomNavState extends State<FloatingBottomNav>
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.fromLTRB(
+      margin: const EdgeInsets.fromLTRB(
         AppDimensions.spaceL,
         0,
         AppDimensions.spaceL,
@@ -271,7 +271,6 @@ class _FloatingBottomNavState extends State<FloatingBottomNav>
           borderRadius: BorderRadius.circular(32),
           border: Border.all(
             color: context.colors.primary.withValues(alpha: 0.1),
-            width: 1,
           ),
           boxShadow: [
             BoxShadow(
@@ -304,15 +303,15 @@ class _FloatingBottomNavState extends State<FloatingBottomNav>
 }
 
 class _FloatingNavItem extends StatefulWidget {
-  final NavItem item;
-  final bool isSelected;
-  final VoidCallback onTap;
 
   const _FloatingNavItem({
     required this.item,
     required this.isSelected,
     required this.onTap,
   });
+  final NavItem item;
+  final bool isSelected;
+  final VoidCallback onTap;
 
   @override
   State<_FloatingNavItem> createState() => _FloatingNavItemState();
@@ -332,17 +331,17 @@ class _FloatingNavItemState extends State<_FloatingNavItem>
       duration: AppDurations.animationMedium,
     );
 
-    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.85).animate(
+    _scaleAnimation = Tween<double>(begin: 1, end: 0.85).animate(
       CurvedAnimation(
         parent: _controller,
-        curve: const Interval(0.0, 0.5, curve: Curves.easeOut),
+        curve: const Interval(0, 0.5, curve: Curves.easeOut),
       ),
     );
 
-    _bounceAnimation = Tween<double>(begin: 0.85, end: 1.0).animate(
+    _bounceAnimation = Tween<double>(begin: 0.85, end: 1).animate(
       CurvedAnimation(
         parent: _controller,
-        curve: const Interval(0.5, 1.0, curve: Curves.elasticOut),
+        curve: const Interval(0.5, 1, curve: Curves.elasticOut),
       ),
     );
   }
@@ -421,7 +420,7 @@ class _FloatingNavItemState extends State<_FloatingNavItem>
                 ),
               ),
               if (widget.isSelected) ...[
-                SizedBox(height: 2),
+                const SizedBox(height: 2),
                 Container(
                   width: 4,
                   height: 4,

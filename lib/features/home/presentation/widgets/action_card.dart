@@ -12,12 +12,6 @@ import 'package:guardiancare/core/core.dart';
 /// - Haptic feedback
 /// - Performance optimized
 class ActionCard extends StatefulWidget {
-  final IconData icon;
-  final String label;
-  final Color color;
-  final VoidCallback onTap;
-  final bool enableGlassmorphism;
-  final bool enable3DEffect;
 
   const ActionCard({
     super.key,
@@ -28,6 +22,12 @@ class ActionCard extends StatefulWidget {
     this.enableGlassmorphism = false,
     this.enable3DEffect = true,
   });
+  final IconData icon;
+  final String label;
+  final Color color;
+  final VoidCallback onTap;
+  final bool enableGlassmorphism;
+  final bool enable3DEffect;
 
   @override
   State<ActionCard> createState() => _ActionCardState();
@@ -50,11 +50,11 @@ class _ActionCardState extends State<ActionCard>
       duration: AppDurations.animationShort,
     );
 
-    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.95).animate(
+    _scaleAnimation = Tween<double>(begin: 1, end: 0.95).animate(
       CurvedAnimation(parent: _controller, curve: AppCurves.tap),
     );
 
-    _elevationAnimation = Tween<double>(begin: 8.0, end: 2.0).animate(
+    _elevationAnimation = Tween<double>(begin: 8, end: 2).animate(
       CurvedAnimation(parent: _controller, curve: AppCurves.tap),
     );
   }
@@ -178,7 +178,6 @@ class _ActionCardState extends State<ActionCard>
 
   Widget _buildGlassmorphicContent() {
     return GlassmorphicContainer(
-      blur: 10,
       opacity: 0.15,
       borderRadius: AppDimensions.borderRadiusL,
       padding: EdgeInsets.zero,
@@ -193,7 +192,7 @@ class _ActionCardState extends State<ActionCard>
         // Animated icon container
         AnimatedContainer(
           duration: AppDurations.animationShort,
-          padding: EdgeInsets.all(AppDimensions.spaceM),
+          padding: const EdgeInsets.all(AppDimensions.spaceM),
           decoration: BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topLeft,
@@ -220,10 +219,10 @@ class _ActionCardState extends State<ActionCard>
             size: AppDimensions.iconL,
           ),
         ),
-        SizedBox(height: AppDimensions.spaceS),
+        const SizedBox(height: AppDimensions.spaceS),
         // Label
         Padding(
-          padding: EdgeInsets.symmetric(horizontal: AppDimensions.spaceXS),
+          padding: const EdgeInsets.symmetric(horizontal: AppDimensions.spaceXS),
           child: Text(
             widget.label,
             style: AppTextStyles.bodySmall.copyWith(
