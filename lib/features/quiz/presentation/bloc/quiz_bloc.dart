@@ -1,6 +1,6 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:guardiancare/core/backend/backend.dart';
+import 'package:guardiancare/core/util/logger.dart';
 import 'package:guardiancare/features/quiz/domain/entities/question_entity.dart';
 import 'package:guardiancare/features/quiz/domain/usecases/generate_recommendations.dart';
 import 'package:guardiancare/features/quiz/domain/usecases/save_quiz_history.dart';
@@ -16,7 +16,6 @@ import 'package:guardiancare/features/quiz/presentation/bloc/quiz_state.dart';
 /// - Quiz completion and result persistence (Requirements: 2.2)
 /// - Recommendation generation delegation (Requirements: 2.3)
 class QuizBloc extends Bloc<QuizEvent, QuizState> {
-
   QuizBloc({
     required this.submitQuiz,
     required this.validateQuiz,
@@ -157,8 +156,8 @@ class QuizBloc extends Bloc<QuizEvent, QuizState> {
   /// Requirements: 2.2
   Future<void> _onCompleteQuizRequested(
       CompleteQuizRequested event, Emitter<QuizState> emit) async {
-    debugPrint('🎯 QuizBloc: Quiz completion requested');
-    debugPrint(
+    Log.d('🎯 QuizBloc: Quiz completion requested');
+    Log.d(
         '   Correct answers: ${event.correctAnswers}/${event.totalQuestions}');
 
     emit(state.copyWith(isSubmitting: true));
@@ -166,12 +165,12 @@ class QuizBloc extends Bloc<QuizEvent, QuizState> {
     try {
       // Extract categories from questions
       final categories = _extractCategories(event.questions);
-      debugPrint('📂 Extracted categories: $categories');
+      Log.d('📂 Extracted categories: $categories');
 
       // Persist quiz results
       final user = authService.currentUser;
       if (user != null) {
-        debugPrint('💾 Saving quiz results for user: ${user.id}');
+        Log.d('💾 Saving quiz results for user: ${user.id}');
 
         // Logic to get quizName from first question's quizId
         final quizName =
@@ -184,9 +183,9 @@ class QuizBloc extends Bloc<QuizEvent, QuizState> {
           totalQuestions: event.totalQuestions,
           categories: categories,
         ));
-        debugPrint('✅ Quiz results saved');
+        Log.d('✅ Quiz results saved');
       } else {
-        debugPrint('⚠️ No user logged in, skipping quiz result save');
+        Log.w('⚠️ No user logged in, skipping quiz result save');
       }
 
       final completionResult = QuizCompletionResult(
@@ -203,10 +202,10 @@ class QuizBloc extends Bloc<QuizEvent, QuizState> {
       ));
 
       // Trigger recommendation generation
-      debugPrint('🚀 Triggering recommendation generation...');
+      Log.d('🚀 Triggering recommendation generation...');
       add(GenerateRecommendationsRequested(categories: categories));
     } on Object catch (e) {
-      debugPrint('❌ Error completing quiz: $e');
+      Log.e('❌ Error completing quiz: $e');
       emit(state.copyWith(
         isSubmitting: false,
         error: 'Failed to complete quiz: ${e.toString()}',
@@ -218,8 +217,8 @@ class QuizBloc extends Bloc<QuizEvent, QuizState> {
   /// Requirements: 2.3
   Future<void> _onGenerateRecommendationsRequested(
       GenerateRecommendationsRequested event, Emitter<QuizState> emit) async {
-    debugPrint('🎯 QuizBloc: Starting recommendation generation');
-    debugPrint('   Categories: ${event.categories}');
+    Log.d('🎯 QuizBloc: Starting recommendation generation');
+    Log.d('   Categories: ${event.categories}');
 
     emit(state.copyWith(
         recommendationsStatus: RecommendationsStatus.generating));
@@ -230,7 +229,7 @@ class QuizBloc extends Bloc<QuizEvent, QuizState> {
 
     result.fold(
       (failure) {
-        debugPrint(
+        Log.e(
             '❌ QuizBloc: Recommendation generation failed: ${failure.message}');
         emit(state.copyWith(
           recommendationsStatus: RecommendationsStatus.failed,
@@ -238,7 +237,7 @@ class QuizBloc extends Bloc<QuizEvent, QuizState> {
         ));
       },
       (_) {
-        debugPrint('✅ QuizBloc: Recommendations generated successfully');
+        Log.d('✅ QuizBloc: Recommendations generated successfully');
         emit(state.copyWith(
           recommendationsStatus: RecommendationsStatus.generated,
         ));

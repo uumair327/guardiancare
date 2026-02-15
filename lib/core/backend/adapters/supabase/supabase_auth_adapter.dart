@@ -1,5 +1,5 @@
-import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:guardiancare/core/util/logger.dart';
 import '../../models/backend_result.dart';
 import '../../models/backend_user.dart' hide OAuthProvider;
 import '../../models/backend_user.dart' as backend show OAuthProvider;
@@ -35,7 +35,7 @@ import 'supabase_initializer.dart';
 /// - Uses `BackendUser` model (vendor-agnostic)
 class SupabaseAuthAdapter implements IAuthService {
   SupabaseAuthAdapter() : _client = SupabaseInitializer.client {
-    debugPrint('SupabaseAuthAdapter: Initialized with Supabase');
+    Log.d('SupabaseAuthAdapter: Initialized with Supabase');
   }
 
   final SupabaseClient _client;

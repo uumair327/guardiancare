@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:guardiancare/core/util/logger.dart';
 import '../../models/backend_result.dart';
 import '../../ports/storage_service_port.dart';
 import 'supabase_initializer.dart';
@@ -29,8 +30,7 @@ class SupabaseStorageAdapter implements IStorageService {
   SupabaseStorageAdapter({String? defaultBucket})
       : _client = SupabaseInitializer.client,
         _defaultBucket = defaultBucket ?? 'public' {
-    debugPrint(
-        'SupabaseStorageAdapter: Initialized with bucket $_defaultBucket');
+    Log.d('SupabaseStorageAdapter: Initialized with bucket $_defaultBucket');
   }
 
   final SupabaseClient _client;

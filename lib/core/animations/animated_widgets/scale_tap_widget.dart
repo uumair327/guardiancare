@@ -13,24 +13,24 @@ import '../config/haptic_feedback_type.dart';
 /// - Performance optimized with RepaintBoundary
 /// - Supports AnimationConfig for centralized configuration
 ///
+
 /// Example usage:
 /// ```dart
 /// // Using AnimationConfig
 /// ScaleTapWidget(
 ///   config: AnimationPresets.scaleButton,
-///   onTap: () => print('Tapped!'),
+///   onTap: () => Log.d('Tapped!'),
 ///   child: MyButton(),
 /// );
 ///
 /// // Using convenience parameters (backward compatible)
 /// ScaleTapWidget(
 ///   scaleDown: 0.9,
-///   onTap: () => print('Tapped!'),
+///   onTap: () => Log.d('Tapped!'),
 ///   child: MyButton(),
 /// );
 /// ```
 class ScaleTapWidget extends StatefulWidget {
-
   const ScaleTapWidget({
     super.key,
     required this.child,
@@ -44,6 +44,7 @@ class ScaleTapWidget extends StatefulWidget {
     this.hapticType = HapticFeedbackType.light,
     this.enabled = true,
   });
+
   /// The child widget to animate.
   final Widget child;
 

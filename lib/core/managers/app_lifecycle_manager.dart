@@ -1,5 +1,5 @@
-import 'package:flutter/foundation.dart' show debugPrint;
 import 'package:guardiancare/core/services/parental_verification_service.dart';
+import 'package:guardiancare/core/util/logger.dart';
 
 /// Abstract interface for app lifecycle management
 /// Follows Single Responsibility Principle - only manages lifecycle events
@@ -20,35 +20,35 @@ abstract class AppLifecycleManager {
 /// Implementation of AppLifecycleManager
 /// Manages app lifecycle events and delegates to appropriate services
 class AppLifecycleManagerImpl implements AppLifecycleManager {
-
   AppLifecycleManagerImpl({
     ParentalVerificationService? verificationService,
-  }) : _verificationService = verificationService ?? ParentalVerificationService() {
-    debugPrint('AppLifecycleManager initialized');
+  }) : _verificationService =
+            verificationService ?? ParentalVerificationService() {
+    Log.d('AppLifecycleManager initialized');
   }
   final ParentalVerificationService _verificationService;
 
   @override
   void onPaused() {
-    debugPrint('AppLifecycleManager: App paused - resetting verification');
+    Log.d('AppLifecycleManager: App paused - resetting verification');
     _verificationService.resetVerification();
   }
 
   @override
   void onDetached() {
-    debugPrint('AppLifecycleManager: App detached - resetting verification');
+    Log.d('AppLifecycleManager: App detached - resetting verification');
     _verificationService.resetVerification();
   }
 
   @override
   void onResumed() {
-    debugPrint('AppLifecycleManager: App resumed');
+    Log.d('AppLifecycleManager: App resumed');
     // Currently no action needed on resume
     // Future: Could refresh session state or check for updates
   }
 
   @override
   void dispose() {
-    debugPrint('AppLifecycleManager disposed');
+    Log.d('AppLifecycleManager disposed');
   }
 }

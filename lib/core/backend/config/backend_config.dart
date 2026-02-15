@@ -198,9 +198,10 @@ abstract final class BackendConfig {
 
   /// Debug information for logging.
   ///
+
   /// Use this to verify backend configuration at startup:
   /// ```dart
-  /// debugPrint('Backend config: ${BackendConfig.debugInfo}');
+  /// Log.d('Backend config: ${BackendConfig.debugInfo}');
   /// ```
   static Map<String, dynamic> get debugInfo => {
         'globalProvider': provider.name,

@@ -1,4 +1,5 @@
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:guardiancare/core/util/logger.dart';
 
 /// Environment configuration using .env files.
 ///
@@ -19,8 +20,9 @@ class Env {
     } catch (e) {
       // If .env file is missing (e.g. in CI/CD or production where secrets are injected via other means),
       // we might want to fail silently or log a warning, depending on the strategy.
+
       // For this implementation, we assume .env is the primary source during dev.
-      print(
+      Log.w(
           'Warning: .env file not found. Ensure environment variables are set.');
     }
   }

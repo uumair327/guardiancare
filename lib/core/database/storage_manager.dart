@@ -1,29 +1,29 @@
-import 'package:flutter/foundation.dart' show debugPrint;
 import 'package:guardiancare/core/database/daos/daos.dart';
 import 'package:guardiancare/core/database/hive_storage_service.dart';
 import 'package:guardiancare/core/database/preferences_storage_service.dart';
 import 'package:guardiancare/core/database/sqlite_storage_service.dart';
+import 'package:guardiancare/core/util/logger.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 /// Unified Storage Manager
-/// 
+///
 /// Coordinates between different storage services without containing
 /// implementation details. Each storage backend is handled by its
 /// dedicated service:
-/// 
+///
 /// - PreferencesStorageService: Simple key-value pairs, app settings
 /// - HiveStorageService: Fast access data, user sessions, temporary data
 /// - SQLiteStorageService: Complex queries, relational data, large datasets
-/// 
+///
 /// Follows Single Responsibility Principle by only orchestrating
 /// storage services without implementing storage logic directly.
 class StorageManager {
-  
   StorageManager._internal();
   static final StorageManager instance = StorageManager._internal();
 
   // Storage Services
-  final PreferencesStorageServiceImpl _prefsService = PreferencesStorageServiceImpl();
+  final PreferencesStorageServiceImpl _prefsService =
+      PreferencesStorageServiceImpl();
   final HiveStorageServiceImpl _hiveService = HiveStorageServiceImpl();
   final SQLiteStorageServiceImpl _sqliteService = SQLiteStorageServiceImpl();
 
@@ -56,9 +56,9 @@ class StorageManager {
       ]);
 
       _initialized = true;
-      debugPrint('✅ Storage Manager initialized successfully');
+      Log.i('✅ Storage Manager initialized successfully');
     } on Object catch (e) {
-      debugPrint('❌ Storage Manager initialization failed: $e');
+      Log.e('❌ Storage Manager initialization failed: $e');
       rethrow;
     }
   }
@@ -159,7 +159,7 @@ class StorageManager {
       'cache': cacheStats,
     };
   }
-  
+
   /// Get video watch statistics (helper method)
   Future<Map<String, dynamic>> getVideoWatchStatistics(String userId) async {
     return _sqliteService.getVideoWatchStatistics(userId);

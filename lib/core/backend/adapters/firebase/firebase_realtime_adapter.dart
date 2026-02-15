@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/foundation.dart';
+import 'package:guardiancare/core/util/logger.dart';
 import '../../models/backend_result.dart';
 import '../../ports/realtime_service_port.dart';
 
@@ -26,7 +26,7 @@ import '../../ports/realtime_service_port.dart';
 /// ```
 class FirebaseRealtimeAdapter implements IRealtimeService {
   FirebaseRealtimeAdapter() : _firestore = FirebaseFirestore.instance {
-    debugPrint('FirebaseRealtimeAdapter: Created');
+    Log.d('FirebaseRealtimeAdapter: Created');
   }
 
   final FirebaseFirestore _firestore;

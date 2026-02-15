@@ -12,18 +12,19 @@ import 'scale_tap_widget.dart';
 ///
 /// Follows Single Responsibility Principle - handles animated button behavior only.
 ///
+
 /// Example usage:
 /// ```dart
 /// // Basic usage
 /// AnimatedButton(
-///   onTap: () => print('Tapped!'),
+///   onTap: () => Log.d('Tapped!'),
 ///   child: Text('Click me'),
 /// );
 ///
 /// // With custom config
 /// AnimatedButton(
 ///   config: AnimationPresets.scaleLarge,
-///   onTap: () => print('Tapped!'),
+///   onTap: () => Log.d('Tapped!'),
 ///   padding: EdgeInsets.all(16),
 ///   decoration: BoxDecoration(
 ///     color: Colors.blue,
@@ -33,7 +34,6 @@ import 'scale_tap_widget.dart';
 /// );
 /// ```
 class AnimatedButton extends StatelessWidget {
-
   /// Creates an animated button with scale-tap animation.
   const AnimatedButton({
     super.key,
@@ -133,6 +133,7 @@ class AnimatedButton extends StatelessWidget {
       ),
     );
   }
+
   /// The child widget to display inside the button.
   final Widget child;
 

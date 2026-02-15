@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:guardiancare/core/services/locale_service.dart';
+import 'package:guardiancare/core/util/logger.dart';
 
 /// Abstract interface for locale management
 /// Follows Single Responsibility Principle - only manages app locale
@@ -25,13 +26,13 @@ abstract class LocaleManager {
 /// Implementation of LocaleManager
 /// Manages application locale and delegates persistence to LocaleService
 class LocaleManagerImpl implements LocaleManager {
-
   LocaleManagerImpl({
     required LocaleService localeService,
     Locale defaultLocale = const Locale('en'),
   })  : _localeService = localeService,
         _currentLocale = defaultLocale {
-    debugPrint('LocaleManager initialized with default locale: ${_currentLocale.languageCode}');
+    Log.d(
+        'LocaleManager initialized with default locale: ${_currentLocale.languageCode}');
   }
   final LocaleService _localeService;
   final StreamController<Locale> _localeController =
@@ -47,7 +48,7 @@ class LocaleManagerImpl implements LocaleManager {
 
   @override
   void changeLocale(Locale newLocale) {
-    debugPrint('LocaleManager: Changing locale to ${newLocale.languageCode}');
+    Log.d('LocaleManager: Changing locale to ${newLocale.languageCode}');
 
     // Update current locale
     _currentLocale = newLocale;
@@ -58,25 +59,25 @@ class LocaleManagerImpl implements LocaleManager {
     // Persist to storage
     _localeService.saveLocale(newLocale);
 
-    debugPrint('LocaleManager: Locale changed to ${_currentLocale.languageCode}');
+    Log.d('LocaleManager: Locale changed to ${_currentLocale.languageCode}');
   }
 
   @override
   Future<void> loadSavedLocale() async {
     final savedLocale = _localeService.getSavedLocale();
-    debugPrint(
+    Log.d(
         'LocaleManager: Loading saved locale: ${savedLocale?.languageCode ?? "none (using default)"}');
 
     if (savedLocale != null) {
       _currentLocale = savedLocale;
       _localeController.add(savedLocale);
-      debugPrint('LocaleManager: Loaded locale: ${_currentLocale.languageCode}');
+      Log.d('LocaleManager: Loaded locale: ${_currentLocale.languageCode}');
     }
   }
 
   @override
   void dispose() {
     _localeController.close();
-    debugPrint('LocaleManager disposed');
+    Log.d('LocaleManager disposed');
   }
 }

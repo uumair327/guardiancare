@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:guardiancare/core/services/theme_service.dart';
+import 'package:guardiancare/core/util/logger.dart';
 
 /// Abstract interface for theme management
 /// Follows Single Responsibility Principle - only manages app theme
@@ -29,14 +30,12 @@ abstract class ThemeManager {
 /// Implementation of ThemeManager
 /// Manages application theme and delegates persistence to ThemeService
 class ThemeManagerImpl implements ThemeManager {
-
   ThemeManagerImpl({
     required ThemeService themeService,
     ThemeMode defaultThemeMode = ThemeMode.system,
   })  : _themeService = themeService,
         _currentThemeMode = defaultThemeMode {
-    debugPrint(
-        'ThemeManager initialized with default theme: $_currentThemeMode');
+    Log.d('ThemeManager initialized with default theme: $_currentThemeMode');
   }
   final ThemeService _themeService;
   final StreamController<ThemeMode> _themeController =
@@ -52,7 +51,7 @@ class ThemeManagerImpl implements ThemeManager {
 
   @override
   void changeTheme(ThemeMode newMode) {
-    debugPrint('ThemeManager: Changing theme to $newMode');
+    Log.d('ThemeManager: Changing theme to $newMode');
 
     // Update current theme
     _currentThemeMode = newMode;
@@ -63,7 +62,7 @@ class ThemeManagerImpl implements ThemeManager {
     // Persist to storage
     _themeService.saveThemeMode(newMode);
 
-    debugPrint('ThemeManager: Theme changed to $_currentThemeMode');
+    Log.d('ThemeManager: Theme changed to $_currentThemeMode');
   }
 
   @override
@@ -80,19 +79,19 @@ class ThemeManagerImpl implements ThemeManager {
   @override
   Future<void> loadSavedTheme() async {
     final savedTheme = _themeService.getSavedThemeMode();
-    debugPrint(
+    Log.d(
         'ThemeManager: Loading saved theme: ${savedTheme?.name ?? "none (using default)"}');
 
     if (savedTheme != null) {
       _currentThemeMode = savedTheme;
       _themeController.add(savedTheme);
-      debugPrint('ThemeManager: Loaded theme: $_currentThemeMode');
+      Log.d('ThemeManager: Loaded theme: $_currentThemeMode');
     }
   }
 
   @override
   void dispose() {
     _themeController.close();
-    debugPrint('ThemeManager disposed');
+    Log.d('ThemeManager disposed');
   }
 }

@@ -2,8 +2,8 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
+import 'package:guardiancare/core/util/logger.dart';
 
 import '../config/config.dart';
 import '../error/exceptions.dart';
@@ -227,24 +227,16 @@ class HttpApiClient implements ApiClient {
   }
 
   void _logRequest(String method, String url, int attempt) {
-    if (kDebugMode) {
-      debugPrint('🌐 [$method] $url${attempt > 0 ? ' (retry $attempt)' : ''}');
-    }
+    Log.d('🌐 [$method] $url${attempt > 0 ? ' (retry $attempt)' : ''}');
   }
 
   void _logResponse(http.Response response) {
-    if (kDebugMode) {
-      final status = NetworkConfig.isSuccess(response.statusCode) ? '✅' : '❌';
-      debugPrint(
-          '$status [${response.statusCode}] ${response.body.length} bytes');
-    }
+    final status = NetworkConfig.isSuccess(response.statusCode) ? '✅' : '❌';
+    Log.d('$status [${response.statusCode}] ${response.body.length} bytes');
   }
 
   void _logRetry(int nextAttempt, Duration delay) {
-    if (kDebugMode) {
-      debugPrint(
-          '🔄 Retrying in ${delay.inMilliseconds}ms (attempt $nextAttempt)');
-    }
+    Log.w('🔄 Retrying in ${delay.inMilliseconds}ms (attempt $nextAttempt)');
   }
 
   @override

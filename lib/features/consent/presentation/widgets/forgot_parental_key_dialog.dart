@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
 import 'package:guardiancare/core/core.dart';
+import 'package:guardiancare/core/util/logger.dart';
 import 'package:guardiancare/features/consent/domain/repositories/consent_repository.dart';
 
 class ForgotParentalKeyDialog extends StatefulWidget {
@@ -54,7 +55,7 @@ class _ForgotParentalKeyDialogState extends State<ForgotParentalKeyDialog> {
       if (!mounted) return;
 
       result.fold((failure) {
-        debugPrint('Error loading security question: ${failure.message}');
+        Log.e('Error loading security question: ${failure.message}');
       }, (consent) {
         setState(() {
           _securityQuestion = consent.securityQuestion;
@@ -62,7 +63,7 @@ class _ForgotParentalKeyDialogState extends State<ForgotParentalKeyDialog> {
         });
       });
     } on Object catch (e) {
-      debugPrint('Error loading security question: $e');
+      Log.e('Error loading security question: $e');
     }
   }
 
@@ -220,7 +221,8 @@ class _ForgotParentalKeyDialogState extends State<ForgotParentalKeyDialog> {
               labelText: UIStrings.yourAnswer,
               hintText: UIStrings.enterAnswerHint,
               border: const OutlineInputBorder(),
-              prefixIcon: const Icon(Icons.question_answer, color: AppColors.primary),
+              prefixIcon:
+                  const Icon(Icons.question_answer, color: AppColors.primary),
               suffixIcon: IconButton(
                 icon: Icon(
                     _obscureAnswer ? Icons.visibility : Icons.visibility_off),
@@ -299,7 +301,8 @@ class _ForgotParentalKeyDialogState extends State<ForgotParentalKeyDialog> {
             labelText: UIStrings.confirmNewKey,
             hintText: UIStrings.reenterKeyHint,
             border: const OutlineInputBorder(),
-            prefixIcon: const Icon(Icons.lock_outline, color: AppColors.primary),
+            prefixIcon:
+                const Icon(Icons.lock_outline, color: AppColors.primary),
             suffixIcon: IconButton(
               icon: Icon(
                   _obscureConfirmKey ? Icons.visibility : Icons.visibility_off),

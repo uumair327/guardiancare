@@ -1,8 +1,8 @@
 import 'dart:async';
 
-import 'package:flutter/foundation.dart' show debugPrint;
 import 'package:guardiancare/core/backend/backend.dart';
 import 'package:guardiancare/core/models/auth_state_event.dart';
+import 'package:guardiancare/core/util/logger.dart';
 
 /// Abstract interface for authentication state management
 /// Follows Single Responsibility Principle - only manages auth state
@@ -31,7 +31,6 @@ abstract class AuthStateManager {
 ///
 /// Following: DIP (Dependency Inversion Principle)
 class AuthStateManagerImpl implements AuthStateManager {
-
   AuthStateManagerImpl({required IAuthService authService})
       : _authService = authService {
     _init();
@@ -47,8 +46,7 @@ class AuthStateManagerImpl implements AuthStateManager {
     _currentUser = _authService.currentUser;
     _authSubscription =
         _authService.authStateChanges.listen(_onAuthStateChanged);
-    debugPrint(
-        'AuthStateManager initialized. Current user: ${_currentUser?.id}');
+    Log.d('AuthStateManager initialized. Current user: ${_currentUser?.id}');
   }
 
   void _onAuthStateChanged(BackendUser? user) {
@@ -58,11 +56,11 @@ class AuthStateManagerImpl implements AuthStateManager {
     if (user != null && previousUser == null) {
       // User logged in
       _eventController.add(AuthStateEvent.loginFromBackendUser(user));
-      debugPrint('AuthStateManager: User logged in - ${user.id}');
+      Log.d('AuthStateManager: User logged in - ${user.id}');
     } else if (user == null && previousUser != null) {
       // User logged out
       _eventController.add(AuthStateEvent.logout());
-      debugPrint('AuthStateManager: User logged out');
+      Log.d('AuthStateManager: User logged out');
     }
   }
 
@@ -78,13 +76,13 @@ class AuthStateManagerImpl implements AuthStateManager {
   @override
   void notifyLogout() {
     _eventController.add(AuthStateEvent.logout());
-    debugPrint('AuthStateManager: Logout notification sent');
+    Log.d('AuthStateManager: Logout notification sent');
   }
 
   @override
   void dispose() {
     _authSubscription?.cancel();
     _eventController.close();
-    debugPrint('AuthStateManager disposed');
+    Log.d('AuthStateManager disposed');
   }
 }

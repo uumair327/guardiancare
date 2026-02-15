@@ -2,13 +2,13 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:guardiancare/core/core.dart';
+import 'package:guardiancare/core/util/logger.dart';
 
 /// Modern parental lock overlay widget
 /// Displays inline on the page with blur effect
 /// Syncs with ParentalVerificationService session state
 /// Follows SRP - only handles UI presentation
 class ParentalLockOverlay extends StatefulWidget {
-
   const ParentalLockOverlay({
     super.key,
     required this.onUnlocked,
@@ -91,7 +91,7 @@ class _ParentalLockOverlayState extends State<ParentalLockOverlay>
       }
     } on Object catch (e) {
       // Service not initialized - show lock overlay
-      debugPrint('ParentalVerificationService not available: $e');
+      Log.e('ParentalVerificationService not available: $e');
       setState(() => _isLocked = true);
       _animationController.forward();
     }
@@ -126,7 +126,7 @@ class _ParentalLockOverlayState extends State<ParentalLockOverlay>
         final service = ParentalVerificationService();
         isValid = await service.verifyParentalKey(key);
       } on Object catch (e) {
-        debugPrint('Verification error: $e');
+        Log.e('Verification error: $e');
       }
     }
 

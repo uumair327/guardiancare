@@ -1,5 +1,5 @@
-import 'package:flutter/foundation.dart';
 import 'package:guardiancare/core/backend/backend.dart';
+import 'package:guardiancare/core/util/logger.dart';
 import 'package:guardiancare/features/home/data/models/carousel_item_model.dart';
 
 /// Abstract interface for home remote data source
@@ -20,7 +20,7 @@ class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
 
   @override
   Stream<List<CarouselItemModel>> getCarouselItems() {
-    debugPrint('HomeRemoteDataSource: Fetching curated carousel items...');
+    Log.d('HomeRemoteDataSource: Fetching curated carousel items...');
 
     // All carousel items link to Children of India website
     const items = [

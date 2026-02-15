@@ -1,5 +1,5 @@
-import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:guardiancare/core/util/logger.dart';
 import '../../models/backend_result.dart';
 import '../../models/query_options.dart';
 import '../../ports/data_store_port.dart';
@@ -30,7 +30,7 @@ import 'supabase_initializer.dart';
 /// e.g., 'users', 'forum_posts', 'quiz_questions'
 class SupabaseDataStoreAdapter implements IDataStore {
   SupabaseDataStoreAdapter() : _client = SupabaseInitializer.client {
-    debugPrint('SupabaseDataStoreAdapter: Initialized with Supabase');
+    Log.d('SupabaseDataStoreAdapter: Initialized with Supabase');
   }
 
   final SupabaseClient _client;

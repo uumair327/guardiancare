@@ -185,9 +185,10 @@ abstract final class BackendSecrets {
 
   /// Get sanitized debug info (secrets are masked).
   ///
+
   /// Safe to log for debugging:
   /// ```dart
-  /// debugPrint('Secrets config: ${BackendSecrets.debugInfo}');
+  /// Log.d('Secrets config: ${BackendSecrets.debugInfo}');
   /// ```
   static Map<String, dynamic> get debugInfo => {
         'firebase': {

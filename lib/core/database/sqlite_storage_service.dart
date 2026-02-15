@@ -1,5 +1,6 @@
-import 'package:flutter/foundation.dart' show kIsWeb, debugPrint;
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:guardiancare/core/database/daos/daos.dart';
+import 'package:guardiancare/core/util/logger.dart';
 
 // Conditional import for DatabaseService
 // ignore: uri_does_not_exist
@@ -7,12 +8,12 @@ import 'package:guardiancare/core/database/database_service_stub.dart'
     if (dart.library.io) 'package:guardiancare/core/database/database_service.dart';
 
 /// Service that handles SQLite operations exclusively.
-/// 
+///
 /// This service is responsible for complex queries, relational data,
 /// and large datasets that require SQL capabilities.
-/// 
+///
 /// Note: SQLite is not available on web platforms.
-/// 
+///
 /// Follows Single Responsibility Principle by handling only SQLite
 /// operations without mixing with other storage backends.
 abstract class SQLiteStorageService {
@@ -53,11 +54,11 @@ abstract class SQLiteStorageService {
 /// Implementation of SQLiteStorageService using sqflite
 class SQLiteStorageServiceImpl implements SQLiteStorageService {
   final DatabaseService _dbService = DatabaseService.instance;
-  
+
   QuizDao? _quizDao;
   VideoDao? _videoDao;
   CacheDao? _cacheDao;
-  
+
   bool _initialized = false;
 
   @override
@@ -66,9 +67,9 @@ class SQLiteStorageServiceImpl implements SQLiteStorageService {
   @override
   Future<void> init() async {
     if (_initialized) return;
-    
+
     if (!isAvailable) {
-      debugPrint('⚠️ SQLite is not available on web platform');
+      Log.w('⚠️ SQLite is not available on web platform');
       return;
     }
 
@@ -78,9 +79,9 @@ class SQLiteStorageServiceImpl implements SQLiteStorageService {
       _videoDao = VideoDao();
       _cacheDao = CacheDao();
       _initialized = true;
-      debugPrint('✅ SQLite Storage Service initialized successfully');
+      Log.i('✅ SQLite Storage Service initialized successfully');
     } on Object catch (e) {
-      debugPrint('❌ SQLite Storage Service initialization failed: $e');
+      Log.e('❌ SQLite Storage Service initialization failed: $e');
       rethrow;
     }
   }
@@ -112,7 +113,7 @@ class SQLiteStorageServiceImpl implements SQLiteStorageService {
   @override
   Future<void> clearExpiredCache() async {
     if (!isAvailable || !_initialized) return;
-    
+
     if (_cacheDao != null) {
       await _cacheDao!.clearExpiredCache();
     }

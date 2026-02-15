@@ -1,6 +1,6 @@
 import 'dart:async';
-import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:guardiancare/core/util/logger.dart';
 import '../../models/backend_result.dart';
 import '../../ports/realtime_service_port.dart';
 import 'supabase_initializer.dart';
@@ -30,7 +30,7 @@ import 'supabase_initializer.dart';
 /// - * : All changes
 class SupabaseRealtimeAdapter implements IRealtimeService {
   SupabaseRealtimeAdapter() : _client = SupabaseInitializer.client {
-    debugPrint('SupabaseRealtimeAdapter: Initialized');
+    Log.d('SupabaseRealtimeAdapter: Initialized');
   }
 
   final SupabaseClient _client;
@@ -228,7 +228,7 @@ class SupabaseRealtimeAdapter implements IRealtimeService {
         });
       }
     } on Object catch (e) {
-      debugPrint('SupabaseRealtime: Error fetching initial data: $e');
+      Log.w('SupabaseRealtime: Error fetching initial data: $e');
     }
   }
 

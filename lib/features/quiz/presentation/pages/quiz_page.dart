@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:guardiancare/core/core.dart';
 import 'package:guardiancare/core/di/di.dart' as di;
+import 'package:guardiancare/core/util/logger.dart';
 import 'package:guardiancare/features/quiz/domain/entities/quiz_entity.dart';
 import 'package:guardiancare/features/quiz/domain/usecases/get_all_quizzes.dart';
 import 'package:guardiancare/features/quiz/presentation/widgets/widgets.dart';
@@ -29,7 +30,7 @@ class _QuizPageState extends State<QuizPage> {
 
     if (mounted) {
       result.fold((failure) {
-        debugPrint('Error loading quizzes: ${failure.message}');
+        Log.e('Error loading quizzes: ${failure.message}');
         setState(() {
           isLoading = false;
         });

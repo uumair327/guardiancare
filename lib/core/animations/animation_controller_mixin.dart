@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:guardiancare/core/animations/app_curves.dart';
 import 'package:guardiancare/core/animations/config/animation_config.dart';
 import 'package:guardiancare/core/constants/app_durations.dart';
+import 'package:guardiancare/core/util/logger.dart';
 
 /// Mixin for managing animation controllers efficiently
 /// Following Single Responsibility Principle
@@ -109,7 +110,8 @@ mixin AnimationControllerMixin<T extends StatefulWidget>
   ///   AnimationPresets.fadeIn.copyWith(duration: Duration(milliseconds: 500)),
   /// );
   /// ```
-  void initAnimationFromConfig(AnimationConfig config, {bool autoStart = false}) {
+  void initAnimationFromConfig(AnimationConfig config,
+      {bool autoStart = false}) {
     _disposeExistingController();
 
     _animationController = AnimationController(
@@ -150,7 +152,7 @@ mixin AnimationControllerMixin<T extends StatefulWidget>
     // Clamp scale value to valid range
     final clampedScale = scaleDown.clamp(0.01, 1.0);
     if (clampedScale != scaleDown) {
-      debugPrint(
+      Log.w(
         'AnimationControllerMixin: scaleDown value $scaleDown clamped to $clampedScale',
       );
     }
@@ -304,7 +306,7 @@ mixin AnimationControllerMixin<T extends StatefulWidget>
       await _animationController!.forward();
     } on Object catch (e) {
       // Controller may be disposed, fail silently
-      debugPrint('AnimationControllerMixin: playForward failed: $e');
+      Log.d('AnimationControllerMixin: playForward failed: $e');
     }
   }
 
@@ -318,7 +320,7 @@ mixin AnimationControllerMixin<T extends StatefulWidget>
       await _animationController!.reverse();
     } on Object catch (e) {
       // Controller may be disposed, fail silently
-      debugPrint('AnimationControllerMixin: playReverse failed: $e');
+      Log.d('AnimationControllerMixin: playReverse failed: $e');
     }
   }
 
@@ -330,7 +332,7 @@ mixin AnimationControllerMixin<T extends StatefulWidget>
     try {
       _animationController!.reset();
     } on Object catch (e) {
-      debugPrint('AnimationControllerMixin: resetAnimation failed: $e');
+      Log.d('AnimationControllerMixin: resetAnimation failed: $e');
     }
   }
 
@@ -345,7 +347,7 @@ mixin AnimationControllerMixin<T extends StatefulWidget>
     try {
       _animationController!.repeat(reverse: reverse);
     } on Object catch (e) {
-      debugPrint('AnimationControllerMixin: repeatAnimation failed: $e');
+      Log.d('AnimationControllerMixin: repeatAnimation failed: $e');
     }
   }
 
@@ -357,7 +359,7 @@ mixin AnimationControllerMixin<T extends StatefulWidget>
     try {
       _animationController!.stop();
     } on Object catch (e) {
-      debugPrint('AnimationControllerMixin: stopAnimation failed: $e');
+      Log.d('AnimationControllerMixin: stopAnimation failed: $e');
     }
   }
 
@@ -382,7 +384,7 @@ mixin AnimationControllerMixin<T extends StatefulWidget>
         curve: curve ?? Curves.linear,
       );
     } on Object catch (e) {
-      debugPrint('AnimationControllerMixin: animateTo failed: $e');
+      Log.d('AnimationControllerMixin: animateTo failed: $e');
     }
   }
 
@@ -399,12 +401,13 @@ mixin AnimationControllerMixin<T extends StatefulWidget>
 
 /// Mixin for staggered animations
 /// Useful for list items and grid animations
-mixin StaggeredAnimationMixin<T extends StatefulWidget> on State<T>, TickerProvider {
+mixin StaggeredAnimationMixin<T extends StatefulWidget>
+    on State<T>, TickerProvider {
   final List<AnimationController> _staggeredControllers = [];
   final List<Animation<double>> _staggeredAnimations = [];
-  
+
   List<Animation<double>> get staggeredAnimations => _staggeredAnimations;
-  
+
   /// Initialize staggered animations for a list of items
   void initStaggeredAnimations({
     required int itemCount,
@@ -417,16 +420,16 @@ mixin StaggeredAnimationMixin<T extends StatefulWidget> on State<T>, TickerProvi
         vsync: this,
         duration: itemDuration,
       );
-      
+
       final animation = Tween<double>(begin: 0, end: 1).animate(
         CurvedAnimation(parent: controller, curve: curve),
       );
-      
+
       _staggeredControllers.add(controller);
       _staggeredAnimations.add(animation);
     }
   }
-  
+
   /// Play all staggered animations with delay
   Future<void> playStaggeredAnimations({
     Duration staggerDelay = const Duration(milliseconds: 50),
@@ -438,7 +441,7 @@ mixin StaggeredAnimationMixin<T extends StatefulWidget> on State<T>, TickerProvi
       }
     }
   }
-  
+
   @override
   void dispose() {
     for (final controller in _staggeredControllers) {
