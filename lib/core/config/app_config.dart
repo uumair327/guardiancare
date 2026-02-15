@@ -48,10 +48,16 @@ abstract final class AppConfig {
 
   // ==================== Firebase Project ====================
   /// Firebase project ID
-  static const String firebaseProjectId = 'guardiancare-prod';
+  static const String firebaseProjectId = String.fromEnvironment(
+    'FIREBASE_PROJECT_ID',
+    defaultValue: 'guardiancare-prod',
+  );
 
   /// Firebase storage bucket
-  static const String storageBucket = 'guardiancare-prod.appspot.com';
+  static const String storageBucket = String.fromEnvironment(
+    'STORAGE_BUCKET',
+    defaultValue: 'guardiancare-prod.appspot.com',
+  );
 
   // ==================== Timeouts ====================
   /// Default connection timeout in seconds
