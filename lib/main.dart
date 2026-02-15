@@ -2,13 +2,15 @@ import 'dart:async';
 import 'dart:ui';
 
 import 'package:firebase_core/firebase_core.dart';
+
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
-import 'package:flutter/foundation.dart' show kIsWeb, debugPrint;
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:guardiancare/core/core.dart';
 import 'package:guardiancare/core/di/di.dart' as di;
+import 'package:guardiancare/core/util/logger.dart';
 import 'package:guardiancare/features/features.dart';
 
 import 'package:guardiancare/core/config/env.dart';
@@ -21,23 +23,23 @@ void main() async {
   await Env.init();
 
   // Log backend configuration
-  debugPrint('=== Backend Configuration ===');
-  debugPrint('Provider: ${BackendConfig.provider.name}');
-  debugPrint('Supabase Auth: ${BackendConfig.useSupabaseAuth}');
-  debugPrint('Supabase Database: ${BackendConfig.useSupabaseDatabase}');
-  debugPrint('Supabase Storage: ${BackendConfig.useSupabaseStorage}');
-  debugPrint('Supabase Realtime: ${BackendConfig.useSupabaseRealtime}');
-  debugPrint('=============================');
+  Log.i('=== Backend Configuration ===');
+  Log.i('Provider: ${BackendConfig.provider.name}');
+  Log.i('Supabase Auth: ${BackendConfig.useSupabaseAuth}');
+  Log.i('Supabase Database: ${BackendConfig.useSupabaseDatabase}');
+  Log.i('Supabase Storage: ${BackendConfig.useSupabaseStorage}');
+  Log.i('Supabase Realtime: ${BackendConfig.useSupabaseRealtime}');
+  Log.i('=============================');
 
   // Initialize Firebase (always - for Crashlytics, Analytics, Remote Config)
   // Firebase is initialized even when using Supabase for data
   try {
     await Firebase.initializeApp(
         options: DefaultFirebaseOptions.currentPlatform);
-    debugPrint('Firebase initialized successfully');
+    Log.i('Firebase initialized successfully');
   } on Object catch (e) {
     if (e.toString().contains('duplicate-app')) {
-      debugPrint('Firebase already initialized, skipping...');
+      Log.w('Firebase already initialized, skipping...');
     } else {
       rethrow;
     }
@@ -48,10 +50,10 @@ void main() async {
   try {
     final supabaseInitialized = await SupabaseInitializer.initializeIfNeeded();
     if (supabaseInitialized) {
-      debugPrint('Supabase initialized successfully');
+      Log.i('Supabase initialized successfully');
     }
   } on Object catch (e) {
-    debugPrint('Supabase initialization failed: $e');
+    Log.e('Supabase initialization failed: $e');
     // Don't rethrow - allow app to continue with Firebase fallback
     // In production, you may want to handle this differently
   }
@@ -144,7 +146,7 @@ class GuardiancareState extends State<Guardiancare>
     // Initialize managers and set up subscriptions
     _initializeManagers();
 
-    debugPrint("GuardiancareState initialized with managers");
+    Log.d("GuardiancareState initialized with managers");
   }
 
   void _initializeManagers() {
@@ -183,7 +185,7 @@ class GuardiancareState extends State<Guardiancare>
       setState(() {
         _user = user;
       });
-      debugPrint("User state updated: ${_user?.id}");
+      Log.d("User state updated: ${_user?.id}");
     });
 
     // Subscribe to auth events for logout notifications
@@ -197,7 +199,7 @@ class GuardiancareState extends State<Guardiancare>
 
   /// Change locale - delegates to LocaleManager
   void changeLocale(Locale newLocale) {
-    debugPrint(
+    Log.d(
         'GuardiancareState: Requesting locale change to ${newLocale.languageCode}');
     _localeManager.changeLocale(newLocale);
   }
