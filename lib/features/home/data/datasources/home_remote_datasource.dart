@@ -13,47 +13,52 @@ abstract class HomeRemoteDataSource {
 /// Following: DIP (Dependency Inversion Principle)
 /// This data source depends on IDataStore abstraction, not Firebase directly.
 class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
-
   HomeRemoteDataSourceImpl({required IDataStore dataStore})
       : _dataStore = dataStore;
+  // ignore: unused_field
   final IDataStore _dataStore;
 
   @override
   Stream<List<CarouselItemModel>> getCarouselItems() {
-    debugPrint('HomeRemoteDataSource: Starting to fetch carousel items...');
+    debugPrint('HomeRemoteDataSource: Fetching curated carousel items...');
 
-    return _dataStore.streamQuery('carousel_items').map((result) {
-      return result.when(
-        success: (docs) {
-          debugPrint('HomeRemoteDataSource: Received ${docs.length} documents');
+    // All carousel items link to Children of India website
+    const items = [
+      CarouselItemModel(
+        id: 'children_of_india',
+        type: 'image',
+        imageUrl:
+            'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+        link: 'https://childrenofindia.in/',
+        thumbnailUrl: '',
+        content: {},
+        order: 1,
+        isActive: true,
+      ),
+      CarouselItemModel(
+        id: 'childline_1098',
+        type: 'image',
+        imageUrl:
+            'https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+        link: 'https://childrenofindia.in/',
+        thumbnailUrl: '',
+        content: {},
+        order: 2,
+        isActive: true,
+      ),
+      CarouselItemModel(
+        id: 'education_for_all',
+        type: 'image',
+        imageUrl:
+            'https://images.unsplash.com/photo-1509062522246-3755977927d7?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+        link: 'https://childrenofindia.in/',
+        thumbnailUrl: '',
+        content: {},
+        order: 3,
+        isActive: true,
+      ),
+    ];
 
-          final items = docs
-              .map((doc) {
-                try {
-                  debugPrint('HomeRemoteDataSource: Parsing doc: $doc');
-                  return CarouselItemModel.fromMap(doc);
-                } on Object catch (e) {
-                  debugPrint('Error parsing carousel document: $e');
-                  return null;
-                }
-              })
-              .where((item) =>
-                  item != null &&
-                  item.imageUrl.isNotEmpty &&
-                  item.link.isNotEmpty)
-              .cast<CarouselItemModel>()
-              .toList();
-
-          debugPrint(
-              'HomeRemoteDataSource: Returning ${items.length} valid items');
-          return items;
-        },
-        failure: (error) {
-          debugPrint(
-              'HomeRemoteDataSource: Error fetching items: ${error.message}');
-          return <CarouselItemModel>[];
-        },
-      );
-    });
+    return Stream.value(items);
   }
 }

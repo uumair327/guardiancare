@@ -10,6 +10,7 @@ class ResourceModel extends Resource {
     super.type,
     super.category,
     super.timestamp,
+    super.content,
   });
 
   factory ResourceModel.fromFirestore(DocumentSnapshot doc) {
@@ -31,6 +32,7 @@ class ResourceModel extends Resource {
           : (map['timestamp'] is String
               ? DateTime.tryParse(map['timestamp'])
               : null),
+      content: map['content'],
     );
   }
 
@@ -42,6 +44,7 @@ class ResourceModel extends Resource {
       if (type != null) 'type': type,
       if (category != null) 'category': category,
       if (timestamp != null) 'timestamp': Timestamp.fromDate(timestamp!),
+      if (content != null) 'content': content,
     };
   }
 }

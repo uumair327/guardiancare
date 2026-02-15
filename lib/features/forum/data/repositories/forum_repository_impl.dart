@@ -10,7 +10,6 @@ import 'package:guardiancare/features/forum/domain/repositories/forum_repository
 
 /// Implementation of ForumRepository
 class ForumRepositoryImpl implements ForumRepository {
-
   ForumRepositoryImpl({
     required this.remoteDataSource,
     required this.networkInfo,
@@ -19,7 +18,12 @@ class ForumRepositoryImpl implements ForumRepository {
   final NetworkInfo networkInfo;
 
   @override
-  Stream<Either<Failure, List<ForumEntity>>> getForums(ForumCategory category) async* {
+  Stream<Either<Failure, List<ForumEntity>>> getForums(
+      ForumCategory category) async* {
+    if (!await networkInfo.isConnected) {
+      yield const Left(NetworkFailure(ErrorStrings.noInternet));
+    }
+
     try {
       await for (final forums in remoteDataSource.getForums(category)) {
         yield Right(forums);
@@ -27,12 +31,14 @@ class ForumRepositoryImpl implements ForumRepository {
     } on ServerException catch (e) {
       yield Left(ServerFailure(e.message, code: e.code));
     } on Object catch (e) {
-      yield Left(ServerFailure(ErrorStrings.withDetails(ErrorStrings.unexpectedError, e.toString())));
+      yield Left(ServerFailure(ErrorStrings.withDetails(
+          ErrorStrings.unexpectedError, e.toString())));
     }
   }
 
   @override
-  Stream<Either<Failure, List<CommentEntity>>> getComments(String forumId) async* {
+  Stream<Either<Failure, List<CommentEntity>>> getComments(
+      String forumId) async* {
     try {
       await for (final comments in remoteDataSource.getComments(forumId)) {
         yield Right(comments);
@@ -40,7 +46,8 @@ class ForumRepositoryImpl implements ForumRepository {
     } on ServerException catch (e) {
       yield Left(ServerFailure(e.message, code: e.code));
     } on Object catch (e) {
-      yield Left(ServerFailure(ErrorStrings.withDetails(ErrorStrings.unexpectedError, e.toString())));
+      yield Left(ServerFailure(ErrorStrings.withDetails(
+          ErrorStrings.unexpectedError, e.toString())));
     }
   }
 
@@ -49,15 +56,18 @@ class ForumRepositoryImpl implements ForumRepository {
     required String forumId,
     required String text,
     required String userId,
+    String? parentId,
   }) async {
     if (await networkInfo.isConnected) {
       try {
-        await remoteDataSource.addComment(forumId, text, userId);
+        await remoteDataSource.addComment(forumId, text, userId,
+            parentId: parentId);
         return const Right(null);
       } on ServerException catch (e) {
         return Left(ServerFailure(e.message, code: e.code));
       } on Object catch (e) {
-        return Left(ServerFailure(ErrorStrings.withDetails(ErrorStrings.unexpectedError, e.toString())));
+        return Left(ServerFailure(ErrorStrings.withDetails(
+            ErrorStrings.unexpectedError, e.toString())));
       }
     } else {
       return const Left(NetworkFailure(ErrorStrings.noInternet));
@@ -65,7 +75,8 @@ class ForumRepositoryImpl implements ForumRepository {
   }
 
   @override
-  Future<Either<Failure, UserDetailsEntity>> getUserDetails(String userId) async {
+  Future<Either<Failure, UserDetailsEntity>> getUserDetails(
+      String userId) async {
     if (await networkInfo.isConnected) {
       try {
         final userDetails = await remoteDataSource.getUserDetails(userId);
@@ -73,7 +84,8 @@ class ForumRepositoryImpl implements ForumRepository {
       } on ServerException catch (e) {
         return Left(ServerFailure(e.message, code: e.code));
       } on Object catch (e) {
-        return Left(ServerFailure(ErrorStrings.withDetails(ErrorStrings.unexpectedError, e.toString())));
+        return Left(ServerFailure(ErrorStrings.withDetails(
+            ErrorStrings.unexpectedError, e.toString())));
       }
     } else {
       return const Left(NetworkFailure(ErrorStrings.noInternet));
@@ -99,7 +111,8 @@ class ForumRepositoryImpl implements ForumRepository {
       } on ServerException catch (e) {
         return Left(ServerFailure(e.message, code: e.code));
       } on Object catch (e) {
-        return Left(ServerFailure(ErrorStrings.withDetails(ErrorStrings.unexpectedError, e.toString())));
+        return Left(ServerFailure(ErrorStrings.withDetails(
+            ErrorStrings.unexpectedError, e.toString())));
       }
     } else {
       return const Left(NetworkFailure(ErrorStrings.noInternet));
@@ -115,7 +128,8 @@ class ForumRepositoryImpl implements ForumRepository {
       } on ServerException catch (e) {
         return Left(ServerFailure(e.message, code: e.code));
       } on Object catch (e) {
-        return Left(ServerFailure(ErrorStrings.withDetails(ErrorStrings.unexpectedError, e.toString())));
+        return Left(ServerFailure(ErrorStrings.withDetails(
+            ErrorStrings.unexpectedError, e.toString())));
       }
     } else {
       return const Left(NetworkFailure(ErrorStrings.noInternet));
@@ -134,7 +148,8 @@ class ForumRepositoryImpl implements ForumRepository {
       } on ServerException catch (e) {
         return Left(ServerFailure(e.message, code: e.code));
       } on Object catch (e) {
-        return Left(ServerFailure(ErrorStrings.withDetails(ErrorStrings.unexpectedError, e.toString())));
+        return Left(ServerFailure(ErrorStrings.withDetails(
+            ErrorStrings.unexpectedError, e.toString())));
       }
     } else {
       return const Left(NetworkFailure(ErrorStrings.noInternet));

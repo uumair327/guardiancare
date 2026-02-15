@@ -8,6 +8,7 @@ class CommentModel extends CommentEntity {
     required super.forumId,
     required super.text,
     required super.createdAt,
+    super.parentId,
   });
 
   /// Create CommentModel from Firestore document
@@ -18,6 +19,7 @@ class CommentModel extends CommentEntity {
       forumId: map['forumId'] as String,
       text: map['text'] as String,
       createdAt: DateTime.parse(map['createdAt'] as String),
+      parentId: map['parentId'] as String?,
     );
   }
 
@@ -29,6 +31,7 @@ class CommentModel extends CommentEntity {
       'forumId': forumId,
       'text': text,
       'createdAt': createdAt.toIso8601String(),
+      if (parentId != null) 'parentId': parentId,
     };
   }
 
@@ -39,6 +42,7 @@ class CommentModel extends CommentEntity {
     String? forumId,
     String? text,
     DateTime? createdAt,
+    String? parentId,
   }) {
     return CommentModel(
       id: id ?? this.id,
@@ -46,6 +50,7 @@ class CommentModel extends CommentEntity {
       forumId: forumId ?? this.forumId,
       text: text ?? this.text,
       createdAt: createdAt ?? this.createdAt,
+      parentId: parentId ?? this.parentId,
     );
   }
 }

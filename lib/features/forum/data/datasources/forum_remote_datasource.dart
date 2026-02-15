@@ -11,7 +11,8 @@ import 'package:guardiancare/features/forum/domain/entities/forum_entity.dart';
 abstract class ForumRemoteDataSource {
   Stream<List<ForumModel>> getForums(ForumCategory category);
   Stream<List<CommentModel>> getComments(String forumId);
-  Future<void> addComment(String forumId, String text, String userId);
+  Future<void> addComment(String forumId, String text, String userId,
+      {String? parentId});
   Future<UserDetailsModel> getUserDetails(String userId);
   Future<String> createForum(
     String title,
@@ -27,7 +28,6 @@ abstract class ForumRemoteDataSource {
 ///
 /// Following: DIP (Dependency Inversion Principle)
 class ForumRemoteDataSourceImpl implements ForumRemoteDataSource {
-
   ForumRemoteDataSourceImpl({required IDataStore dataStore})
       : _dataStore = dataStore;
   final IDataStore _dataStore;
@@ -103,7 +103,8 @@ class ForumRemoteDataSourceImpl implements ForumRemoteDataSource {
   }
 
   @override
-  Future<void> addComment(String forumId, String text, String userId) async {
+  Future<void> addComment(String forumId, String text, String userId,
+      {String? parentId}) async {
     try {
       final commentId = DateTime.now().microsecondsSinceEpoch.toString();
       final comment = CommentModel(
@@ -112,6 +113,7 @@ class ForumRemoteDataSourceImpl implements ForumRemoteDataSource {
         forumId: forumId,
         text: text,
         createdAt: DateTime.now(),
+        parentId: parentId,
       );
 
       final result = await _dataStore.setSubdocument(

@@ -18,17 +18,47 @@ class ForumLoading extends ForumState {
 }
 
 class ForumsLoaded extends ForumState {
+  const ForumsLoaded({
+    this.parentForums = const [],
+    this.childrenForums = const [],
+    this.isLoadingParent = false,
+    this.isLoadingChildren = false,
+    this.error,
+  });
 
-  const ForumsLoaded(this.forums, this.category);
-  final List<ForumEntity> forums;
-  final ForumCategory category;
+  final List<ForumEntity> parentForums;
+  final List<ForumEntity> childrenForums;
+  final bool isLoadingParent;
+  final bool isLoadingChildren;
+  final String? error;
 
   @override
-  List<Object> get props => [forums, category];
+  List<Object?> get props => [
+        parentForums,
+        childrenForums,
+        isLoadingParent,
+        isLoadingChildren,
+        error,
+      ];
+
+  ForumsLoaded copyWith({
+    List<ForumEntity>? parentForums,
+    List<ForumEntity>? childrenForums,
+    bool? isLoadingParent,
+    bool? isLoadingChildren,
+    String? error,
+  }) {
+    return ForumsLoaded(
+      parentForums: parentForums ?? this.parentForums,
+      childrenForums: childrenForums ?? this.childrenForums,
+      isLoadingParent: isLoadingParent ?? this.isLoadingParent,
+      isLoadingChildren: isLoadingChildren ?? this.isLoadingChildren,
+      error: error,
+    );
+  }
 }
 
 class CommentsLoaded extends ForumState {
-
   const CommentsLoaded(this.comments, this.forumId);
   final List<CommentEntity> comments;
   final String forumId;
@@ -46,7 +76,6 @@ class CommentSubmitted extends ForumState {
 }
 
 class ForumError extends ForumState {
-
   const ForumError(this.message, {this.code});
   final String message;
   final String? code;
@@ -56,7 +85,6 @@ class ForumError extends ForumState {
 }
 
 class ForumCreated extends ForumState {
-
   const ForumCreated(this.forumId);
   final String forumId;
 

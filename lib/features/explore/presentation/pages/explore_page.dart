@@ -7,7 +7,14 @@ import 'package:guardiancare/features/explore/explore.dart';
 
 /// Modern, education-friendly Explore Page
 class ExplorePage extends StatefulWidget {
-  const ExplorePage({super.key});
+  const ExplorePage({
+    super.key,
+    this.onNavigateToHome,
+    this.onNavigateToForum,
+  });
+
+  final VoidCallback? onNavigateToHome;
+  final VoidCallback? onNavigateToForum;
 
   @override
   State<ExplorePage> createState() => _ExplorePageState();
@@ -16,6 +23,7 @@ class ExplorePage extends StatefulWidget {
 class _ExplorePageState extends State<ExplorePage>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
+  bool _isNavigating = false;
 
   @override
   void initState() {
@@ -37,12 +45,76 @@ class _ExplorePageState extends State<ExplorePage>
         children: [
           _ExploreHeader(tabController: _tabController),
           Expanded(
-            child: TabBarView(
-              controller: _tabController,
-              children: const [
-                _RecommendedTab(),
-                _ResourcesTab(),
-              ],
+            child: NotificationListener<ScrollNotification>(
+              onNotification: (notification) {
+                // Only handle horizontal swipes from the TabBarView itself (depth 0)
+                // This prevents nested horizontal lists from triggering page navigation
+                if (notification.depth != 0 ||
+                    notification.metrics.axis != Axis.horizontal) {
+                  return false;
+                }
+
+                // Reset navigation flag when scroll ends
+                if (notification is ScrollEndNotification) {
+                  _isNavigating = false;
+                  return false;
+                }
+
+                // Prevent multiple triggers
+                if (_isNavigating) return false;
+
+                // Handle Bouncing Scroll Physics (iOS style)
+                if (notification is ScrollUpdateNotification &&
+                    notification.dragDetails != null) {
+                  // Swipe Right at Start (to Home)
+                  if (notification.metrics.pixels <
+                          notification.metrics.minScrollExtent &&
+                      _tabController.index == 0) {
+                    _isNavigating = true;
+                    widget.onNavigateToHome?.call();
+                    return true;
+                  }
+
+                  // Swipe Left at End (to Forum)
+                  if (notification.metrics.pixels >
+                          notification.metrics.maxScrollExtent &&
+                      _tabController.index == 1) {
+                    _isNavigating = true;
+                    widget.onNavigateToForum?.call();
+                    return true;
+                  }
+                }
+
+                // Handle Clamping Scroll Physics (Android style)
+                if (notification is OverscrollNotification &&
+                    notification.dragDetails != null) {
+                  // Swipe Right at Start (to Home)
+                  if (notification.overscroll < 0 &&
+                      _tabController.index == 0) {
+                    _isNavigating = true;
+                    widget.onNavigateToHome?.call();
+                    return true;
+                  }
+
+                  // Swipe Left at End (to Forum)
+                  if (notification.overscroll > 0 &&
+                      _tabController.index == 1) {
+                    _isNavigating = true;
+                    widget.onNavigateToForum?.call();
+                    return true;
+                  }
+                }
+
+                return false;
+              },
+              child: TabBarView(
+                controller: _tabController,
+                physics: const BouncingScrollPhysics(),
+                children: const [
+                  _RecommendedTab(),
+                  _ResourcesTab(),
+                ],
+              ),
             ),
           ),
         ],
@@ -53,7 +125,6 @@ class _ExplorePageState extends State<ExplorePage>
 
 /// Modern header with gradient and animated tabs
 class _ExploreHeader extends StatefulWidget {
-
   const _ExploreHeader({required this.tabController});
   final TabController tabController;
 
@@ -329,7 +400,12 @@ class _RecommendedTabState extends State<_RecommendedTab> {
 
                 return ListView.builder(
                   physics: const AlwaysScrollableScrollPhysics(),
-                  padding: const EdgeInsets.all(AppDimensions.screenPaddingH),
+                  padding: const EdgeInsets.fromLTRB(
+                    AppDimensions.screenPaddingH,
+                    AppDimensions.screenPaddingH,
+                    AppDimensions.screenPaddingH,
+                    100,
+                  ),
                   itemCount: videos.length,
                   itemBuilder: (context, index) {
                     final video = videos[index];
@@ -546,7 +622,8 @@ class _RecommendedTabState extends State<_RecommendedTab> {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Icon(Icons.quiz_rounded, color: AppColors.white, size: 20),
+                    const Icon(Icons.quiz_rounded,
+                        color: AppColors.white, size: 20),
                     const SizedBox(width: AppDimensions.spaceS),
                     Text(l10n.takeAQuiz, style: AppTextStyles.button),
                   ],
@@ -571,7 +648,6 @@ class _RecommendedTabState extends State<_RecommendedTab> {
 
 /// Modern recommended video card
 class _RecommendedVideoCard extends StatefulWidget {
-
   const _RecommendedVideoCard({
     required this.title,
     required this.thumbnail,
@@ -798,7 +874,12 @@ class _ResourcesTab extends StatelessWidget {
                 color: AppColors.cardEmerald,
                 child: ListView.builder(
                   physics: const AlwaysScrollableScrollPhysics(),
-                  padding: const EdgeInsets.all(AppDimensions.screenPaddingH),
+                  padding: const EdgeInsets.fromLTRB(
+                    AppDimensions.screenPaddingH,
+                    AppDimensions.screenPaddingH,
+                    AppDimensions.screenPaddingH,
+                    100,
+                  ),
                   itemCount: resources.length,
                   itemBuilder: (context, index) {
                     final resource = resources[index];
@@ -813,6 +894,7 @@ class _ResourcesTab extends StatelessWidget {
                         type: resource.type ?? '',
                         url: resource.url ?? '',
                         index: index,
+                        content: resource.content,
                       ),
                     );
                   },
@@ -919,7 +1001,6 @@ class _ResourcesTab extends StatelessWidget {
 
 /// Modern resource card
 class _ResourceCard extends StatefulWidget {
-
   const _ResourceCard({
     required this.title,
     required this.description,
@@ -927,6 +1008,7 @@ class _ResourceCard extends StatefulWidget {
     required this.type,
     required this.url,
     required this.index,
+    this.content,
   });
   final String title;
   final String description;
@@ -934,6 +1016,7 @@ class _ResourceCard extends StatefulWidget {
   final String type;
   final String url;
   final int index;
+  final Map<String, dynamic>? content;
 
   @override
   State<_ResourceCard> createState() => _ResourceCardState();
@@ -1000,8 +1083,19 @@ class _ResourceCardState extends State<_ResourceCard>
     super.dispose();
   }
 
-  void _onTap() {
+  Future<void> _onTap() async {
     HapticFeedback.lightImpact();
+
+    if (widget.type.toLowerCase() == 'custom' && widget.content != null) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => CustomContentPage(content: widget.content!),
+        ),
+      );
+      return;
+    }
+
     if (widget.url.isEmpty) return;
 
     if (widget.type.toLowerCase() == 'pdf') {

@@ -194,11 +194,7 @@ void main() {
           if (import.contains('quiz') && import.contains('services')) {
             final normalizedImport = import.replaceAll(r'\', '/');
             
-            // If it's a quiz services import, it must be from domain or data
-            final isValidPath = 
-                normalizedImport.contains('quiz/domain/services') ||
-                normalizedImport.contains('quiz/data/services');
-            
+            // Check if it's an old path (not in domain or data)
             final isOldPath = normalizedImport.contains('quiz/services/') &&
                 !normalizedImport.contains('quiz/domain/services') &&
                 !normalizedImport.contains('quiz/data/services');

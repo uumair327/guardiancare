@@ -13,14 +13,17 @@ import 'package:intl/intl.dart';
 /// - Subtle interactions
 /// - Fetches user display name from Firestore
 class CommentItem extends StatefulWidget {
-
   const CommentItem({
     super.key,
     required this.comment,
     this.index = 0,
+    this.depth = 0,
+    this.onReply,
   });
   final CommentEntity comment;
   final int index;
+  final int depth;
+  final VoidCallback? onReply;
 
   @override
   State<CommentItem> createState() => _CommentItemState();
@@ -232,159 +235,185 @@ class _CommentItemState extends State<CommentItem> {
         duration: AppDurations.animationMedium,
         delay: Duration(milliseconds: 50 * widget.index),
         slideOffset: 15,
-        child: Container(
-          margin: const EdgeInsets.only(bottom: AppDimensions.spaceM),
-          padding: const EdgeInsets.all(AppDimensions.spaceM),
-          decoration: BoxDecoration(
-            color: context.colors.surface,
-            borderRadius: AppDimensions.borderRadiusL,
-            border: Border.all(
-              color: context.colors.divider.withValues(alpha: 0.5),
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: AppColors.shadowLight.withValues(alpha: 0.05),
-                blurRadius: 8,
-                offset: const Offset(0, 2),
-              ),
-            ],
+        child: Padding(
+          padding: EdgeInsets.only(
+            left: widget.depth * 16.0,
+            bottom: AppDimensions.spaceM,
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  // User Avatar - shows profile photo or initials
-                  _buildAvatar(avatarColor, displayName),
-                  const SizedBox(width: AppDimensions.spaceS),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _isLoadingUser
-                            ? Container(
-                                width: 80,
-                                height: 14,
-                                decoration: BoxDecoration(
-                                  color: context.colors.inputBackground,
-                                  borderRadius: BorderRadius.circular(4),
+          child: Container(
+            padding: const EdgeInsets.all(AppDimensions.spaceM),
+            decoration: BoxDecoration(
+              color: context.colors.surface,
+              borderRadius: AppDimensions.borderRadiusL,
+              border: Border.all(
+                color: widget.depth > 0
+                    ? _getAvatarColor(widget.comment.userId)
+                        .withValues(alpha: 0.3)
+                    : context.colors.divider.withValues(alpha: 0.5),
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: AppColors.shadowLight.withValues(alpha: 0.05),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // User Avatar - shows profile photo or initials
+                    _buildAvatar(avatarColor, displayName),
+                    const SizedBox(width: AppDimensions.spaceS),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Flexible(
+                                child: Text(
+                                  displayName,
+                                  style: AppTextStyles.bodySmall.copyWith(
+                                    fontWeight: FontWeight.w600,
+                                    color: context.colors.textPrimary,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
                                 ),
-                              )
-                            : Text(
-                                displayName,
-                                style: AppTextStyles.bodySmall.copyWith(
-                                  fontWeight: FontWeight.w600,
-                                  color: context.colors.textPrimary,
-                                ),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
                               ),
-                        const SizedBox(height: 2),
-                        Row(
-                          children: [
-                            Icon(
-                              Icons.schedule_rounded,
-                              size: 12,
-                              color: context.colors.textSecondary,
-                            ),
-                            const SizedBox(width: 4),
-                            Text(
-                              _getTimeAgo(widget.comment.createdAt),
-                              style: AppTextStyles.caption.copyWith(
+                              if (widget.depth > 0) ...[
+                                const SizedBox(width: 4),
+                                Icon(
+                                  Icons.subdirectory_arrow_right_rounded,
+                                  size: 14,
+                                  color: context.colors.textSecondary,
+                                ),
+                              ],
+                            ],
+                          ),
+                          const SizedBox(height: 2),
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.schedule_rounded,
+                                size: 12,
                                 color: context.colors.textSecondary,
                               ),
-                            ),
-                          ],
-                        ),
-                      ],
+                              const SizedBox(width: 4),
+                              Text(
+                                _getTimeAgo(widget.comment.createdAt),
+                                style: AppTextStyles.caption.copyWith(
+                                  color: context.colors.textSecondary,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: AppDimensions.spaceM),
+                AnimatedCrossFade(
+                  firstChild: Text(
+                    widget.comment.text,
+                    style: AppTextStyles.body2.copyWith(
+                      height: 1.6,
+                      color: context.colors.textPrimary,
+                    ),
+                    maxLines: 4,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  secondChild: Text(
+                    widget.comment.text,
+                    style: AppTextStyles.body2.copyWith(
+                      height: 1.6,
+                      color: context.colors.textPrimary,
                     ),
                   ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: AppDimensions.spaceS,
-                      vertical: 4,
-                    ),
-                    decoration: BoxDecoration(
-                      color: _primaryColor.withValues(alpha: 0.1),
-                      borderRadius: AppDimensions.borderRadiusS,
-                    ),
+                  crossFadeState: _isExpanded
+                      ? CrossFadeState.showSecond
+                      : CrossFadeState.showFirst,
+                  duration: AppDurations.animationShort,
+                ),
+                if (isLongComment) ...[
+                  const SizedBox(height: AppDimensions.spaceS),
+                  ScaleTapWidget(
+                    onTap: () {
+                      HapticFeedback.selectionClick();
+                      setState(() => _isExpanded = !_isExpanded);
+                    },
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(
-                          Icons.verified_user_rounded,
-                          size: 12,
-                          color: _primaryColor,
-                        ),
-                        const SizedBox(width: 4),
                         Text(
-                          ForumStrings.member,
+                          _isExpanded ? UIStrings.showLess : UIStrings.showMore,
                           style: AppTextStyles.caption.copyWith(
                             color: _primaryColor,
-                            fontWeight: FontWeight.w500,
-                            fontSize: 10,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const SizedBox(width: 4),
+                        AnimatedRotation(
+                          turns: _isExpanded ? 0.5 : 0,
+                          duration: AppDurations.animationShort,
+                          child: Icon(
+                            Icons.keyboard_arrow_down_rounded,
+                            size: 16,
+                            color: _primaryColor,
                           ),
                         ),
                       ],
                     ),
                   ),
                 ],
-              ),
-              const SizedBox(height: AppDimensions.spaceM),
-              AnimatedCrossFade(
-                firstChild: Text(
-                  widget.comment.text,
-                  style: AppTextStyles.body2.copyWith(
-                    height: 1.6,
-                    color: context.colors.textPrimary,
-                  ),
-                  maxLines: 4,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                secondChild: Text(
-                  widget.comment.text,
-                  style: AppTextStyles.body2.copyWith(
-                    height: 1.6,
-                    color: context.colors.textPrimary,
-                  ),
-                ),
-                crossFadeState: _isExpanded
-                    ? CrossFadeState.showSecond
-                    : CrossFadeState.showFirst,
-                duration: AppDurations.animationShort,
-              ),
-              if (isLongComment) ...[
-                const SizedBox(height: AppDimensions.spaceS),
-                ScaleTapWidget(
-                  onTap: () {
-                    HapticFeedback.selectionClick();
-                    setState(() => _isExpanded = !_isExpanded);
-                  },
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        _isExpanded ? UIStrings.showLess : UIStrings.showMore,
-                        style: AppTextStyles.caption.copyWith(
-                          color: _primaryColor,
-                          fontWeight: FontWeight.w600,
+                // Reply Button
+                if (widget.onReply != null) ...[
+                  const SizedBox(height: AppDimensions.spaceS),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: ScaleTapWidget(
+                      onTap: widget.onReply,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 6,
+                        ),
+                        decoration: BoxDecoration(
+                          color: context.colors.background,
+                          borderRadius: AppDimensions.borderRadiusM,
+                          border: Border.all(
+                            color: context.colors.divider,
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.reply_rounded,
+                              size: 14,
+                              color: context.colors.textSecondary,
+                            ),
+                            const SizedBox(width: 6),
+                            Text(
+                              'Reply',
+                              style: AppTextStyles.caption.copyWith(
+                                color: context.colors.textSecondary,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                      const SizedBox(width: 4),
-                      AnimatedRotation(
-                        turns: _isExpanded ? 0.5 : 0,
-                        duration: AppDurations.animationShort,
-                        child: Icon(
-                          Icons.keyboard_arrow_down_rounded,
-                          size: 16,
-                          color: _primaryColor,
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
-                ),
+                ],
               ],
-            ],
+            ),
           ),
         ),
       ),

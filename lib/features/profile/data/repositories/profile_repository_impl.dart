@@ -8,7 +8,6 @@ import 'package:guardiancare/features/profile/domain/repositories/profile_reposi
 
 /// Implementation of ProfileRepository
 class ProfileRepositoryImpl implements ProfileRepository {
-
   ProfileRepositoryImpl({required this.remoteDataSource});
   final ProfileRemoteDataSource remoteDataSource;
 
@@ -20,7 +19,8 @@ class ProfileRepositoryImpl implements ProfileRepository {
     } on ServerException catch (e) {
       return Left(ServerFailure(e.message));
     } on Object catch (e) {
-      return Left(ServerFailure(ErrorStrings.withDetails(ErrorStrings.getProfileError, e.toString())));
+      return Left(ServerFailure(ErrorStrings.withDetails(
+          ErrorStrings.getProfileError, e.toString())));
     }
   }
 
@@ -33,19 +33,22 @@ class ProfileRepositoryImpl implements ProfileRepository {
     } on ServerException catch (e) {
       return Left(ServerFailure(e.message));
     } on Object catch (e) {
-      return Left(ServerFailure(ErrorStrings.withDetails(ErrorStrings.updateProfileError, e.toString())));
+      return Left(ServerFailure(ErrorStrings.withDetails(
+          ErrorStrings.updateProfileError, e.toString())));
     }
   }
 
   @override
-  Future<Either<Failure, void>> deleteAccount(String uid) async {
+  Future<Either<Failure, void>> deleteAccount(String uid,
+      {String? password}) async {
     try {
-      await remoteDataSource.deleteAccount(uid);
+      await remoteDataSource.deleteAccount(uid, password: password);
       return const Right(null);
     } on ServerException catch (e) {
       return Left(ServerFailure(e.message));
     } on Object catch (e) {
-      return Left(ServerFailure(ErrorStrings.withDetails(ErrorStrings.deleteAccountError, e.toString())));
+      return Left(ServerFailure(ErrorStrings.withDetails(
+          ErrorStrings.deleteAccountError, e.toString())));
     }
   }
 
@@ -57,7 +60,8 @@ class ProfileRepositoryImpl implements ProfileRepository {
     } on CacheException catch (e) {
       return Left(CacheFailure(e.message));
     } on Object catch (e) {
-      return Left(CacheFailure(ErrorStrings.withDetails(ErrorStrings.clearPreferencesError, e.toString())));
+      return Left(CacheFailure(ErrorStrings.withDetails(
+          ErrorStrings.clearPreferencesError, e.toString())));
     }
   }
 }

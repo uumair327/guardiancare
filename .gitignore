@@ -151,9 +151,13 @@ yarn-error.log
 # package.json
 # package-lock.json
 
+
 # -----------------------------------------------------------------------------
 # 7. SECURITY & SECRETS (STRICT ENFORCEMENT)
 # -----------------------------------------------------------------------------
+# Web Config
+public/config.js
+
 # Firebase Service Files (Contains Project IDs and API Keys)
 **/google-services.json
 **/GoogleService-Info.plist

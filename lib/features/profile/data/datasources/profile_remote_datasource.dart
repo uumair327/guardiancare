@@ -13,7 +13,7 @@ abstract class ProfileRemoteDataSource {
   Future<void> updateProfile(ProfileModel profile);
 
   /// Delete user account and all associated data
-  Future<void> deleteAccount(String uid);
+  Future<void> deleteAccount(String uid, {String? password});
 
   /// Clear user preferences from local storage
   Future<void> clearUserPreferences();
@@ -21,7 +21,6 @@ abstract class ProfileRemoteDataSource {
 
 /// Implementation of ProfileRemoteDataSource using IDataStore and IAuthService
 class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
-
   ProfileRemoteDataSourceImpl({
     required IDataStore dataStore,
     required IAuthService authService,
@@ -75,7 +74,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
   }
 
   @override
-  Future<void> deleteAccount(String uid) async {
+  Future<void> deleteAccount(String uid, {String? password}) async {
     try {
       final user = _authService.currentUser;
       if (user == null) {
@@ -100,7 +99,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
       await _dataStore.delete('users', uid);
 
       // Delete account (handled by AuthService including re-auth for Google if possible)
-      final deleteResult = await _authService.deleteAccount();
+      final deleteResult = await _authService.deleteAccount(password: password);
 
       if (deleteResult.isFailure) {
         throw ServerException(ErrorStrings.withDetails(

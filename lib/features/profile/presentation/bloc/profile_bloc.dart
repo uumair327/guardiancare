@@ -13,7 +13,6 @@ import 'package:guardiancare/features/profile/presentation/bloc/profile_state.da
 /// Delegates language changes to LocaleService and logout to AuthRepository
 /// Requirements: 6.1, 6.2, 6.3
 class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
-
   ProfileBloc({
     required this.getProfile,
     required this.updateProfile,
@@ -74,7 +73,10 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     await clearUserPreferences(NoParams());
 
     // Then delete account
-    final result = await deleteAccount(event.uid);
+    final result = await deleteAccount(DeleteAccountParams(
+      uid: event.uid,
+      password: event.password,
+    ));
 
     result.fold(
       (failure) => emit(ProfileError(failure.message)),

@@ -23,6 +23,7 @@ class _PagesState extends State<Pages> with SingleTickerProviderStateMixin {
 
   late AnimationController _fadeController;
   late Animation<double> _fadeAnimation;
+  late PageController _pageController;
 
   final TextEditingController formController = TextEditingController();
   final TextEditingController otpController = TextEditingController();
@@ -60,6 +61,7 @@ class _PagesState extends State<Pages> with SingleTickerProviderStateMixin {
     // Initialize blocs once - they will persist across locale changes
     _homeBloc = sl<HomeBloc>()..add(const LoadCarouselItems());
     _forumBloc = sl<ForumBloc>();
+    _pageController = PageController(initialPage: index);
 
     _fadeController = AnimationController(
       vsync: this,
@@ -81,6 +83,7 @@ class _PagesState extends State<Pages> with SingleTickerProviderStateMixin {
 
   @override
   void dispose() {
+    _pageController.dispose();
     _fadeController.dispose();
     formController.dispose();
     otpController.dispose();
@@ -131,9 +134,11 @@ class _PagesState extends State<Pages> with SingleTickerProviderStateMixin {
   }
 
   void _onNavTap(int newIndex) {
-    setState(() {
-      index = newIndex;
-    });
+    _pageController.animateToPage(
+      newIndex,
+      duration: AppDurations.animationMedium,
+      curve: Curves.easeOutCubic,
+    );
   }
 
   @override
@@ -144,10 +149,33 @@ class _PagesState extends State<Pages> with SingleTickerProviderStateMixin {
         value: _homeBloc,
         child: const HomePage(),
       ),
-      const ExplorePage(),
+      ExplorePage(
+        onNavigateToHome: () {
+          _pageController.animateToPage(
+            0,
+            duration: AppDurations.animationMedium,
+            curve: Curves.easeOutCubic,
+          );
+        },
+        onNavigateToForum: () {
+          _pageController.animateToPage(
+            2,
+            duration: AppDurations.animationMedium,
+            curve: Curves.easeOutCubic,
+          );
+        },
+      ),
       BlocProvider.value(
         value: _forumBloc,
-        child: const ForumPage(),
+        child: ForumPage(
+          onNavigateToExplore: () {
+            _pageController.animateToPage(
+              1,
+              duration: AppDurations.animationMedium,
+              curve: Curves.easeOutCubic,
+            );
+          },
+        ),
       ),
     ];
 
@@ -158,14 +186,13 @@ class _PagesState extends State<Pages> with SingleTickerProviderStateMixin {
           backgroundColor: context.colors.background,
           body: FadeTransition(
             opacity: _fadeAnimation,
-            child: AnimatedSwitcher(
-              duration: AppDurations.animationMedium,
-              switchInCurve: Curves.easeOut,
-              switchOutCurve: Curves.easeIn,
-              child: KeyedSubtree(
-                key: ValueKey<int>(index),
-                child: screens[index],
-              ),
+            child: PageView(
+              controller: _pageController,
+              onPageChanged: (newIndex) {
+                setState(() => index = newIndex);
+              },
+              physics: const BouncingScrollPhysics(),
+              children: screens,
             ),
           ),
           bottomNavigationBar: ModernBottomNav(

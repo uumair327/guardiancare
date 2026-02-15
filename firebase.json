@@ -1,1 +1,39 @@
-{"firestore":{"rules":"firestore.rules","indexes":"firestore.indexes.json"},"flutter":{"platforms":{"android":{"default":{"projectId":"guardiancare-prod","appId":"1:480855529488:android:b1409c95385f81eb1b5295","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"guardiancare-prod","configurations":{"android":"1:480855529488:android:b1409c95385f81eb1b5295","ios":"1:480855529488:ios:f00835b3d0d66a3b1b5295","macos":"1:480855529488:ios:f00835b3d0d66a3b1b5295","web":"1:480855529488:web:508d2091762512101b5295","windows":"1:480855529488:web:dc48737c378b0bd51b5295"}}}}}}
+{
+    "firestore": {
+        "rules": "firestore.rules",
+        "indexes": "firestore.indexes.json"
+    },
+    "hosting": {
+        "public": "public",
+        "ignore": [
+            "firebase.json",
+            "**/.*",
+            "**/node_modules/**"
+        ],
+        "rewrites": [
+            {
+                "source": "**",
+                "destination": "/index.html"
+            }
+        ]
+    },
+    "flutter": {
+        "platforms": {
+            "android": {
+                "default": {
+                    "projectId": "guardiancare-prod",
+                    "appId": "1:480855529488:android:b1409c95385f81eb1b5295",
+                    "fileOutput": "android/app/google-services.json"
+                }
+            },
+            "dart": {
+                "lib/firebase_options.dart": {
+                    "projectId": "guardiancare-prod",
+                    "configurations": {
+                        "android": "1:480855529488:android:b1409c95385f81eb1b5295"
+                    }
+                }
+            }
+        }
+    }
+}

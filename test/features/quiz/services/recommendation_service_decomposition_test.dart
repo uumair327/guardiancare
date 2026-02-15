@@ -722,7 +722,7 @@ void main() {
     test('GeminiAIService should handle empty category', () async {
       final fixture = RecommendationTestFixture.create();
 
-      final result = await fixture.geminiService.generateSearchTerms('');
+      await fixture.geminiService.generateSearchTerms('');
 
       // Empty category should still be processed (validation in real implementation)
       expect(fixture.geminiService.methodCalls.length, equals(1));
@@ -733,7 +733,7 @@ void main() {
     test('YoutubeSearchService should handle empty search term', () async {
       final fixture = RecommendationTestFixture.create();
 
-      final result = await fixture.youtubeService.searchVideo('');
+      await fixture.youtubeService.searchVideo('');
 
       // Empty term should still be processed (validation in real implementation)
       expect(fixture.youtubeService.methodCalls.length, equals(1));

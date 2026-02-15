@@ -11,10 +11,14 @@ import 'package:guardiancare/core/core.dart';
 import 'package:guardiancare/core/di/di.dart' as di;
 import 'package:guardiancare/features/features.dart';
 
+import 'package:guardiancare/core/config/env.dart';
 import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Load environment variables (Security Audit Requirement)
+  await Env.init();
 
   // Log backend configuration
   debugPrint('=== Backend Configuration ===');

@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>GuardianCare - Delete Account</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+      background: #f0f2f5;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .card {
+      background: white;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      max-width: 400px;
+      width: 100%;
+    }
+
+    h1 {
+      margin-top: 0;
+      color: #1a1a1a;
+    }
+
+    p {
+      color: #666;
+      line-height: 1.5;
+      margin-bottom: 24px;
+    }
+
+    button {
+      background: #dc3545;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 6px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+      width: 100%;
+      margin-bottom: 12px;
+    }
+
+    button:hover {
+      background: #c82333;
+    }
+
+    button.google-btn {
+      background: #fff;
+      color: #757575;
+      border: 1px solid #ddd;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+    }
+
+    button.google-btn:hover {
+      background: #f8f9fa;
+      border-color: #ccc;
+    }
+
+    img.google-icon {
+      width: 18px;
+      height: 18px;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .success-message {
+      color: #28a745;
+      font-weight: bold;
+    }
+
+    .error-message {
+      color: #dc3545;
+      font-size: 14px;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="card" id="login-section">
+    <h1>Delete Account</h1>
+    <p>To optimize for security, please sign in with Google to verify your identity before deleting your GuardianCare
+      account.</p>
+    <button class="google-btn" onclick="signInWithGoogle()">
+      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="google-icon"
+        alt="Google logo">
+      Sign in with Google
+    </button>
+    <div id="login-error" class="error-message"></div>
+  </div>
+
+  <div class="card hidden" id="delete-section">
+    <h1>Confirm Deletion</h1>
+    <p>Warning: This action is permanent. All your data including profile, forum posts, and progress will be erased
+      immediately.</p>
+    <p id="user-email" style="font-weight: bold; color: #333;"></p>
+    <button onclick="deleteAccount()">Permanently Delete My Account</button>
+    <button onclick="signOut()" style="background: transparent; color: #666; border: 1px solid #ddd;">Cancel</button>
+    <div id="delete-error" class="error-message"></div>
+  </div>
+
+  <div class="card hidden" id="success-section">
+    <h1>Account Deleted</h1>
+    <p class="success-message">Your account has been successfully deleted.</p>
+    <p>We are sorry to see you go. You can close this window now.</p>
+  </div>
+
+
+  <!-- Firebase App (the core Firebase SDK) is always required and must be listed first -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+  <!-- Load configuration (gitignored) -->
+  <script src="config.js"></script>
+
+  <script>
+    // Initialize Firebase (firebaseConfig is defined in config.js)
+    if (typeof firebaseConfig === 'undefined') {
+      alert('Error: config.js is missing. Please create it from config.example.js');
+    } else {
+      firebase.initializeApp(firebaseConfig);
+    }
+
+    const auth = firebase.auth();
+
+    // UI Elements
+    const loginSection = document.getElementById('login-section');
+    const deleteSection = document.getElementById('delete-section');
+    const successSection = document.getElementById('success-section');
+    const userEmailDisplay = document.getElementById('user-email');
+    const loginError = document.getElementById('login-error');
+    const deleteError = document.getElementById('delete-error');
+
+    // Auth State Listener
+    auth.onAuthStateChanged((user) => {
+      if (user) {
+        loginSection.classList.add('hidden');
+        deleteSection.classList.remove('hidden');
+        userEmailDisplay.textContent = `Signed in as: ${user.email}`;
+        loginError.textContent = '';
+      } else {
+        loginSection.classList.remove('hidden');
+        deleteSection.classList.add('hidden');
+        successSection.classList.add('hidden');
+      }
+    });
+
+    function signInWithGoogle() {
+      const provider = new firebase.auth.GoogleAuthProvider();
+      auth.signInWithPopup(provider).catch((error) => {
+        loginError.textContent = error.message;
+        console.error(error);
+      });
+    }
+
+    function signOut() {
+      auth.signOut();
+    }
+
+    function deleteAccount() {
+      const user = auth.currentUser;
+      if (user) {
+        // Re-authenticating is recommended for sensitive operations like deletion
+        // but if they just signed in, it should be fine.
+
+        user.delete().then(() => {
+          deleteSection.classList.add('hidden');
+          successSection.classList.remove('hidden');
+        }).catch((error) => {
+          // If requires-recent-login error, prompt to re-login
+          if (error.code === 'auth/requires-recent-login') {
+            const provider = new firebase.auth.GoogleAuthProvider();
+            user.reauthenticateWithPopup(provider).then(() => {
+              // Retry delete
+              return user.delete();
+            }).then(() => {
+              deleteSection.classList.add('hidden');
+              successSection.classList.remove('hidden');
+            }).catch((reauthError) => {
+              deleteError.textContent = reauthError.message;
+            });
+          } else {
+            deleteError.textContent = error.message;
+          }
+        });
+      }
+    }
+  </script>
+</body>
+
+</html>

@@ -9,7 +9,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 /// Forum page with inline parental lock protection
 /// Follows SRP - handles page structure and parental verification
 class ForumPage extends StatefulWidget {
-  const ForumPage({super.key});
+  const ForumPage({
+    super.key,
+    this.onNavigateToExplore,
+  });
+
+  final VoidCallback? onNavigateToExplore;
 
   @override
   State<ForumPage> createState() => _ForumPageState();
@@ -201,7 +206,9 @@ class _ForumPageState extends State<ForumPage>
         child: _isUnlocked
             ? FadeTransition(
                 opacity: _fadeAnimation,
-                child: const _ForumContent(),
+                child: _ForumContent(
+                  onNavigateToExplore: widget.onNavigateToExplore,
+                ),
               )
             : const _ForumPlaceholder(),
       ),
@@ -261,7 +268,8 @@ class _ForumPlaceholder extends StatelessWidget {
 
 /// Forum content with modern header and tabs
 class _ForumContent extends StatefulWidget {
-  const _ForumContent();
+  const _ForumContent({this.onNavigateToExplore});
+  final VoidCallback? onNavigateToExplore;
 
   @override
   State<_ForumContent> createState() => _ForumContentState();
@@ -270,12 +278,22 @@ class _ForumContent extends StatefulWidget {
 class _ForumContentState extends State<_ForumContent>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
+  bool _isNavigating = false;
+  int _lastIndex = 0;
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
     _tabController.addListener(_onTabChanged);
+
+    // Preload both categories
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final bloc = context.read<ForumBloc>();
+      // Always ensure both are loaded/subscribed
+      bloc.add(const LoadForums(ForumCategory.parent));
+      bloc.add(const LoadForums(ForumCategory.children));
+    });
   }
 
   @override
@@ -286,34 +304,67 @@ class _ForumContentState extends State<_ForumContent>
   }
 
   void _onTabChanged() {
-    if (_tabController.indexIsChanging) {
-      HapticFeedback.selectionClick();
-      final category = _tabController.index == 0
-          ? ForumCategory.parent
-          : ForumCategory.children;
-      context.read<ForumBloc>().add(LoadForums(category));
-    }
+    if (_tabController.index == _lastIndex) return;
+
+    // Update index locally to prevent duplicate calls
+    setState(() => _lastIndex = _tabController.index);
+    HapticFeedback.selectionClick();
   }
 
   @override
   Widget build(BuildContext context) {
-    // Load initial forums
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (context.read<ForumBloc>().state is ForumInitial) {
-        context.read<ForumBloc>().add(const LoadForums(ForumCategory.parent));
-      }
-    });
-
     return Column(
       children: [
         _ForumHeader(tabController: _tabController),
         Expanded(
-          child: TabBarView(
-            controller: _tabController,
-            children: const [
-              _ForumListView(category: ForumCategory.parent),
-              _ForumListView(category: ForumCategory.children),
-            ],
+          child: NotificationListener<ScrollNotification>(
+            onNotification: (notification) {
+              // Only handle horizontal swipes from the TabBarView itself (depth 0)
+              if (notification.depth != 0 ||
+                  notification.metrics.axis != Axis.horizontal) {
+                return false;
+              }
+
+              // Reset navigation flag
+              if (notification is ScrollEndNotification) {
+                _isNavigating = false;
+                return false;
+              }
+
+              if (_isNavigating) return false;
+
+              // Handle Bouncing Physics
+              if (notification is ScrollUpdateNotification &&
+                  notification.dragDetails != null) {
+                if (notification.metrics.pixels <
+                        notification.metrics.minScrollExtent &&
+                    _tabController.index == 0) {
+                  _isNavigating = true;
+                  widget.onNavigateToExplore?.call();
+                  return true;
+                }
+              }
+
+              // Handle Clamping Physics
+              if (notification is OverscrollNotification &&
+                  notification.dragDetails != null) {
+                if (notification.overscroll < 0 && _tabController.index == 0) {
+                  _isNavigating = true;
+                  widget.onNavigateToExplore?.call();
+                  return true;
+                }
+              }
+
+              return false;
+            },
+            child: TabBarView(
+              controller: _tabController,
+              physics: const BouncingScrollPhysics(),
+              children: const [
+                _ForumListView(category: ForumCategory.parent),
+                _ForumListView(category: ForumCategory.children),
+              ],
+            ),
           ),
         ),
       ],
@@ -323,7 +374,6 @@ class _ForumContentState extends State<_ForumContent>
 
 /// Modern forum header with gradient and tabs
 class _ForumHeader extends StatefulWidget {
-
   const _ForumHeader({required this.tabController});
   final TabController tabController;
 
@@ -497,7 +547,8 @@ class _ForumHeaderState extends State<_ForumHeader>
                             mainAxisAlignment: MainAxisAlignment.center,
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              const Icon(Icons.family_restroom_rounded, size: 16),
+                              const Icon(Icons.family_restroom_rounded,
+                                  size: 16),
                               const SizedBox(width: 4),
                               Flexible(
                                 child: Text(
@@ -544,7 +595,6 @@ class _ForumHeaderState extends State<_ForumHeader>
 
 /// Forum list view for each category
 class _ForumListView extends StatelessWidget {
-
   const _ForumListView({required this.category});
   final ForumCategory category;
 
@@ -554,6 +604,21 @@ class _ForumListView extends StatelessWidget {
 
     return BlocConsumer<ForumBloc, ForumState>(
       listener: (context, state) {
+        if (state is ForumsLoaded) {
+          if (state.error != null) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(state.error!),
+                backgroundColor: AppColors.error,
+                duration: AppDurations.snackbarMedium,
+                behavior: SnackBarBehavior.floating,
+                shape: RoundedRectangleBorder(
+                  borderRadius: AppDimensions.borderRadiusS,
+                ),
+              ),
+            );
+          }
+        }
         if (state is ForumError) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -574,11 +639,18 @@ class _ForumListView extends StatelessWidget {
         }
 
         if (state is ForumsLoaded) {
-          if (state.category != category) {
+          final forums = category == ForumCategory.parent
+              ? state.parentForums
+              : state.childrenForums;
+          final isLoading = category == ForumCategory.parent
+              ? state.isLoadingParent
+              : state.isLoadingChildren;
+
+          if (isLoading && forums.isEmpty) {
             return _buildLoadingState();
           }
 
-          if (state.forums.isEmpty) {
+          if (forums.isEmpty) {
             return _buildEmptyState(context, l10n);
           }
 
@@ -590,15 +662,20 @@ class _ForumListView extends StatelessWidget {
             },
             color: AppColors.videoPrimary,
             child: ListView.builder(
-              itemCount: state.forums.length,
-              padding: const EdgeInsets.all(AppDimensions.screenPaddingH),
+              itemCount: forums.length,
+              padding: const EdgeInsets.fromLTRB(
+                AppDimensions.screenPaddingH,
+                AppDimensions.screenPaddingH,
+                AppDimensions.screenPaddingH,
+                100,
+              ),
               itemBuilder: (context, index) {
                 return FadeSlideWidget(
                   duration: AppDurations.animationMedium,
                   delay: Duration(milliseconds: 50 * index),
                   slideOffset: 20,
                   child: ForumListItem(
-                    forum: state.forums[index],
+                    forum: forums[index],
                     index: index,
                   ),
                 );
@@ -619,7 +696,12 @@ class _ForumListView extends StatelessWidget {
   Widget _buildLoadingState() {
     return ListView.builder(
       itemCount: 5,
-      padding: const EdgeInsets.all(AppDimensions.screenPaddingH),
+      padding: const EdgeInsets.fromLTRB(
+        AppDimensions.screenPaddingH,
+        AppDimensions.screenPaddingH,
+        AppDimensions.screenPaddingH,
+        100,
+      ),
       itemBuilder: (context, index) {
         return FadeSlideWidget(
           duration: AppDurations.animationShort,
@@ -709,7 +791,8 @@ class _ForumListView extends StatelessWidget {
             ),
             const SizedBox(height: AppDimensions.spaceS),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: AppDimensions.spaceXL),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: AppDimensions.spaceXL),
               child: Text(
                 message,
                 textAlign: TextAlign.center,

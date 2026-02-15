@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+
 import 'package:guardiancare/core/core.dart';
 import 'package:guardiancare/features/home/home.dart';
 
@@ -150,7 +151,8 @@ class _HomeCarouselState extends State<HomeCarousel>
           ),
           itemBuilder: (context, index, realIndex) {
             return Container(
-              margin: const EdgeInsets.symmetric(horizontal: AppDimensions.spaceXS),
+              margin:
+                  const EdgeInsets.symmetric(horizontal: AppDimensions.spaceXS),
               child: ShimmerLoading(
                 child: Container(
                   decoration: BoxDecoration(
@@ -185,7 +187,8 @@ class _HomeCarouselState extends State<HomeCarousel>
     return FadeSlideWidget(
       child: Container(
         height: height,
-        margin: const EdgeInsets.symmetric(horizontal: AppDimensions.screenPaddingH),
+        margin: const EdgeInsets.symmetric(
+            horizontal: AppDimensions.screenPaddingH),
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
@@ -226,7 +229,8 @@ class _HomeCarouselState extends State<HomeCarousel>
               ),
               const SizedBox(height: AppDimensions.spaceXS),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: AppDimensions.spaceL),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: AppDimensions.spaceL),
                 child: Text(
                   message,
                   style: AppTextStyles.bodySmall.copyWith(
@@ -261,7 +265,6 @@ class _HomeCarouselState extends State<HomeCarousel>
 
 /// Carousel card with 3D effects and animations
 class CarouselCard extends StatefulWidget {
-
   const CarouselCard({
     super.key,
     required this.item,
@@ -356,7 +359,8 @@ class _CarouselCardState extends State<CarouselCard>
               child: AnimatedContainer(
                 duration: AppDurations.animationShort,
                 curve: AppCurves.standard,
-                margin: const EdgeInsets.symmetric(horizontal: AppDimensions.spaceXS),
+                margin: const EdgeInsets.symmetric(
+                    horizontal: AppDimensions.spaceXS),
                 transform: Matrix4.identity()
                   ..setEntry(3, 2, 0.001)
                   ..rotateX(_tiltOffset.dx)
@@ -367,9 +371,8 @@ class _CarouselCardState extends State<CarouselCard>
                   boxShadow: [
                     BoxShadow(
                       color: AppColors.primary.withValues(
-                        alpha: widget.isActive
-                            ? (_isPressed ? 0.15 : 0.25)
-                            : 0.1,
+                        alpha:
+                            widget.isActive ? (_isPressed ? 0.15 : 0.25) : 0.1,
                       ),
                       blurRadius: widget.isActive ? 20 : 12,
                       offset: Offset(
@@ -402,7 +405,8 @@ class _CarouselCardState extends State<CarouselCard>
                       ),
                     ),
                   ),
-                  errorWidget: (context, url, error) => _buildErrorPlaceholder(),
+                  errorWidget: (context, url, error) =>
+                      _buildErrorPlaceholder(),
                 ),
                 // Gradient overlay
                 Container(

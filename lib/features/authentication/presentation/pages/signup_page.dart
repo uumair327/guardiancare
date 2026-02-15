@@ -49,12 +49,12 @@ class _SignupPageState extends State<SignupPage> {
     return BlocProvider(
       create: (context) => sl<AuthBloc>(),
       child: Scaffold(
-        backgroundColor: AppColors.background,
+        backgroundColor: context.colors.background,
         appBar: AppBar(
-          backgroundColor: AppColors.background,
+          backgroundColor: context.colors.background,
           elevation: AppDimensions.elevation0,
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back, color: AppColors.primary),
+            icon: Icon(Icons.arrow_back, color: context.colors.primary),
             onPressed: () => Navigator.pop(context),
           ),
         ),
@@ -72,11 +72,11 @@ class _SignupPageState extends State<SignupPage> {
               } else if (state is AuthAuthenticated) {
                 // Show email verification message
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text(
+                  SnackBar(
+                    content: const Text(
                       'Account created! Please check your email to verify your account before signing in.',
                     ),
-                    backgroundColor: AppColors.success,
+                    backgroundColor: context.colors.success,
                     duration: AppDurations.snackbarLong,
                   ),
                 );
@@ -92,10 +92,10 @@ class _SignupPageState extends State<SignupPage> {
             },
             builder: (context, state) {
               if (state is AuthLoading) {
-                return const Center(
+                return Center(
                   child: CircularProgressIndicator(
                     valueColor:
-                        AlwaysStoppedAnimation<Color>(AppColors.primary),
+                        AlwaysStoppedAnimation<Color>(context.colors.primary),
                   ),
                 );
               }
@@ -109,28 +109,42 @@ class _SignupPageState extends State<SignupPage> {
                     children: [
                       Text(
                         'Create Account',
-                        style:
-                            AppTextStyles.h1.copyWith(color: AppColors.primary),
+                        style: AppTextStyles.h1
+                            .copyWith(color: context.colors.primary),
                       ),
                       const SizedBox(height: AppDimensions.spaceS),
                       Text(
                         'Sign up to get started',
                         style: AppTextStyles.bodyLarge
-                            .copyWith(color: AppColors.textSecondary),
+                            .copyWith(color: context.colors.textSecondary),
                       ),
                       const SizedBox(height: AppDimensions.spaceXL),
 
                       // Full Name Field
                       TextFormField(
                         controller: _nameController,
+                        style: TextStyle(color: context.colors.textPrimary),
                         decoration: InputDecoration(
                           labelText: 'Full Name',
-                          prefixIcon: const Icon(Icons.person_outline),
+                          labelStyle:
+                              TextStyle(color: context.colors.textSecondary),
+                          prefixIcon: Icon(Icons.person_outline,
+                              color: context.colors.textSecondary),
                           border: OutlineInputBorder(
                             borderRadius: AppDimensions.borderRadiusM,
                           ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: AppDimensions.borderRadiusM,
+                            borderSide:
+                                BorderSide(color: context.colors.textSecondary),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: AppDimensions.borderRadiusM,
+                            borderSide:
+                                BorderSide(color: context.colors.primary),
+                          ),
                           filled: true,
-                          fillColor: AppColors.inputBackground,
+                          fillColor: context.colors.inputBackground,
                         ),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
@@ -150,14 +164,28 @@ class _SignupPageState extends State<SignupPage> {
                       TextFormField(
                         controller: _emailController,
                         keyboardType: TextInputType.emailAddress,
+                        style: TextStyle(color: context.colors.textPrimary),
                         decoration: InputDecoration(
                           labelText: 'Email',
-                          prefixIcon: const Icon(Icons.email_outlined),
+                          labelStyle:
+                              TextStyle(color: context.colors.textSecondary),
+                          prefixIcon: Icon(Icons.email_outlined,
+                              color: context.colors.textSecondary),
                           border: OutlineInputBorder(
                             borderRadius: AppDimensions.borderRadiusM,
                           ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: AppDimensions.borderRadiusM,
+                            borderSide:
+                                BorderSide(color: context.colors.textSecondary),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: AppDimensions.borderRadiusM,
+                            borderSide:
+                                BorderSide(color: context.colors.primary),
+                          ),
                           filled: true,
-                          fillColor: AppColors.inputBackground,
+                          fillColor: context.colors.inputBackground,
                         ),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
@@ -174,12 +202,12 @@ class _SignupPageState extends State<SignupPage> {
                       ),
                       const SizedBox(height: AppDimensions.spaceM),
 
-                      // Role Selection - Using RadioGroup for Flutter 3.32+ compatibility
+                      // Role Selection
                       Container(
                         decoration: BoxDecoration(
-                          color: AppColors.inputBackground,
+                          color: context.colors.inputBackground,
                           borderRadius: AppDimensions.borderRadiusM,
-                          border: Border.all(color: AppColors.inputBorder),
+                          border: Border.all(color: context.colors.divider),
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -188,8 +216,9 @@ class _SignupPageState extends State<SignupPage> {
                               padding: AppDimensions.paddingAllM,
                               child: Text(
                                 'I am a:',
-                                style: AppTextStyles.bodyLarge
-                                    .copyWith(fontWeight: FontWeight.w500),
+                                style: AppTextStyles.bodyLarge.copyWith(
+                                    fontWeight: FontWeight.w500,
+                                    color: context.colors.textPrimary),
                               ),
                             ),
                             RadioGroup<String>(
@@ -201,15 +230,27 @@ class _SignupPageState extends State<SignupPage> {
                                   });
                                 }
                               },
-                              child: const Column(
+                              child: Column(
                                 children: [
                                   RadioListTile<String>(
-                                    title: Text(UIStrings.parentGuardian),
+                                    title: Text(UIStrings.parentGuardian,
+                                        style: TextStyle(
+                                            color: context.colors.textPrimary)),
                                     value: 'parent',
+                                    groupValue: _selectedRole,
+                                    onChanged: (val) =>
+                                        setState(() => _selectedRole = val!),
+                                    activeColor: context.colors.primary,
                                   ),
                                   RadioListTile<String>(
-                                    title: Text(UIStrings.child),
+                                    title: Text(UIStrings.child,
+                                        style: TextStyle(
+                                            color: context.colors.textPrimary)),
                                     value: 'child',
+                                    groupValue: _selectedRole,
+                                    onChanged: (val) =>
+                                        setState(() => _selectedRole = val!),
+                                    activeColor: context.colors.primary,
                                   ),
                                 ],
                               ),
@@ -223,14 +264,19 @@ class _SignupPageState extends State<SignupPage> {
                       TextFormField(
                         controller: _passwordController,
                         obscureText: _obscurePassword,
+                        style: TextStyle(color: context.colors.textPrimary),
                         decoration: InputDecoration(
                           labelText: 'Password',
-                          prefixIcon: const Icon(Icons.lock_outline),
+                          labelStyle:
+                              TextStyle(color: context.colors.textSecondary),
+                          prefixIcon: Icon(Icons.lock_outline,
+                              color: context.colors.textSecondary),
                           suffixIcon: IconButton(
                             icon: Icon(
                               _obscurePassword
                                   ? Icons.visibility_off
                                   : Icons.visibility,
+                              color: context.colors.textSecondary,
                             ),
                             onPressed: () {
                               setState(() {
@@ -241,8 +287,18 @@ class _SignupPageState extends State<SignupPage> {
                           border: OutlineInputBorder(
                             borderRadius: AppDimensions.borderRadiusM,
                           ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: AppDimensions.borderRadiusM,
+                            borderSide:
+                                BorderSide(color: context.colors.textSecondary),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: AppDimensions.borderRadiusM,
+                            borderSide:
+                                BorderSide(color: context.colors.primary),
+                          ),
                           filled: true,
-                          fillColor: AppColors.inputBackground,
+                          fillColor: context.colors.inputBackground,
                         ),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
@@ -262,14 +318,19 @@ class _SignupPageState extends State<SignupPage> {
                       TextFormField(
                         controller: _confirmPasswordController,
                         obscureText: _obscureConfirmPassword,
+                        style: TextStyle(color: context.colors.textPrimary),
                         decoration: InputDecoration(
                           labelText: 'Confirm Password',
-                          prefixIcon: const Icon(Icons.lock_outline),
+                          labelStyle:
+                              TextStyle(color: context.colors.textSecondary),
+                          prefixIcon: Icon(Icons.lock_outline,
+                              color: context.colors.textSecondary),
                           suffixIcon: IconButton(
                             icon: Icon(
                               _obscureConfirmPassword
                                   ? Icons.visibility_off
                                   : Icons.visibility,
+                              color: context.colors.textSecondary,
                             ),
                             onPressed: () {
                               setState(() {
@@ -281,8 +342,18 @@ class _SignupPageState extends State<SignupPage> {
                           border: OutlineInputBorder(
                             borderRadius: AppDimensions.borderRadiusM,
                           ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: AppDimensions.borderRadiusM,
+                            borderSide:
+                                BorderSide(color: context.colors.textSecondary),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: AppDimensions.borderRadiusM,
+                            borderSide:
+                                BorderSide(color: context.colors.primary),
+                          ),
                           filled: true,
-                          fillColor: AppColors.inputBackground,
+                          fillColor: context.colors.inputBackground,
                         ),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
@@ -305,7 +376,7 @@ class _SignupPageState extends State<SignupPage> {
                         child: ElevatedButton(
                           onPressed: () => _handleSignup(context),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.primary,
+                            backgroundColor: context.colors.primary,
                             shape: RoundedRectangleBorder(
                               borderRadius: AppDimensions.borderRadiusM,
                             ),
@@ -325,13 +396,13 @@ class _SignupPageState extends State<SignupPage> {
                           child: Text.rich(
                             TextSpan(
                               text: 'Already have an account? ',
-                              style: AppTextStyles.bodyMedium
-                                  .copyWith(color: AppColors.textSecondary),
-                              children: const [
+                              style: AppTextStyles.bodyMedium.copyWith(
+                                  color: context.colors.textSecondary),
+                              children: [
                                 TextSpan(
                                   text: 'Login',
                                   style: TextStyle(
-                                    color: AppColors.primary,
+                                    color: context.colors.primary,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),

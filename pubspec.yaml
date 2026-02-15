@@ -1,7 +1,7 @@
 name: guardiancare
 description: "An educational app for child safety and family empowerment."
 publish_to: 'none'
-version: 1.0.0+20
+version: 1.0.0+21
 
 environment:
   sdk: '>=3.4.0 <4.0.0'
@@ -83,6 +83,7 @@ dependencies:
   # Legacy (consider removing if not used)
   get: ^4.7.2
   firebase_storage: ^12.4.10
+  flutter_dotenv: ^6.0.0
 
 dev_dependencies:
   flutter_test:

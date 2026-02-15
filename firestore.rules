@@ -23,13 +23,13 @@ service cloud.firestore {
     // ==================== Users Collection ====================
     match /users/{userId} {
       // Users can read their own profile
-      allow read: if isOwner(userId);
+      allow read: if isAuthenticated();
       // Users can create their own profile on signup
       allow create: if isOwner(userId);
       // Users can update their own profile
       allow update: if isOwner(userId);
       // Only admins can delete users
-      allow delete: if isAdmin();
+      allow delete: if isOwner(userId) || isAdmin();
     }
     
     // ==================== Consents Collection ====================
@@ -44,18 +44,20 @@ service cloud.firestore {
       allow read: if isAuthenticated();
       // Users can create posts
       allow create: if isAuthenticated() && 
-        request.resource.data.authorId == request.auth.uid;
+        request.resource.data.userId == request.auth.uid;
       // Only author or admin can update/delete
       allow update, delete: if isAuthenticated() &&
-        (resource.data.authorId == request.auth.uid || isAdmin());
+        (resource.data.userId == request.auth.uid || isAdmin());
       
       // Comments subcollection
       match /comments/{commentId} {
         allow read: if isAuthenticated();
+        // Allow creating comments if authenticated and the comment's userId matches auth uid
         allow create: if isAuthenticated() &&
-          request.resource.data.authorId == request.auth.uid;
+          request.resource.data.userId == request.auth.uid;
+        // Allow updating/deleting if user owns the comment or is admin
         allow update, delete: if isAuthenticated() &&
-          (resource.data.authorId == request.auth.uid || isAdmin());
+          (resource.data.userId == request.auth.uid || isAdmin());
       }
     }
     

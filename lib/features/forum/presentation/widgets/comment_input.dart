@@ -12,9 +12,13 @@ import 'package:guardiancare/features/forum/forum.dart';
 /// - Glassmorphism style
 /// - Haptic feedback
 class CommentInput extends StatefulWidget {
-
-  const CommentInput({super.key, required this.forumId});
+  const CommentInput({
+    super.key,
+    required this.forumId,
+    required this.replyingTo,
+  });
   final String forumId;
+  final ValueNotifier<CommentEntity?> replyingTo;
 
   @override
   State<CommentInput> createState() => _CommentInputState();
@@ -41,6 +45,8 @@ class _CommentInputState extends State<CommentInput>
     _controller.addListener(_onTextChanged);
     _focusNode.addListener(_onFocusChanged);
 
+    widget.replyingTo.addListener(_onReplyChanged);
+
     _animationController = AnimationController(
       vsync: this,
       duration: AppDurations.animationShort,
@@ -55,10 +61,18 @@ class _CommentInputState extends State<CommentInput>
   void dispose() {
     _controller.removeListener(_onTextChanged);
     _focusNode.removeListener(_onFocusChanged);
+    widget.replyingTo.removeListener(_onReplyChanged);
     _controller.dispose();
     _focusNode.dispose();
     _animationController.dispose();
     super.dispose();
+  }
+
+  void _onReplyChanged() {
+    setState(() {});
+    if (widget.replyingTo.value != null && !_focusNode.hasFocus) {
+      _focusNode.requestFocus();
+    }
   }
 
   void _onTextChanged() {
@@ -126,6 +140,7 @@ class _CommentInputState extends State<CommentInput>
           SubmitComment(
             forumId: widget.forumId,
             text: text,
+            parentId: widget.replyingTo.value?.id,
           ),
         );
   }
@@ -146,6 +161,7 @@ class _CommentInputState extends State<CommentInput>
         if (state is CommentSubmitted) {
           _controller.clear();
           setState(() => _characterCount = 0);
+          widget.replyingTo.value = null; // Clear reply state
           _focusNode.unfocus();
 
           ScaffoldMessenger.of(context).showSnackBar(
@@ -202,6 +218,47 @@ class _CommentInputState extends State<CommentInput>
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
+                if (widget.replyingTo.value != null) ...[
+                  Padding(
+                    padding:
+                        const EdgeInsets.only(bottom: AppDimensions.spaceS),
+                    child: Row(
+                      children: [
+                        Transform.flip(
+                          flipY: true,
+                          child: Icon(
+                            Icons.reply_rounded,
+                            size: 16,
+                            color: _primaryColor,
+                          ),
+                        ),
+                        const SizedBox(width: AppDimensions.spaceS),
+                        Expanded(
+                          child: Text(
+                            'Replying to comment...',
+                            style: AppTextStyles.caption.copyWith(
+                              color: _primaryColor,
+                              fontWeight: FontWeight.w600,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            HapticFeedback.lightImpact();
+                            widget.replyingTo.value = null;
+                          },
+                          child: Icon(
+                            Icons.close_rounded,
+                            size: 16,
+                            color: context.colors.textSecondary,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [

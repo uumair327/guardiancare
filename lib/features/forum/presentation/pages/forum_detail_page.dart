@@ -12,8 +12,7 @@ import 'package:intl/intl.dart';
 /// - Animated comments list
 /// - Modern comment input
 /// - Pull to refresh
-class ForumDetailPage extends StatelessWidget {
-
+class ForumDetailPage extends StatefulWidget {
   const ForumDetailPage({
     super.key,
     required this.forumId,
@@ -22,6 +21,7 @@ class ForumDetailPage extends StatelessWidget {
     this.createdAt,
     this.userId,
   });
+
   final String forumId;
   final String forumTitle;
   final String? forumDescription;
@@ -29,9 +29,22 @@ class ForumDetailPage extends StatelessWidget {
   final String? userId;
 
   @override
+  State<ForumDetailPage> createState() => _ForumDetailPageState();
+}
+
+class _ForumDetailPageState extends State<ForumDetailPage> {
+  final ValueNotifier<CommentEntity?> _replyingTo = ValueNotifier(null);
+
+  @override
+  void dispose() {
+    _replyingTo.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => sl<ForumBloc>()..add(LoadComments(forumId)),
+      create: (context) => sl<ForumBloc>()..add(LoadComments(widget.forumId)),
       child: Builder(
         builder: (context) => Scaffold(
           backgroundColor: context.colors.background,
@@ -39,19 +52,22 @@ class ForumDetailPage extends StatelessWidget {
             bottom: false,
             child: Column(
               children: [
-                // Header
-                _ForumDetailHeader(
-                  title: forumTitle,
-                  description: forumDescription,
-                  createdAt: createdAt,
-                  userId: userId,
-                ),
-                // Comments list
                 Expanded(
-                  child: _CommentsSection(forumId: forumId),
+                  child: _CommentsSection(
+                    forumId: widget.forumId,
+                    replyingTo: _replyingTo,
+                    header: _ForumDetailHeader(
+                      title: widget.forumTitle,
+                      description: widget.forumDescription,
+                      createdAt: widget.createdAt,
+                      userId: widget.userId,
+                    ),
+                  ),
                 ),
-                // Comment input
-                CommentInput(forumId: forumId),
+                CommentInput(
+                  forumId: widget.forumId,
+                  replyingTo: _replyingTo,
+                ),
               ],
             ),
           ),
@@ -63,7 +79,6 @@ class ForumDetailPage extends StatelessWidget {
 
 /// Forum detail header with gradient and info
 class _ForumDetailHeader extends StatefulWidget {
-
   const _ForumDetailHeader({
     required this.title,
     this.description,
@@ -318,7 +333,8 @@ class _ForumDetailHeaderState extends State<_ForumDetailHeader>
                       ),
                       if (widget.description!.length > 100)
                         Padding(
-                          padding: const EdgeInsets.only(top: AppDimensions.spaceXS),
+                          padding:
+                              const EdgeInsets.only(top: AppDimensions.spaceXS),
                           child: GestureDetector(
                             onTap: () {
                               HapticFeedback.selectionClick();
@@ -410,13 +426,41 @@ class _ForumDetailHeaderState extends State<_ForumDetailHeader>
   }
 }
 
-/// Comments section with list and states
+/// Comments section with threaded list
 class _CommentsSection extends StatelessWidget {
+  const _CommentsSection({
+    required this.forumId,
+    required this.replyingTo,
+    required this.header,
+  });
 
-  const _CommentsSection({required this.forumId});
   final String forumId;
+  final ValueNotifier<CommentEntity?> replyingTo;
+  final Widget header;
 
   static Color get _primaryColor => AppColors.videoPrimary;
+
+  List<_CommentDisplayItem> _flattenComments(List<CommentEntity> comments) {
+    final Map<String?, List<CommentEntity>> byParent = {};
+    for (var c in comments) {
+      byParent.putIfAbsent(c.parentId, () => []).add(c);
+    }
+
+    final List<_CommentDisplayItem> result = [];
+    void traverse(String? parentId, int depth) {
+      final children = byParent[parentId] ?? [];
+      // Sort by creation time (oldest first for thread readability)
+      children.sort((a, b) => a.createdAt.compareTo(b.createdAt));
+
+      for (var child in children) {
+        result.add(_CommentDisplayItem(child, depth));
+        traverse(child.id, depth + 1);
+      }
+    }
+
+    traverse(null, 0);
+    return result;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -451,13 +495,29 @@ class _CommentsSection extends StatelessWidget {
       },
       builder: (context, state) {
         if (state is ForumLoading) {
-          return _buildLoadingState();
+          return ListView(
+            padding: EdgeInsets.zero,
+            children: [
+              header,
+              const SizedBox(height: AppDimensions.spaceM),
+              _buildLoadingState(),
+            ],
+          );
         }
 
         if (state is CommentsLoaded && state.forumId == forumId) {
           if (state.comments.isEmpty) {
-            return _buildEmptyState(context, l10n);
+            return ListView(
+              padding: EdgeInsets.zero,
+              children: [
+                header,
+                const SizedBox(height: AppDimensions.spaceM),
+                _buildEmptyState(context, l10n),
+              ],
+            );
           }
+
+          final displayItems = _flattenComments(state.comments);
 
           return RefreshIndicator(
             onRefresh: () async {
@@ -467,68 +527,98 @@ class _CommentsSection extends StatelessWidget {
             },
             color: _primaryColor,
             child: ListView.builder(
-              padding: const EdgeInsets.all(AppDimensions.screenPaddingH),
-              itemCount: state.comments.length + 1, // +1 for header
+              padding: EdgeInsets.zero,
+              itemCount: displayItems.length + 2, // +1 Header, +1 Count
               itemBuilder: (context, index) {
                 if (index == 0) {
-                  return _buildCommentsHeader(
-                      context, state.comments.length, l10n);
+                  return header;
                 }
-                return CommentItem(
-                  comment: state.comments[index - 1],
-                  index: index - 1,
+                if (index == 1) {
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppDimensions.screenPaddingH,
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: AppDimensions.spaceM),
+                      child: _buildCommentsHeader(
+                          context, state.comments.length, l10n),
+                    ),
+                  );
+                }
+                final item = displayItems[index - 2];
+                return Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppDimensions.screenPaddingH,
+                  ),
+                  child: CommentItem(
+                    comment: item.comment,
+                    index: index - 2,
+                    depth: item.depth,
+                    onReply: () {
+                      HapticFeedback.selectionClick();
+                      replyingTo.value = item.comment;
+                    },
+                  ),
                 );
               },
             ),
           );
         }
 
-        return _buildLoadingState();
+        return ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            header,
+            const SizedBox(height: AppDimensions.spaceM),
+            _buildLoadingState(),
+          ],
+        );
       },
     );
   }
 
   Widget _buildCommentsHeader(
       BuildContext context, int count, AppLocalizations l10n) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: AppDimensions.spaceM),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(AppDimensions.spaceS),
-            decoration: BoxDecoration(
-              color: _primaryColor.withValues(alpha: 0.1),
-              borderRadius: AppDimensions.borderRadiusS,
-            ),
-            child: Icon(
-              Icons.chat_bubble_rounded,
-              color: _primaryColor,
-              size: 18,
-            ),
+    return Row(
+      children: [
+        Container(
+          padding: const EdgeInsets.all(AppDimensions.spaceS),
+          decoration: BoxDecoration(
+            color: _primaryColor.withValues(alpha: 0.1),
+            borderRadius: AppDimensions.borderRadiusS,
           ),
-          const SizedBox(width: AppDimensions.spaceS),
-          Text(
-            l10n.commentsCount(count),
-            style: AppTextStyles.h4.copyWith(
-              color: context.colors.textPrimary,
-              fontWeight: FontWeight.w600,
-            ),
+          child: Icon(
+            Icons.chat_bubble_rounded,
+            color: _primaryColor,
+            size: 18,
           ),
-        ],
-      ),
+        ),
+        const SizedBox(width: AppDimensions.spaceS),
+        Text(
+          l10n.commentsCount(count),
+          style: AppTextStyles.h4.copyWith(
+            color: context.colors.textPrimary,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ],
     );
   }
 
   Widget _buildLoadingState() {
-    return ListView.builder(
-      padding: const EdgeInsets.all(AppDimensions.screenPaddingH),
-      itemCount: 5,
-      itemBuilder: (context, index) {
-        return FadeSlideWidget(
+    return Column(
+      children: List.generate(
+        5,
+        (index) => FadeSlideWidget(
           duration: AppDurations.animationShort,
           delay: Duration(milliseconds: 50 * index),
           child: Padding(
-            padding: const EdgeInsets.only(bottom: AppDimensions.spaceM),
+            padding: const EdgeInsets.only(
+              bottom: AppDimensions.spaceM,
+              left: AppDimensions.screenPaddingH,
+              right: AppDimensions.screenPaddingH,
+            ),
             child: ShimmerLoading(
               child: Container(
                 height: 100,
@@ -539,8 +629,8 @@ class _CommentsSection extends StatelessWidget {
               ),
             ),
           ),
-        );
-      },
+        ),
+      ),
     );
   }
 
@@ -612,4 +702,11 @@ class _CommentsSection extends StatelessWidget {
       ),
     );
   }
+}
+
+class _CommentDisplayItem {
+  final CommentEntity comment;
+  final int depth;
+
+  _CommentDisplayItem(this.comment, this.depth);
 }

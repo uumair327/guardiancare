@@ -15,8 +15,8 @@ import 'package:guardiancare/main.dart' show Guardiancare;
 ///
 /// Following: DIP (Dependency Inversion Principle) - uses BackendUser abstraction
 class AccountPage extends StatefulWidget {
-
   const AccountPage({super.key, this.backendUser});
+
   /// The BackendUser to display (backend-agnostic)
   final BackendUser? backendUser;
 
@@ -209,8 +209,8 @@ class _AccountPlaceholder extends StatelessWidget {
         // Content placeholder
         Expanded(
           child: ListView.builder(
-            padding:
-                const EdgeInsets.symmetric(horizontal: AppDimensions.screenPaddingH),
+            padding: const EdgeInsets.symmetric(
+                horizontal: AppDimensions.screenPaddingH),
             itemCount: 3,
             itemBuilder: (context, index) {
               return Padding(
@@ -234,61 +234,19 @@ class _AccountPlaceholder extends StatelessWidget {
 /// Account content widget - shown after parental verification
 /// Uses BackendUser for backend-agnostic user representation
 class _AccountContent extends StatelessWidget {
-
   const _AccountContent({required this.user});
   final BackendUser user;
 
   Future<void> _confirmAndDeleteAccount(
       BuildContext context, ProfileBloc profileBloc) async {
-    final l10n = AppLocalizations.of(context);
-    final bool shouldDelete = await showDialog(
+    final String? result = await showDialog<String>(
       context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          backgroundColor: context.colors.surface,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppDimensions.dialogRadius),
-          ),
-          title: Row(
-            children: [
-              const Icon(Icons.warning_rounded, color: AppColors.error),
-              const SizedBox(width: AppDimensions.spaceS),
-              Text(
-                l10n.deleteAccount,
-                style: AppTextStyles.dialogTitle.copyWith(
-                  color: context.colors.textPrimary,
-                ),
-              ),
-            ],
-          ),
-          content: Text(
-            l10n.deleteAccountConfirm,
-            style: AppTextStyles.body2.copyWith(
-              color: context.colors.textSecondary,
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(false),
-              child: Text(
-                l10n.no,
-                style: TextStyle(color: context.colors.textSecondary),
-              ),
-            ),
-            ElevatedButton(
-              onPressed: () => Navigator.of(context).pop(true),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.error,
-              ),
-              child: Text(l10n.yes, style: const TextStyle(color: AppColors.white)),
-            ),
-          ],
-        );
-      },
+      builder: (BuildContext context) => const _DeleteAccountDialog(),
     );
 
-    if (shouldDelete) {
-      profileBloc.add(DeleteAccountRequested(user.id));
+    if (result != null) {
+      final String? password = result.isEmpty ? null : result;
+      profileBloc.add(DeleteAccountRequested(user.id, password: password));
     }
   }
 
@@ -403,7 +361,8 @@ class _AccountContent extends StatelessWidget {
       SnackBar(
         content: Row(
           children: [
-            const Icon(Icons.check_circle_rounded, color: AppColors.white, size: 20),
+            const Icon(Icons.check_circle_rounded,
+                color: AppColors.white, size: 20),
             const SizedBox(width: AppDimensions.spaceS),
             Text(
               state.localeName,
@@ -459,8 +418,8 @@ class _AccountContent extends StatelessWidget {
         ),
         const SizedBox(height: AppDimensions.spaceL),
         Padding(
-          padding:
-              const EdgeInsets.symmetric(horizontal: AppDimensions.screenPaddingH),
+          padding: const EdgeInsets.symmetric(
+              horizontal: AppDimensions.screenPaddingH),
           child: Column(
             children: List.generate(4, (index) {
               return Padding(
@@ -510,7 +469,8 @@ class _AccountContent extends StatelessWidget {
             ),
             const SizedBox(height: AppDimensions.spaceS),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: AppDimensions.spaceXL),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: AppDimensions.spaceXL),
               child: Text(
                 message,
                 style: AppTextStyles.body2.copyWith(
@@ -565,8 +525,8 @@ class _AccountContent extends StatelessWidget {
         children: [
           // Profile header with proper horizontal margin
           Padding(
-            padding:
-                const EdgeInsets.symmetric(horizontal: AppDimensions.screenPaddingH),
+            padding: const EdgeInsets.symmetric(
+                horizontal: AppDimensions.screenPaddingH),
             child: ProfileHeader(profile: profile),
           ),
           const SizedBox(height: AppDimensions.spaceL),
@@ -736,5 +696,98 @@ class _AccountContent extends StatelessWidget {
       orElse: () => locales.first,
     );
     return localeInfo.displayName;
+  }
+}
+
+class _DeleteAccountDialog extends StatefulWidget {
+  const _DeleteAccountDialog();
+
+  @override
+  State<_DeleteAccountDialog> createState() => _DeleteAccountDialogState();
+}
+
+class _DeleteAccountDialogState extends State<_DeleteAccountDialog> {
+  final _passwordController = TextEditingController();
+  bool _obscureText = true;
+
+  @override
+  void dispose() {
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final theme = Theme.of(context);
+
+    return AlertDialog(
+      backgroundColor: theme.colorScheme.surface,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(AppDimensions.dialogRadius),
+      ),
+      title: Row(
+        children: [
+          const Icon(Icons.warning_rounded, color: AppColors.error),
+          const SizedBox(width: AppDimensions.spaceS),
+          Text(
+            l10n.deleteAccount,
+            style: AppTextStyles.dialogTitle.copyWith(
+              color: theme.colorScheme.onSurface,
+            ),
+          ),
+        ],
+      ),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            l10n.deleteAccountConfirm,
+            style: AppTextStyles.body2.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
+          ),
+          const SizedBox(height: AppDimensions.spaceM),
+          TextField(
+            controller: _passwordController,
+            obscureText: _obscureText,
+            decoration: InputDecoration(
+              labelText: 'Password',
+              helperText: 'Required for Email login. Leave empty for Google.',
+              border: OutlineInputBorder(
+                borderRadius: AppDimensions.borderRadiusM,
+              ),
+              suffixIcon: IconButton(
+                icon: Icon(
+                  _obscureText
+                      ? Icons.visibility_outlined
+                      : Icons.visibility_off_outlined,
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
+                onPressed: () => setState(() => _obscureText = !_obscureText),
+              ),
+            ),
+          ),
+        ],
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(null),
+          child: Text(
+            l10n.cancel,
+            style: TextStyle(color: theme.colorScheme.onSurfaceVariant),
+          ),
+        ),
+        ElevatedButton(
+          onPressed: () => Navigator.of(context).pop(_passwordController.text),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: AppColors.error,
+            foregroundColor: AppColors.white,
+          ),
+          child: Text(l10n.yes),
+        ),
+      ],
+    );
   }
 }

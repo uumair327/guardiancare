@@ -1,4 +1,6 @@
 import 'package:equatable/equatable.dart';
+import 'package:dartz/dartz.dart';
+import 'package:guardiancare/core/error/failures.dart';
 import 'package:guardiancare/features/forum/domain/entities/forum_entity.dart';
 
 abstract class ForumEvent extends Equatable {
@@ -9,7 +11,6 @@ abstract class ForumEvent extends Equatable {
 }
 
 class LoadForums extends ForumEvent {
-
   const LoadForums(this.category);
   final ForumCategory category;
 
@@ -18,7 +19,6 @@ class LoadForums extends ForumEvent {
 }
 
 class LoadComments extends ForumEvent {
-
   const LoadComments(this.forumId);
   final String forumId;
 
@@ -27,20 +27,20 @@ class LoadComments extends ForumEvent {
 }
 
 class SubmitComment extends ForumEvent {
-
   const SubmitComment({
     required this.forumId,
     required this.text,
+    this.parentId,
   });
   final String forumId;
   final String text;
+  final String? parentId;
 
   @override
-  List<Object> get props => [forumId, text];
+  List<Object?> get props => [forumId, text, parentId];
 }
 
 class CreateForum extends ForumEvent {
-
   const CreateForum({
     required this.title,
     required this.description,
@@ -55,7 +55,6 @@ class CreateForum extends ForumEvent {
 }
 
 class DeleteForum extends ForumEvent {
-
   const DeleteForum(this.forumId);
   final String forumId;
 
@@ -64,7 +63,6 @@ class DeleteForum extends ForumEvent {
 }
 
 class DeleteComment extends ForumEvent {
-
   const DeleteComment({
     required this.forumId,
     required this.commentId,
@@ -77,10 +75,18 @@ class DeleteComment extends ForumEvent {
 }
 
 class RefreshForums extends ForumEvent {
-
   const RefreshForums(this.category);
   final ForumCategory category;
 
   @override
   List<Object> get props => [category];
+}
+
+class ForumsUpdated extends ForumEvent {
+  const ForumsUpdated(this.result, this.category);
+  final Either<Failure, List<ForumEntity>> result;
+  final ForumCategory category;
+
+  @override
+  List<Object> get props => [result, category];
 }

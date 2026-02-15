@@ -17,6 +17,7 @@ abstract class ForumRepository {
     required String forumId,
     required String text,
     required String userId,
+    String? parentId,
   });
 
   /// Get user details by user ID

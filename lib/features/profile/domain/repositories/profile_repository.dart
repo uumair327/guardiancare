@@ -11,7 +11,7 @@ abstract class ProfileRepository {
   Future<Either<Failure, void>> updateProfile(ProfileEntity profile);
 
   /// Delete user account and all associated data
-  Future<Either<Failure, void>> deleteAccount(String uid);
+  Future<Either<Failure, void>> deleteAccount(String uid, {String? password});
 
   /// Clear user preferences
   Future<Either<Failure, void>> clearUserPreferences();
