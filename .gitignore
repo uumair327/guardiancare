@@ -5,6 +5,7 @@
 # Standard: Strict/Secure
 # =============================================================================
 
+
 # -----------------------------------------------------------------------------
 # 1. CORE FLUTTER & DART
 # -----------------------------------------------------------------------------
@@ -18,7 +19,6 @@ build/
 coverage/
 lcov.info
 doc/api/
-lib/core/constants/api_keys.dart
 
 # Generated files
 *.g.dart
@@ -174,9 +174,9 @@ public/config.js
 **/*-private-key.json
 **/client_secret_*.json
 
+
 # API Keys & Secrets
 **/start_config.dart
-**/api_keys.dart
 **/secrets.dart
 **/dev_config.dart
 
