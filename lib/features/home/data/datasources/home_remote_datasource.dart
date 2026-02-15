@@ -30,10 +30,7 @@ class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
         imageUrl:
             'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
         link: 'https://childrenofindia.in/',
-        thumbnailUrl: '',
-        content: {},
         order: 1,
-        isActive: true,
       ),
       CarouselItemModel(
         id: 'childline_1098',
@@ -41,10 +38,7 @@ class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
         imageUrl:
             'https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
         link: 'https://childrenofindia.in/',
-        thumbnailUrl: '',
-        content: {},
         order: 2,
-        isActive: true,
       ),
       CarouselItemModel(
         id: 'education_for_all',
@@ -52,10 +46,7 @@ class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
         imageUrl:
             'https://images.unsplash.com/photo-1509062522246-3755977927d7?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
         link: 'https://childrenofindia.in/',
-        thumbnailUrl: '',
-        content: {},
         order: 3,
-        isActive: true,
       ),
     ];
 

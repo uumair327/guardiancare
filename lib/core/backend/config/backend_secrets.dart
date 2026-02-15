@@ -67,7 +67,6 @@ abstract final class BackendSecrets {
   /// This exists for advanced use cases where env-based config is needed.
   static String get firebaseProjectId => _getSecret(
         'FIREBASE_PROJECT_ID',
-        defaultValue: const String.fromEnvironment('FIREBASE_PROJECT_ID'),
       );
 
   /// Firebase API key (for REST API usage).
@@ -75,7 +74,6 @@ abstract final class BackendSecrets {
   /// Note: Standard Firebase SDK uses `firebase_options.dart`.
   static String get firebaseApiKey => _getSecret(
         'FIREBASE_API_KEY',
-        defaultValue: const String.fromEnvironment('FIREBASE_API_KEY'),
       );
 
   // ============================================================================
@@ -87,7 +85,6 @@ abstract final class BackendSecrets {
   /// Example: `https://xyzcompany.supabase.co`
   static String get supabaseUrl => _getSecret(
         'SUPABASE_URL',
-        defaultValue: const String.fromEnvironment('SUPABASE_URL'),
       );
 
   /// Supabase anonymous (public) key.
@@ -96,7 +93,6 @@ abstract final class BackendSecrets {
   /// It has limited permissions based on Row Level Security (RLS) policies.
   static String get supabaseAnonKey => _getSecret(
         'SUPABASE_ANON_KEY',
-        defaultValue: const String.fromEnvironment('SUPABASE_ANON_KEY'),
       );
 
   /// Supabase service role key (for admin operations).
@@ -107,7 +103,6 @@ abstract final class BackendSecrets {
   /// Only use in secure backend/edge functions.
   static String get supabaseServiceKey => _getSecret(
         'SUPABASE_SERVICE_KEY',
-        defaultValue: const String.fromEnvironment('SUPABASE_SERVICE_KEY'),
       );
 
   // ============================================================================
@@ -117,13 +112,11 @@ abstract final class BackendSecrets {
   /// Appwrite endpoint URL.
   static String get appwriteEndpoint => _getSecret(
         'APPWRITE_ENDPOINT',
-        defaultValue: const String.fromEnvironment('APPWRITE_ENDPOINT'),
       );
 
   /// Appwrite project ID.
   static String get appwriteProjectId => _getSecret(
         'APPWRITE_PROJECT_ID',
-        defaultValue: const String.fromEnvironment('APPWRITE_PROJECT_ID'),
       );
 
   // ============================================================================

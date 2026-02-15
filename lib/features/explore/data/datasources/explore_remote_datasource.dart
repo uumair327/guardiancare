@@ -56,7 +56,7 @@ class ExploreRemoteDataSourceImpl implements ExploreRemoteDataSource {
         category: 'Guide',
         type: 'custom',
         timestamp: DateTime.now(),
-        content: {
+        content: const {
           'title': 'Online Safety Guide',
           'description':
               'This comprehensive guide helps you understand the basics of digital safety. From secure passwords to recognizing phishing attempts, we cover essential topics for children and parents alike.\n\nStay safe, stay informed.',

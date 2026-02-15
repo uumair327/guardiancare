@@ -5,10 +5,10 @@ import 'package:guardiancare/features/profile/domain/repositories/profile_reposi
 
 /// Use case for deleting user account
 class DeleteAccountParams {
-  final String uid;
-  final String? password;
 
   DeleteAccountParams({required this.uid, this.password});
+  final String uid;
+  final String? password;
 }
 
 /// Use case for deleting user account

@@ -442,7 +442,7 @@ class _CommentsSection extends StatelessWidget {
 
   List<_CommentDisplayItem> _flattenComments(List<CommentEntity> comments) {
     final Map<String?, List<CommentEntity>> byParent = {};
-    for (var c in comments) {
+    for (final c in comments) {
       byParent.putIfAbsent(c.parentId, () => []).add(c);
     }
 
@@ -452,7 +452,7 @@ class _CommentsSection extends StatelessWidget {
       // Sort by creation time (oldest first for thread readability)
       children.sort((a, b) => a.createdAt.compareTo(b.createdAt));
 
-      for (var child in children) {
+      for (final child in children) {
         result.add(_CommentDisplayItem(child, depth));
         traverse(child.id, depth + 1);
       }
@@ -705,8 +705,8 @@ class _CommentsSection extends StatelessWidget {
 }
 
 class _CommentDisplayItem {
-  final CommentEntity comment;
-  final int depth;
 
   _CommentDisplayItem(this.comment, this.depth);
+  final CommentEntity comment;
+  final int depth;
 }

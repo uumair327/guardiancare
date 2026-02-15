@@ -773,7 +773,7 @@ class _DeleteAccountDialogState extends State<_DeleteAccountDialog> {
       ),
       actions: [
         TextButton(
-          onPressed: () => Navigator.of(context).pop(null),
+          onPressed: () => Navigator.of(context).pop(),
           child: Text(
             l10n.cancel,
             style: TextStyle(color: theme.colorScheme.onSurfaceVariant),
