@@ -1,13 +1,12 @@
 import 'dart:async';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:guardiancare/core/usecases/usecase.dart';
+import 'package:guardiancare/core/util/logger.dart';
 import 'package:guardiancare/features/home/domain/usecases/get_carousel_items.dart';
 import 'package:guardiancare/features/home/presentation/bloc/home_event.dart';
 import 'package:guardiancare/features/home/presentation/bloc/home_state.dart';
 
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
-
   HomeBloc({
     required this.getCarouselItems,
   }) : super(const HomeInitial()) {
@@ -24,27 +23,27 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     LoadCarouselItems event,
     Emitter<HomeState> emit,
   ) async {
-    debugPrint('HomeBloc: Loading carousel items...');
+    Log.d('HomeBloc: Loading carousel items...');
     emit(const HomeLoading());
 
     await _carouselSubscription?.cancel();
 
     _carouselSubscription = getCarouselItems(NoParams()).listen(
       (result) {
-        debugPrint('HomeBloc: Received result from stream');
+        Log.d('HomeBloc: Received result from stream');
         result.fold(
           (failure) {
-            debugPrint('HomeBloc: Stream returned failure: ${failure.message}');
+            Log.e('HomeBloc: Stream returned failure: ${failure.message}');
             add(CarouselItemsError(failure.message, code: failure.code));
           },
           (items) {
-            debugPrint('HomeBloc: Stream returned ${items.length} items');
+            Log.d('HomeBloc: Stream returned ${items.length} items');
             add(CarouselItemsReceived(items));
           },
         );
       },
       onError: (error) {
-        debugPrint('HomeBloc: Stream error: $error');
+        Log.e('HomeBloc: Stream error: $error');
         add(CarouselItemsError('Stream error: ${error.toString()}'));
       },
     );
@@ -54,7 +53,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     CarouselItemsReceived event,
     Emitter<HomeState> emit,
   ) {
-    debugPrint('HomeBloc: Emitting CarouselItemsLoaded with ${event.items.length} items');
+    Log.d(
+        'HomeBloc: Emitting CarouselItemsLoaded with ${event.items.length} items');
     emit(CarouselItemsLoaded(event.items));
   }
 
@@ -62,7 +62,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     CarouselItemsError event,
     Emitter<HomeState> emit,
   ) {
-    debugPrint('HomeBloc: Emitting HomeError: ${event.message}');
+    Log.e('HomeBloc: Emitting HomeError: ${event.message}');
     emit(HomeError(event.message, code: event.code));
   }
 
@@ -70,14 +70,14 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     RefreshCarouselItems event,
     Emitter<HomeState> emit,
   ) async {
-    debugPrint('HomeBloc: Refreshing carousel items...');
+    Log.d('HomeBloc: Refreshing carousel items...');
     // Just reload - the stream will handle the update
     add(const LoadCarouselItems());
   }
 
   @override
   Future<void> close() {
-    debugPrint('HomeBloc: Closing bloc');
+    Log.d('HomeBloc: Closing bloc');
     _carouselSubscription?.cancel();
     return super.close();
   }

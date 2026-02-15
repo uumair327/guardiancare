@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:guardiancare/core/core.dart';
+import 'package:guardiancare/core/util/logger.dart';
 import 'package:http/http.dart' as http;
 
 class YoutubeService {
@@ -18,7 +19,7 @@ class YoutubeService {
       final jsonData = jsonDecode(response.body);
       return jsonData['items']?.first;
     } else {
-      print('Failed to fetch data for term: $formattedTerm');
+      Log.e('Failed to fetch data for term: $formattedTerm');
       return null;
     }
   }

@@ -1,7 +1,7 @@
-import 'package:flutter/foundation.dart';
 import 'package:guardiancare/core/backend/backend.dart';
 import 'package:guardiancare/core/constants/constants.dart';
 import 'package:guardiancare/core/error/exceptions.dart';
+import 'package:guardiancare/core/util/logger.dart';
 import 'package:guardiancare/features/learn/data/models/category_model.dart';
 import 'package:guardiancare/features/learn/data/models/video_model.dart';
 
@@ -21,7 +21,6 @@ abstract class LearnRemoteDataSource {
 ///
 /// Following: DIP (Dependency Inversion Principle)
 class LearnRemoteDataSourceImpl implements LearnRemoteDataSource {
-
   LearnRemoteDataSourceImpl({required IDataStore dataStore})
       : _dataStore = dataStore;
   final IDataStore _dataStore;
@@ -41,14 +40,13 @@ class LearnRemoteDataSourceImpl implements LearnRemoteDataSource {
                 categories.add(category);
               }
             } on Object catch (e) {
-              debugPrint('LearnDataSource: Error processing category: $e');
+              Log.e('LearnDataSource: Error processing category: $e');
             }
           }
           return categories;
         },
         failure: (error) {
-          debugPrint(
-              'LearnDataSource: Error fetching categories: ${error.message}');
+          Log.e('LearnDataSource: Error fetching categories: ${error.message}');
           throw ServerException(ErrorStrings.withDetails(
               ErrorStrings.getCategoriesError, error.message));
         },
@@ -93,8 +91,7 @@ class LearnRemoteDataSourceImpl implements LearnRemoteDataSource {
           );
         },
         failure: (error) {
-          debugPrint(
-              'LearnDataSource: Error fetching videos: ${error.message}');
+          Log.e('LearnDataSource: Error fetching videos: ${error.message}');
           throw ServerException(ErrorStrings.withDetails(
               ErrorStrings.getVideosByCategoryError, error.message));
         },
@@ -116,7 +113,7 @@ class LearnRemoteDataSourceImpl implements LearnRemoteDataSource {
       return result.when(
         success: _mapVideos,
         failure: (error) {
-          debugPrint('LearnDataSource: Stream error: ${error.message}');
+          Log.e('LearnDataSource: Stream error: ${error.message}');
           return <VideoModel>[];
         },
       );
@@ -132,7 +129,7 @@ class LearnRemoteDataSourceImpl implements LearnRemoteDataSource {
           videos.add(video);
         }
       } on Object catch (e) {
-        debugPrint('LearnDataSource: Error processing video: $e');
+        Log.e('LearnDataSource: Error processing video: $e');
       }
     }
     return videos;

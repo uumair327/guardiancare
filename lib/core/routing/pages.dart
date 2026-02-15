@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:guardiancare/core/core.dart';
+import 'package:guardiancare/core/util/logger.dart';
 import 'package:guardiancare/features/features.dart';
 
 class Pages extends StatefulWidget {
@@ -116,7 +117,7 @@ class _PagesState extends State<Pages> with SingleTickerProviderStateMixin {
         });
       }
     } on Object catch (e) {
-      debugPrint("Error fetching consent data: $e");
+      Log.e("Error fetching consent data: $e");
 
       if (mounted) {
         setState(() {

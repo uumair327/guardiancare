@@ -1,9 +1,9 @@
 import 'dart:convert';
 
 import 'package:dartz/dartz.dart';
-import 'package:flutter/foundation.dart';
 import 'package:guardiancare/core/constants/constants.dart';
 import 'package:guardiancare/core/error/failures.dart';
+import 'package:guardiancare/core/util/logger.dart';
 import 'package:guardiancare/features/quiz/domain/services/youtube_search_service.dart';
 import 'package:http/http.dart' as http;
 
@@ -15,7 +15,6 @@ import 'package:http/http.dart' as http;
 ///
 /// Requirements: 1.2, 5.1
 class YoutubeSearchServiceImpl implements YoutubeSearchService {
-
   /// Creates a [YoutubeSearchServiceImpl]
   ///
   /// [httpClient] - HTTP client for making API requests (optional, defaults to new client)
@@ -36,12 +35,13 @@ class YoutubeSearchServiceImpl implements YoutubeSearchService {
 
     // Skip invalid terms that start with dash
     if (term.startsWith('-')) {
-      return const Left(YoutubeApiFailure(ErrorStrings.youtubeInvalidTermFormat));
+      return const Left(
+          YoutubeApiFailure(ErrorStrings.youtubeInvalidTermFormat));
     }
 
     try {
       final formattedTerm = term.trim();
-      debugPrint('🔍 YouTube API: Searching for "$formattedTerm"');
+      Log.d('🔍 YouTube API: Searching for "$formattedTerm"');
 
       final url = Uri.parse(
         'https://www.googleapis.com/youtube/v3/search'
@@ -55,8 +55,8 @@ class YoutubeSearchServiceImpl implements YoutubeSearchService {
       final response = await _httpClient.get(url);
 
       if (response.statusCode != 200) {
-        debugPrint('❌ YouTube API error: Status ${response.statusCode}');
-        debugPrint('   Response: ${response.body}');
+        Log.e('❌ YouTube API error: Status ${response.statusCode}');
+        Log.e('   Response: ${response.body}');
         return Left(YoutubeApiFailure(
           '${ErrorStrings.youtubeApiRequestFailed} ${response.statusCode}',
           code: response.statusCode.toString(),
@@ -67,17 +67,19 @@ class YoutubeSearchServiceImpl implements YoutubeSearchService {
       final items = jsonData['items'] as List<dynamic>?;
 
       if (items == null || items.isEmpty) {
-        debugPrint('⚠️ YouTube API: No videos found for "$formattedTerm"');
-        return Left(YoutubeApiFailure(ErrorStrings.withDetails(ErrorStrings.youtubeNoVideosFound, term)));
+        Log.w('⚠️ YouTube API: No videos found for "$formattedTerm"');
+        return Left(YoutubeApiFailure(
+            ErrorStrings.withDetails(ErrorStrings.youtubeNoVideosFound, term)));
       }
 
       final videoData = _parseVideoData(items.first as Map<String, dynamic>);
 
-      debugPrint('✅ YouTube API: Found video "${videoData.title}"');
+      Log.d('✅ YouTube API: Found video "${videoData.title}"');
       return Right(videoData);
     } on Object catch (e) {
-      debugPrint('❌ YouTube API exception: $e');
-      return Left(YoutubeApiFailure(ErrorStrings.withDetails(ErrorStrings.youtubeApiError, e.toString())));
+      Log.e('❌ YouTube API exception: $e');
+      return Left(YoutubeApiFailure(ErrorStrings.withDetails(
+          ErrorStrings.youtubeApiError, e.toString())));
     }
   }
 

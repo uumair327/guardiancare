@@ -1,7 +1,7 @@
-import 'package:flutter/foundation.dart';
 import 'package:guardiancare/core/backend/backend.dart';
 import 'package:guardiancare/core/constants/constants.dart';
 import 'package:guardiancare/core/error/exceptions.dart';
+import 'package:guardiancare/core/util/logger.dart';
 import 'package:guardiancare/features/forum/data/models/comment_model.dart';
 import 'package:guardiancare/features/forum/data/models/forum_model.dart';
 import 'package:guardiancare/features/forum/data/models/user_details_model.dart';
@@ -36,8 +36,7 @@ class ForumRemoteDataSourceImpl implements ForumRemoteDataSource {
   Stream<List<ForumModel>> getForums(ForumCategory category) {
     final categoryString =
         category == ForumCategory.parent ? 'parent' : 'children';
-    debugPrint(
-        'ForumDataSource: Fetching forums for category: $categoryString');
+    Log.d('ForumDataSource: Fetching forums for category: $categoryString');
 
     final options = QueryOptions(
       filters: [QueryFilter.equals('category', categoryString)],
@@ -47,28 +46,28 @@ class ForumRemoteDataSourceImpl implements ForumRemoteDataSource {
     return _dataStore.streamQuery('forum', options: options).map((result) {
       return result.when(
         success: (docs) {
-          debugPrint('ForumDataSource: Received ${docs.length} forums');
+          Log.d('ForumDataSource: Received ${docs.length} forums');
           if (docs.isEmpty) {
-            debugPrint(
+            Log.d(
                 'ForumDataSource: No forums found for category: $categoryString');
           }
 
           return docs.map((doc) {
             try {
-              debugPrint('ForumDataSource: Parsing forum: $doc');
+              Log.d('ForumDataSource: Parsing forum: $doc');
               // Ensure doc has ID, though adapter should provide it
               if (!doc.containsKey('id')) {
-                debugPrint('ForumDataSource: Warning - doc missing id field');
+                Log.w('ForumDataSource: Warning - doc missing id field');
               }
               return ForumModel.fromMap(doc);
             } on Object catch (e) {
-              debugPrint('ForumDataSource: Error parsing forum: $e');
+              Log.e('ForumDataSource: Error parsing forum: $e');
               rethrow;
             }
           }).toList();
         },
         failure: (error) {
-          debugPrint('ForumDataSource: Stream error: ${error.message}');
+          Log.e('ForumDataSource: Stream error: ${error.message}');
           return <ForumModel>[];
         },
       );
@@ -90,8 +89,7 @@ class ForumRemoteDataSourceImpl implements ForumRemoteDataSource {
             return docs.map(CommentModel.fromMap).toList();
           },
           failure: (error) {
-            debugPrint(
-                'ForumDataSource: Error fetching comments: ${error.message}');
+            Log.e('ForumDataSource: Error fetching comments: ${error.message}');
             return <CommentModel>[];
           },
         );

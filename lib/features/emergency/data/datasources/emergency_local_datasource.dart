@@ -1,5 +1,6 @@
 import 'package:guardiancare/core/constants/constants.dart';
 import 'package:guardiancare/core/error/exceptions.dart';
+import 'package:guardiancare/core/util/logger.dart';
 import 'package:guardiancare/features/emergency/data/models/emergency_contact_model.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -48,11 +49,10 @@ class EmergencyLocalDataSourceImpl implements EmergencyLocalDataSource {
   Future<List<EmergencyContactModel>> getEmergencyContacts() async {
     try {
       final allContacts = [..._emergencyServices, ..._childSafety];
-      return allContacts
-          .map(EmergencyContactModel.fromJson)
-          .toList();
+      return allContacts.map(EmergencyContactModel.fromJson).toList();
     } on Object catch (e) {
-      throw CacheException(ErrorStrings.withDetails(ErrorStrings.getEmergencyContactsError, e.toString()));
+      throw CacheException(ErrorStrings.withDetails(
+          ErrorStrings.getEmergencyContactsError, e.toString()));
     }
   }
 
@@ -70,12 +70,10 @@ class EmergencyLocalDataSourceImpl implements EmergencyLocalDataSource {
         contacts = [];
       }
 
-      return contacts
-          .map(EmergencyContactModel.fromJson)
-          .toList();
+      return contacts.map(EmergencyContactModel.fromJson).toList();
     } on Object catch (e) {
-      throw CacheException(
-          ErrorStrings.withDetails(ErrorStrings.getContactsByCategoryError, e.toString()));
+      throw CacheException(ErrorStrings.withDetails(
+          ErrorStrings.getContactsByCategoryError, e.toString()));
     }
   }
 
@@ -86,8 +84,8 @@ class EmergencyLocalDataSourceImpl implements EmergencyLocalDataSource {
       final cleanNumber = phoneNumber.replaceAll(RegExp(r'[^\d+]'), '');
       final Uri phoneLaunchUri = Uri(scheme: 'tel', path: cleanNumber);
 
-      print('Attempting to launch phone dialer for: $cleanNumber');
-      
+      Log.d('Attempting to launch phone dialer for: $cleanNumber');
+
       // Try to launch with mode platformDefault first
       final bool launched = await launchUrl(
         phoneLaunchUri,
@@ -95,11 +93,13 @@ class EmergencyLocalDataSourceImpl implements EmergencyLocalDataSource {
       );
 
       if (!launched) {
-        throw CacheException(ErrorStrings.withDetails(ErrorStrings.phoneDialerError, phoneNumber));
+        throw CacheException(ErrorStrings.withDetails(
+            ErrorStrings.phoneDialerError, phoneNumber));
       }
     } on Object catch (e) {
-      print('Error making phone call: $e');
-      throw CacheException(ErrorStrings.withDetails(ErrorStrings.makePhoneCallError, e.toString()));
+      Log.e('Error making phone call: $e');
+      throw CacheException(ErrorStrings.withDetails(
+          ErrorStrings.makePhoneCallError, e.toString()));
     }
   }
 }

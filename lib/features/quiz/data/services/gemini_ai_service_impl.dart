@@ -1,8 +1,8 @@
 import 'package:dartz/dartz.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_gemini/flutter_gemini.dart';
 import 'package:guardiancare/core/constants/constants.dart';
 import 'package:guardiancare/core/error/failures.dart';
+import 'package:guardiancare/core/util/logger.dart';
 import 'package:guardiancare/features/quiz/domain/services/gemini_ai_service.dart';
 
 /// Implementation of [GeminiAIService] using Flutter Gemini package
@@ -14,7 +14,6 @@ import 'package:guardiancare/features/quiz/domain/services/gemini_ai_service.dar
 ///
 /// Requirements: 1.1, 5.1
 class GeminiAIServiceImpl implements GeminiAIService {
-
   /// Creates a [GeminiAIServiceImpl] with the provided Gemini instance
   ///
   /// If no instance is provided, initializes Gemini with the API key
@@ -48,29 +47,30 @@ class GeminiAIServiceImpl implements GeminiAIService {
 
     try {
       final promptText = _buildPrompt(category);
-      debugPrint('🤖 Calling Gemini API for category: $category');
+      Log.d('🤖 Calling Gemini API for category: $category');
 
       // Using prompt method with Part.text for flutter_gemini 3.0.0
       final response = await _gemini.prompt(parts: [Part.text(promptText)]);
 
       if (response == null || response.output == null) {
-        debugPrint('⚠️ Gemini API returned null response');
+        Log.w('⚠️ Gemini API returned null response');
         return _handleFallback(category, ErrorStrings.geminiNullResponse);
       }
 
       final searchTerms = _parseSearchTerms(response.output!);
 
       if (searchTerms.isEmpty) {
-        debugPrint('⚠️ No valid search terms generated from Gemini');
+        Log.w('⚠️ No valid search terms generated from Gemini');
         return _handleFallback(category, ErrorStrings.geminiNoSearchTerms);
       }
 
-      debugPrint(
+      Log.d(
           '✅ Gemini generated ${searchTerms.length} search terms: $searchTerms');
       return Right(searchTerms);
     } on Object catch (e) {
-      debugPrint('❌ Gemini API error: $e');
-      return _handleFallback(category, ErrorStrings.withDetails(ErrorStrings.geminiApiError, e.toString()));
+      Log.e('❌ Gemini API error: $e');
+      return _handleFallback(category,
+          ErrorStrings.withDetails(ErrorStrings.geminiApiError, e.toString()));
     }
   }
 
@@ -79,7 +79,7 @@ class GeminiAIServiceImpl implements GeminiAIService {
       String category, String errorMessage) {
     if (_useFallback) {
       final fallbackTerms = _generateFallbackSearchTerms(category);
-      debugPrint('🔄 Using fallback search terms: $fallbackTerms');
+      Log.d('🔄 Using fallback search terms: $fallbackTerms');
       return Right(fallbackTerms);
     }
     return Left(GeminiApiFailure(errorMessage));

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:guardiancare/core/util/logger.dart';
 import 'package:guardiancare/features/forum/domain/usecases/add_comment.dart';
 import 'package:guardiancare/features/forum/domain/usecases/get_comments.dart';
 import 'package:guardiancare/features/forum/domain/usecases/get_forums.dart';
@@ -41,7 +42,7 @@ class ForumBloc extends Bloc<ForumEvent, ForumState> {
     LoadForums event,
     Emitter<ForumState> emit,
   ) async {
-    print('ForumBloc: Loading forums for category: ${event.category}');
+    Log.d('ForumBloc: Loading forums for category: ${event.category}');
 
     // Preserve existing state if possible
     final currentState =
@@ -74,7 +75,7 @@ class ForumBloc extends Bloc<ForumEvent, ForumState> {
 
     event.result.fold(
       (failure) {
-        print('ForumBloc: Error loading forums: ${failure.message}');
+        Log.e('ForumBloc: Error loading forums: ${failure.message}');
         // If it was the first load and we failed, we might want to show error
         // But if we have other data, we might just want to show a snackbar (handled by UI listener?)
         // For now, let's update state to stop loading and maybe set error
@@ -87,7 +88,7 @@ class ForumBloc extends Bloc<ForumEvent, ForumState> {
         ));
       },
       (forums) {
-        print(
+        Log.d(
             'ForumBloc: Loaded ${forums.length} forums for ${event.category}');
 
         if (event.category == ForumCategory.parent) {
