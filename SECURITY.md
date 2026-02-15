@@ -22,8 +22,10 @@ SUPABASE_ANON_KEY=your-supabase-key
 Production builds inject secrets via `--dart-define`.
 Go to **Settings > Secrets and variables > Actions** in your GitHub repository and add:
 
+
 - `FIREBASE_PROJECT_ID`
 - `STORAGE_BUCKET`
+- `FIREBASE_OPTIONS_BASE64` (Base64 encoded content of lib/firebase_options.dart)
 - `SUPABASE_URL`
 - `SUPABASE_ANON_KEY`
 - `KEYSTORE_PASSWORD` (if using signing)
