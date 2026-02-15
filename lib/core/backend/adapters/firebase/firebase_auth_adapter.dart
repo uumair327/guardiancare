@@ -29,8 +29,6 @@ class FirebaseAuthAdapter implements IAuthService {
         _googleSignIn = googleSignIn ??
             GoogleSignIn(
               scopes: ['email', 'profile'],
-              serverClientId:
-                  '480855529488-809q7ih0n0vhoqrj47pgk986u4kobt1h.apps.googleusercontent.com',
             );
 
   final fb.FirebaseAuth _auth;
