@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:guardiancare/core/util/logger.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../backend_factory.dart';
@@ -48,7 +49,7 @@ class SupabaseInitializer {
   /// Returns `true` if Supabase was initialized, `false` if skipped.
   static Future<bool> initializeIfNeeded() async {
     if (_initialized) {
-      debugPrint('SupabaseInitializer: Already initialized');
+      Log.i('SupabaseInitializer: Already initialized');
       return true;
     }
 
@@ -56,7 +57,7 @@ class SupabaseInitializer {
         BackendConfig.hasSupabaseFeatures;
 
     if (!needsSupabase) {
-      debugPrint('SupabaseInitializer: Skipped (no Supabase features enabled)');
+      Log.i('SupabaseInitializer: Skipped (no Supabase features enabled)');
       return false;
     }
 
@@ -81,9 +82,9 @@ class SupabaseInitializer {
       debug: kDebugMode,
     );
 
-    debugPrint('SupabaseInitializer: Initialized successfully');
-    debugPrint('  URL: ${BackendSecrets.supabaseUrl}');
-    debugPrint('  Provider: ${BackendConfig.provider.name}');
+    Log.i('SupabaseInitializer: Initialized successfully');
+    Log.i('  URL: ${BackendSecrets.supabaseUrl}');
+    Log.i('  Provider: ${BackendConfig.provider.name}');
 
     _initialized = true;
     return true;
