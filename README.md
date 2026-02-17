@@ -1,6 +1,6 @@
 # 🏥 GuardianCare - Flutter Application
 
-[![Flutter Version](https://img.shields.io/badge/Flutter-3.4.0%2B-02569B?logo=flutter)](https://flutter.dev)
+[![Flutter Version](https://img.shields.io/badge/Flutter-3.19.0%2B-02569B?logo=flutter)](https://flutter.dev)
 [![Dart Version](https://img.shields.io/badge/Dart-3.0%2B-0175C2?logo=dart)](https://dart.dev)
 [![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
 [![Build Status](https://img.shields.io/badge/build-passing-brightgreen)]()
@@ -57,7 +57,7 @@ graph TD
 ## 🛠️ Tech Stack
 
 ### Core
-- **Flutter**: UI Toolkit (SDK >=3.4.0 <4.0.0)
+- **Flutter**: UI Toolkit (SDK >=3.19.0)
 - **Dart**: Programming Language
 - **Clean Architecture**: Structural Pattern
 
@@ -307,10 +307,11 @@ All user-facing text and technical keys are centralized in `lib/core/constants/`
 
 ## 📈 Roadmap
 
-- [x] **Phase 1**: Core Infrastructure & Auth ✅
-- [x] **Phase 2**: Forum & Community Features ✅
-- [ ] **Phase 3**: Core Features (Learning, Quiz, Home) ⏳
-- [ ] **Phase 4**: Polish, Performance, & Launch 📅
+
+- [x] Phase 1: Core Infrastructure & Auth ✅
+- [x] Phase 2: Forum & Community Features ✅
+- [ ] Phase 3: Core Features (Learning, Quiz, Home) ⏳
+- [ ] Phase 4: Polish, Performance, & Launch 📅
 
 ---
 
