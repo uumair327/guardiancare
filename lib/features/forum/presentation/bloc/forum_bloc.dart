@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:guardiancare/core/backend/backend.dart';
 import 'package:guardiancare/core/util/logger.dart';
 import 'package:guardiancare/features/forum/domain/entities/forum_entity.dart';
 import 'package:guardiancare/features/forum/domain/usecases/add_comment.dart';
@@ -15,7 +15,7 @@ class ForumBloc extends Bloc<ForumEvent, ForumState> {
     required this.getForums,
     required this.getComments,
     required this.addComment,
-    required this.firebaseAuth,
+    required this.authService,
   }) : super(const ForumInitial()) {
     on<LoadForums>(_onLoadForums);
     on<ForumsUpdated>(_onForumsUpdated);
@@ -26,7 +26,7 @@ class ForumBloc extends Bloc<ForumEvent, ForumState> {
   final GetForums getForums;
   final GetComments getComments;
   final AddComment addComment;
-  final FirebaseAuth firebaseAuth;
+  final IAuthService authService;
 
   StreamSubscription? _parentForumsSubscription;
   StreamSubscription? _childrenForumsSubscription;
@@ -130,7 +130,7 @@ class ForumBloc extends Bloc<ForumEvent, ForumState> {
     SubmitComment event,
     Emitter<ForumState> emit,
   ) async {
-    final currentUser = firebaseAuth.currentUser;
+    final currentUser = authService.currentUser;
     if (currentUser == null) {
       emit(const ForumError('User not authenticated'));
       return;
@@ -142,7 +142,7 @@ class ForumBloc extends Bloc<ForumEvent, ForumState> {
       AddCommentParams(
         forumId: event.forumId,
         text: event.text,
-        userId: currentUser.uid,
+        userId: currentUser.id,
         parentId: event.parentId,
       ),
     );

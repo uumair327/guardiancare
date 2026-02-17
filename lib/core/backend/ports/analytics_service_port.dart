@@ -32,7 +32,8 @@ abstract interface class IAnalyticsService {
   Future<BackendResult<void>> initialize();
 
   /// Set analytics collection enabled/disabled
-  Future<BackendResult<void>> setAnalyticsCollectionEnabled(bool enabled);
+  Future<BackendResult<void>> setAnalyticsCollectionEnabled(
+      {required bool enabled});
 
   // ==================== User Properties ====================
   /// Set user ID for analytics

@@ -237,9 +237,6 @@ class _SignupPageState extends State<SignupPage> {
                                         style: TextStyle(
                                             color: context.colors.textPrimary)),
                                     value: 'parent',
-                                    groupValue: _selectedRole,
-                                    onChanged: (val) =>
-                                        setState(() => _selectedRole = val!),
                                     activeColor: context.colors.primary,
                                   ),
                                   RadioListTile<String>(
@@ -247,9 +244,6 @@ class _SignupPageState extends State<SignupPage> {
                                         style: TextStyle(
                                             color: context.colors.textPrimary)),
                                     value: 'child',
-                                    groupValue: _selectedRole,
-                                    onChanged: (val) =>
-                                        setState(() => _selectedRole = val!),
                                     activeColor: context.colors.primary,
                                   ),
                                 ],

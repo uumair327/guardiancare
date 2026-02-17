@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:guardiancare/core/animations/animated_widgets/scale_tap_widget.dart';
@@ -28,7 +29,7 @@ void main() {
         );
 
         // Start animation
-        controller.forward();
+        unawaited(controller.forward());
         await AnimationTestUtils.verifyAnimationComplete(tester, controller);
       });
     });
@@ -51,7 +52,7 @@ void main() {
         AnimationTestUtils.verifyAnimationValue(controller, 0);
 
         // Forward to completion
-        controller.forward();
+        unawaited(controller.forward());
         await tester.pumpAndSettle();
 
         // Final value should be 1.0
@@ -215,7 +216,7 @@ void main() {
         );
 
         // Start animation and pump once to begin
-        controller.forward();
+        unawaited(controller.forward());
         await tester.pump();
 
         // Pump for half the duration using our utility
@@ -252,7 +253,6 @@ void main() {
 
 /// Helper widget for testing animation controller
 class _AnimatedTestWidget extends StatefulWidget {
-
   const _AnimatedTestWidget({
     required this.onControllerCreated,
     this.duration = const Duration(milliseconds: 300),

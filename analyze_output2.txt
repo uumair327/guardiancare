@@ -1,0 +1,41 @@
+﻿Analyzing guardiancare...                                       
+
+   info - Unclosed instance of 'Sink' - lib\core\backend\adapters\firebase\firebase_realtime_adapter.dart:92:11 - close_sinks
+   info - Uncancelled instance of 'StreamSubscription' - lib\core\backend\adapters\firebase\firebase_realtime_adapter.dart:99:13 - cancel_subscriptions
+   info - Uncancelled instance of 'StreamSubscription' - lib\core\backend\adapters\firebase\firebase_realtime_adapter.dart:128:13 - cancel_subscriptions
+   info - Uncancelled instance of 'StreamSubscription' - lib\core\backend\adapters\firebase\firebase_realtime_adapter.dart:151:13 - cancel_subscriptions
+   info - Unclosed instance of 'Sink' - lib\core\backend\adapters\supabase\supabase_realtime_adapter.dart:43:9 - close_sinks
+   info - Unclosed instance of 'Sink' - lib\core\backend\adapters\supabase\supabase_realtime_adapter.dart:237:11 - close_sinks
+   info - Unclosed instance of 'Sink' - lib\core\backend\adapters\supabase\supabase_realtime_adapter.dart:343:11 - close_sinks
+   info - 'bool' parameters should be named parameters - lib\core\backend\ports\analytics_service_port.dart:35:61 - avoid_positional_boolean_parameters
+   info - The method is used to change a property - lib\core\routing\app_router.dart:33:15 - use_setters_to_change_properties
+   info - Unnecessary use of an abstract class - lib\core\services\parental_key_verifier.dart:9:16 - one_member_abstracts
+   info - 'bool' parameters should be named parameters - lib\core\services\parental_session_manager.dart:9:20 - avoid_positional_boolean_parameters
+   info - Unnecessary use of an abstract class - lib\core\usecases\usecase.dart:9:16 - one_member_abstracts
+   info - The type parameter name 'Type' matches a visible type name - lib\core\usecases\usecase.dart:9:24 - avoid_types_as_parameter_names
+   info - Unnecessary use of an abstract class - lib\core\usecases\usecase.dart:17:16 - one_member_abstracts
+   info - The type parameter name 'Type' matches a visible type name - lib\core\usecases\usecase.dart:17:30 - avoid_types_as_parameter_names
+   info - The parameter 'document' is not used in the constructor - lib\core\widgets\pdf_viewer_stub.dart:15:23 - avoid_unused_constructor_parameters
+   info - 'dart:html' is deprecated and shouldn't be used. Use package:web and dart:js_interop instead - lib\core\widgets\video_player_page_web.dart:4:1 - deprecated_member_use
+   info - Don't use web-only libraries outside Flutter web plugins - lib\core\widgets\video_player_page_web.dart:4:1 - avoid_web_libraries_in_flutter
+   info - 'groupValue' is deprecated and shouldn't be used. Use a RadioGroup ancestor to manage group value instead. This feature was deprecated after v3.32.0-0.0.pre - lib\features\authentication\presentation\pages\signup_page.dart:240:37 - deprecated_member_use
+   info - 'onChanged' is deprecated and shouldn't be used. Use RadioGroup to handle value change instead. This feature was deprecated after v3.32.0-0.0.pre - lib\features\authentication\presentation\pages\signup_page.dart:241:37 - deprecated_member_use
+   info - 'groupValue' is deprecated and shouldn't be used. Use a RadioGroup ancestor to manage group value instead. This feature was deprecated after v3.32.0-0.0.pre - lib\features\authentication\presentation\pages\signup_page.dart:250:37 - deprecated_member_use
+   info - 'onChanged' is deprecated and shouldn't be used. Use RadioGroup to handle value change instead. This feature was deprecated after v3.32.0-0.0.pre - lib\features\authentication\presentation\pages\signup_page.dart:251:37 - deprecated_member_use
+   info - Unnecessary use of an abstract class - lib\features\home\data\datasources\home_remote_datasource.dart:6:16 - one_member_abstracts
+   info - Unnecessary use of an abstract class - lib\features\home\domain\repositories\home_repository.dart:6:16 - one_member_abstracts
+   info - Unnecessary use of an abstract class - lib\features\quiz\domain\services\gemini_ai_service.dart:17:16 - one_member_abstracts
+   info - Unnecessary use of an abstract class - lib\features\quiz\domain\services\youtube_search_service.dart:49:16 - one_member_abstracts
+   info - 'bool' parameters should be named parameters - lib\features\report\presentation\bloc\report_event.dart:35:51 - avoid_positional_boolean_parameters
+   info - 'bool' parameters should be named parameters - lib\features\video_player\presentation\cubit\video_player_cubit.dart:38:22 - avoid_positional_boolean_parameters
+   info - The method is used to change a property - test\core\routing\auth_guard_encapsulation_test.dart:68:8 - use_setters_to_change_properties
+   info - 'bool' parameters should be named parameters - test\core\routing\auth_guard_encapsulation_test.dart:68:25 - avoid_positional_boolean_parameters
+   info - Classes that override '==' should not be implemented - test\core\routing\auth_guard_encapsulation_test.dart:94:36 - avoid_implementing_value_types
+
+flutter : 31 issues found. (ran in 78.3s)
+At line:1 char:1
++ flutter analyze 2>&1 | Out-File -FilePath analyze_output2.txt -Encodi ...
++ ~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (31 issues found. (ran in 78.3s):String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 

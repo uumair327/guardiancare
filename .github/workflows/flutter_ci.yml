@@ -26,14 +26,21 @@ jobs:
 
       - name: Create Firebase Options
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        env:
+          FIREBASE_OPTIONS_BASE64: ${{ secrets.FIREBASE_OPTIONS_BASE64 || '' }}
         run: |
-          echo "${{ secrets.FIREBASE_OPTIONS_BASE64 }}" | base64 --decode > lib/firebase_options.dart
+          echo "$FIREBASE_OPTIONS_BASE64" | base64 --decode > lib/firebase_options.dart
 
       - name: Build APK (with Secrets)
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        env:
+          FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID || '' }}
+          STORAGE_BUCKET: ${{ secrets.STORAGE_BUCKET || '' }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL || '' }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY || '' }}
         run: |
           flutter build apk --release \
-            --dart-define=FIREBASE_PROJECT_ID=${{ secrets.FIREBASE_PROJECT_ID }} \
-            --dart-define=STORAGE_BUCKET=${{ secrets.STORAGE_BUCKET }} \
-            --dart-define=SUPABASE_URL=${{ secrets.SUPABASE_URL }} \
-            --dart-define=SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }}
+            --dart-define=FIREBASE_PROJECT_ID=$FIREBASE_PROJECT_ID \
+            --dart-define=STORAGE_BUCKET=$STORAGE_BUCKET \
+            --dart-define=SUPABASE_URL=$SUPABASE_URL \
+            --dart-define=SUPABASE_ANON_KEY=$SUPABASE_ANON_KEY

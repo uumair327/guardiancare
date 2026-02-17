@@ -17,7 +17,7 @@ class Env {
     // In a more complex setup, we could check kReleaseMode or --dart-define=ENV
     try {
       await dotenv.load();
-    } catch (e) {
+    } on Exception {
       // If .env file is missing (e.g. in CI/CD or production where secrets are injected via other means),
       // we might want to fail silently or log a warning, depending on the strategy.
 
@@ -38,13 +38,8 @@ class Env {
       return dotenvValue;
     }
 
-    // 2. Check compile-time constants (--dart-define)
-    // This allows overriding .env with command line args
-    const dartDefineValue =
-        String.fromEnvironment('__DART_DEFINE_PLACEHOLDER__');
-    // We can't dynamically access String.fromEnvironment with a variable key.
-    // So we rely on the specific getters in BackendSecrets to use String.fromEnvironment.
-    // However, for this helper, we strictly return dotenv or fallback.
+    // Note: String.fromEnvironment cannot be called with a dynamic key.
+    // Compile-time constants are accessed via specific getters (e.g. BackendSecrets).
 
     return fallback;
   }

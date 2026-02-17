@@ -165,14 +165,17 @@ class FirebaseAuthAdapter implements IAuthService {
   Future<BackendResult<BackendUser>> signInWithOAuth(
     OAuthProvider provider,
   ) async {
-    return switch (provider) {
-      OAuthProvider.google => signInWithGoogle(),
-      OAuthProvider.apple => signInWithApple(),
-      _ => BackendResult.failure(BackendError(
+    switch (provider) {
+      case OAuthProvider.google:
+        return signInWithGoogle();
+      case OAuthProvider.apple:
+        return signInWithApple();
+      default:
+        return BackendResult.failure(BackendError(
           code: BackendErrorCode.authError,
           message: 'OAuth provider ${provider.name} not supported',
-        )),
-    };
+        ));
+    }
   }
 
   // ==================== Anonymous Auth ====================

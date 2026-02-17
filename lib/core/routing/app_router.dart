@@ -30,6 +30,7 @@ class AppRouter {
   }
 
   /// Sets the AuthGuard instance. Useful for testing.
+  // ignore: use_setters_to_change_properties
   static void setAuthGuard(AuthGuard guard) {
     _authGuard = guard;
   }

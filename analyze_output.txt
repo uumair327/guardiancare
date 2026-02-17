@@ -1,0 +1,64 @@
+﻿Analyzing guardiancare...                                       
+
+   info - Unclosed instance of 'Sink' - lib\core\backend\adapters\firebase\firebase_realtime_adapter.dart:92:11 - close_sinks
+   info - Uncancelled instance of 'StreamSubscription' - lib\core\backend\adapters\firebase\firebase_realtime_adapter.dart:99:13 - cancel_subscriptions
+   info - Uncancelled instance of 'StreamSubscription' - lib\core\backend\adapters\firebase\firebase_realtime_adapter.dart:128:13 - cancel_subscriptions
+   info - Uncancelled instance of 'StreamSubscription' - lib\core\backend\adapters\firebase\firebase_realtime_adapter.dart:151:13 - cancel_subscriptions
+   info - Unclosed instance of 'Sink' - lib\core\backend\adapters\supabase\supabase_realtime_adapter.dart:43:9 - close_sinks
+   info - Unclosed instance of 'Sink' - lib\core\backend\adapters\supabase\supabase_realtime_adapter.dart:237:11 - close_sinks
+   info - Unclosed instance of 'Sink' - lib\core\backend\adapters\supabase\supabase_realtime_adapter.dart:343:11 - close_sinks
+   info - 'bool' parameters should be named parameters - lib\core\backend\ports\analytics_service_port.dart:35:61 - avoid_positional_boolean_parameters
+warning - The exception variable 'e' isn't used, so the 'catch' clause can be removed - lib\core\config\env.dart:20:27 - unused_catch_clause
+   info - Sort directive sections alphabetically - lib\core\database\database_service.dart:3:1 - directives_ordering
+   info - Sort directive sections alphabetically - lib\core\database\sqlite_storage_service.dart:7:1 - directives_ordering
+   info - The method is used to change a property - lib\core\routing\app_router.dart:33:15 - use_setters_to_change_properties
+   info - Unnecessary use of an abstract class - lib\core\services\parental_key_verifier.dart:9:16 - one_member_abstracts
+   info - 'bool' parameters should be named parameters - lib\core\services\parental_session_manager.dart:9:20 - avoid_positional_boolean_parameters
+   info - Unnecessary use of an abstract class - lib\core\usecases\usecase.dart:9:16 - one_member_abstracts
+   info - The type parameter name 'Type' matches a visible type name - lib\core\usecases\usecase.dart:9:24 - avoid_types_as_parameter_names
+   info - Unnecessary use of an abstract class - lib\core\usecases\usecase.dart:17:16 - one_member_abstracts
+   info - The type parameter name 'Type' matches a visible type name - lib\core\usecases\usecase.dart:17:30 - avoid_types_as_parameter_names
+   info - The parameter 'document' is not used in the constructor - lib\core\widgets\pdf_viewer_stub.dart:15:23 - avoid_unused_constructor_parameters
+   info - 'dart:html' is deprecated and shouldn't be used. Use package:web and dart:js_interop instead - lib\core\widgets\video_player_page_web.dart:4:1 - deprecated_member_use
+   info - Don't use web-only libraries outside Flutter web plugins - lib\core\widgets\video_player_page_web.dart:4:1 - avoid_web_libraries_in_flutter
+   info - Missing an 'await' for the 'Future' computed by this expression - lib\core\widgets\web_view_page.dart:468:30 - unawaited_futures
+   info - Missing an 'await' for the 'Future' computed by this expression - lib\core\widgets\web_view_page.dart:470:29 - unawaited_futures
+   info - Missing an 'await' for the 'Future' computed by this expression - lib\core\widgets\web_view_page.dart:478:30 - unawaited_futures
+   info - Missing an 'await' for the 'Future' computed by this expression - lib\core\widgets\web_view_page.dart:480:29 - unawaited_futures
+   info - Missing an 'await' for the 'Future' computed by this expression - lib\features\authentication\presentation\pages\login_page.dart:87:20 - unawaited_futures
+   info - 'groupValue' is deprecated and shouldn't be used. Use a RadioGroup ancestor to manage group value instead. This feature was deprecated after v3.32.0-0.0.pre - lib\features\authentication\presentation\pages\signup_page.dart:240:37 - deprecated_member_use
+   info - 'onChanged' is deprecated and shouldn't be used. Use RadioGroup to handle value change instead. This feature was deprecated after v3.32.0-0.0.pre - lib\features\authentication\presentation\pages\signup_page.dart:241:37 - deprecated_member_use
+   info - 'groupValue' is deprecated and shouldn't be used. Use a RadioGroup ancestor to manage group value instead. This feature was deprecated after v3.32.0-0.0.pre - lib\features\authentication\presentation\pages\signup_page.dart:250:37 - deprecated_member_use
+   info - 'onChanged' is deprecated and shouldn't be used. Use RadioGroup to handle value change instead. This feature was deprecated after v3.32.0-0.0.pre - lib\features\authentication\presentation\pages\signup_page.dart:251:37 - deprecated_member_use
+   info - Missing an 'await' for the 'Future' computed by this expression - lib\features\consent\presentation\pages\enhanced_consent_form_page.dart:133:20 - unawaited_futures
+   info - Missing an 'await' for the 'Future' computed by this expression - lib\features\consent\presentation\widgets\forgot_parental_key_dialog.dart:76:7 - unawaited_futures
+   info - Missing an 'await' for the 'Future' computed by this expression - lib\features\explore\presentation\pages\explore_page.dart:347:20 - unawaited_futures
+   info - Missing an 'await' for the 'Future' computed by this expression - lib\features\explore\presentation\pages\explore_page.dart:871:34 - unawaited_futures
+   info - Missing an 'await' for the 'Future' computed by this expression - lib\features\explore\presentation\pages\explore_page.dart:1087:20 - unawaited_futures
+   info - Missing an 'await' for the 'Future' computed by this expression - lib\features\explore\presentation\pages\explore_page.dart:1090:17 - unawaited_futures
+   info - Missing an 'await' for the 'Future' computed by this expression - lib\features\explore\presentation\pages\explore_page.dart:1102:15 - unawaited_futures
+   info - Missing an 'await' for the 'Future' computed by this expression - lib\features\explore\presentation\pages\explore_page.dart:1107:15 - unawaited_futures
+   info - Missing an 'await' for the 'Future' computed by this expression - lib\features\forum\presentation\pages\forum_detail_page.dart:524:30 - unawaited_futures
+   info - Missing an 'await' for the 'Future' computed by this expression - lib\features\forum\presentation\pages\forum_page.dart:659:30 - unawaited_futures
+   info - Unnecessary use of an abstract class - lib\features\home\data\datasources\home_remote_datasource.dart:6:16 - one_member_abstracts
+   info - Unnecessary use of an abstract class - lib\features\home\domain\repositories\home_repository.dart:6:16 - one_member_abstracts
+   info - Unnecessary use of an abstract class - lib\features\quiz\domain\services\gemini_ai_service.dart:17:16 - one_member_abstracts
+   info - Unnecessary use of an abstract class - lib\features\quiz\domain\services\youtube_search_service.dart:49:16 - one_member_abstracts
+   info - 'bool' parameters should be named parameters - lib\features\report\presentation\bloc\report_event.dart:35:51 - avoid_positional_boolean_parameters
+   info - 'bool' parameters should be named parameters - lib\features\video_player\presentation\cubit\video_player_cubit.dart:38:22 - avoid_positional_boolean_parameters
+   info - Angle brackets will be interpreted as HTML - test\core\animations\animation_test_utils.dart:85:33 - unintended_html_in_doc_comment
+   info - Angle brackets will be interpreted as HTML - test\core\animations\animation_test_utils.dart:91:35 - unintended_html_in_doc_comment
+   info - Missing an 'await' for the 'Future' computed by this expression - test\core\animations\animation_test_utils_test.dart:31:20 - unawaited_futures
+   info - Missing an 'await' for the 'Future' computed by this expression - test\core\animations\animation_test_utils_test.dart:54:20 - unawaited_futures
+   info - Missing an 'await' for the 'Future' computed by this expression - test\core\animations\animation_test_utils_test.dart:218:20 - unawaited_futures
+   info - The method is used to change a property - test\core\routing\auth_guard_encapsulation_test.dart:68:8 - use_setters_to_change_properties
+   info - 'bool' parameters should be named parameters - test\core\routing\auth_guard_encapsulation_test.dart:68:25 - avoid_positional_boolean_parameters
+   info - Classes that override '==' should not be implemented - test\core\routing\auth_guard_encapsulation_test.dart:94:36 - avoid_implementing_value_types
+
+flutter : 54 issues found. (ran in 74.9s)
+At line:1 char:1
++ flutter analyze 2>&1 | Out-File -FilePath analyze_output.txt -Encodin ...
++ ~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (54 issues found. (ran in 74.9s):String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 

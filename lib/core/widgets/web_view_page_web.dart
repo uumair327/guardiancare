@@ -1,4 +1,4 @@
-// ignore_for_file: avoid_web_libraries_in_flutter, deprecated_member_use
+// ignore_for_file: avoid_web_libraries_in_flutter, deprecated_member_use, unawaited_futures
 import 'dart:html' as html;
 import 'dart:ui_web' as ui_web;
 
@@ -9,7 +9,6 @@ import 'package:guardiancare/core/core.dart';
 /// Web-specific WebView implementation using iframe
 /// This is used on web platform where webview_flutter is not available
 class WebViewPage extends StatefulWidget {
-
   const WebViewPage({
     super.key,
     required this.url,
@@ -387,7 +386,6 @@ class _WebViewPageState extends State<WebViewPage>
 
 /// Options bottom sheet for webview
 class _WebViewOptionsSheet extends StatelessWidget {
-
   const _WebViewOptionsSheet({
     required this.currentUrl,
     required this.pageTitle,

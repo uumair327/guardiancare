@@ -6,7 +6,8 @@ abstract class ParentalSessionManager {
   bool get isVerified;
 
   /// Set the verification state
-  void setVerified(bool value);
+  // ignore: use_setters_to_change_properties
+  void setVerified({required bool value});
 
   /// Reset verification state (called when app closes or user logs out)
   void reset();
@@ -28,7 +29,8 @@ class ParentalSessionManagerImpl implements ParentalSessionManager {
   bool get isVerified => _isVerified;
 
   @override
-  void setVerified(bool value) {
+  // ignore: use_setters_to_change_properties
+  void setVerified({required bool value}) {
     _isVerified = value;
   }
 

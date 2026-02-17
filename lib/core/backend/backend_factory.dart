@@ -9,6 +9,8 @@ import 'adapters/supabase/supabase_auth_adapter.dart';
 import 'adapters/supabase/supabase_data_store_adapter.dart';
 import 'adapters/supabase/supabase_realtime_adapter.dart';
 import 'adapters/supabase/supabase_storage_adapter.dart';
+// Sync adapter (dual-write to both backends)
+import 'adapters/sync/sync_data_store_adapter.dart';
 import 'config/backend_config.dart';
 import 'models/backend_result.dart';
 import 'ports/analytics_service_port.dart';
@@ -26,6 +28,9 @@ enum BackendProvider {
 
   /// Supabase (PostgreSQL, Auth, Storage, Realtime)
   supabase,
+
+  /// Sync mode (Firebase primary + Supabase secondary dual-write)
+  sync,
 
   /// Appwrite (future implementation)
   appwrite,
@@ -111,6 +116,8 @@ class BackendFactory {
     return switch (resolvedProvider) {
       BackendProvider.firebase => FirebaseAuthAdapter(),
       BackendProvider.supabase => SupabaseAuthAdapter(),
+      // Sync mode: auth uses primary (Firebase) — auth can't dual-write
+      BackendProvider.sync => FirebaseAuthAdapter(),
       BackendProvider.appwrite => _throwNotImplemented('Appwrite auth'),
       BackendProvider.custom => _throwNotImplemented('Custom auth'),
     };
@@ -126,6 +133,11 @@ class BackendFactory {
     return switch (resolvedProvider) {
       BackendProvider.firebase => FirebaseDataStoreAdapter(),
       BackendProvider.supabase => SupabaseDataStoreAdapter(),
+      // Sync mode: dual-write to both Firebase (primary) and Supabase (secondary)
+      BackendProvider.sync => SyncDataStoreAdapter(
+          primary: FirebaseDataStoreAdapter(),
+          secondary: SupabaseDataStoreAdapter(),
+        ),
       BackendProvider.appwrite => _throwNotImplemented('Appwrite data store'),
       BackendProvider.custom => _throwNotImplemented('Custom data store'),
     };
@@ -140,6 +152,8 @@ class BackendFactory {
     return switch (resolvedProvider) {
       BackendProvider.firebase => FirebaseStorageAdapter(),
       BackendProvider.supabase => SupabaseStorageAdapter(),
+      // Sync mode: storage uses primary (Firebase) — can be extended later
+      BackendProvider.sync => FirebaseStorageAdapter(),
       BackendProvider.appwrite => _throwNotImplemented('Appwrite storage'),
       BackendProvider.custom => _throwNotImplemented('Custom storage'),
     };
@@ -152,6 +166,8 @@ class BackendFactory {
   IAnalyticsService createAnalyticsService() {
     return switch (provider) {
       BackendProvider.firebase => FirebaseAnalyticsAdapter(),
+      // Sync mode: analytics uses Firebase
+      BackendProvider.sync => FirebaseAnalyticsAdapter(),
       // Other backends use NoOp analytics (can be replaced with custom impl)
       BackendProvider.supabase => const NoOpAnalyticsAdapter(),
       BackendProvider.appwrite => const NoOpAnalyticsAdapter(),
@@ -169,6 +185,8 @@ class BackendFactory {
     return switch (resolvedProvider) {
       BackendProvider.firebase => FirebaseRealtimeAdapter(),
       BackendProvider.supabase => SupabaseRealtimeAdapter(),
+      // Sync mode: realtime uses primary (Firebase)
+      BackendProvider.sync => FirebaseRealtimeAdapter(),
       BackendProvider.appwrite => _throwNotImplemented('Appwrite realtime'),
       BackendProvider.custom => _throwNotImplemented('Custom realtime'),
     };
@@ -244,7 +262,7 @@ class NoOpAnalyticsAdapter implements IAnalyticsService {
 
   @override
   Future<BackendResult<void>> setAnalyticsCollectionEnabled(
-          bool enabled) async =>
+          {required bool enabled}) async =>
       const BackendResult.success(null);
 
   @override

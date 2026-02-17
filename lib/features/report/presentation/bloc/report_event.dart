@@ -10,7 +10,6 @@ abstract class ReportEvent extends Equatable {
 
 /// Event to create a new report
 class CreateReportRequested extends ReportEvent {
-
   const CreateReportRequested(this.caseName, this.questions);
   final String caseName;
   final List<String> questions;
@@ -21,7 +20,6 @@ class CreateReportRequested extends ReportEvent {
 
 /// Event to load a saved report
 class LoadReportRequested extends ReportEvent {
-
   const LoadReportRequested(this.caseName);
   final String caseName;
 
@@ -31,8 +29,10 @@ class LoadReportRequested extends ReportEvent {
 
 /// Event to update an answer
 class UpdateAnswerRequested extends ReportEvent {
-
-  const UpdateAnswerRequested(this.questionIndex, this.isChecked);
+  const UpdateAnswerRequested({
+    required this.questionIndex,
+    required this.isChecked,
+  });
   final int questionIndex;
   final bool isChecked;
 
@@ -47,7 +47,6 @@ class SaveReportRequested extends ReportEvent {
 
 /// Event to delete a report
 class DeleteReportRequested extends ReportEvent {
-
   const DeleteReportRequested(this.caseName);
   final String caseName;
 

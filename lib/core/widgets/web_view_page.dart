@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:guardiancare/core/core.dart';
@@ -6,7 +7,6 @@ import 'package:webview_flutter/webview_flutter.dart';
 /// Education-friendly WebView page with modern design
 /// Features progress indicator, navigation controls, and smooth animations
 class WebViewPage extends StatefulWidget {
-
   const WebViewPage({
     super.key,
     required this.url,
@@ -465,9 +465,9 @@ class _WebViewPageState extends State<WebViewPage>
             icon: Icons.arrow_back_ios_rounded,
             enabled: _canGoBack,
             onTap: () async {
-              HapticFeedback.lightImpact();
+              unawaited(HapticFeedback.lightImpact());
               if (await _controller.canGoBack()) {
-                _controller.goBack();
+                unawaited(_controller.goBack());
               }
             },
           ),
@@ -475,9 +475,9 @@ class _WebViewPageState extends State<WebViewPage>
             icon: Icons.arrow_forward_ios_rounded,
             enabled: _canGoForward,
             onTap: () async {
-              HapticFeedback.lightImpact();
+              unawaited(HapticFeedback.lightImpact());
               if (await _controller.canGoForward()) {
-                _controller.goForward();
+                unawaited(_controller.goForward());
               }
             },
           ),
@@ -600,7 +600,6 @@ class _WebViewPageState extends State<WebViewPage>
 
 /// Options bottom sheet for webview
 class _WebViewOptionsSheet extends StatelessWidget {
-
   const _WebViewOptionsSheet({
     required this.currentUrl,
     required this.pageTitle,

@@ -3,7 +3,7 @@ import 'package:guardiancare/core/database/daos/daos.dart';
 import 'package:guardiancare/core/util/logger.dart';
 
 // Conditional import for DatabaseService
-// ignore: uri_does_not_exist
+// ignore: uri_does_not_exist, directives_ordering
 import 'package:guardiancare/core/database/database_service_stub.dart'
     if (dart.library.io) 'package:guardiancare/core/database/database_service.dart';
 

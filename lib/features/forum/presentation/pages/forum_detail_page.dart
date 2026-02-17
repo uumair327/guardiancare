@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -521,7 +522,7 @@ class _CommentsSection extends StatelessWidget {
 
           return RefreshIndicator(
             onRefresh: () async {
-              HapticFeedback.lightImpact();
+              unawaited(HapticFeedback.lightImpact());
               context.read<ForumBloc>().add(LoadComments(forumId));
               await Future.delayed(AppDurations.animationMedium);
             },
@@ -705,7 +706,6 @@ class _CommentsSection extends StatelessWidget {
 }
 
 class _CommentDisplayItem {
-
   _CommentDisplayItem(this.comment, this.depth);
   final CommentEntity comment;
   final int depth;

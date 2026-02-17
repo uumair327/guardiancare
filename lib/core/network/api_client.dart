@@ -2,8 +2,8 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:http/http.dart' as http;
 import 'package:guardiancare/core/util/logger.dart';
+import 'package:http/http.dart' as http;
 
 import '../config/config.dart';
 import '../error/exceptions.dart';

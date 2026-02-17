@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
-import 'package:flutter_test/flutter_test.dart' hide test, group, setUp, tearDown, expect;
+import 'package:flutter_test/flutter_test.dart'
+    hide test, group, setUp, tearDown, expect;
 import 'package:glados/glados.dart';
 import 'package:guardiancare/core/error/failures.dart';
 import 'package:guardiancare/core/services/crypto_service.dart';
@@ -31,7 +32,8 @@ class MockParentalSessionManager implements ParentalSessionManager {
   }
 
   @override
-  void setVerified(bool value) {
+  // ignore: use_setters_to_change_properties
+  void setVerified({required bool value}) {
     methodCalls.add('setVerified:$value');
     setVerifiedCalls.add(value);
     _isVerified = value;
@@ -113,8 +115,8 @@ class MockCryptoService implements CryptoService {
 
   /// Verifies that only crypto-related methods were called
   bool get onlyCryptoMethodsCalled {
-    return methodCalls.every((call) =>
-        call == 'hashString' || call == 'compareHash');
+    return methodCalls
+        .every((call) => call == 'hashString' || call == 'compareHash');
   }
 
   void clearCalls() {
@@ -129,7 +131,6 @@ class MockCryptoService implements CryptoService {
 // ============================================================================
 
 class ParentalVerificationTestFixture {
-
   ParentalVerificationTestFixture._({
     required this.sessionManager,
     required this.keyVerifier,
@@ -217,13 +218,14 @@ void main() {
 
         try {
           // Act - set verification state
-          fixture.sessionManager.setVerified(verifiedState);
+          fixture.sessionManager.setVerified(value: verifiedState);
 
           // Assert: Only session-related methods were called
           expect(
             fixture.sessionManager.onlySessionMethodsCalled,
             isTrue,
-            reason: 'ParentalSessionManager should only call session-related methods',
+            reason:
+                'ParentalSessionManager should only call session-related methods',
           );
 
           // Assert: The state was set correctly
@@ -263,7 +265,8 @@ void main() {
           expect(
             fixture.keyVerifier.onlyVerificationMethodsCalled,
             isTrue,
-            reason: 'ParentalKeyVerifier should only call verification-related methods',
+            reason:
+                'ParentalKeyVerifier should only call verification-related methods',
           );
 
           // Assert: The request was recorded correctly
@@ -272,7 +275,8 @@ void main() {
               (req) => req['uid'] == userId && req['key'] == key,
             ),
             isTrue,
-            reason: 'ParentalKeyVerifier should receive uid: $userId and key: $key',
+            reason:
+                'ParentalKeyVerifier should receive uid: $userId and key: $key',
           );
 
           // Assert: Method was called exactly once
@@ -356,7 +360,8 @@ void main() {
           );
 
           // Assert: Wrong hash returns false
-          final wrongMatch = fixture.cryptoService.compareHash(input, 'wrong_hash');
+          final wrongMatch =
+              fixture.cryptoService.compareHash(input, 'wrong_hash');
           expect(
             wrongMatch,
             isFalse,
@@ -380,7 +385,7 @@ void main() {
         try {
           // Act - set verified multiple times then reset
           for (var i = 0; i < count; i++) {
-            fixture.sessionManager.setVerified(true);
+            fixture.sessionManager.setVerified(value: true);
           }
           fixture.sessionManager.reset();
 
@@ -388,7 +393,8 @@ void main() {
           expect(
             fixture.sessionManager.isVerified,
             isFalse,
-            reason: 'ParentalSessionManager should reset to false after reset()',
+            reason:
+                'ParentalSessionManager should reset to false after reset()',
           );
 
           // Assert: Reset was called
@@ -422,7 +428,8 @@ void main() {
           expect(
             result.isLeft(),
             isTrue,
-            reason: 'ParentalKeyVerifier should return failure when verification fails',
+            reason:
+                'ParentalKeyVerifier should return failure when verification fails',
           );
 
           // Assert: Failure is AuthenticationFailure
@@ -458,7 +465,7 @@ void main() {
 
         try {
           // Act - perform operations on each service
-          fixture.sessionManager.setVerified(true);
+          fixture.sessionManager.setVerified(value: true);
           await fixture.keyVerifier.verify(userId, key);
           fixture.cryptoService.hashString(key);
 
@@ -466,13 +473,15 @@ void main() {
           expect(
             fixture.sessionManager.onlySessionMethodsCalled,
             isTrue,
-            reason: 'ParentalSessionManager should only handle session operations',
+            reason:
+                'ParentalSessionManager should only handle session operations',
           );
 
           expect(
             fixture.keyVerifier.onlyVerificationMethodsCalled,
             isTrue,
-            reason: 'ParentalKeyVerifier should only handle verification operations',
+            reason:
+                'ParentalKeyVerifier should only handle verification operations',
           );
 
           expect(
@@ -498,7 +507,7 @@ void main() {
         try {
           // Act
           for (final state in states) {
-            fixture.sessionManager.setVerified(state);
+            fixture.sessionManager.setVerified(value: state);
           }
 
           // Assert: All state changes were tracked
@@ -539,7 +548,8 @@ void main() {
           expect(
             fixture.keyVerifier.verifyRequests.length,
             equals(count),
-            reason: 'ParentalKeyVerifier should process all $count verifications',
+            reason:
+                'ParentalKeyVerifier should process all $count verifications',
           );
 
           // Assert: Each verification was recorded correctly
@@ -570,13 +580,14 @@ void main() {
 
         try {
           // Act - verify and update session based on result
-          final result = await fixture.keyVerifier.verify('test-user', 'test-key');
+          final result =
+              await fixture.keyVerifier.verify('test-user', 'test-key');
 
           result.fold(
             (_) => fail('Expected success'),
             (valid) {
               if (valid) {
-                fixture.sessionManager.setVerified(true);
+                fixture.sessionManager.setVerified(value: true);
               }
             },
           );
@@ -610,10 +621,10 @@ void main() {
       final fixture = ParentalVerificationTestFixture.create();
 
       // Rapidly change states
-      fixture.sessionManager.setVerified(true);
-      fixture.sessionManager.setVerified(false);
-      fixture.sessionManager.setVerified(true);
-      fixture.sessionManager.setVerified(false);
+      fixture.sessionManager.setVerified(value: true);
+      fixture.sessionManager.setVerified(value: false);
+      fixture.sessionManager.setVerified(value: true);
+      fixture.sessionManager.setVerified(value: false);
 
       expect(fixture.sessionManager.setVerifiedCalls.length, equals(4));
       expect(fixture.sessionManager.isVerified, isFalse);
@@ -626,7 +637,8 @@ void main() {
 
       await fixture.keyVerifier.verify('', 'test-key');
 
-      expect(fixture.keyVerifier.verifyRequests.any((req) => req['uid'] == ''), isTrue);
+      expect(fixture.keyVerifier.verifyRequests.any((req) => req['uid'] == ''),
+          isTrue);
 
       fixture.reset();
     });
@@ -636,7 +648,8 @@ void main() {
 
       await fixture.keyVerifier.verify('test-user', '');
 
-      expect(fixture.keyVerifier.verifyRequests.any((req) => req['key'] == ''), isTrue);
+      expect(fixture.keyVerifier.verifyRequests.any((req) => req['key'] == ''),
+          isTrue);
 
       fixture.reset();
     });
@@ -664,12 +677,13 @@ void main() {
       fixture.reset();
     });
 
-    test('Services should maintain isolation during concurrent operations', () async {
+    test('Services should maintain isolation during concurrent operations',
+        () async {
       final fixture = ParentalVerificationTestFixture.create();
 
       // Simulate concurrent operations
       final futures = [
-        Future(() => fixture.sessionManager.setVerified(true)),
+        Future(() => fixture.sessionManager.setVerified(value: true)),
         fixture.keyVerifier.verify('user-1', 'key-1'),
         Future(() => fixture.cryptoService.hashString('test')),
       ];
@@ -684,13 +698,15 @@ void main() {
       fixture.reset();
     });
 
-    test('ParentalSessionManager reset should work after multiple verifications', () {
+    test(
+        'ParentalSessionManager reset should work after multiple verifications',
+        () {
       final fixture = ParentalVerificationTestFixture.create();
 
       // Multiple verifications
-      fixture.sessionManager.setVerified(true);
-      fixture.sessionManager.setVerified(true);
-      fixture.sessionManager.setVerified(true);
+      fixture.sessionManager.setVerified(value: true);
+      fixture.sessionManager.setVerified(value: true);
+      fixture.sessionManager.setVerified(value: true);
 
       // Reset
       fixture.sessionManager.reset();
@@ -739,7 +755,7 @@ void main() {
       expect(sessionManager.isVerified, isFalse);
 
       // Set to true
-      sessionManager.setVerified(true);
+      sessionManager.setVerified(value: true);
       expect(sessionManager.isVerified, isTrue);
 
       // Reset

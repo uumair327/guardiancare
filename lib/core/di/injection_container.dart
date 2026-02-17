@@ -284,7 +284,7 @@ void _initForumFeature() {
       getForums: sl(),
       getComments: sl(),
       addComment: sl(),
-      firebaseAuth: sl(),
+      authService: sl<IAuthService>(),
     ),
   );
 }

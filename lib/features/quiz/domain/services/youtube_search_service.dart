@@ -10,13 +10,13 @@ import 'package:guardiancare/core/error/failures.dart';
 ///
 /// Requirements: 1.3, 2.2
 class VideoData extends Equatable {
-
   const VideoData({
     required this.videoId,
     required this.title,
     required this.thumbnailUrl,
     required this.videoUrl,
   });
+
   /// Unique identifier for the video on YouTube
   final String videoId;
 
@@ -46,6 +46,7 @@ class VideoData extends Equatable {
 /// - Error handling for network and API failures
 ///
 /// Requirements: 1.3, 2.2
+// ignore: one_member_abstracts
 abstract class YoutubeSearchService {
   /// Searches for a video on YouTube using the given search term
   ///

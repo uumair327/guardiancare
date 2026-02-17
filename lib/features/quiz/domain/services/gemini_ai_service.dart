@@ -14,6 +14,7 @@ import 'package:guardiancare/core/error/failures.dart';
 /// - Error handling and fallback mechanisms
 ///
 /// Requirements: 1.3, 2.2
+// ignore: one_member_abstracts
 abstract class GeminiAIService {
   /// Generates YouTube search terms for a given category
   ///

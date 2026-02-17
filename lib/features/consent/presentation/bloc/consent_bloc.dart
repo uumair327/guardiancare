@@ -2,15 +2,20 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:guardiancare/features/consent/domain/usecases/save_parental_key.dart';
 import 'package:guardiancare/features/consent/domain/usecases/submit_consent.dart';
 import 'package:guardiancare/features/consent/domain/usecases/verify_parental_key.dart';
+import 'package:guardiancare/features/consent/domain/validators/parental_key_validator.dart';
 import 'package:guardiancare/features/consent/presentation/bloc/consent_event.dart';
 import 'package:guardiancare/features/consent/presentation/bloc/consent_state.dart';
 
+/// BLoC for managing consent state.
+///
+/// Delegates business logic to domain-layer use cases and validators.
+/// The Bloc only orchestrates state transitions.
 class ConsentBloc extends Bloc<ConsentEvent, ConsentState> {
-
   ConsentBloc({
     required this.submitConsent,
     required this.verifyParentalKey,
     required this.saveParentalKey,
+    this.keyValidator = const ParentalKeyValidator(),
   }) : super(ConsentInitial()) {
     on<SubmitConsentRequested>(_onSubmitConsent);
     on<VerifyParentalKeyRequested>(_onVerifyParentalKey);
@@ -21,8 +26,8 @@ class ConsentBloc extends Bloc<ConsentEvent, ConsentState> {
   final VerifyParentalKey verifyParentalKey;
   final SaveParentalKey saveParentalKey;
 
-  /// Minimum length for parental key validation
-  static const int minKeyLength = 4;
+  /// Domain-layer validator (injected for testability)
+  final ParentalKeyValidator keyValidator;
 
   Future<void> _onSubmitConsent(
     SubmitConsentRequested event,
@@ -57,30 +62,18 @@ class ConsentBloc extends Bloc<ConsentEvent, ConsentState> {
   }
 
   /// Handle parental key format validation (local validation)
+  /// Delegates to domain-layer ParentalKeyValidator.
   /// Requirements: 5.1
   void _onValidateParentalKey(
     ValidateParentalKey event,
     Emitter<ConsentState> emit,
   ) {
-    final key = event.key;
+    final validationResult = keyValidator.validate(event.key);
 
-    if (key.isEmpty) {
-      emit(const ParentalKeyValidated(
-        isValid: false,
-        errorMessage: 'Parental key cannot be empty',
-      ));
-      return;
-    }
-
-    if (key.length < minKeyLength) {
-      emit(const ParentalKeyValidated(
-        isValid: false,
-        errorMessage: 'Parental key must be at least $minKeyLength characters',
-      ));
-      return;
-    }
-
-    emit(const ParentalKeyValidated(isValid: true));
+    emit(ParentalKeyValidated(
+      isValid: validationResult.isValid,
+      errorMessage: validationResult.errorMessage,
+    ));
   }
 
   /// Handle parental key submission and persistence
@@ -89,11 +82,12 @@ class ConsentBloc extends Bloc<ConsentEvent, ConsentState> {
     SubmitParentalKey event,
     Emitter<ConsentState> emit,
   ) async {
-    // First validate the key
-    if (event.key.length < minKeyLength) {
-      emit(const ParentalKeyValidated(
+    // Validate before submitting (domain logic delegated)
+    final validationResult = keyValidator.validate(event.key);
+    if (!validationResult.isValid) {
+      emit(ParentalKeyValidated(
         isValid: false,
-        errorMessage: 'Parental key must be at least $minKeyLength characters',
+        errorMessage: validationResult.errorMessage,
       ));
       return;
     }

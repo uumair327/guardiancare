@@ -12,7 +12,8 @@ class PdfDocument {
 }
 
 class PdfControllerPinch {
-  PdfControllerPinch();
+  // ignore: avoid_unused_constructor_parameters
+  PdfControllerPinch({dynamic document});
   void dispose() {}
 }
 
@@ -23,6 +24,7 @@ class PdfViewPinch extends StatelessWidget {
     this.scrollDirection = Axis.vertical,
   });
   final PdfControllerPinch controller;
+  // ignore: unused_field
   final Axis scrollDirection;
 
   @override

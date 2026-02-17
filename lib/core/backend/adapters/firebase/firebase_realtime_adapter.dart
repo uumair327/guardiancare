@@ -89,6 +89,7 @@ class FirebaseRealtimeAdapter implements IRealtimeService {
       return _controllers[channel]!.stream;
     }
 
+    // ignore: close_sinks
     final controller = StreamController<Map<String, dynamic>>.broadcast(
       onCancel: () => _cleanupChannel(channel),
     );
@@ -96,6 +97,7 @@ class FirebaseRealtimeAdapter implements IRealtimeService {
 
     if (segments.length == 1) {
       // Collection subscription
+      // ignore: cancel_subscriptions
       final subscription =
           _firestore.collection(segments[0]).snapshots().listen(
         (snapshot) {
@@ -125,6 +127,7 @@ class FirebaseRealtimeAdapter implements IRealtimeService {
       _subscriptions[channel] = subscription;
     } else if (segments.length == 2) {
       // Document subscription
+      // ignore: cancel_subscriptions
       final subscription = _firestore
           .collection(segments[0])
           .doc(segments[1])
@@ -148,6 +151,7 @@ class FirebaseRealtimeAdapter implements IRealtimeService {
     } else if (segments.length >= 3) {
       // Subcollection subscription
       final collectionPath = segments.take(segments.length - 1).join('/');
+      // ignore: cancel_subscriptions
       final subscription =
           _firestore.collection(collectionPath).snapshots().listen(
         (snapshot) {

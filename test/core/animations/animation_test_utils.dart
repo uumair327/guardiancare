@@ -82,13 +82,13 @@ class AnimationTestUtils {
     );
   }
 
-  /// Verifies that an Animation<double> is at a specific value within tolerance.
+  /// Verifies that an `Animation<double>` is at a specific value within tolerance.
   ///
   /// This is useful when testing animations that are derived from a controller
   /// (e.g., with Tween or CurvedAnimation).
   ///
   /// Parameters:
-  /// - [animation]: The Animation<double> to verify
+  /// - [animation]: The `Animation<double>` to verify
   /// - [expected]: The expected animation value
   /// - [tolerance]: The acceptable deviation from expected (default: 0.01)
   ///

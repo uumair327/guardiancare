@@ -7,7 +7,6 @@ import 'package:guardiancare/core/services/parental_session_manager.dart';
 /// without containing implementation details
 /// Requirements: 9.1, 9.2, 9.3, 9.4
 class ParentalVerificationService {
-
   /// Factory constructor for singleton access (backward compatibility)
   factory ParentalVerificationService() {
     if (_instance == null) {
@@ -73,7 +72,7 @@ class ParentalVerificationService {
       (isValid) {
         if (isValid) {
           // Delegate session state management to ParentalSessionManager
-          _sessionManager.setVerified(true);
+          _sessionManager.setVerified(value: true);
         }
         return isValid;
       },

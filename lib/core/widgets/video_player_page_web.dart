@@ -1,6 +1,7 @@
 // Web-specific implementation of VideoPlayerPage using YouTube iframe embed
 // This file is used on web platform where youtube_player_flutter is not supported
 
+// ignore_for_file: avoid_web_libraries_in_flutter, unawaited_futures, deprecated_member_use
 import 'dart:html' as html;
 import 'dart:ui_web' as ui_web;
 
@@ -8,7 +9,6 @@ import 'package:flutter/material.dart';
 import 'package:guardiancare/core/core.dart';
 
 class VideoPlayerPage extends StatefulWidget {
-
   const VideoPlayerPage({super.key, required this.videoUrl});
   final String videoUrl;
 
@@ -26,7 +26,7 @@ class _VideoPlayerPageState extends State<VideoPlayerPage> {
     super.initState();
     _videoId = _extractVideoId(widget.videoUrl);
     _isVideoUrlValid = _videoId != null;
-    
+
     if (_isVideoUrlValid) {
       _viewId = 'youtube-player-${DateTime.now().millisecondsSinceEpoch}';
       _registerViewFactory();
@@ -36,7 +36,8 @@ class _VideoPlayerPageState extends State<VideoPlayerPage> {
   String? _extractVideoId(String url) {
     // Handle various YouTube URL formats
     final regexPatterns = [
-      RegExp(r'(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})'),
+      RegExp(
+          r'(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})'),
       RegExp(r'youtube\.com\/v\/([a-zA-Z0-9_-]{11})'),
       RegExp(r'youtube\.com\/shorts\/([a-zA-Z0-9_-]{11})'),
     ];
@@ -47,12 +48,12 @@ class _VideoPlayerPageState extends State<VideoPlayerPage> {
         return match.group(1);
       }
     }
-    
+
     // Check if the URL is already just a video ID
     if (RegExp(r'^[a-zA-Z0-9_-]{11}$').hasMatch(url)) {
       return url;
     }
-    
+
     return null;
   }
 
@@ -61,11 +62,13 @@ class _VideoPlayerPageState extends State<VideoPlayerPage> {
       _viewId,
       (int viewId) {
         final iframe = html.IFrameElement()
-          ..src = 'https://www.youtube.com/embed/$_videoId?autoplay=1&rel=0&modestbranding=1&enablejsapi=1'
+          ..src =
+              'https://www.youtube.com/embed/$_videoId?autoplay=1&rel=0&modestbranding=1&enablejsapi=1'
           ..style.border = 'none'
           ..style.width = '100%'
           ..style.height = '100%'
-          ..allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen'
+          ..allow =
+              'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen'
           ..allowFullscreen = true;
         return iframe;
       },
@@ -122,12 +125,14 @@ class _VideoPlayerPageState extends State<VideoPlayerPage> {
                             const SizedBox(height: AppDimensions.spaceL),
                             // Fullscreen hint
                             Container(
-                              padding: const EdgeInsets.all(AppDimensions.spaceM),
+                              padding:
+                                  const EdgeInsets.all(AppDimensions.spaceM),
                               decoration: BoxDecoration(
                                 color: AppColors.primary.withValues(alpha: 0.1),
                                 borderRadius: AppDimensions.borderRadiusM,
                                 border: Border.all(
-                                  color: AppColors.primary.withValues(alpha: 0.3),
+                                  color:
+                                      AppColors.primary.withValues(alpha: 0.3),
                                 ),
                               ),
                               child: Row(

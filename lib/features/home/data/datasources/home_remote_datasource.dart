@@ -3,6 +3,7 @@ import 'package:guardiancare/core/util/logger.dart';
 import 'package:guardiancare/features/home/data/models/carousel_item_model.dart';
 
 /// Abstract interface for home remote data source
+// ignore: one_member_abstracts
 abstract class HomeRemoteDataSource {
   /// Get carousel items as a stream for real-time updates
   Stream<List<CarouselItemModel>> getCarouselItems();

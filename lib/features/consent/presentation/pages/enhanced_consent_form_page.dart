@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:crypto/crypto.dart';
@@ -21,7 +22,6 @@ import 'package:guardiancare/features/consent/domain/repositories/consent_reposi
 /// - Open/Closed: Extensible step system
 /// - Dependency Inversion: Uses abstractions for data operations
 class EnhancedConsentFormPage extends StatefulWidget {
-
   const EnhancedConsentFormPage({
     super.key,
     required this.onSubmit,
@@ -107,7 +107,7 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage>
 
   void _nextStep() {
     if (_formKey.currentState!.validate()) {
-      HapticFeedback.lightImpact();
+      unawaited(HapticFeedback.lightImpact());
       _animController.reset();
       setState(() => _currentStep++);
       _animController.forward();
@@ -115,7 +115,7 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage>
   }
 
   void _previousStep() {
-    HapticFeedback.lightImpact();
+    unawaited(HapticFeedback.lightImpact());
     _animController.reset();
     setState(() => _currentStep--);
     _animController.forward();
@@ -130,7 +130,7 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage>
     }
 
     setState(() => _isSubmitting = true);
-    HapticFeedback.mediumImpact();
+    unawaited(HapticFeedback.mediumImpact());
 
     try {
       final user = sl<IAuthService>().currentUser;
@@ -196,7 +196,8 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage>
                   children: [
                     _buildHeader(),
                     Padding(
-                      padding: const EdgeInsets.all(AppDimensions.screenPaddingH),
+                      padding:
+                          const EdgeInsets.all(AppDimensions.screenPaddingH),
                       child: Form(
                         key: _formKey,
                         child: FadeTransition(
@@ -317,7 +318,8 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage>
                 duration: AppDurations.animationShort,
                 width: 40,
                 height: 3,
-                margin: const EdgeInsets.symmetric(horizontal: AppDimensions.spaceXS),
+                margin: const EdgeInsets.symmetric(
+                    horizontal: AppDimensions.spaceXS),
                 decoration: BoxDecoration(
                   color: index < _currentStep
                       ? AppColors.white
@@ -788,7 +790,8 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage>
                 ),
               ),
               child: _agreedToTerms
-                  ? const Icon(Icons.check_rounded, color: AppColors.white, size: 18)
+                  ? const Icon(Icons.check_rounded,
+                      color: AppColors.white, size: 18)
                   : null,
             ),
             const SizedBox(width: AppDimensions.spaceM),
@@ -860,8 +863,8 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage>
                 child: ScaleTapWidget(
                   onTap: _previousStep,
                   child: Container(
-                    padding:
-                        const EdgeInsets.symmetric(vertical: AppDimensions.spaceM),
+                    padding: const EdgeInsets.symmetric(
+                        vertical: AppDimensions.spaceM),
                     decoration: BoxDecoration(
                       color: context.colors.surfaceVariant,
                       borderRadius: AppDimensions.borderRadiusM,
@@ -889,7 +892,8 @@ class _EnhancedConsentFormPageState extends State<EnhancedConsentFormPage>
                         ? _nextStep
                         : _submitConsent),
                 child: Container(
-                  padding: const EdgeInsets.symmetric(vertical: AppDimensions.spaceM),
+                  padding: const EdgeInsets.symmetric(
+                      vertical: AppDimensions.spaceM),
                   decoration: BoxDecoration(
                     gradient: const LinearGradient(
                       colors: [AppColors.primary, AppColors.primaryDark],

@@ -1,5 +1,5 @@
-import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:guardiancare/core/util/logger.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../models/backend_result.dart';
 import '../../models/backend_user.dart' hide OAuthProvider;
 import '../../models/backend_user.dart' as backend show OAuthProvider;

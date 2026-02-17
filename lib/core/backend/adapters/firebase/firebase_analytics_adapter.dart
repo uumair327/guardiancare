@@ -23,7 +23,7 @@ class FirebaseAnalyticsAdapter implements IAnalyticsService {
 
   @override
   Future<BackendResult<void>> setAnalyticsCollectionEnabled(
-      bool enabled) async {
+      {required bool enabled}) async {
     try {
       await _analytics.setAnalyticsCollectionEnabled(enabled);
       return const BackendResult.success(null);

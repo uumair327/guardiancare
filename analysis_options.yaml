@@ -42,7 +42,7 @@ linter:
     # ERROR PREVENTION & TYPE SAFETY
     # -------------------------------------------------------------------------
     - always_declare_return_types
-    - always_require_non_null_named_parameters
+    # always_require_non_null_named_parameters — removed in Dart 3.3.0
     - annotate_overrides
     - avoid_empty_else
     - avoid_init_to_null
@@ -112,7 +112,7 @@ linter:
     - file_names
     - library_names
     - library_prefixes
-    - list_remove_unrelated_type
+    # list_remove_unrelated_type — removed in Dart 3.3.0 (replaced by collection_methods_unrelated_type)
     - no_adjacent_strings_in_list
     - no_leading_underscores_for_library_prefixes
     - no_leading_underscores_for_local_identifiers

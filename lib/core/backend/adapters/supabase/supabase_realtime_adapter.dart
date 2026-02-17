@@ -1,6 +1,6 @@
 import 'dart:async';
-import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:guardiancare/core/util/logger.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../models/backend_result.dart';
 import '../../ports/realtime_service_port.dart';
 import 'supabase_initializer.dart';
@@ -40,6 +40,7 @@ class SupabaseRealtimeAdapter implements IRealtimeService {
   RealtimeConnectionState _connectionState = RealtimeConnectionState.connected;
   final _connectionStateController =
       StreamController<RealtimeConnectionState>.broadcast();
+  // ignore: close_sinks
   final _syncStateController = StreamController<SyncState>.broadcast();
 
   // ============================================================================
@@ -234,14 +235,24 @@ class SupabaseRealtimeAdapter implements IRealtimeService {
 
   @override
   Stream<Map<String, dynamic>> subscribeMultiple(List<String> channels) {
+    // ignore: close_sinks
     final controller = StreamController<Map<String, dynamic>>.broadcast();
+    final subscriptions = <StreamSubscription>[];
 
     for (final channel in channels) {
-      subscribe(channel).listen(
+      final sub = subscribe(channel).listen(
         controller.add,
         onError: (e) => controller.addError(e),
       );
+      subscriptions.add(sub);
     }
+
+    controller.onCancel = () async {
+      for (final sub in subscriptions) {
+        await sub.cancel();
+      }
+      await controller.close();
+    };
 
     return controller.stream;
   }
@@ -340,25 +351,29 @@ class SupabaseRealtimeAdapter implements IRealtimeService {
   Stream<List<String>> streamOnlineUsers(String channel) {
     // Use Supabase Presence for online users
     final presenceChannel = _client.channel('presence:$channel');
+    // ignore: close_sinks
     final controller = StreamController<List<String>>.broadcast();
 
-    presenceChannel
-      ..onPresenceSync((payload) {
-        final state = presenceChannel.presenceState();
-        // Extract user IDs from presence state
-        // Each item in the list contains presences array with user data
-        final userIds = <String>[];
-        for (final presenceState in state) {
-          for (final presence in presenceState.presences) {
-            final userId = presence.payload['user_id'] as String?;
-            if (userId != null && !userIds.contains(userId)) {
-              userIds.add(userId);
-            }
+    presenceChannel.onPresenceSync((payload) {
+      final state = presenceChannel.presenceState();
+      // Extract user IDs from presence state
+      // Each item in the list contains presences array with user data
+      final userIds = <String>[];
+      for (final presenceState in state) {
+        for (final presence in presenceState.presences) {
+          final userId = presence.payload['user_id'] as String?;
+          if (userId != null && !userIds.contains(userId)) {
+            userIds.add(userId);
           }
         }
-        controller.add(userIds);
-      })
-      ..subscribe();
+      }
+      controller.add(userIds);
+    }).subscribe();
+
+    controller.onCancel = () async {
+      await _client.removeChannel(presenceChannel);
+      await controller.close();
+    };
 
     return controller.stream;
   }

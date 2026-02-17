@@ -61,6 +61,7 @@ abstract final class BackendConfig {
   /// Individual service flags can override this for granular control.
   static BackendProvider get provider => switch (_backendEnv.toLowerCase()) {
         'supabase' => BackendProvider.supabase,
+        'sync' => BackendProvider.sync,
         'appwrite' => BackendProvider.appwrite,
         'custom' => BackendProvider.custom,
         _ => BackendProvider.firebase,
@@ -156,9 +157,13 @@ abstract final class BackendConfig {
   /// Check if using Supabase as global provider.
   static bool get isSupabase => provider == BackendProvider.supabase;
 
+  /// Check if using Sync mode (Firebase + Supabase dual-write).
+  static bool get isSync => provider == BackendProvider.sync;
+
   /// Check if any Supabase feature is enabled (global or granular).
   static bool get hasSupabaseFeatures =>
       isSupabase ||
+      isSync ||
       useSupabaseAuth ||
       useSupabaseDatabase ||
       useSupabaseStorage ||
@@ -167,6 +172,7 @@ abstract final class BackendConfig {
   /// Check if any Firebase feature is enabled (global or granular).
   static bool get hasFirebaseFeatures =>
       isFirebase ||
+      isSync ||
       (!useSupabaseAuth && isFirebase) ||
       (!useSupabaseDatabase && isFirebase) ||
       (!useSupabaseStorage && isFirebase) ||

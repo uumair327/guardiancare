@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -110,7 +111,7 @@ class _ParentalLockOverlayState extends State<ParentalLockOverlay>
 
     if (key.length < 4) {
       setState(() => _showError = true);
-      HapticFeedback.heavyImpact();
+      unawaited(HapticFeedback.heavyImpact());
       return;
     }
 
@@ -133,7 +134,7 @@ class _ParentalLockOverlayState extends State<ParentalLockOverlay>
     if (!mounted) return;
 
     if (isValid) {
-      HapticFeedback.mediumImpact();
+      unawaited(HapticFeedback.mediumImpact());
       setState(() {
         _isLoading = false;
         _isLocked = false;
@@ -143,7 +144,7 @@ class _ParentalLockOverlayState extends State<ParentalLockOverlay>
       await _animationController.reverse();
       widget.onUnlocked();
     } else {
-      HapticFeedback.heavyImpact();
+      unawaited(HapticFeedback.heavyImpact());
       setState(() {
         _isLoading = false;
         _showError = true;
@@ -151,7 +152,7 @@ class _ParentalLockOverlayState extends State<ParentalLockOverlay>
       _keyController.clear();
 
       // Shake animation
-      _shakeAnimation();
+      unawaited(_shakeAnimation());
     }
   }
 

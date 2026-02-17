@@ -64,6 +64,8 @@ export 'adapters/firebase/firebase_storage_adapter.dart';
 
 // Supabase initializer (can be exported even without full implementation)
 export 'adapters/supabase/supabase_initializer.dart';
+// Sync adapter (dual-write to both backends)
+export 'adapters/sync/sync_data_store_adapter.dart';
 // Backend factory
 export 'backend_factory.dart';
 // Configuration (Feature Flags & Secrets)

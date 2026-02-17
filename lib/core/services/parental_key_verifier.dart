@@ -6,6 +6,7 @@ import 'package:guardiancare/core/services/crypto_service.dart';
 /// Abstract interface for parental key verification
 /// Handles verification logic exclusively using CryptoService for hashing
 /// Requirements: 9.2
+// ignore: one_member_abstracts
 abstract class ParentalKeyVerifier {
   /// Verify a parental key against the stored hash for a user
   Future<Either<Failure, bool>> verify(String uid, String key);
@@ -14,7 +15,6 @@ abstract class ParentalKeyVerifier {
 /// Implementation of ParentalKeyVerifier
 /// Uses CryptoService for hashing and Firestore for stored hash retrieval
 class ParentalKeyVerifierImpl implements ParentalKeyVerifier {
-
   ParentalKeyVerifierImpl({
     required CryptoService cryptoService,
     required FirebaseFirestore firestore,

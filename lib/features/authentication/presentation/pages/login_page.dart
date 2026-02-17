@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -84,7 +85,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
 
   /// Initiates Google Sign-In flow after user accepts terms and conditions.
   Future<void> _handleGoogleSignIn(BuildContext context) async {
-    HapticFeedback.mediumImpact();
+    unawaited(HapticFeedback.mediumImpact());
     final accepted = await TermsAndConditionsDialog.show(context);
     if (accepted == true && context.mounted) {
       context.read<AuthBloc>().add(const SignInWithGoogleRequested());
@@ -94,7 +95,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
   /// Handles email/password sign-in after form validation.
   void _handleEmailSignIn(BuildContext context) {
     if (_formKey.currentState!.validate()) {
-      HapticFeedback.mediumImpact();
+      unawaited(HapticFeedback.mediumImpact());
       context.read<AuthBloc>().add(
             SignInWithEmailRequested(
               email: _emailController.text.trim(),
@@ -265,7 +266,8 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
     return SingleChildScrollView(
       physics: const BouncingScrollPhysics(),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: AppDimensions.screenPaddingH),
+        padding: const EdgeInsets.symmetric(
+            horizontal: AppDimensions.screenPaddingH),
         child: AnimatedBuilder(
           animation: _mainController,
           builder: (context, child) {
@@ -599,7 +601,8 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
             onTap: () => _handleEmailSignIn(context),
             child: Container(
               width: double.infinity,
-              padding: const EdgeInsets.symmetric(vertical: AppDimensions.spaceM),
+              padding:
+                  const EdgeInsets.symmetric(vertical: AppDimensions.spaceM),
               decoration: BoxDecoration(
                 gradient: const LinearGradient(
                   colors: [AppColors.primary, AppColors.primaryDark],
@@ -848,7 +851,6 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
 }
 
 class _FeatureItem {
-
   const _FeatureItem({
     required this.icon,
     required this.title,

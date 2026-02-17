@@ -1,10 +1,10 @@
+import 'package:guardiancare/core/util/logger.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
 /// Industrial-grade SQLite database service
 /// Handles all SQL database operations with proper error handling and migrations
 class DatabaseService {
-
   DatabaseService._internal();
   static final DatabaseService instance = DatabaseService._internal();
   static Database? _database;
@@ -28,15 +28,15 @@ class DatabaseService {
       onUpgrade: _onUpgrade,
       onConfigure: _onConfigure,
     );
-    
+
     // Set journal mode to WAL for better concurrency (must be done after opening)
     try {
       await db.rawQuery('PRAGMA journal_mode = WAL');
       await db.rawQuery('PRAGMA synchronous = NORMAL');
     } on Object catch (e) {
-      print('Warning: Could not set WAL mode: $e');
+      Log.w('Could not set WAL mode: $e');
     }
-    
+
     return db;
   }
 

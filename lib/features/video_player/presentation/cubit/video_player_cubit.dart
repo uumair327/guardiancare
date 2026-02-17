@@ -35,7 +35,7 @@ class VideoPlayerCubit extends Cubit<VideoPlayerState> {
   }
 
   /// Sets fullscreen mode
-  void setFullScreen(bool isFullScreen) {
+  void setFullScreen({required bool isFullScreen}) {
     emit(state.copyWith(isFullScreen: isFullScreen));
   }
 

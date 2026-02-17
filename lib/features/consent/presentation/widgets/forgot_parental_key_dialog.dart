@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
@@ -73,7 +74,7 @@ class _ForgotParentalKeyDialogState extends State<ForgotParentalKeyDialog> {
     }
 
     if (_storedAnswerHash == null) {
-      _loadSecurityQuestion();
+      unawaited(_loadSecurityQuestion());
       return;
     }
 

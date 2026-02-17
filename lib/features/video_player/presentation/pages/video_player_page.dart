@@ -15,7 +15,6 @@ import 'package:youtube_player_flutter/youtube_player_flutter.dart'
 /// Education-friendly video player page with clean architecture
 /// Supports fullscreen, landscape mode, and smooth transitions
 class VideoPlayerPage extends StatefulWidget {
-
   const VideoPlayerPage({super.key, required this.videoUrl});
   final String videoUrl;
 
@@ -128,11 +127,12 @@ class _VideoPlayerPageState extends State<VideoPlayerPage>
 
   void _handleOrientationChange(Orientation orientation) {
     if (_isDisposed) return;
-    
+
     if (orientation == Orientation.landscape && !_cubit.state.isFullScreen) {
       // Auto-enter fullscreen when rotating to landscape
       _enterFullScreen();
-    } else if (orientation == Orientation.portrait && _cubit.state.isFullScreen) {
+    } else if (orientation == Orientation.portrait &&
+        _cubit.state.isFullScreen) {
       // Auto-exit fullscreen when rotating to portrait
       _exitFullScreen();
     }
@@ -170,17 +170,17 @@ class _VideoPlayerPageState extends State<VideoPlayerPage>
 
   void _enterFullScreen() {
     if (_isDisposed) return;
-    
+
     HapticFeedback.mediumImpact();
-    _cubit.setFullScreen(true);
-    
+    _cubit.setFullScreen(isFullScreen: true);
+
     // Allow both landscape orientations
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.landscapeLeft,
       DeviceOrientation.landscapeRight,
     ]);
     _setSystemUIForFullscreen();
-    
+
     // Trigger YouTube player fullscreen
     if (!_ytController.value.isFullScreen) {
       _ytController.toggleFullScreenMode();
@@ -189,17 +189,17 @@ class _VideoPlayerPageState extends State<VideoPlayerPage>
 
   void _exitFullScreen() {
     if (_isDisposed) return;
-    
+
     HapticFeedback.lightImpact();
-    _cubit.setFullScreen(false);
-    
+    _cubit.setFullScreen(isFullScreen: false);
+
     // Return to portrait
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
     ]);
     _setSystemUIForPortrait();
-    
+
     // Exit YouTube player fullscreen
     if (_ytController.value.isFullScreen) {
       _ytController.toggleFullScreenMode();
@@ -239,8 +239,8 @@ class _VideoPlayerPageState extends State<VideoPlayerPage>
   void _startHideControlsTimer() {
     _hideControlsTimer?.cancel();
     _hideControlsTimer = Timer(const Duration(seconds: 4), () {
-      if (mounted && 
-          !_isDisposed && 
+      if (mounted &&
+          !_isDisposed &&
           _cubit.state.playbackState == PlaybackState.playing &&
           _cubit.state.showControls) {
         _hideControls();
@@ -268,7 +268,8 @@ class _VideoPlayerPageState extends State<VideoPlayerPage>
 
   void _seekForward() {
     HapticFeedback.lightImpact();
-    final newPosition = _ytController.value.position + const Duration(seconds: 10);
+    final newPosition =
+        _ytController.value.position + const Duration(seconds: 10);
     final maxDuration = _ytController.metadata.duration;
     _ytController.seekTo(
       newPosition > maxDuration ? maxDuration : newPosition,
@@ -278,7 +279,8 @@ class _VideoPlayerPageState extends State<VideoPlayerPage>
 
   void _seekBackward() {
     HapticFeedback.lightImpact();
-    final newPosition = _ytController.value.position - const Duration(seconds: 10);
+    final newPosition =
+        _ytController.value.position - const Duration(seconds: 10);
     _ytController.seekTo(newPosition.isNegative ? Duration.zero : newPosition);
     _showControls();
   }
@@ -286,7 +288,7 @@ class _VideoPlayerPageState extends State<VideoPlayerPage>
   void _showSpeedSelector() {
     HapticFeedback.lightImpact();
     _hideControlsTimer?.cancel();
-    
+
     showModalBottomSheet(
       context: context,
       backgroundColor: AppColors.transparent,
@@ -315,12 +317,12 @@ class _VideoPlayerPageState extends State<VideoPlayerPage>
 
   void _showVideoEndedDialog() {
     if (!mounted || _isDisposed) return;
-    
+
     // Exit fullscreen first
     if (_cubit.state.isFullScreen) {
       _exitFullScreen();
     }
-    
+
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -371,13 +373,13 @@ class _VideoPlayerPageState extends State<VideoPlayerPage>
                 ),
                 onEnterFullScreen: () {
                   if (!_cubit.state.isFullScreen) {
-                    _cubit.setFullScreen(true);
+                    _cubit.setFullScreen(isFullScreen: true);
                     _setSystemUIForFullscreen();
                   }
                 },
                 onExitFullScreen: () {
                   if (_cubit.state.isFullScreen) {
-                    _cubit.setFullScreen(false);
+                    _cubit.setFullScreen(isFullScreen: false);
                     _setSystemUIForPortrait();
                   }
                 },
@@ -422,14 +424,15 @@ class _VideoPlayerPageState extends State<VideoPlayerPage>
     return _buildVideoContainer(player, state, isFullScreen: true);
   }
 
-  Widget _buildVideoContainer(Widget player, VideoPlayerState state, {required bool isFullScreen}) {
+  Widget _buildVideoContainer(Widget player, VideoPlayerState state,
+      {required bool isFullScreen}) {
     return GestureDetector(
       onTap: _toggleControls,
       onDoubleTapDown: (details) {
         // Double tap to seek
         final screenWidth = MediaQuery.of(context).size.width;
         final tapX = details.globalPosition.dx;
-        
+
         if (tapX < screenWidth / 3) {
           _seekBackward();
         } else if (tapX > screenWidth * 2 / 3) {
@@ -493,7 +496,8 @@ class _VideoPlayerPageState extends State<VideoPlayerPage>
 
   // ==================== Controls Overlay ====================
 
-  Widget _buildControlsOverlay(VideoPlayerState state, {required bool isFullScreen}) {
+  Widget _buildControlsOverlay(VideoPlayerState state,
+      {required bool isFullScreen}) {
     return AnimatedBuilder(
       animation: _controlsFadeAnimation,
       builder: (context, child) {
@@ -604,7 +608,8 @@ class _VideoPlayerPageState extends State<VideoPlayerPage>
     );
   }
 
-  Widget _buildSeekButton({required IconData icon, required VoidCallback onTap}) {
+  Widget _buildSeekButton(
+      {required IconData icon, required VoidCallback onTap}) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -663,7 +668,8 @@ class _VideoPlayerPageState extends State<VideoPlayerPage>
     );
   }
 
-  Widget _buildControlButton({required IconData icon, required VoidCallback onTap}) {
+  Widget _buildControlButton(
+      {required IconData icon, required VoidCallback onTap}) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -679,7 +685,8 @@ class _VideoPlayerPageState extends State<VideoPlayerPage>
 
   // ==================== Bottom Controls ====================
 
-  Widget _buildBottomControls(VideoPlayerState state, {required bool isFullScreen}) {
+  Widget _buildBottomControls(VideoPlayerState state,
+      {required bool isFullScreen}) {
     return Padding(
       padding: EdgeInsets.symmetric(
         horizontal: isFullScreen ? AppDimensions.spaceL : AppDimensions.spaceM,
@@ -767,8 +774,11 @@ class _VideoPlayerPageState extends State<VideoPlayerPage>
             ),
             // Thumb
             Positioned(
-              left: (progressPercent * (MediaQuery.of(context).size.width - 
-                  (AppDimensions.spaceM * 2) - 12)).clamp(0.0, double.infinity),
+              left: (progressPercent *
+                      (MediaQuery.of(context).size.width -
+                          (AppDimensions.spaceM * 2) -
+                          12))
+                  .clamp(0.0, double.infinity),
               child: Container(
                 width: 12,
                 height: 12,
@@ -828,7 +838,9 @@ class _VideoPlayerPageState extends State<VideoPlayerPage>
       child: Container(
         padding: const EdgeInsets.all(AppDimensions.spaceS),
         child: Icon(
-          isFullScreen ? Icons.fullscreen_exit_rounded : Icons.fullscreen_rounded,
+          isFullScreen
+              ? Icons.fullscreen_exit_rounded
+              : Icons.fullscreen_rounded,
           color: AppColors.white,
           size: 22,
         ),
@@ -929,7 +941,8 @@ class _VideoPlayerPageState extends State<VideoPlayerPage>
                 ),
                 const SizedBox(height: AppDimensions.spaceXS),
                 Text(
-                  VideoPlayerStrings.watched(_formatDuration(state.progress.position)),
+                  VideoPlayerStrings.watched(
+                      _formatDuration(state.progress.position)),
                   style: AppTextStyles.body1.copyWith(
                     color: AppColors.white,
                     fontWeight: FontWeight.w600,
@@ -1082,13 +1095,13 @@ class _VideoPlayerPageState extends State<VideoPlayerPage>
     _hideControlsTimer?.cancel();
     _controlsAnimController.dispose();
     _overlayAnimController.dispose();
-    
+
     if (_isVideoUrlValid) {
       _ytController.removeListener(_onPlayerStateChanged);
       _ytController.dispose();
     }
     _cubit.close();
-    
+
     // Reset orientations and system UI
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
@@ -1104,7 +1117,6 @@ class _VideoPlayerPageState extends State<VideoPlayerPage>
   }
 }
 
-
 // ==================== Supporting Widgets ====================
 
 /// Quick action button widget using centralized AnimatedButton.
@@ -1112,7 +1124,6 @@ class _VideoPlayerPageState extends State<VideoPlayerPage>
 /// Uses [AnimatedButton] for scale-tap animation,
 /// eliminating duplicate animation code.
 class _QuickActionButton extends StatelessWidget {
-
   const _QuickActionButton({
     required this.icon,
     required this.label,
@@ -1165,7 +1176,6 @@ class _QuickActionButton extends StatelessWidget {
 
 /// Video ended dialog
 class _VideoEndedDialog extends StatelessWidget {
-
   const _VideoEndedDialog({
     required this.onReplay,
     required this.onClose,

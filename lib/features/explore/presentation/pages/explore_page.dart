@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:dartz/dartz.dart' as dartz;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -344,7 +345,7 @@ class _RecommendedTab extends StatefulWidget {
 
 class _RecommendedTabState extends State<_RecommendedTab> {
   Future<void> _refreshRecommendations() async {
-    HapticFeedback.lightImpact();
+    unawaited(HapticFeedback.lightImpact());
     setState(() {});
     await Future.delayed(const Duration(milliseconds: 500));
   }
@@ -868,7 +869,7 @@ class _ResourcesTab extends StatelessWidget {
 
               return RefreshIndicator(
                 onRefresh: () async {
-                  HapticFeedback.lightImpact();
+                  unawaited(HapticFeedback.lightImpact());
                   await Future.delayed(AppDurations.animationMedium);
                 },
                 color: AppColors.cardEmerald,
@@ -1084,27 +1085,27 @@ class _ResourceCardState extends State<_ResourceCard>
   }
 
   Future<void> _onTap() async {
-    HapticFeedback.lightImpact();
+    unawaited(HapticFeedback.lightImpact());
 
     if (widget.type.toLowerCase() == 'custom' && widget.content != null) {
-      Navigator.push(
+      unawaited(Navigator.push(
         context,
         MaterialPageRoute(
           builder: (context) => CustomContentPage(content: widget.content!),
         ),
-      );
+      ));
       return;
     }
 
     if (widget.url.isEmpty) return;
 
     if (widget.type.toLowerCase() == 'pdf') {
-      context.push('/pdf-viewer', extra: {
+      unawaited(context.push('/pdf-viewer', extra: {
         'url': widget.url,
         'title': widget.title,
-      });
+      }));
     } else {
-      context.push('/webview', extra: widget.url);
+      unawaited(context.push('/webview', extra: widget.url));
     }
   }
 

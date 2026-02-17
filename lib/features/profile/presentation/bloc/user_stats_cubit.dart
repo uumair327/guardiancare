@@ -1,14 +1,13 @@
-import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:guardiancare/features/profile/domain/entities/user_stats_entity.dart';
 import 'package:guardiancare/features/profile/domain/usecases/get_user_stats.dart';
+import 'package:guardiancare/features/profile/presentation/bloc/user_stats_state.dart';
 
 /// Cubit for managing user statistics state.
-/// 
+///
 /// Separated from ProfileBloc following Single Responsibility Principle.
 /// Handles quiz, video, and badge statistics independently.
 class UserStatsCubit extends Cubit<UserStatsState> {
-
   UserStatsCubit({this.getUserStats}) : super(UserStatsInitial());
   final GetUserStats? getUserStats;
 
@@ -32,38 +31,4 @@ class UserStatsCubit extends Cubit<UserStatsState> {
 
   /// Refresh stats (useful after completing a quiz or video)
   Future<void> refreshStats(String userId) => loadStats(userId);
-}
-
-/// Base state for user statistics
-abstract class UserStatsState extends Equatable {
-  const UserStatsState();
-
-  @override
-  List<Object?> get props => [];
-}
-
-/// Initial state before loading
-class UserStatsInitial extends UserStatsState {}
-
-/// Loading state while fetching stats
-class UserStatsLoading extends UserStatsState {}
-
-/// Stats loaded successfully
-class UserStatsLoaded extends UserStatsState {
-
-  const UserStatsLoaded(this.stats);
-  final UserStatsEntity stats;
-
-  @override
-  List<Object?> get props => [stats];
-}
-
-/// Error state when loading fails
-class UserStatsError extends UserStatsState {
-
-  const UserStatsError(this.message);
-  final String message;
-
-  @override
-  List<Object?> get props => [message];
 }
