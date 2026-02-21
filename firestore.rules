@@ -146,6 +146,12 @@ service cloud.firestore {
       allow write: if isAdmin();
     }
     
+    // ==================== Feature Flags ====================
+    match /feature_flags/{flagId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    
     // ==================== Default: Deny All ====================
     // Any collection not explicitly defined above is denied
     match /{document=**} {
