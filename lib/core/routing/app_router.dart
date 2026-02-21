@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -6,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import 'package:guardiancare/core/core.dart';
 import 'package:guardiancare/core/di/di.dart' as di;
 import 'package:guardiancare/features/features.dart';
+import 'package:guardiancare/features/quiz/domain/entities/quiz_route_arguments.dart';
 import 'package:guardiancare/features/video_player/presentation/pages/video_player_page.dart'
     as video_player;
 
@@ -49,6 +51,9 @@ class AppRouter {
     initialLocation: '/',
     refreshListenable: GoRouterRefreshStream(_authStateChanges),
     redirect: (context, state) => authGuard.redirect(context, state),
+    // extraCodec tells GoRouter how to JSON-encode/decode typed route extras
+    // so they survive Flutter Web's browser History API round-trips.
+    extraCodec: const _AppRouterExtraCodec(),
     routes: [
       // Auth routes
       GoRoute(
@@ -101,10 +106,13 @@ class AppRouter {
         path: '/quiz-questions',
         name: 'quiz-questions',
         builder: (context, state) {
-          final questions = state.extra as List<QuestionEntity>;
+          // QuizRouteArguments.fromExtra safely handles both:
+          //   - Fresh nav   → state.extra is already a QuizRouteArguments
+          //   - Web history → state.extra is a Map<String,dynamic> (JSON)
+          final args = QuizRouteArguments.fromExtra(state.extra);
           return BlocProvider(
             create: (_) => di.sl<QuizBloc>(),
-            child: QuizQuestionsPage(questions: questions),
+            child: QuizQuestionsPage(questions: args.questions),
           );
         },
       ),
@@ -225,5 +233,60 @@ class GoRouterRefreshStream extends ChangeNotifier {
   void dispose() {
     _subscription.cancel();
     super.dispose();
+  }
+}
+
+// ── Extra Codec ───────────────────────────────────────────────────────────────
+//
+// GoRouter requires a Codec<Object?, Object?> to serialise route `extra` objects
+// into the browser's History state (a JSON-compatible Map). Without this,
+// `extra` is stored as a raw Dart object — which is discarded when the browser
+// back/forward buttons restore the page, causing null or wrong-type errors.
+//
+// Pattern: wrap with a type discriminator `{'type': '...', 'value': {...}}`
+// so additional types can be added without breaking existing routes.
+
+class _AppRouterExtraCodec extends Codec<Object?, Object?> {
+  const _AppRouterExtraCodec();
+
+  @override
+  Converter<Object?, Object?> get encoder => const _ExtraEncoder();
+
+  @override
+  Converter<Object?, Object?> get decoder => const _ExtraDecoder();
+}
+
+class _ExtraEncoder extends Converter<Object?, Object?> {
+  const _ExtraEncoder();
+
+  @override
+  Object? convert(Object? input) {
+    if (input == null) return null;
+    if (input is QuizRouteArguments) {
+      return {'type': 'QuizRouteArguments', 'value': input.toJson()};
+    }
+    // Primitive types (String, num, bool) pass through unchanged.
+    if (input is String || input is num || input is bool) return input;
+    throw ArgumentError('_ExtraEncoder: unsupported type ${input.runtimeType}');
+  }
+}
+
+class _ExtraDecoder extends Converter<Object?, Object?> {
+  const _ExtraDecoder();
+
+  @override
+  Object? convert(Object? input) {
+    if (input == null) return null;
+    if (input is Map<Object?, Object?>) {
+      final map = input.cast<String, dynamic>();
+      switch (map['type'] as String?) {
+        case 'QuizRouteArguments':
+          return QuizRouteArguments.fromJson(
+            (map['value'] as Map<Object?, Object?>).cast<String, dynamic>(),
+          );
+      }
+    }
+    // Primitive types pass through unchanged.
+    return input;
   }
 }

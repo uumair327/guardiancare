@@ -8,7 +8,7 @@
 ///   2. Add it to the CIF Dashboard's FeatureFlagKey union
 ///   3. Add its definition to APP_FEATURE_FLAGS in the dashboard
 ///
-/// Convention: 'feature.<snake_case_name>'
+/// Convention: 'feature.[snake_case_name]'
 abstract final class FeatureFlagKeys {
   FeatureFlagKeys._();
 

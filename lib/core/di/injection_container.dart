@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:get_it/get_it.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:guardiancare/core/core.dart';
-import 'package:guardiancare/core/feature_flags/feature_flags.dart';
+
 import 'package:guardiancare/core/util/logger.dart';
 import 'package:guardiancare/features/features.dart';
 import 'package:guardiancare/features/quiz/domain/usecases/get_all_quizzes.dart';

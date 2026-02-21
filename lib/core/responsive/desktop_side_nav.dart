@@ -40,7 +40,6 @@ class DesktopSideNav extends StatelessWidget {
         border: Border(
           right: BorderSide(
             color: colorScheme.outlineVariant.withValues(alpha: 0.5),
-            width: 1,
           ),
         ),
         boxShadow: [
