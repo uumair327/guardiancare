@@ -149,14 +149,20 @@ class _QuizPageState extends State<QuizPage> {
   }
 
   Widget _buildQuizGrid() {
+    final cols = context.responsiveValue<int>(
+      mobile: 2,
+      tablet: 3,
+      desktop: 4,
+    );
+
     return RefreshIndicator(
       onRefresh: _loadQuizzes,
       color: context.colors.primary,
       child: Padding(
-        padding: const EdgeInsets.all(AppDimensions.screenPaddingH),
+        padding: EdgeInsets.all(context.responsivePaddingH),
         child: GridView.builder(
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: cols,
             crossAxisSpacing: AppDimensions.spaceM,
             mainAxisSpacing: AppDimensions.spaceM,
             childAspectRatio: 0.8,
@@ -164,8 +170,8 @@ class _QuizPageState extends State<QuizPage> {
           itemCount: quizzes.length,
           itemBuilder: (context, index) {
             final quiz = quizzes[index];
-            final row = index ~/ 2;
-            final col = index % 2;
+            final row = index ~/ cols;
+            final col = index % cols;
             final delay = Duration(milliseconds: (row * 100) + (col * 50));
 
             return FadeSlideWidget(

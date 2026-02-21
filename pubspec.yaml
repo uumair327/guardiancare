@@ -140,6 +140,7 @@ flutter:
   uses-material-design: true
   generate: true
   assets:
+    - .env
     - assets/logo/
     
 flutter_launcher_icons:

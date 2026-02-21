@@ -241,7 +241,6 @@ class _VideoPageContent extends StatelessWidget {
 
 /// Category grid view with staggered animations
 class _CategoryGridView extends StatelessWidget {
-
   const _CategoryGridView({required this.categories});
   final List<CategoryEntity> categories;
 
@@ -309,12 +308,18 @@ class _CategoryGridView extends StatelessWidget {
             ),
           ),
         ),
-        // Category grid
+        // Category grid — adaptive columns
         SliverPadding(
-          padding: const EdgeInsets.symmetric(horizontal: AppDimensions.spaceM),
+          padding: EdgeInsets.symmetric(
+            horizontal: context.responsivePaddingH,
+          ),
           sliver: SliverGrid(
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: context.responsiveValue(
+                mobile: 2,
+                tablet: 3,
+                desktop: 4,
+              ),
               crossAxisSpacing: AppDimensions.spaceM,
               mainAxisSpacing: AppDimensions.spaceM,
               childAspectRatio: 0.85,
@@ -394,7 +399,6 @@ class _CategoryGridView extends StatelessWidget {
 
 /// Video grid view with staggered animations
 class _VideoGridView extends StatelessWidget {
-
   const _VideoGridView({
     required this.categoryName,
     required this.videos,
@@ -467,12 +471,18 @@ class _VideoGridView extends StatelessWidget {
             ),
           ),
         ),
-        // Video grid
+        // Video grid — adaptive columns
         SliverPadding(
-          padding: const EdgeInsets.symmetric(horizontal: AppDimensions.spaceM),
+          padding: EdgeInsets.symmetric(
+            horizontal: context.responsivePaddingH,
+          ),
           sliver: SliverGrid(
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: context.responsiveValue(
+                mobile: 2,
+                tablet: 3,
+                desktop: 4,
+              ),
               crossAxisSpacing: AppDimensions.spaceM,
               mainAxisSpacing: AppDimensions.spaceM,
               childAspectRatio: 0.8,

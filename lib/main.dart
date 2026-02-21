@@ -58,8 +58,12 @@ void main() async {
   }
 
   // Initialize dependency injection
-  // This will use BackendFactory which reads from BackendConfig
   await di.init();
+
+  // Start the feature flag real-time stream as early as possible.
+  // Singleton from DI — same instance used everywhere in the app.
+  di.sl<FeatureFlagCubit>().startListening();
+  Log.i('Feature flags stream started');
 
   // Crashlytics is not supported on web
   if (!kIsWeb) {
@@ -235,39 +239,42 @@ class GuardiancareState extends State<Guardiancare>
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => di.sl<AuthBloc>(),
-      child: MaterialApp.router(
-        title: AppStrings.appName,
-        routerConfig: AppRouter.router,
-        debugShowCheckedModeBanner: false,
+      child: BlocProvider<FeatureFlagCubit>.value(
+        value: di.sl<FeatureFlagCubit>(),
+        child: MaterialApp.router(
+          title: AppStrings.appName,
+          routerConfig: AppRouter.router,
+          debugShowCheckedModeBanner: false,
 
-        // Theme configuration
-        theme: AppTheme.lightTheme,
-        darkTheme: AppTheme.darkTheme,
-        themeMode: _themeMode,
+          // Theme configuration
+          theme: AppTheme.lightTheme,
+          darkTheme: AppTheme.darkTheme,
+          themeMode: _themeMode,
 
-        // Localization configuration
-        locale: _locale,
-        localizationsDelegates: const [
-          AppLocalizations.delegate,
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-          GlobalCupertinoLocalizations.delegate,
-        ],
-        supportedLocales: const [
-          Locale('en'), // English
-          Locale('hi'), // Hindi
-          Locale('mr'), // Marathi
-          Locale('gu'), // Gujarati
-          Locale('bn'), // Bengali
-          Locale('ta'), // Tamil
-          Locale('te'), // Telugu
-          Locale('kn'), // Kannada
-          Locale('ml'), // Malayalam
-        ],
-        localeResolutionCallback: (locale, supportedLocales) {
-          // Always use the saved/selected locale
-          return _locale;
-        },
+          // Localization configuration
+          locale: _locale,
+          localizationsDelegates: const [
+            AppLocalizations.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: const [
+            Locale('en'), // English
+            Locale('hi'), // Hindi
+            Locale('mr'), // Marathi
+            Locale('gu'), // Gujarati
+            Locale('bn'), // Bengali
+            Locale('ta'), // Tamil
+            Locale('te'), // Telugu
+            Locale('kn'), // Kannada
+            Locale('ml'), // Malayalam
+          ],
+          localeResolutionCallback: (locale, supportedLocales) {
+            // Always use the saved/selected locale
+            return _locale;
+          },
+        ),
       ),
     );
   }

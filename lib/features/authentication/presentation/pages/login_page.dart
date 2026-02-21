@@ -156,11 +156,18 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                 children: [
                   // Background decorations
                   _buildBackgroundDecorations(),
-                  // Main content
+                  // Main content — centred on wide screens
                   SafeArea(
                     child: state is AuthLoading
                         ? _buildLoadingState()
-                        : _buildLoginContent(context),
+                        : Center(
+                            child: ConstrainedBox(
+                              constraints: const BoxConstraints(
+                                maxWidth: 480,
+                              ),
+                              child: _buildLoginContent(context),
+                            ),
+                          ),
                   ),
                 ],
               );

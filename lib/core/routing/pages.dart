@@ -135,11 +135,16 @@ class _PagesState extends State<Pages> with SingleTickerProviderStateMixin {
   }
 
   void _onNavTap(int newIndex) {
-    _pageController.animateToPage(
-      newIndex,
-      duration: AppDurations.animationMedium,
-      curve: Curves.easeOutCubic,
-    );
+    if (context.isDesktopOrLarger) {
+      // On desktop we switch pages directly without PageView animation
+      setState(() => index = newIndex);
+    } else {
+      _pageController.animateToPage(
+        newIndex,
+        duration: AppDurations.animationMedium,
+        curve: Curves.easeOutCubic,
+      );
+    }
   }
 
   @override
@@ -151,57 +156,83 @@ class _PagesState extends State<Pages> with SingleTickerProviderStateMixin {
         child: const HomePage(),
       ),
       ExplorePage(
-        onNavigateToHome: () {
-          _pageController.animateToPage(
-            0,
-            duration: AppDurations.animationMedium,
-            curve: Curves.easeOutCubic,
-          );
-        },
-        onNavigateToForum: () {
-          _pageController.animateToPage(
-            2,
-            duration: AppDurations.animationMedium,
-            curve: Curves.easeOutCubic,
-          );
-        },
+        onNavigateToHome: () => _onNavTap(0),
+        onNavigateToForum: () => _onNavTap(2),
       ),
       BlocProvider.value(
         value: _forumBloc,
-        child: ForumPage(
-          onNavigateToExplore: () {
-            _pageController.animateToPage(
-              1,
-              duration: AppDurations.animationMedium,
-              curve: Curves.easeOutCubic,
-            );
-          },
+        child: FeatureGate(
+          flagKey: FeatureFlagKeys.forum,
+          disabledChild: const FeatureDisabledPlaceholder(
+            label: 'Forum',
+            message:
+                'The community forum is temporarily unavailable. Please check back later.',
+          ),
+          child: ForumPage(
+            onNavigateToExplore: () => _onNavTap(1),
+          ),
         ),
       ),
     ];
 
-    return Stack(
-      children: [
-        Scaffold(
-          extendBody: true,
-          backgroundColor: context.colors.background,
-          body: FadeTransition(
-            opacity: _fadeAnimation,
-            child: PageView(
-              controller: _pageController,
-              onPageChanged: (newIndex) {
-                setState(() => index = newIndex);
-              },
-              physics: const BouncingScrollPhysics(),
-              children: screens,
-            ),
-          ),
-          bottomNavigationBar: ModernBottomNav(
+    final isDesktop = context.isDesktopOrLarger;
+
+    // ── Desktop layout ───────────────────────────────────────────────────────
+    // Side nav + content side-by-side, no PageView physics
+    Widget mainContent;
+    if (isDesktop) {
+      mainContent = Row(
+        children: [
+          DesktopSideNav(
             currentIndex: index,
             onTap: _onNavTap,
             items: _navItems,
           ),
+          Expanded(
+            child: FadeTransition(
+              opacity: _fadeAnimation,
+              child: IndexedStack(
+                index: index,
+                children: screens,
+              ),
+            ),
+          ),
+        ],
+      );
+    } else {
+      // ── Mobile/Tablet layout ─────────────────────────────────────────────
+      // PageView with floating bottom nav
+      mainContent = Scaffold(
+        extendBody: true,
+        backgroundColor: context.colors.background,
+        body: FadeTransition(
+          opacity: _fadeAnimation,
+          child: PageView(
+            controller: _pageController,
+            onPageChanged: (newIndex) {
+              setState(() => index = newIndex);
+            },
+            physics: const BouncingScrollPhysics(),
+            children: screens,
+          ),
         ),
+        bottomNavigationBar: ModernBottomNav(
+          currentIndex: index,
+          onTap: _onNavTap,
+          items: _navItems,
+        ),
+      );
+    }
+
+    return Stack(
+      children: [
+        if (isDesktop)
+          Scaffold(
+            backgroundColor: context.colors.background,
+            body: mainContent,
+          )
+        else
+          mainContent,
 
         // Loading overlay
         if (isCheckingConsent)

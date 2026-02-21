@@ -5,6 +5,8 @@ export 'constants/constants.dart';
 export 'database/database.dart';
 export 'di/di.dart';
 export 'error/error.dart';
+export 'feature_flags/feature_flags.dart';
+export 'responsive/responsive.dart';
 export 'l10n/l10n.dart';
 export 'managers/managers.dart';
 export 'models/models.dart';

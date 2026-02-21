@@ -4,14 +4,13 @@ import 'package:guardiancare/core/core.dart';
 import 'package:guardiancare/features/home/presentation/widgets/action_card.dart';
 
 /// Action Grid with staggered animations
-/// 
+///
 /// Features:
 /// - Staggered entrance animations
 /// - 3D card effects
 /// - Responsive grid layout
 /// - Performance optimized
 class ActionGrid extends StatefulWidget {
-
   const ActionGrid({
     super.key,
     required this.onQuizTap,
@@ -76,13 +75,22 @@ class _ActionGridState extends State<ActionGrid> {
       ),
     ];
 
+    // Responsive column count
+    final cols = context.responsiveValue<int>(
+      mobile: 3,
+      tablet: 4,
+      desktop: 6,
+    );
+
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: AppDimensions.screenPaddingH),
+      padding: EdgeInsets.symmetric(
+        horizontal: context.responsivePaddingH,
+      ),
       child: GridView.builder(
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 3,
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: cols,
           mainAxisSpacing: AppDimensions.spaceM,
           crossAxisSpacing: AppDimensions.spaceM,
           childAspectRatio: 0.85,
@@ -91,8 +99,8 @@ class _ActionGridState extends State<ActionGrid> {
         itemBuilder: (context, index) {
           final action = actions[index];
           // Calculate stagger delay based on grid position
-          final row = index ~/ 3;
-          final col = index % 3;
+          final row = index ~/ cols;
+          final col = index % cols;
           final staggerIndex = row + col;
 
           return FadeSlideWidget(
@@ -113,7 +121,6 @@ class _ActionGridState extends State<ActionGrid> {
 }
 
 class _ActionItem {
-
   const _ActionItem({
     required this.icon,
     required this.label,

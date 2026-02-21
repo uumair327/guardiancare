@@ -84,7 +84,18 @@ class AppRouter {
       GoRoute(
         path: '/quiz',
         name: 'quiz',
-        builder: (context, state) => const QuizPage(),
+        builder: (context, state) => const FeatureGate(
+          flagKey: FeatureFlagKeys.quizzes,
+          disabledChild: Scaffold(
+            body: FeatureDisabledPlaceholder(
+              label: 'Quizzes',
+              message:
+                  'Quizzes are temporarily unavailable. Please check back later.',
+              icon: Icons.quiz_rounded,
+            ),
+          ),
+          child: QuizPage(),
+        ),
       ),
       GoRoute(
         path: '/quiz-questions',
@@ -102,7 +113,17 @@ class AppRouter {
       GoRoute(
         path: '/video',
         name: 'video',
-        builder: (context, state) => const VideoPage(),
+        builder: (context, state) => const FeatureGate(
+          flagKey: FeatureFlagKeys.learn,
+          disabledChild: Scaffold(
+            body: FeatureDisabledPlaceholder(
+              label: 'Learn',
+              message: 'The learning section is temporarily unavailable.',
+              icon: Icons.school_rounded,
+            ),
+          ),
+          child: VideoPage(),
+        ),
       ),
 
       // Emergency route

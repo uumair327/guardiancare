@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:get_it/get_it.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:guardiancare/core/core.dart';
+import 'package:guardiancare/core/feature_flags/feature_flags.dart';
 import 'package:guardiancare/core/util/logger.dart';
 import 'package:guardiancare/features/features.dart';
 import 'package:guardiancare/features/quiz/domain/usecases/get_all_quizzes.dart';
@@ -93,6 +94,7 @@ Future<void> init() async {
   _initReportFeature();
   _initExploreFeature();
   _initConsentFeature();
+  _initFeatureFlags();
 }
 
 /// Initialize backend abstraction layer services.
@@ -566,5 +568,21 @@ void _initConsentFeature() {
       verifyParentalKey: sl(),
       saveParentalKey: sl(),
     ),
+  );
+}
+
+/// Initialize Feature Flags (remote config from CIF Dashboard via Firestore)
+///
+/// The cubit is a singleton — one instance holds the live stream for the
+/// entire app lifetime. Registered LAST so all other features are ready.
+void _initFeatureFlags() {
+  // Repository — reads from the same Firestore collection the dashboard writes to
+  sl.registerLazySingleton<IFeatureFlagRepository>(
+    () => FirebaseFeatureFlagRepository(firestore: sl<FirebaseFirestore>()),
+  );
+
+  // Cubit — singleton so the same stream is shared across the whole widget tree
+  sl.registerLazySingleton<FeatureFlagCubit>(
+    () => FeatureFlagCubit(repository: sl<IFeatureFlagRepository>()),
   );
 }

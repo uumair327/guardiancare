@@ -17,7 +17,7 @@ class Env {
     // In a more complex setup, we could check kReleaseMode or --dart-define=ENV
     try {
       await dotenv.load();
-    } on Exception {
+    } on Object {
       // If .env file is missing (e.g. in CI/CD or production where secrets are injected via other means),
       // we might want to fail silently or log a warning, depending on the strategy.
 
