@@ -46,7 +46,7 @@ class _ActionGridState extends State<ActionGrid> {
       _ActionItem(
         icon: Icons.video_library_rounded,
         label: l10n.learn,
-        color: AppColors.secondary,
+        color: AppColors.cardIndigo,
         onTap: widget.onLearnTap,
       ),
       _ActionItem(
