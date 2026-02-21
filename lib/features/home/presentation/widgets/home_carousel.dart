@@ -44,8 +44,21 @@ class _HomeCarouselState extends State<HomeCarousel>
 
   @override
   Widget build(BuildContext context) {
-    final screenHeight = MediaQuery.of(context).size.height;
-    final carouselHeight = screenHeight * 0.22;
+    final screenHeight = MediaQuery.sizeOf(context).height;
+
+    final carouselHeight = context.responsiveValue<double>(
+      mobile: screenHeight * 0.22,
+      tablet: 260,
+      desktop: 320,
+      widescreen: 380,
+    );
+
+    final viewportFraction = context.responsiveValue<double>(
+      mobile: 0.85,
+      tablet: 0.6,
+      desktop: 0.45,
+      widescreen: 0.35,
+    );
 
     return BlocBuilder<HomeBloc, HomeState>(
       builder: (context, state) {
@@ -53,7 +66,7 @@ class _HomeCarouselState extends State<HomeCarousel>
           final items = state.items;
 
           if (items.isEmpty) {
-            return _buildShimmerCarousel(carouselHeight);
+            return _buildShimmerCarousel(carouselHeight, viewportFraction);
           }
 
           return FadeTransition(
@@ -64,7 +77,7 @@ class _HomeCarouselState extends State<HomeCarousel>
                   itemCount: items.length,
                   options: CarouselOptions(
                     height: carouselHeight,
-                    viewportFraction: 0.85,
+                    viewportFraction: viewportFraction,
                     enableInfiniteScroll: items.length > 1,
                     autoPlay: items.length > 1,
                     autoPlayInterval: AppDurations.carouselAutoPlay,
@@ -91,9 +104,10 @@ class _HomeCarouselState extends State<HomeCarousel>
             ),
           );
         } else if (state is HomeError) {
-          return _buildErrorCarousel(carouselHeight, state.message);
+          return _buildErrorCarousel(
+              carouselHeight, viewportFraction, state.message);
         } else {
-          return _buildShimmerCarousel(carouselHeight);
+          return _buildShimmerCarousel(carouselHeight, viewportFraction);
         }
       },
     );
@@ -136,14 +150,14 @@ class _HomeCarouselState extends State<HomeCarousel>
     );
   }
 
-  Widget _buildShimmerCarousel(double height) {
+  Widget _buildShimmerCarousel(double height, double viewportFraction) {
     return Column(
       children: [
         CarouselSlider.builder(
           itemCount: 3,
           options: CarouselOptions(
             height: height,
-            viewportFraction: 0.85,
+            viewportFraction: viewportFraction,
             autoPlay: true,
             autoPlayInterval: AppDurations.carouselAutoPlay,
             enlargeCenterPage: true,
@@ -183,10 +197,15 @@ class _HomeCarouselState extends State<HomeCarousel>
     );
   }
 
-  Widget _buildErrorCarousel(double height, String message) {
+  Widget _buildErrorCarousel(
+      double height, double viewportFraction, String message) {
+    final double width = MediaQuery.sizeOf(context).width * viewportFraction;
+
     return FadeSlideWidget(
       child: Container(
         height: height,
+        width: width.clamp(
+            300, 800), // Bound the maximum width of the error message box
         margin: const EdgeInsets.symmetric(
             horizontal: AppDimensions.screenPaddingH),
         decoration: BoxDecoration(
