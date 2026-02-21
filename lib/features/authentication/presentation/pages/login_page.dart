@@ -152,22 +152,84 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
               }
             },
             builder: (context, state) {
+              if (state is AuthLoading) {
+                return Stack(
+                  children: [
+                    _buildBackgroundDecorations(),
+                    SafeArea(child: _buildLoadingState()),
+                  ],
+                );
+              }
+
+              final isDesktop = context.isDesktopOrLarger;
+
+              if (isDesktop) {
+                return Row(
+                  children: [
+                    // Left side - Branding & Illustration
+                    Expanded(
+                      flex: 5,
+                      child: Container(
+                        color: context.colors.primary.withValues(alpha: 0.03),
+                        child: Stack(
+                          children: [
+                            _buildBackgroundDecorations(),
+                            Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  _buildIllustration(),
+                                  const SizedBox(height: AppDimensions.spaceXL),
+                                  Text(
+                                    AppStrings.appName,
+                                    style: AppTextStyles.h1.copyWith(
+                                      color: context.colors.primary,
+                                      fontWeight: FontWeight.bold,
+                                      letterSpacing: -1,
+                                    ),
+                                  ),
+                                  const SizedBox(height: AppDimensions.spaceS),
+                                  Text(
+                                    'Protecting children, empowering parents.',
+                                    style: AppTextStyles.h5.copyWith(
+                                      color: context.colors.textSecondary,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const VerticalDivider(width: 1, thickness: 1),
+                    // Right side - Authentication Form
+                    Expanded(
+                      flex: 4,
+                      child: SafeArea(
+                        child: Center(
+                          child: ConstrainedBox(
+                            constraints: const BoxConstraints(maxWidth: 480),
+                            child: _buildLoginContent(context, isDesktop: true),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                );
+              }
+
+              // Mobile / Tablet layout
               return Stack(
                 children: [
-                  // Background decorations
                   _buildBackgroundDecorations(),
-                  // Main content — centred on wide screens
                   SafeArea(
-                    child: state is AuthLoading
-                        ? _buildLoadingState()
-                        : Center(
-                            child: ConstrainedBox(
-                              constraints: const BoxConstraints(
-                                maxWidth: 480,
-                              ),
-                              child: _buildLoginContent(context),
-                            ),
-                          ),
+                    child: Center(
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(maxWidth: 480),
+                        child: _buildLoginContent(context),
+                      ),
+                    ),
                   ),
                 ],
               );
@@ -267,7 +329,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
     );
   }
 
-  Widget _buildLoginContent(BuildContext context) {
+  Widget _buildLoginContent(BuildContext context, {bool isDesktop = false}) {
     final l10n = AppLocalizations.of(context);
 
     return SingleChildScrollView(
@@ -287,16 +349,23 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
             );
           },
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const SizedBox(height: AppDimensions.spaceXL),
-              _buildHeader(l10n),
-              const SizedBox(height: AppDimensions.spaceL),
-              _buildIllustration(),
-              const SizedBox(height: AppDimensions.spaceL),
+              if (!isDesktop) ...[
+                const SizedBox(height: AppDimensions.spaceXL),
+                _buildHeader(l10n),
+                const SizedBox(height: AppDimensions.spaceL),
+                _buildIllustration(),
+                const SizedBox(height: AppDimensions.spaceL),
+              ] else ...[
+                const SizedBox(height: AppDimensions.spaceXXL),
+              ],
               _buildWelcomeCard(context, l10n),
               const SizedBox(height: AppDimensions.spaceL),
-              _buildFeaturesList(l10n),
-              const SizedBox(height: AppDimensions.spaceXXL),
+              if (!isDesktop) ...[
+                _buildFeaturesList(l10n),
+                const SizedBox(height: AppDimensions.spaceXXL),
+              ],
             ],
           ),
         ),
