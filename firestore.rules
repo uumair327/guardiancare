@@ -152,6 +152,26 @@ service cloud.firestore {
       allow write: if isAdmin();
     }
     
+    // ==================== Moderator Applications ====================
+    match /moderator_applications/{applicationId} {
+      // Authenticated users can read their own application (doc ID == their UID)
+      // Admins can read all applications
+      allow read: if isAuthenticated() && 
+        (applicationId == request.auth.uid || isAdmin());
+      
+      // Users can create their own application (doc ID must be their UID)
+      allow create: if isAuthenticated() && 
+        applicationId == request.auth.uid &&
+        request.resource.data.applicantUid == request.auth.uid &&
+        request.resource.data.status == 'pending';
+      
+      // Only admins can update applications (approve/reject)
+      allow update: if isAdmin();
+      
+      // Only admins can delete applications
+      allow delete: if isAdmin();
+    }
+    
     // ==================== Default: Deny All ====================
     // Any collection not explicitly defined above is denied
     match /{document=**} {
