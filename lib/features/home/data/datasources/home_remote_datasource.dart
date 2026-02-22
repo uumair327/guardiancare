@@ -21,36 +21,38 @@ class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
 
   @override
   Stream<List<CarouselItemModel>> getCarouselItems() {
-    Log.d('HomeRemoteDataSource: Fetching curated carousel items...');
+    Log.d(
+        'HomeRemoteDataSource: Fetching curated carousel items from database...');
 
-    // All carousel items link to Children of India website
-    const items = [
-      CarouselItemModel(
-        id: 'children_of_india',
-        type: 'image',
-        imageUrl:
-            'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-        link: 'https://childrenofindia.in/',
-        order: 1,
-      ),
-      CarouselItemModel(
-        id: 'childline_1098',
-        type: 'image',
-        imageUrl:
-            'https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-        link: 'https://childrenofindia.in/',
-        order: 2,
-      ),
-      CarouselItemModel(
-        id: 'education_for_all',
-        type: 'image',
-        imageUrl:
-            'https://images.unsplash.com/photo-1509062522246-3755977927d7?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-        link: 'https://childrenofindia.in/',
-        order: 3,
-      ),
-    ];
+    return _dataStore.streamQuery('carousel_items').map((result) {
+      return result.when(
+        success: (docs) {
+          final List<CarouselItemModel> items = [];
+          for (final doc in docs) {
+            try {
+              // Ensure doc contains ID, many mappers assume 'id' is present
+              if (!doc.containsKey('id') && doc.containsKey('_id')) {
+                doc['id'] = doc['_id'];
+              }
+              items.add(CarouselItemModel.fromMap(doc));
+            } on Object catch (e) {
+              Log.e('HomeRemoteDataSource: Error processing carousel item: $e');
+            }
+          }
 
-    return Stream.value(items);
+          // Filter and sort on the client side to bypass Firestore composite index requirements
+          final activeItems = items.where((item) => item.isActive).toList();
+          activeItems.sort((a, b) => a.order.compareTo(b.order));
+
+          Log.d(
+              'HomeRemoteDataSource: Emitting ${activeItems.length} active carousel items');
+          return activeItems;
+        },
+        failure: (error) {
+          Log.e('HomeRemoteDataSource: Stream error: ${error.message}');
+          return <CarouselItemModel>[];
+        },
+      );
+    });
   }
 }
