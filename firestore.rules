@@ -22,12 +22,12 @@ service cloud.firestore {
     
     // ==================== Users Collection ====================
     match /users/{userId} {
-      // Users can read their own profile
+      // Any authenticated user can read (needed to check own role)
       allow read: if isAuthenticated();
       // Users can create their own profile on signup
-      allow create: if isOwner(userId);
-      // Users can update their own profile
-      allow update: if isOwner(userId);
+      allow create: if isOwner(userId) || isAdmin();
+      // Users can update their own profile; admins can update any (e.g. role assignment)
+      allow update: if isOwner(userId) || isAdmin();
       // Only admins can delete users
       allow delete: if isOwner(userId) || isAdmin();
     }
